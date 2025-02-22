@@ -1,5 +1,43 @@
-import React from 'react';
+import styled from 'styled-components';
 import { FiDollarSign, FiPieChart, FiUsers } from 'react-icons/fi';
+
+const ServicesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 3rem;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ServiceCard = styled.div`
+  padding: 2rem;
+  background: ${({ theme }) => theme.colors.white};
+  border-radius: 16px;
+  text-align: center;
+  transition: transform ${({ theme }) => theme.transitions.default};
+  border: 2px solid ${({ theme }) => theme.colors.secondary}20;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  h3 {
+    margin: 1rem 0;
+  }
+
+  p {
+    color: ${({ theme }) => theme.colors.text}90;
+  }
+`;
+
+const ServiceIcon = styled.div`
+  font-size: 2.5rem;
+  color: ${({ theme }) => theme.colors.primary};
+  margin-bottom: 1rem;
+`;
 
 const Services = () => {
   const services = [
@@ -9,18 +47,18 @@ const Services = () => {
   ];
 
   return (
-    <section id="services" className="services">
+    <section id="services">
       <div className="container">
-        <h2 className="section-title">Our Services</h2>
-        <div className="services-grid">
+        <h2>Our Services</h2>
+        <ServicesGrid>
           {services.map((service, index) => (
-            <div key={index} className="service-card">
-              <div className="service-icon">{service.icon}</div>
+            <ServiceCard key={index}>
+              <ServiceIcon>{service.icon}</ServiceIcon>
               <h3>{service.title}</h3>
               <p>{service.desc}</p>
-            </div>
+            </ServiceCard>
           ))}
-        </div>
+        </ServicesGrid>
       </div>
     </section>
   );

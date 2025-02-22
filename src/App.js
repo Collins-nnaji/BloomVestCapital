@@ -1,33 +1,28 @@
-import React from 'react';
-import './App.css';
+import { ThemeProvider } from 'styled-components';
+import { theme } from './theme';
+import { GlobalStyles } from './GlobalStyles';
+import Header from './components/Header';
 import Hero from './components/Hero';
+import WhyChooseUs from './components/WhyChooseUs';
 import Services from './components/Services';
 import Pricing from './components/Pricing';
 import AdditionalServices from './components/AdditionalServices';
-import WhyChooseUs from './components/WhyChooseUs';
 import Footer from './components/Footer';
 
 function App() {
   return (
-    <div className="App">
-      <nav className="navbar">
-        <div className="container">
-          <h1 className="logo">BloomVest Capital</h1>
-          <div className="nav-links">
-            <a href="#services">Services</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#why">Why Us</a>
-          </div>
-        </div>
-      </nav>
-      
-      <Hero />
-      <Services />
-      <Pricing />
-      <AdditionalServices />
-      <WhyChooseUs />
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      <Header />
+      <main>
+        <Hero />
+        <WhyChooseUs />
+        <Services />
+        <Pricing />
+        <AdditionalServices />
+      </main>
       <Footer />
-    </div>
+    </ThemeProvider>
   );
 }
 
