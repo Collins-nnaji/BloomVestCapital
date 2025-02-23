@@ -1,28 +1,39 @@
-import { ThemeProvider } from 'styled-components';
-import { theme } from './theme';
-import { GlobalStyles } from './GlobalStyles';
+import styled from 'styled-components';
+
+// Component imports
 import Header from './components/Header';
 import Hero from './components/Hero';
-import WhyChooseUs from './components/WhyChooseUs';
 import Services from './components/Services';
+import WhyChooseUs from './components/WhyChooseUs';
 import Pricing from './components/Pricing';
-import AdditionalServices from './components/AdditionalServices';
+import CTA from './components/CTA';
 import Footer from './components/Footer';
+
+const MainContent = styled.main`
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+`;
+
+const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
+    <PageContainer>
       <Header />
-      <main>
+      <MainContent>
         <Hero />
-        <WhyChooseUs />
         <Services />
+        <WhyChooseUs />
         <Pricing />
-        <AdditionalServices />
-      </main>
+        <CTA />
+      </MainContent>
       <Footer />
-    </ThemeProvider>
+    </PageContainer>
   );
 }
 
