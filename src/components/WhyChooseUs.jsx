@@ -1,9 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaUserShield, FaChartLine, FaGem, FaGraduationCap } from 'react-icons/fa';
+import { 
+  FaUserShield, 
+
+  FaGraduationCap, 
+  FaHandshake, 
+  FaGlobeAfrica 
+} from 'react-icons/fa';
 
 const Section = styled.section`
-  padding: 100px 0;
+  padding: 120px 0;
   background: #FFFFFF;
   position: relative;
   overflow: hidden;
@@ -19,16 +25,38 @@ const Section = styled.section`
   }
 `;
 
+const BackgroundAccent = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+`;
+
 const Container = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
+  position: relative;
+  z-index: 1;
 `;
 
 const Header = styled.div`
   text-align: center;
   max-width: 800px;
   margin: 0 auto 80px;
+`;
+
+const Preheading = styled.div`
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #22c55e;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 `;
 
 const Title = styled.h2`
@@ -62,14 +90,15 @@ const Card = styled.div`
   background: #ffffff;
   border-radius: 20px;
   padding: 3rem;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   border: 1px solid rgba(34, 197, 94, 0.1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
     border-color: rgba(34, 197, 94, 0.3);
   }
 
@@ -91,17 +120,22 @@ const Card = styled.div`
 `;
 
 const IconWrapper = styled.div`
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, #22c55e, #4ade80);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 2rem;
-  font-size: 2rem;
+  font-size: 2.25rem;
   color: white;
   box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
+  transition: all 0.3s ease;
+  
+  ${Card}:hover & {
+    transform: scale(1.05) rotate(5deg);
+  }
 `;
 
 const CardTitle = styled.h3`
@@ -124,6 +158,11 @@ const StatsList = styled.div`
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 `;
 
 const Stat = styled.div`
@@ -146,50 +185,52 @@ const WhyChooseUs = () => {
   const reasons = [
     {
       icon: <FaUserShield />,
-      title: "Trusted Expertise",
-      description: "Our team of certified financial advisors brings decades of experience in wealth management and investment strategy.",
+      title: "Independent Expertise",
+      description: "Our advisors provide unbiased guidance with no hidden agendas or platform-specific incentives. We focus solely on what's best for your financial growth.",
       stats: [
         { number: "15+", label: "Years Experience" },
-        { number: "500+", label: "Happy Clients" }
+        { number: "100%", label: "Independent Advice" }
       ]
     },
     {
-      icon: <FaChartLine />,
-      title: "Proven Track Record",
-      description: "Consistent growth and remarkable returns through our tested and proven investment strategies.",
+      icon: <FaGlobeAfrica />,
+      title: "Nigeria-Focused Insights",
+      description: "Our advisory services are specifically tailored to the Nigerian economic landscape, including local market conditions, regulations, and opportunities.",
       stats: [
-        { number: "₦50B+", label: "Managed Assets" },
-        { number: "25%", label: "Avg. Returns" }
-      ]
-    },
-    {
-      icon: <FaGem />,
-      title: "Premium Service",
-      description: "Personalized attention and dedicated support to help you achieve your financial goals.",
-      stats: [
-        { number: "24/7", label: "Support" },
-        { number: "98%", label: "Client Retention" }
+        { number: "20+", label: "Years in Nigeria" },
+        { number: "All 36", label: "States Covered" }
       ]
     },
     {
       icon: <FaGraduationCap />,
-      title: "Financial Education",
-      description: "Comprehensive training and resources to help you make informed financial decisions.",
+      title: "Education-First Approach",
+      description: "We believe in empowering you through knowledge. Our services include comprehensive financial education to build your decision-making skills.",
       stats: [
-        { number: "1000+", label: "Workshops" },
-        { number: "5000+", label: "Graduates" }
+        { number: "5,000+", label: "Workshop Graduates" },
+        { number: "200+", label: "Educational Resources" }
+      ]
+    },
+    {
+      icon: <FaHandshake />,
+      title: "Client Partnership",
+      description: "We build long-term relationships founded on trust and transparency. Your financial success is our ultimate goal and measure of achievement.",
+      stats: [
+        { number: "98%", label: "Client Retention" },
+        { number: "4.9/5", label: "Client Satisfaction" }
       ]
     }
   ];
 
   return (
     <Section id="why">
+      <BackgroundAccent />
       <Container>
         <Header>
-          <Title>Why Choose BloomVest Capital?</Title>
+          <Preheading>Why Choose Us</Preheading>
+          <Title>The BloomVest Capital Advantage</Title>
           <Description>
-            We combine expertise, innovation, and personalized service to help you achieve 
-            your financial goals with confidence and peace of mind.
+            As an independent advisory firm, we offer something different: unbiased guidance and 
+            personalized solutions focused on empowering you to make informed financial decisions.
           </Description>
         </Header>
         <Grid>

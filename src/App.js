@@ -1,39 +1,44 @@
-import styled from 'styled-components';
+import React from 'react';
+import { ThemeProvider } from 'styled-components';
+import { GlobalStyles } from './GlobalStyles';
+import theme from './theme';
 
-// Component imports
+// Import Components
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Services from './components/Services';
+import Education from './components/Education';
+import AIToolSection from './components/AIToolSection';
+import AIFeatures from './components/AIFeatures';
+import AIAdvisoryIntegration from './components/AIAdvisoryIntegration';
 import WhyChooseUs from './components/WhyChooseUs';
+import About from './components/About';
+import Resources from './components/Resources';
 import Pricing from './components/Pricing';
-import CTA from './components/CTA';
+import AdditionalServices from './components/AdditionalServices';
+import Contact from './components/Contact';
+
 import Footer from './components/Footer';
-
-const MainContent = styled.main`
-  min-height: 100vh;
-  width: 100%;
-  overflow-x: hidden;
-`;
-
-const PageContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-`;
 
 function App() {
   return (
-    <PageContainer>
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
       <Header />
-      <MainContent>
-        <Hero />
-        <Services />
-        <WhyChooseUs />
-        <Pricing />
-        <CTA />
-      </MainContent>
+      <Hero />
+      <AIToolSection />
+      <Services />
+      <Education />
+      <AIFeatures />
+      <WhyChooseUs />
+      <AIAdvisoryIntegration />
+      <About />
+      <Resources />
+      <Pricing />
+      <AdditionalServices />
+      <Contact />
       <Footer />
-    </PageContainer>
+    </ThemeProvider>
   );
 }
 
