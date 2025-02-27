@@ -22,6 +22,10 @@ const NavContainer = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 2rem;
+
+  @media (max-width: 1024px) {
+    padding: 0 1rem;
+  }
 `;
 
 const LogoLink = styled(Link)`
@@ -36,11 +40,11 @@ const LogoLink = styled(Link)`
   }
   
   img {
-    height: 60px;
+    height: 50px;
     width: auto;
     
     @media (max-width: 768px) {
-      height: 50px;
+      height: 40px;
     }
   }
 `;
@@ -54,7 +58,7 @@ const Nav = styled.nav`
     position: fixed;
     top: 0;
     right: ${props => props.isOpen ? '0' : '-100%'};
-    width: 300px;
+    width: 100%;
     height: 100vh;
     background: #1a365d;
     flex-direction: column;
@@ -64,6 +68,7 @@ const Nav = styled.nav`
     transition: right 0.4s ease;
     box-shadow: ${props => props.isOpen ? '-5px 0 25px rgba(0,0,0,0.1)' : 'none'};
     z-index: 1001;
+    padding: 0 2rem;
   }
 `;
 
@@ -75,6 +80,8 @@ const NavLink = styled(Link)`
   transition: all 0.3s ease;
   position: relative;
   padding: 0.5rem 0;
+  text-align: center;
+  width: 100%;
   
   &:after {
     content: '';
@@ -97,7 +104,8 @@ const NavLink = styled(Link)`
   
   @media (max-width: 1024px) {
     color: #FFFFFF;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
+    padding: 1rem 0;
   }
 `;
 
@@ -131,6 +139,7 @@ const CloseButton = styled.button`
   font-size: 1.8rem;
   cursor: pointer;
   display: none;
+  z-index: 1003;
   
   @media (max-width: 1024px) {
     display: block;
@@ -194,6 +203,7 @@ const Header = () => {
                 key={item.path}
                 to={item.path} 
                 isopen={isMenuOpen ? 1 : 0}
+                onClick={toggleMenu}
                 aria-label={item.label}
               >
                 {item.label}
