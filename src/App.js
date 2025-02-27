@@ -1,43 +1,35 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { ThemeProvider } from 'styled-components';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GlobalStyles } from './GlobalStyles';
 import theme from './theme';
+import Layout from './components/Layout';
+import Loader from './components/Loader'; // Assuming you'll create a loader component
 
-// Import Components
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Services from './components/Services';
-import Education from './components/Education';
-import AIToolSection from './components/AIToolSection';
-import AIFeatures from './components/AIFeatures';
-import AIAdvisoryIntegration from './components/AIAdvisoryIntegration';
-import WhyChooseUs from './components/WhyChooseUs';
-import About from './components/About';
-import Resources from './components/Resources';
-import Pricing from './components/Pricing';
-import AdditionalServices from './components/AdditionalServices';
-import Contact from './components/Contact';
-
-import Footer from './components/Footer';
+// Lazy load pages for better performance
+const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
+const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
+const FinancialEducationPage = lazy(() => import('./pages/FinancialEducationPage'));
+const InvestmentResourcesPage = lazy(() => import('./pages/InvestmentResourcesPage'));
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
-      <Header />
-      <Hero />
-      <AIToolSection />
-      <Services />
-      <Education />
-      <AIFeatures />
-      <WhyChooseUs />
-      <AIAdvisoryIntegration />
-      <About />
-      <Resources />
-      <Pricing />
-      <AdditionalServices />
-      <Contact />
-      <Footer />
+      <Router>
+        <Suspense fallback={<Loader />}>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<MainDashboardPage />} />
+              <Route path="/about" element={<AboutUsPage />} />
+              <Route path="/education" element={<FinancialEducationPage />} />
+              <Route path="/resources" element={<InvestmentResourcesPage />} />
+              {/* Add a 404 page if needed */}
+              <Route path="*" element={<MainDashboardPage />} />
+            </Routes>
+          </Layout>
+        </Suspense>
+      </Router>
     </ThemeProvider>
   );
 }

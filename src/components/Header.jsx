@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
@@ -8,10 +9,10 @@ const HeaderContainer = styled.header`
   left: 0;
   right: 0;
   z-index: 1000;
-  background: ${props => props.scrolled ? '#FFFFFF' : 'transparent'};
+  background: #FFFFFF;
   transition: all 0.4s ease;
-  box-shadow: ${props => props.scrolled ? '0 4px 20px rgba(0,0,0,0.08)' : 'none'};
-  padding: ${props => props.scrolled ? '0.5rem 0' : '1rem 0'};
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 0.5rem 0;
 `;
 
 const NavContainer = styled.div`
@@ -23,7 +24,7 @@ const NavContainer = styled.div`
   padding: 0 2rem;
 `;
 
-const LogoLink = styled.a`
+const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -66,8 +67,8 @@ const Nav = styled.nav`
   }
 `;
 
-const NavLink = styled.a`
-  color: ${props => (props.isOpen || !props.scrolled) ? '#FFFFFF' : '#1a365d'};
+const NavLink = styled(Link)`
+  color: ${props => props.isopen ? '#FFFFFF' : '#1a365d'};
   text-decoration: none;
   font-weight: 500;
   font-size: 1.1rem;
@@ -100,37 +101,13 @@ const NavLink = styled.a`
   }
 `;
 
-const ContactButton = styled.button`
-  background: #22c55e;
-  color: white;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
-  
-  &:hover {
-    transform: translateY(-2px);
-    background: #1a945e;
-    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
-  }
-  
-  @media (max-width: 1024px) {
-    margin-top: 1.5rem;
-    width: 80%;
-  }
-`;
-
 const MenuButton = styled.button`
   display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  color: ${props => props.scrolled ? '#1a365d' : '#FFFFFF'};
+  color: #1a365d;
   font-size: 1.8rem;
   transition: all 0.3s ease;
   z-index: 1002;
@@ -174,61 +151,66 @@ const Overlay = styled.div`
 `;
 
 const Header = () => {
-  const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
+  // Navigation items for easier maintenance
+  const navItems = [
+    { path: '/', label: 'Home' },
+    { path: '/about', label: 'About Us' },
+    { path: '/education', label: 'Education' },
+    { path: '/resources', label: 'Resources' }
+  ];
+
+  // Manage menu and body overflow
   useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      setScrolled(isScrolled);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  useEffect(() => {
-    // Prevent body scroll when menu is open
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }, [isMenuOpen]);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
+    // Close menu when route changes
     setIsMenuOpen(false);
+    
+    // Manage body overflow when menu is open
+    document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
+  }, [location, isMenuOpen]);
+
+  // Toggle mobile menu
+  const toggleMenu = () => {
+    setIsMenuOpen(prev => !prev);
   };
 
   return (
     <>
-      <HeaderContainer scrolled={scrolled}>
+      <HeaderContainer>
         <NavContainer>
-          <LogoLink href="/">
+          <LogoLink to="/">
             <img src="/bloomvest.png" alt="BloomVest Capital" />
           </LogoLink>
+          
           <Nav isOpen={isMenuOpen}>
-            <CloseButton onClick={closeMenu}>
+            <CloseButton onClick={toggleMenu} aria-label="Close Menu">
               <FaTimes />
             </CloseButton>
-            <NavLink href="#services" scrolled={scrolled} isOpen={isMenuOpen}>Advisory Services</NavLink>
-            <NavLink href="#ai-tool" scrolled={scrolled} isOpen={isMenuOpen}>AI Wealth Check</NavLink>
-            <NavLink href="#education" scrolled={scrolled} isOpen={isMenuOpen}>Financial Education</NavLink>
-            <NavLink href="#about" scrolled={scrolled} isOpen={isMenuOpen}>About Us</NavLink>
-            <NavLink href="#resources" scrolled={scrolled} isOpen={isMenuOpen}>Resources</NavLink>
-            <NavLink href="#contact" scrolled={scrolled} isOpen={isMenuOpen}>Contact</NavLink>
-            <ContactButton>Free Consultation</ContactButton>
+            
+            {navItems.map((item) => (
+              <NavLink 
+                key={item.path}
+                to={item.path} 
+                isopen={isMenuOpen ? 1 : 0}
+                aria-label={item.label}
+              >
+                {item.label}
+              </NavLink>
+            ))}
           </Nav>
-          <MenuButton scrolled={scrolled} onClick={toggleMenu}>
+          
+          <MenuButton 
+            onClick={toggleMenu}
+            aria-label="Open Menu"
+          >
             <FaBars />
           </MenuButton>
         </NavContainer>
       </HeaderContainer>
-      <Overlay isOpen={isMenuOpen} onClick={closeMenu} />
+      
+      <Overlay isOpen={isMenuOpen} onClick={toggleMenu} />
     </>
   );
 };
