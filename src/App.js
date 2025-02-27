@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GlobalStyles } from './GlobalStyles';
 import theme from './theme';
 import Layout from './components/Layout';
-import Loader from './components/Loader'; // Assuming you'll create a loader component
+import Loader from './components/Loader';
 
 // Lazy load pages for better performance
 const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
