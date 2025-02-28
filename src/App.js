@@ -10,7 +10,8 @@ import Loader from './components/Loader';
 const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
 const FinancialEducationPage = lazy(() => import('./pages/FinancialEducationPage'));
-const InvestmentResourcesPage = lazy(() => import('./pages/InvestmentResourcesPage'));
+
+const HybridAdvisoryPage = lazy(() => import('./pages/HybridAdvisoryPage'));
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
               <Route path="/" element={<MainDashboardPage />} />
               <Route path="/about" element={<AboutUsPage />} />
               <Route path="/education" element={<FinancialEducationPage />} />
-              <Route path="/resources" element={<InvestmentResourcesPage />} />
+
+              <Route path="/hybrid-advisory" element={<HybridAdvisoryPage />} />
               {/* Add a 404 page if needed */}
               <Route path="*" element={<MainDashboardPage />} />
             </Routes>

@@ -45,7 +45,7 @@ const FooterPattern = styled.div`
 
 const FooterGrid = styled.div`
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 4rem;
   max-width: 1400px;
   margin: 0 auto;
@@ -309,12 +309,12 @@ const Footer = () => {
       <FooterGrid>
         <FooterColumn>
           <CompanyInfo>
-            <img src="/bloomvest.png" alt="BloomVest Capital" />
-            <Tagline>Your Trusted Financial Guide</Tagline>
+            <img src="/bloomvest.png" alt="BloomVest Finance" />
+            <Tagline>Hybrid Financial Advisory</Tagline>
             <p>
-              BloomVest Capital provides expert financial advisory services to help you make informed decisions
-              and achieve your wealth-building goals. We focus on education, personalized guidance, and 
-              independent advice without platform trading commitments.
+              BloomVest Finance combines human expertise with AI-powered insights to deliver 
+              exceptional financial advisory services. We empower individuals and businesses to make 
+              informed decisions through personalized guidance and innovative solutions.
             </p>
             <SocialLinks>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
@@ -337,46 +337,25 @@ const Footer = () => {
         </FooterColumn>
 
         <FooterColumn>
-          <h4>Our Services</h4>
-          <QuickLinks>
-            <NavLink href="#investment-advisory">
-              <FaChevronRight /> Investment Advisory
-            </NavLink>
-            <NavLink href="#property-guidance">
-              <FaChevronRight /> Property Investment Guidance
-            </NavLink>
-            <NavLink href="#financial-education">
-              <FaChevronRight /> Financial Education
-            </NavLink>
-            <NavLink href="#wealth-preservation">
-              <FaChevronRight /> Wealth Preservation
-            </NavLink>
-            <NavLink href="#risk-management">
-              <FaChevronRight /> Risk Management
-            </NavLink>
-          </QuickLinks>
-        </FooterColumn>
-
-        <FooterColumn>
           <h4>Quick Links</h4>
           <QuickLinks>
-            <NavLink href="#about">
+            <NavLink href="/about">
               <FaChevronRight /> About Us
             </NavLink>
-            <NavLink href="#team">
-              <FaChevronRight /> Our Team
+            <NavLink href="/hybrid-advisory">
+              <FaChevronRight /> Hybrid Advisory
             </NavLink>
-            <NavLink href="#testimonials">
-              <FaChevronRight /> Client Testimonials
+            <NavLink href="/events">
+              <FaChevronRight /> Events & Workshops
             </NavLink>
-            <NavLink href="#resources">
-              <FaChevronRight /> Financial Resources
+            <NavLink href="/training">
+              <FaChevronRight /> Training Sessions
             </NavLink>
-            <NavLink href="#events">
-              <FaChevronRight /> Upcoming Events
+            <NavLink href="/resources">
+              <FaChevronRight /> Resources
             </NavLink>
-            <NavLink href="#blog">
-              <FaChevronRight /> Financial Insights Blog
+            <NavLink href="/contact">
+              <FaChevronRight /> Contact Us
             </NavLink>
           </QuickLinks>
         </FooterColumn>
@@ -399,7 +378,7 @@ const Footer = () => {
             <ContactItem>
               <FaEnvelope />
               <span>
-                <a href="mailto:hello@bloomvest.ng">hello@bloomvest.ng</a>
+                <a href="mailto:hello@bloomvestfinance.com">hello@bloomvestfinance.com</a>
               </span>
             </ContactItem>
             <ContactItem>
@@ -421,11 +400,11 @@ const Footer = () => {
       </FooterGrid>
 
       <BottomBar>
-        <Copyright>&copy; {new Date().getFullYear()} BloomVest Capital. All rights reserved.</Copyright>
+        <Copyright>&copy; {new Date().getFullYear()} BloomVest Finance. All rights reserved.</Copyright>
         <LegalLinks>
-          <LegalLink href="#terms">Terms of Service</LegalLink>
-          <LegalLink href="#privacy">Privacy Policy</LegalLink>
-          <LegalLink href="#disclaimer">Disclaimer</LegalLink>
+          <LegalLink href="/terms">Terms of Service</LegalLink>
+          <LegalLink href="/privacy">Privacy Policy</LegalLink>
+          <LegalLink href="/disclaimer">Disclaimer</LegalLink>
         </LegalLinks>
       </BottomBar>
     </FooterWrapper>

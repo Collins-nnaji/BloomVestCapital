@@ -2,13 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { 
   FaQuoteLeft, 
-  FaLinkedin, 
-  FaTwitter, 
-  FaAward, 
   FaUserShield, 
   FaBalanceScale, 
-  FaHandshake, 
-  FaArrowRight 
+  FaAward, 
+  FaHandshake,
+  FaRegLightbulb,
+  FaUsers,
+  FaRobot,
+  FaGraduationCap
 } from 'react-icons/fa';
 
 const Section = styled.section`
@@ -16,12 +17,38 @@ const Section = styled.section`
   background: var(--background);
   position: relative;
   overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.05) 0%, transparent 70%);
+    top: -200px;
+    right: -200px;
+    border-radius: 50%;
+    z-index: 0;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(26, 54, 93, 0.05) 0%, transparent 70%);
+    bottom: -150px;
+    left: -150px;
+    border-radius: 50%;
+    z-index: 0;
+  }
 `;
 
 const Container = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
+  position: relative;
+  z-index: 1;
 `;
 
 const SectionHeader = styled.div`
@@ -37,6 +64,19 @@ const Preheading = styled.div`
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  display: inline-block;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    width: 60px;
+    background: var(--accent-color);
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 `;
 
 const Title = styled.h2`
@@ -76,6 +116,17 @@ const StoryTitle = styled.h3`
   color: var(--primary-color);
   margin-bottom: 1.5rem;
   font-weight: 700;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    height: 3px;
+    width: 80px;
+    background: linear-gradient(to right, var(--accent-color), transparent);
+    bottom: -10px;
+    left: 0;
+  }
 `;
 
 const StoryText = styled.div`
@@ -98,16 +149,28 @@ const StoryImage = styled.div`
   overflow: hidden;
   box-shadow: ${props => props.theme.shadows.lg};
   height: 500px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to top, rgba(26, 54, 93, 0.4), transparent);
+    z-index: 1;
+  }
   
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.8s ease;
   }
   
   &:hover img {
-    transform: scale(1.03);
+    transform: scale(1.05);
   }
   
   @media (max-width: 768px) {
@@ -140,10 +203,27 @@ const ValueCard = styled.div`
   box-shadow: ${props => props.theme.shadows.md};
   transition: all 0.3s ease;
   height: 100%;
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--accent-color);
+    transition: width 0.4s ease;
+  }
   
   &:hover {
     transform: translateY(-8px);
     box-shadow: ${props => props.theme.shadows.lg};
+    
+    &::after {
+      width: 100%;
+    }
   }
 `;
 
@@ -158,6 +238,7 @@ const ValueIcon = styled.div`
   margin-bottom: 1.5rem;
   color: white;
   font-size: 1.75rem;
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
 `;
 
 const ValueTitle = styled.h4`
@@ -173,14 +254,53 @@ const ValueText = styled.p`
   line-height: 1.7;
 `;
 
-const TeamSection = styled.div`
+const TeamOverviewSection = styled.div`
   margin-bottom: 100px;
+  background: linear-gradient(145deg, rgba(26, 54, 93, 0.05), rgba(34, 197, 94, 0.05));
+  border-radius: 20px;
+  padding: 4rem;
+  position: relative;
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    padding: 3rem 2rem;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+    top: -150px;
+    right: -100px;
+    border-radius: 50%;
+  }
 `;
 
-const TeamGrid = styled.div`
+const TeamTitle = styled.h3`
+  font-size: 2.25rem;
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  font-weight: 700;
+  text-align: center;
+`;
+
+const TeamDescription = styled.p`
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 3rem;
+  text-align: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const TeamGridLayout = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
   
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
@@ -191,81 +311,44 @@ const TeamGrid = styled.div`
   }
 `;
 
-const TeamCard = styled.div`
+const TeamCategory = styled.div`
   background: ${props => props.theme.colors.cardBg};
   border-radius: 16px;
-  overflow: hidden;
+  padding: 2rem;
   box-shadow: ${props => props.theme.shadows.md};
+  text-align: center;
   transition: all 0.3s ease;
   
   &:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
     box-shadow: ${props => props.theme.shadows.lg};
   }
 `;
 
-const TeamImage = styled.div`
-  height: 300px;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  
-  ${TeamCard}:hover & img {
-    transform: scale(1.05);
-  }
+const CategoryIcon = styled.div`
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, ${props => props.gradient || 'var(--primary-color), #2d4e71'});
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: 1.5rem;
 `;
 
-const TeamInfo = styled.div`
-  padding: 1.5rem;
-`;
-
-const TeamName = styled.h4`
-  font-size: 1.25rem;
+const CategoryTitle = styled.h4`
+  font-size: 1.2rem;
   color: var(--primary-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   font-weight: 600;
 `;
 
-const TeamRole = styled.p`
-  font-size: 0.95rem;
-  color: var(--accent-color);
-  font-weight: 500;
-  margin-bottom: 1rem;
-`;
-
-const TeamBio = styled.p`
+const CategoryText = styled.p`
   font-size: 0.95rem;
   color: var(--text-secondary);
   line-height: 1.6;
-  margin-bottom: 1.25rem;
-`;
-
-const TeamSocial = styled.div`
-  display: flex;
-  gap: 1rem;
-  
-  a {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(26, 54, 93, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-color);
-    transition: all 0.3s ease;
-    
-    &:hover {
-      background: var(--primary-color);
-      color: white;
-      transform: translateY(-3px);
-    }
-  }
 `;
 
 const TestimonialSection = styled.div`
@@ -289,10 +372,12 @@ const TestimonialCard = styled.div`
   box-shadow: ${props => props.theme.shadows.md};
   position: relative;
   transition: all 0.3s ease;
+  border: 1px solid rgba(34, 197, 94, 0.05);
   
   &:hover {
     transform: translateY(-5px);
     box-shadow: ${props => props.theme.shadows.lg};
+    border-color: rgba(34, 197, 94, 0.2);
   }
 `;
 
@@ -324,6 +409,7 @@ const AuthorImage = styled.div`
   height: 60px;
   border-radius: 50%;
   overflow: hidden;
+  border: 3px solid rgba(34, 197, 94, 0.2);
   
   img {
     width: 100%;
@@ -346,58 +432,6 @@ const AuthorRole = styled.p`
   color: var(--text-secondary);
 `;
 
-const CTASection = styled.div`
-  background: linear-gradient(135deg, var(--primary-color), #2d4e71);
-  border-radius: 20px;
-  padding: 4rem;
-  text-align: center;
-  color: white;
-  box-shadow: ${props => props.theme.shadows.lg};
-  
-  @media (max-width: 768px) {
-    padding: 3rem 2rem;
-  }
-`;
-
-const CTATitle = styled.h3`
-  font-size: 2.25rem;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
-  
-  @media (max-width: 768px) {
-    font-size: 1.75rem;
-  }
-`;
-
-const CTAText = styled.p`
-  font-size: 1.1rem;
-  opacity: 0.9;
-  max-width: 800px;
-  margin: 0 auto 2rem;
-  line-height: 1.7;
-`;
-
-const CTAButton = styled.button`
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 1.25rem 2.5rem;
-  font-weight: 600;
-  font-size: 1.125rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  
-  &:hover {
-    background: #1a945e;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-`;
-
 const About = () => {
   const values = [
     {
@@ -418,64 +452,40 @@ const About = () => {
     {
       icon: <FaHandshake />,
       title: "Client-Focused",
-      text: "Your goals and needs are at the center of everything we do, guiding our personalized advisory approach."
+      text: "Your goals and needs are at the center of everything we do, guiding our personalized hybrid advisory approach."
     }
   ];
   
-  const team = [
+  const teamCategories = [
     {
-      name: "Oluwaseun Adebayo",
-      role: "Founder & CEO",
-      bio: "With over 15 years in financial services and a passion for technology, Oluwaseun founded BloomVest to democratize access to quality financial advice in Nigeria.",
-      image: "/images/team-founder.jpg",
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
+      icon: <FaRegLightbulb />,
+      title: "Investment Experts",
+      text: "Seasoned financial strategists with deep knowledge of Nigerian and West African markets who craft personalized investment strategies.",
+      gradient: "var(--primary-color), #2d4e71"
     },
     {
-      name: "Amina Ibrahim",
-      role: "Chief Investment Officer",
-      bio: "A veteran investment strategist with expertise in Nigerian and West African markets, Amina leads our investment research and advisory strategies.",
-      image: "/images/team-cio.jpg",
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
+      icon: <FaRobot />,
+      title: "Technology Innovators",
+      text: "AI specialists and fintech engineers who develop our cutting-edge tools while ensuring data security and analytical precision.",
+      gradient: "var(--accent-color), #4ade80"
     },
     {
-      name: "Chukwudi Okonkwo",
-      role: "Head of Financial Education",
-      bio: "Former university professor with a gift for making complex financial concepts accessible, Chukwudi designs our educational programs and workshops.",
-      image: "/images/team-education.jpg",
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
+      icon: <FaGraduationCap />,
+      title: "Financial Educators",
+      text: "Expert communicators who translate complex financial concepts into accessible knowledge through workshops and resources.",
+      gradient: "#6366F1, #A855F7"
     },
     {
-      name: "Funke Adeyemi",
-      role: "Chief Technology Officer",
-      bio: "AI and fintech expert who leads our technology initiatives, ensuring our AI advisory tools deliver valuable insights while maintaining user privacy.",
-      image: "/images/team-cto.jpg",
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
-    },
-    {
-      name: "David Nwachukwu",
-      role: "Real Estate Advisory Lead",
-      bio: "With a background in property development and market analysis, David specializes in helping clients navigate Nigeria's complex real estate landscape.",
-      image: "/images/team-realestate.jpg",
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
-    },
-    {
-      name: "Zainab Mohammed",
-      role: "Client Success Manager",
-      bio: "Dedicated to ensuring exceptional client experiences, Zainab works closely with our advisory team to deliver personalized service and support.",
-      image: "/images/team-success.jpg",
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com"
+      icon: <FaUsers />,
+      title: "Client Success Team",
+      text: "Dedicated professionals who ensure a seamless experience, guiding you through every step of your financial journey with BloomVest.",
+      gradient: "#F59E0B, #EF4444"
     }
   ];
   
   const testimonials = [
     {
-      text: "BloomVest's AI assessment gave me insights I'd never considered before, and their human advisors helped me implement a financial strategy that's perfectly aligned with my goals.",
+      text: "BloomVest Finance's AI assessment gave me insights I'd never considered before, and their human advisors helped me implement a financial strategy that's perfectly aligned with my goals.",
       name: "Tunde Johnson",
       role: "Business Owner, Lagos",
       image: "/images/testimonial1.jpg"
@@ -505,10 +515,10 @@ const About = () => {
       <Container>
         <SectionHeader>
           <Preheading>Our Story</Preheading>
-          <Title>About BloomVest Capital</Title>
+          <Title>About BloomVest Finance</Title>
           <Subtitle>
-            We're on a mission to transform financial advisory in Nigeria through a blend of 
-            human expertise and cutting-edge technology.
+            We're transforming financial advisory in Nigeria through our unique hybrid model that blends 
+            human expertise with cutting-edge AI technology.
           </Subtitle>
         </SectionHeader>
         
@@ -517,26 +527,26 @@ const About = () => {
             <StoryTitle>Our Journey</StoryTitle>
             <StoryText>
               <p>
-                BloomVest Capital was founded in 2020 with a clear vision: to make high-quality 
+                BloomVest Finance was founded in 2020 with a clear vision: to make high-quality 
                 financial guidance accessible to all Nigerians, regardless of their wealth level or 
                 investment experience.
               </p>
               <p>
-                Our founder, Oluwaseun Adebayo, recognized a significant gap in the Nigerian financial 
+                Our founder recognized a significant gap in the Nigerian financial 
                 advisory landscape. Traditional wealth management services were typically reserved for 
                 the ultra-wealthy, while the average Nigerian had limited access to unbiased, 
                 personalized financial guidance.
               </p>
               <p>
                 By combining <strong>human expertise</strong> with <strong>AI-powered analysis</strong>, 
-                we've created a new model for financial advisory that's more accessible, affordable, 
-                and effective than traditional approaches.
+                we've created a new hybrid model for financial advisory that's more accessible, affordable, 
+                and effective than traditional approaches. This innovative blend allows us to provide 
+                personalized guidance that's enhanced by data-driven insights.
               </p>
               <p>
                 Today, BloomVest serves thousands of clients across Nigeria, helping them navigate 
-                complex financial decisions with confidence and clarity. Our team of experienced 
-                advisors and cutting-edge technology work together to deliver guidance that's both 
-                deeply personal and data-driven.
+                complex financial decisions with confidence and clarity. Our commitment to innovation and 
+                client success has positioned us as pioneers in hybrid financial advisory.
               </p>
             </StoryText>
           </StoryContent>
@@ -550,8 +560,8 @@ const About = () => {
             <Preheading>Our Principles</Preheading>
             <Title>Core Values</Title>
             <Subtitle>
-              These foundational values guide everything we do, from the advice we provide 
-              to how we interact with our clients and community.
+              These foundational values guide every aspect of our work, shaping our hybrid advisory 
+              approach and defining our relationships with clients.
             </Subtitle>
           </SectionHeader>
           
@@ -566,47 +576,33 @@ const About = () => {
           </ValuesGrid>
         </ValuesSection>
         
-        <TeamSection>
-          <SectionHeader>
-            <Preheading>Our Experts</Preheading>
-            <Title>Meet the Team</Title>
-            <Subtitle>
-              Our diverse team of financial experts, technologists, and educators combine their 
-              expertise to deliver exceptional advisory services.
-            </Subtitle>
-          </SectionHeader>
+        <TeamOverviewSection>
+          <TeamTitle>Our Multidisciplinary Team</TeamTitle>
+          <TeamDescription>
+            Behind BloomVest Finance's success is our diverse team of experts working at the intersection 
+            of finance, technology, and education. Our collaborative team culture brings together specialists 
+            from different backgrounds who share a common passion for transforming financial advisory 
+            through our hybrid approach.
+          </TeamDescription>
           
-          <TeamGrid>
-            {team.map((member, index) => (
-              <TeamCard key={index}>
-                <TeamImage>
-                  <img src={member.image || "/images/team-placeholder.jpg"} alt={member.name} />
-                </TeamImage>
-                <TeamInfo>
-                  <TeamName>{member.name}</TeamName>
-                  <TeamRole>{member.role}</TeamRole>
-                  <TeamBio>{member.bio}</TeamBio>
-                  <TeamSocial>
-                    <a href={member.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                      <FaLinkedin />
-                    </a>
-                    <a href={member.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                      <FaTwitter />
-                    </a>
-                  </TeamSocial>
-                </TeamInfo>
-              </TeamCard>
+          <TeamGridLayout>
+            {teamCategories.map((category, index) => (
+              <TeamCategory key={index}>
+                <CategoryIcon gradient={category.gradient}>{category.icon}</CategoryIcon>
+                <CategoryTitle>{category.title}</CategoryTitle>
+                <CategoryText>{category.text}</CategoryText>
+              </TeamCategory>
             ))}
-          </TeamGrid>
-        </TeamSection>
+          </TeamGridLayout>
+        </TeamOverviewSection>
         
         <TestimonialSection>
           <SectionHeader>
-            <Preheading>Client Stories</Preheading>
-            <Title>What Our Clients Say</Title>
+            <Preheading>Client Success Stories</Preheading>
+            <Title>The Impact of Hybrid Advisory</Title>
             <Subtitle>
-              Hear from people who have transformed their financial futures with 
-              BloomVest Capital's guidance.
+              Discover how our unique blend of human expertise and AI technology has helped our clients 
+              achieve their financial goals and transform their futures.
             </Subtitle>
           </SectionHeader>
           
@@ -632,17 +628,6 @@ const About = () => {
             ))}
           </TestimonialGrid>
         </TestimonialSection>
-        
-        <CTASection>
-          <CTATitle>Ready to Start Your Financial Journey?</CTATitle>
-          <CTAText>
-            Take the first step toward financial confidence with our free AI assessment 
-            or schedule a consultation with one of our expert advisors.
-          </CTAText>
-          <CTAButton>
-            Get Started Today <FaArrowRight />
-          </CTAButton>
-        </CTASection>
       </Container>
     </Section>
   );

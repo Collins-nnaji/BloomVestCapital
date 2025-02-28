@@ -1,19 +1,13 @@
 import React from 'react';
 import Hero from '../components/Hero';
-import AIToolSection from '../components/AIToolSection';
 import Services from '../components/Services';
-import AIAdvisoryIntegration from '../components/AIAdvisoryIntegration';
-
-
+import AIFeatures from '../components/AIFeatures';
 
 const MainDashboardPage = () => (
   <>
     <Hero />
     <Services />
-    <AIToolSection />
-    <AIAdvisoryIntegration />
-
-
+    <AIFeatures />
   </>
 );
 

@@ -53,7 +53,6 @@ const NavWrapper = styled.nav`
   display: flex;
   align-items: center;
   gap: 2rem;
-
   @media (max-width: 1024px) {
     position: fixed;
     top: 0;
@@ -75,13 +74,11 @@ const NavLink = styled(Link)`
   text-decoration: none;
   font-size: 1rem;
   transition: color 0.3s ease;
-
   @media (max-width: 1024px) {
     color: white;
     font-size: 1.2rem;
     margin: 1rem 0;
   }
-
   &:hover {
     color: #22c55e;
   }
@@ -107,45 +104,46 @@ const CloseButton = styled.div`
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-
+  
   // Close menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location]);
-
+  
   // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : 'auto';
   }, [isMenuOpen]);
-
+  
   const toggleMenu = () => {
     console.log('Toggle menu clicked');
     setIsMenuOpen(prevState => !prevState);
   };
-
+  
   const navItems = [
     { path: '/', label: 'Home' },
-    { path: '/about', label: 'About Us' },
+    { path: '/hybrid-advisory', label: 'Hybrid Advisory' }, 
     { path: '/education', label: 'Education' },
-    { path: '/resources', label: 'Resources' }
+    { path: '/about', label: 'About Us' }, 
+   
   ];
-
+  
   return (
     <HeaderContainer>
       <NavContainer>
         <LogoLink to="/">
           <img src="/bloomvest.png" alt="BloomVest Capital" />
         </LogoLink>
-
+        
         <MobileMenuToggle onClick={toggleMenu}>
           <FaBars />
         </MobileMenuToggle>
-
+        
         <NavWrapper isopen={isMenuOpen ? 1 : 0}>
           <CloseButton onClick={toggleMenu}>
             <FaTimes />
           </CloseButton>
-
+          
           {navItems.map((item) => (
             <NavLink 
               key={item.path} 

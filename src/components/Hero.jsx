@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaArrowRight, FaCheckCircle } from 'react-icons/fa';
+import { FaArrowRight, FaCheckCircle, FaRobot, FaUserTie} from 'react-icons/fa';
 
 const HeroSection = styled.div`
   position: relative;
@@ -112,28 +112,68 @@ const HeroHeading = styled.h1`
 
 const HeroSubtitle = styled.p`
   font-size: 1.25rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   opacity: 0.9;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
 `;
 
-const KeyPoints = styled.div`
+const HybridContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  justify-content: space-between;
   margin-bottom: 2.5rem;
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
-const KeyPoint = styled.div`
+const HybridBox = styled.div`
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid ${props => props.aiBox ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 255, 255, 0.1)'};
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+`;
+
+const HybridTitle = styled.h3`
+  font-size: 1.25rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.125rem;
+  margin-bottom: 1rem;
+  color: ${props => props.aiTitle ? '#22c55e' : 'white'};
+  
+  svg {
+    font-size: 1.5rem;
+  }
+`;
+
+const HybridList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const HybridItem = styled.li`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
   
   svg {
     color: #22c55e;
     flex-shrink: 0;
+    margin-top: 0.25rem;
   }
 `;
 
@@ -222,6 +262,33 @@ const FormTitle = styled.h3`
   text-align: center;
 `;
 
+const SwitchContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem;
+  position: relative;
+`;
+
+const SwitchOption = styled.button`
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: ${props => props.active ? 'rgba(34, 197, 94, 0.8)' : 'transparent'};
+  color: white;
+  font-weight: ${props => props.active ? '600' : '400'};
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1;
+  
+  &:hover {
+    background: ${props => props.active ? 'rgba(34, 197, 94, 0.8)' : 'rgba(255, 255, 255, 0.05)'};
+  }
+`;
+
 const FormGroup = styled.div`
   margin-bottom: 1.5rem;
 `;
@@ -299,6 +366,8 @@ const FormDisclaimer = styled.p`
 `;
 
 const Hero = () => {
+  const [selectedOption, setSelectedOption] = React.useState('hybrid');
+  
   return (
     <HeroSection>
       <VideoBackground autoPlay muted loop playsInline>
@@ -307,38 +376,81 @@ const Hero = () => {
       <Overlay />
       <ContentWrapper>
         <HeroContent>
-          <Overline>Your Trusted Financial Guide</Overline>
-          <HeroHeading>Financial Advisory Powered by AI</HeroHeading>
+          <Overline>BloomVest Finance</Overline>
+          <HeroHeading>Hybrid Financial Advisory</HeroHeading>
           <HeroSubtitle>
-            Expert guidance enhanced by intelligent technology to navigate your financial journey through personalized advisory, 
-            education, and actionable insights - without the complications of platform trading.
+            Leverage the perfect blend of human expertise and cutting-edge AI technology to navigate your financial 
+            journey with personalized advisory, education, and actionable insights.
           </HeroSubtitle>
           
-          <KeyPoints>
-            <KeyPoint>
-              <FaCheckCircle />
-              <span>Free AI-powered financial assessment and personalized recommendations</span>
-            </KeyPoint>
-            <KeyPoint>
-              <FaCheckCircle />
-              <span>Expert-led financial education and wealth-building strategies</span>
-            </KeyPoint>
-            <KeyPoint>
-              <FaCheckCircle />
-              <span>Independent guidance tailored to Nigerian market conditions</span>
-            </KeyPoint>
-          </KeyPoints>
+          <HybridContainer>
+            <HybridBox>
+              <HybridTitle>
+                <FaUserTie /> Human Expertise
+              </HybridTitle>
+              <HybridList>
+                <HybridItem>
+                  <FaCheckCircle />
+                  <span>Personalized financial strategy sessions</span>
+                </HybridItem>
+                <HybridItem>
+                  <FaCheckCircle />
+                  <span>Nuanced market insights from experts</span>
+                </HybridItem>
+                <HybridItem>
+                  <FaCheckCircle />
+                  <span>Complex decision support & guidance</span>
+                </HybridItem>
+              </HybridList>
+            </HybridBox>
+            
+            <HybridBox aiBox>
+              <HybridTitle aiTitle>
+                <FaRobot /> AI-Powered Tools
+              </HybridTitle>
+              <HybridList>
+                <HybridItem>
+                  <FaCheckCircle />
+                  <span>Real-time data analysis & insights</span>
+                </HybridItem>
+                <HybridItem>
+                  <FaCheckCircle />
+                  <span>Automated portfolio monitoring</span>
+                </HybridItem>
+                <HybridItem>
+                  <FaCheckCircle />
+                  <span>Smart financial goals tracking</span>
+                </HybridItem>
+              </HybridList>
+            </HybridBox>
+          </HybridContainer>
           
           <ButtonGroup>
             <PrimaryButton>
-              Try Free AI Assessment <FaArrowRight />
+              Start Free Assessment <FaArrowRight />
             </PrimaryButton>
-            <SecondaryButton>Explore Services</SecondaryButton>
+            <SecondaryButton>Explore Hybrid Services</SecondaryButton>
           </ButtonGroup>
         </HeroContent>
         
         <HeroFormCard>
-          <FormTitle>Schedule Your Free Strategy Session</FormTitle>
+          <FormTitle>BloomVest Finance Consultation</FormTitle>
+          
+          <SwitchContainer>
+            <SwitchOption 
+              active={selectedOption === 'hybrid'}
+              onClick={() => setSelectedOption('hybrid')}
+            >
+              Hybrid Advisory
+            </SwitchOption>
+            <SwitchOption 
+              active={selectedOption === 'ai'}
+              onClick={() => setSelectedOption('ai')}
+            >
+              AI Only
+            </SwitchOption>
+          </SwitchContainer>
+          
           <FormGroup>
             <FormInput type="text" placeholder="Your Full Name" />
           </FormGroup>
@@ -350,15 +462,16 @@ const Hero = () => {
           </FormGroup>
           <FormGroup>
             <FormSelect>
-              <option value="">Select Your Financial Goal</option>
+              <option value="">Select Your Primary Goal</option>
               <option value="wealth-building">Wealth Building</option>
               <option value="retirement">Retirement Planning</option>
               <option value="property">Property Investment</option>
               <option value="education">Financial Education</option>
+              <option value="risk-management">Risk Management</option>
             </FormSelect>
           </FormGroup>
           <FormButton>
-            Reserve My Spot <FaArrowRight />
+            {selectedOption === 'hybrid' ? 'Schedule Strategy Session' : 'Get AI Analysis'} <FaArrowRight />
           </FormButton>
           <FormDisclaimer>
             We respect your privacy. Your information will never be shared.

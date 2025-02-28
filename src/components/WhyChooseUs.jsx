@@ -2,10 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { 
   FaUserShield, 
-
   FaGraduationCap, 
   FaHandshake, 
-  FaGlobeAfrica 
+  FaGlobeAfrica,
+  FaRobot,
+
+  FaLock
 } from 'react-icons/fa';
 
 const Section = styled.section`
@@ -29,9 +31,20 @@ const BackgroundAccent = styled.div`
   position: absolute;
   bottom: 0;
   right: 0;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
+  border-radius: 50%;
+  z-index: 0;
+`;
+
+const BackgroundAccent2 = styled.div`
+  position: absolute;
+  top: -150px;
+  left: -150px;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(34, 197, 94, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(circle, rgba(26, 54, 93, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
   z-index: 0;
 `;
@@ -57,6 +70,19 @@ const Preheading = styled.div`
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: #22c55e;
+  }
 `;
 
 const Title = styled.h2`
@@ -119,30 +145,51 @@ const Card = styled.div`
   }
 `;
 
+const TopContent = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 const IconWrapper = styled.div`
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #22c55e, #4ade80);
+  background: ${props => props.gradient || 'linear-gradient(135deg, #22c55e, #4ade80)'};
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
+  flex-shrink: 0;
   font-size: 2.25rem;
   color: white;
   box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
   transition: all 0.3s ease;
   
   ${Card}:hover & {
-    transform: scale(1.05) rotate(5deg);
+    transform: scale(1.05);
   }
+`;
+
+const TitleArea = styled.div`
+  flex: 1;
 `;
 
 const CardTitle = styled.h3`
   font-size: 1.75rem;
   color: #1a365d;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
+`;
+
+const CardTagline = styled.div`
+  color: #22c55e;
+  font-size: 1rem;
+  font-weight: 500;
 `;
 
 const CardDescription = styled.p`
@@ -185,17 +232,32 @@ const WhyChooseUs = () => {
   const reasons = [
     {
       icon: <FaUserShield />,
+      gradient: 'linear-gradient(135deg, #1a365d, #3b82f6)',
       title: "Independent Expertise",
-      description: "Our advisors provide unbiased guidance with no hidden agendas or platform-specific incentives. We focus solely on what's best for your financial growth.",
+      tagline: "Unbiased human guidance",
+      description: "Our advisors provide objective guidance with no hidden agendas or platform-specific incentives. We focus solely on what's best for your financial growth and long-term success.",
       stats: [
         { number: "15+", label: "Years Experience" },
         { number: "100%", label: "Independent Advice" }
       ]
     },
     {
+      icon: <FaRobot />,
+      gradient: 'linear-gradient(135deg, #22c55e, #4ade80)',
+      title: "AI-Powered Insights",
+      tagline: "Data-driven intelligence",
+      description: "Our proprietary AI systems analyze vast amounts of market data to identify patterns and opportunities that human analysis alone might miss, giving you a competitive advantage.",
+      stats: [
+        { number: "24/7", label: "Market Monitoring" },
+        { number: "95%", label: "Prediction Accuracy" }
+      ]
+    },
+    {
       icon: <FaGlobeAfrica />,
-      title: "Nigeria-Focused Insights",
-      description: "Our advisory services are specifically tailored to the Nigerian economic landscape, including local market conditions, regulations, and opportunities.",
+      gradient: 'linear-gradient(135deg, #8b5cf6, #c084fc)',
+      title: "Nigeria-Focused Strategy",
+      tagline: "Local expertise, global perspective",
+      description: "Our hybrid advisory services are specifically tailored to the Nigerian economic landscape, including local market conditions, regulations, and unique investment opportunities.",
       stats: [
         { number: "20+", label: "Years in Nigeria" },
         { number: "All 36", label: "States Covered" }
@@ -203,17 +265,32 @@ const WhyChooseUs = () => {
     },
     {
       icon: <FaGraduationCap />,
+      gradient: 'linear-gradient(135deg, #f97316, #fb923c)',
       title: "Education-First Approach",
-      description: "We believe in empowering you through knowledge. Our services include comprehensive financial education to build your decision-making skills.",
+      tagline: "Empowerment through knowledge",
+      description: "We believe in empowering you through knowledge. Our hybrid services include AI-assisted learning tools and expert-led workshops to build your financial decision-making skills.",
       stats: [
         { number: "5,000+", label: "Workshop Graduates" },
         { number: "200+", label: "Educational Resources" }
       ]
     },
     {
+      icon: <FaLock />,
+      gradient: 'linear-gradient(135deg, #64748b, #94a3b8)',
+      title: "Data Security",
+      tagline: "Your information, protected",
+      description: "We employ enterprise-grade security measures to protect your financial data, with strict protocols for both our human advisors and AI systems to ensure complete confidentiality.",
+      stats: [
+        { number: "256-bit", label: "Encryption" },
+        { number: "ISO 27001", label: "Compliance" }
+      ]
+    },
+    {
       icon: <FaHandshake />,
-      title: "Client Partnership",
-      description: "We build long-term relationships founded on trust and transparency. Your financial success is our ultimate goal and measure of achievement.",
+      gradient: 'linear-gradient(135deg, #0891b2, #06b6d4)',
+      title: "Hybrid Partnership",
+      tagline: "The best of both worlds",
+      description: "Experience the perfect blend of human relationship-building and AI efficiency. Our hybrid model gives you both the personal touch of human advisors and the precision of technology.",
       stats: [
         { number: "98%", label: "Client Retention" },
         { number: "4.9/5", label: "Client Satisfaction" }
@@ -224,20 +301,27 @@ const WhyChooseUs = () => {
   return (
     <Section id="why">
       <BackgroundAccent />
+      <BackgroundAccent2 />
       <Container>
         <Header>
           <Preheading>Why Choose Us</Preheading>
-          <Title>The BloomVest Capital Advantage</Title>
+          <Title>The BloomVest Finance Advantage</Title>
           <Description>
-            As an independent advisory firm, we offer something different: unbiased guidance and 
-            personalized solutions focused on empowering you to make informed financial decisions.
+            As a pioneer in hybrid financial advisory, we combine unbiased human expertise with 
+            powerful AI technology to deliver personalized solutions that empower you to make 
+            confident financial decisions.
           </Description>
         </Header>
         <Grid>
           {reasons.map((reason, index) => (
             <Card key={index}>
-              <IconWrapper>{reason.icon}</IconWrapper>
-              <CardTitle>{reason.title}</CardTitle>
+              <TopContent>
+                <IconWrapper gradient={reason.gradient}>{reason.icon}</IconWrapper>
+                <TitleArea>
+                  <CardTitle>{reason.title}</CardTitle>
+                  <CardTagline>{reason.tagline}</CardTagline>
+                </TitleArea>
+              </TopContent>
               <CardDescription>{reason.description}</CardDescription>
               <StatsList>
                 {reason.stats.map((stat, i) => (

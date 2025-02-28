@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { 
   FaChartLine, 
@@ -7,7 +7,11 @@ import {
   FaHandHoldingUsd,
   FaChartPie,
   FaShieldAlt,
-  FaArrowRight
+  FaArrowRight,
+  FaRobot,
+  FaUserTie,
+  FaExchangeAlt,
+  FaSyncAlt
 } from 'react-icons/fa';
 
 const ServicesSection = styled.section`
@@ -40,7 +44,7 @@ const ServicesSection = styled.section`
 const SectionHeader = styled.div`
   text-align: center;
   max-width: 800px;
-  margin: 0 auto 80px;
+  margin: 0 auto 60px;
   padding: 0 2rem;
 `;
 
@@ -70,6 +74,38 @@ const Subtitle = styled.p`
   line-height: 1.7;
 `;
 
+const ToggleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 50px;
+  max-width: 500px;
+  padding: 0.5rem;
+  background: rgba(26, 54, 93, 0.05);
+  border-radius: 100px;
+`;
+
+const ToggleOption = styled.button`
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  background: ${props => props.active ? 'var(--primary-color)' : 'transparent'};
+  color: ${props => props.active ? 'white' : 'var(--primary-color)'};
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: ${props => props.active ? 'var(--primary-color)' : 'rgba(26, 54, 93, 0.1)'};
+  }
+`;
+
 const ServicesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -96,28 +132,20 @@ const ServiceCard = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
   
   &:hover {
     transform: translateY(-10px);
     box-shadow: ${props => props.theme.shadows.lg};
     border-color: rgba(74, 222, 128, 0.3);
   }
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 0;
-    background: var(--accent-color);
-    border-radius: 4px 0 0 4px;
-    transition: height 0.4s ease;
-  }
-  
-  &:hover::before {
-    height: 100%;
-  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
 `;
 
 const IconWrapper = styled.div`
@@ -128,7 +156,6 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
   font-size: 2rem;
   color: white;
   box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
@@ -138,6 +165,19 @@ const IconWrapper = styled.div`
     transform: scale(1.1);
     box-shadow: 0 15px 25px rgba(34, 197, 94, 0.3);
   }
+`;
+
+const HybridTag = styled.div`
+  background: linear-gradient(135deg, #1a365d, #22c55e);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.8rem;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const ServiceTitle = styled.h3`
@@ -153,6 +193,29 @@ const ServiceDescription = styled.p`
   line-height: 1.7;
   margin-bottom: 1.5rem;
   flex-grow: 1;
+`;
+
+const DeliveryModes = styled.div`
+  display: flex;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+`;
+
+const DeliveryMode = styled.div`
+  flex: 1;
+  background: ${props => props.ai ? 'rgba(34, 197, 94, 0.1)' : 'rgba(26, 54, 93, 0.1)'};
+  padding: 0.8rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: ${props => props.ai ? 'var(--accent-color)' : 'var(--primary-color)'};
+  font-weight: 500;
 `;
 
 const Features = styled.ul`
@@ -215,6 +278,19 @@ const ConsultationContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   box-shadow: ${props => props.theme.shadows.lg};
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.15) 0%, transparent 70%);
+    top: -150px;
+    right: -100px;
+    border-radius: 50%;
+  }
   
   @media (max-width: 968px) {
     flex-direction: column;
@@ -226,6 +302,8 @@ const ConsultationContainer = styled.div`
 
 const ConsultationText = styled.div`
   max-width: 600px;
+  position: relative;
+  z-index: 1;
   
   h3 {
     font-size: 2rem;
@@ -254,6 +332,8 @@ const ConsultationButton = styled.button`
   align-items: center;
   gap: 0.75rem;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
   
   &:hover {
     transform: translateY(-3px);
@@ -268,92 +348,140 @@ const ConsultationButton = styled.button`
 `;
 
 const Services = () => {
-  const services = [
+  const [viewMode, setViewMode] = useState('all');
+  
+  const allServices = [
     {
       icon: <FaChartLine />,
       title: "Investment Advisory",
-      description: "Receive expert guidance on investment decisions without the platform commitment. We analyze options and provide clear, actionable recommendations.",
+      description: "Get expert guidance on investment decisions with the perfect blend of human expertise and AI-powered analysis for optimal strategy.",
       features: [
-        "Independent market analysis",
+        "Personalized investment strategy",
+        "AI-powered market analysis",
         "Risk assessment consultation",
-        "Portfolio strategy development",
         "Investment opportunity evaluation"
-      ]
+      ],
+      isHybrid: true
     },
     {
       icon: <FaHome />,
       title: "Property Investment Guidance",
-      description: "Navigate Nigeria's real estate market with expert advisory on property investments, locations, and financing options.",
+      description: "Navigate Nigeria's real estate market with our hybrid approach combining human expertise on locations with AI data analysis.",
       features: [
-        "Property market analysis",
-        "Location opportunity assessment",
+        "AI-driven property market trends",
+        "Expert location opportunity assessment",
         "Mortgage and financing guidance",
-        "Property investment strategy"
-      ]
+        "Predictive ROI analysis"
+      ],
+      isHybrid: true
     },
     {
       icon: <FaGraduationCap />,
       title: "Financial Education",
-      description: "Build your financial knowledge with our comprehensive training programs designed specifically for the Nigerian context.",
+      description: "Build your financial knowledge with our comprehensive training that combines expert-led sessions with AI learning tools.",
       features: [
-        "Investment fundamentals workshops",
-        "Wealth building strategy sessions",
-        "Market analysis training",
-        "Personal finance masterclasses"
-      ]
+        "Interactive AI learning modules",
+        "Expert-led strategy workshops",
+        "Personalized education paths",
+        "On-demand knowledge resources"
+      ],
+      isHybrid: true
     },
     {
       icon: <FaHandHoldingUsd />,
       title: "Wealth Preservation",
-      description: "Protect and grow your existing assets with strategies designed to preserve wealth against inflation and market volatility.",
+      description: "Protect and grow your existing assets with strategies designed by our experts and continuously monitored by AI tools.",
       features: [
-        "Asset protection planning",
-        "Inflation hedging strategies",
-        "Wealth transfer consultation",
+        "Inflation protection planning",
+        "AI-monitored asset tracking",
+        "Expert wealth transfer consultation",
         "Economic trend analysis"
-      ]
+      ],
+      isHybrid: true
     },
     {
       icon: <FaChartPie />,
       title: "Financial Planning",
-      description: "Create a comprehensive roadmap for your financial future with goal-based planning tailored to your personal circumstances.",
+      description: "Create a comprehensive roadmap for your financial future with human-led planning and AI-powered goal tracking and optimization.",
       features: [
-        "Goal setting and prioritization",
-        "Cash flow optimization",
-        "Emergency planning",
-        "Retirement roadmapping"
-      ]
+        "Expert-led goal setting",
+        "AI cash flow optimization",
+        "Automated progress tracking",
+        "Personalized retirement modeling"
+      ],
+      isHybrid: true
     },
     {
       icon: <FaShieldAlt />,
       title: "Risk Management Advisory",
-      description: "Navigate financial uncertainties with expert risk assessment and mitigation strategies tailored to the Nigerian economic landscape.",
+      description: "Navigate financial uncertainties with our hybrid approach to risk assessment combining expert insight with AI-driven scenario analysis.",
       features: [
-        "Personalized risk assessment",
-        "Diversification strategy",
-        "Market volatility preparation",
-        "Contingency planning"
-      ]
+        "Human-AI collaborative risk assessment",
+        "Diversification strategy development",
+        "AI market volatility monitoring",
+        "Expert-led contingency planning"
+      ],
+      isHybrid: true
     }
   ];
+
+  const filteredServices = viewMode === 'all' 
+    ? allServices 
+    : viewMode === 'hybrid' 
+      ? allServices.filter(service => service.isHybrid) 
+      : allServices.filter(service => !service.isHybrid);
 
   return (
     <ServicesSection id="services">
       <SectionHeader>
-        <Preheading>Our Services</Preheading>
-        <Title>Expert Financial Advisory</Title>
+        <Preheading>BloomVest Finance</Preheading>
+        <Title>Hybrid Financial Advisory</Title>
         <Subtitle>
-          We provide comprehensive financial advisory services to help you make informed decisions
-          and achieve your financial goals through expert guidance and education.
+          Experience the best of both worlds with our hybrid approach that combines human financial 
+          expertise with cutting-edge AI technology to deliver superior guidance tailored to your needs.
         </Subtitle>
       </SectionHeader>
       
+      <ToggleContainer>
+        <ToggleOption 
+          active={viewMode === 'all'}
+          onClick={() => setViewMode('all')}
+        >
+          All Services
+        </ToggleOption>
+        <ToggleOption 
+          active={viewMode === 'hybrid'}
+          onClick={() => setViewMode('hybrid')}
+        >
+          <FaSyncAlt /> Hybrid Services
+        </ToggleOption>
+      </ToggleContainer>
+      
       <ServicesGrid>
-        {services.map((service, index) => (
+        {filteredServices.map((service, index) => (
           <ServiceCard key={index}>
-            <IconWrapper>{service.icon}</IconWrapper>
+            <CardHeader>
+              <IconWrapper>{service.icon}</IconWrapper>
+              {service.isHybrid && (
+                <HybridTag>
+                  <FaExchangeAlt /> Hybrid
+                </HybridTag>
+              )}
+            </CardHeader>
             <ServiceTitle>{service.title}</ServiceTitle>
             <ServiceDescription>{service.description}</ServiceDescription>
+            
+            {service.isHybrid && (
+              <DeliveryModes>
+                <DeliveryMode>
+                  <FaUserTie /> Human Advisory
+                </DeliveryMode>
+                <DeliveryMode ai>
+                  <FaRobot /> AI Support
+                </DeliveryMode>
+              </DeliveryModes>
+            )}
+            
             <Features>
               {service.features.map((feature, i) => (
                 <Feature key={i}>{feature}</Feature>
@@ -368,8 +496,8 @@ const Services = () => {
       
       <ConsultationContainer>
         <ConsultationText>
-          <h3>Not sure which service fits your needs?</h3>
-          <p>Schedule a free 30-minute consultation with our experts to discuss your financial goals and receive personalized recommendations.</p>
+          <h3>Ready to experience BloomVest Finance?</h3>
+          <p>Schedule a free consultation to discuss your financial goals and see how our unique blend of human expertise and AI technology can help you achieve them.</p>
         </ConsultationText>
         <ConsultationButton>
           Book Free Consultation <FaArrowRight />
