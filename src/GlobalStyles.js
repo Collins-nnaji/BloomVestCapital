@@ -1,8 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
+// Import Google Fonts in the HTML or index.js directly
+// Do not use @import inside createGlobalStyle
 export const GlobalStyles = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
   * {
     margin: 0;
     padding: 0;
