@@ -8,9 +8,9 @@ import Loader from './components/Loader';
 
 // Lazy load pages for better performance
 const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const EducationPage = lazy(() => import('./pages/EducationPage'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
-const FinancialEducationPage = lazy(() => import('./pages/FinancialEducationPage'));
-
 const HybridAdvisoryPage = lazy(() => import('./pages/HybridAdvisoryPage'));
 
 function App() {
@@ -22,10 +22,10 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<MainDashboardPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/education" element={<EducationPage />} />
               <Route path="/about" element={<AboutUsPage />} />
-              <Route path="/education" element={<FinancialEducationPage />} />
-
-              <Route path="/hybrid-advisory" element={<HybridAdvisoryPage />} />
+              <Route path="/hybrid-advisory" element={<ServicesPage />} />
               {/* Add a 404 page if needed */}
               <Route path="*" element={<MainDashboardPage />} />
             </Routes>

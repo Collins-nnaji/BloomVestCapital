@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { FaCheck, FaStar, FaArrowRight, FaHeadset, FaShieldAlt, FaFileAlt } from 'react-icons/fa';
+import { FaCheck, FaStar, FaArrowRight } from 'react-icons/fa';
 
 const PricingSection = styled.section`
   background: linear-gradient(to bottom, #f8fafc, #ffffff);
@@ -51,11 +51,13 @@ const PricingGrid = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     max-width: 450px;
+    gap: 2.5rem;
   }
 `;
 
@@ -69,6 +71,9 @@ const PricingCard = styled.div`
   box-shadow: ${props => props.$featured ? '0 15px 30px rgba(34, 197, 94, 0.15)' : '0 10px 20px rgba(0,0,0,0.03)'};
   transform: ${props => props.$featured ? 'translateY(-15px)' : 'none'};
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     transform: translateY(-10px);
@@ -120,18 +125,17 @@ const Description = styled.p`
   font-size: 0.95rem;
   line-height: 1.5;
   margin-bottom: 1.5rem;
-  min-height: 60px;
 `;
 
 const PlanPrice = styled.div`
-  margin: 1.75rem 0;
+  margin: 1.5rem 0;
   color: #1a365d;
   position: relative;
   display: inline-block;
 `;
 
 const Amount = styled.span`
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 700;
   line-height: 1;
   background: ${props => props.$featured ? 
@@ -142,7 +146,7 @@ const Amount = styled.span`
 `;
 
 const Currency = styled.span`
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 500;
   margin-right: 0.25rem;
   vertical-align: top;
@@ -160,8 +164,9 @@ const Period = styled.span`
 
 const FeatureList = styled.ul`
   list-style: none;
-  margin: 1.75rem 0;
+  margin: 1.5rem 0;
   padding: 0;
+  flex-grow: 1;
 `;
 
 const Feature = styled.li`
@@ -190,11 +195,11 @@ const PlanButton = styled.button`
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  margin-top: auto;
 
   &:hover {
     transform: translateY(-3px);
@@ -211,146 +216,162 @@ const PlanButton = styled.button`
   }
 `;
 
-const BonusBadge = styled.div`
-  margin-top: 2rem;
-  padding: 1rem;
-  background: rgba(34, 197, 94, 0.08);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+const InfoSection = styled.div`
+  max-width: 900px;
+  margin: 3rem auto 0;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(34, 197, 94, 0.05);
+  border-radius: 16px;
+`;
+
+const InfoText = styled.p`
+  font-size: 1.1rem;
+  color: #1a365d;
+  margin-bottom: 1rem;
   
-  svg {
+  strong {
     color: #22c55e;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-  }
-  
-  div {
-    font-size: 0.9rem;
-    color: #1a365d;
-    line-height: 1.5;
   }
 `;
 
-const Disclaimer = styled.div`
-  text-align: center;
-  margin-top: 3rem;
-  color: #64748b;
-  font-size: 0.9rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 1.5rem;
+const ContactButton = styled.button`
+  background: #22c55e;
+  color: white;
+  padding: 0.9rem 1.8rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: #1a945e;
+    transform: translateY(-3px);
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover svg {
+    transform: translateX(4px);
+  }
 `;
 
 const Pricing = () => {
   const plans = [
     {
-      name: "Starter Advisory",
-      price: "30,000",
-      description: "Basic financial guidance for individuals beginning their wealth-building journey.",
+      name: "Essential",
+      description: "Data-driven financial planning for individuals at the beginning of their financial journey.",
+      price: {
+        amount: "120,000",
+        period: "/year"
+      },
       features: [
-        "Initial financial assessment",
-        "Basic investment strategy guidance",
+        "Financial assessment & planning",
         "Quarterly portfolio review",
-        "Email support within 48 hours",
-        "Access to educational resources",
-        "Nigerian investment landscape overview"
+        "Basic analytics dashboard",
+        "Email support",
+        "Educational resources"
       ],
-      bonus: {
-        icon: <FaFileAlt />,
-        text: "Free 'Beginner's Guide to Nigerian Markets' e-book"
-      }
+      buttonText: "Get Started",
+      featured: false
     },
     {
-      name: "Pro Advisory",
-      price: "90,000",
-      featured: true,
-      description: "Comprehensive financial advisory for serious wealth builders.",
+      name: "Professional",
+      description: "Comprehensive financial management with advanced analytics for serious investors.",
+      price: {
+        amount: "340,000",
+        period: "/year"
+      },
       features: [
-        "In-depth financial assessment",
-        "Personalized investment roadmap",
-        "Monthly strategy sessions",
-        "Priority support within 24 hours",
-        "Exclusive market insights and opportunities",
-        "Tax optimization guidance",
-        "Risk mitigation planning"
-      ],
-      bonus: {
-        icon: <FaHeadset />,
-        text: "2 emergency consulting sessions per quarter"
-      }
-    },
-    {
-      name: "Premium Advisory",
-      price: "250,000",
-      description: "Elite advisory service for high-net-worth individuals with complex financial needs.",
-      features: [
-        "Comprehensive wealth strategy",
-        "Weekly advisory sessions",
-        "24/7 priority support",
+        "Everything in Essential, plus:",
+        "Monthly portfolio optimization",
+        "Advanced AI analytics",
         "Dedicated financial advisor",
-        "Advanced portfolio strategy",
-        "Estate and succession planning",
-        "International investment guidance",
-        "Family wealth management"
+        "Tax optimization"
       ],
-      bonus: {
-        icon: <FaShieldAlt />,
-        text: "Complete legal and tax documentation review"
-      }
+      buttonText: "Choose Plan",
+      featured: true,
+      popular: true
+    },
+    {
+      name: "Enterprise",
+      description: "Full-scale financial partnership with customized solutions for corporate clients.",
+      price: {
+        amount: "Custom",
+        period: ""
+      },
+      features: [
+        "Everything in Professional, plus:",
+        "Custom financial solutions",
+        "Enterprise analytics platform",
+        "24/7 priority support",
+        "Advanced risk management"
+      ],
+      buttonText: "Contact Us",
+      featured: false
     }
   ];
 
   return (
     <PricingSection id="pricing">
       <SectionHeader>
-        <Preheading>Our Advisory Packages</Preheading>
-        <Title>Expert Guidance That Fits Your Needs</Title>
+        <Preheading>BloomVest Capital</Preheading>
+        <Title>Simple, Transparent Pricing</Title>
         <Subtitle>
-          Choose the advisory package that aligns with your financial goals and get personalized guidance 
-          from our experienced advisors.
+          Choose the plan that suits your financial goals with access to our data-driven 
+          insights and expertise to make informed decisions.
         </Subtitle>
       </SectionHeader>
+      
       <PricingGrid>
         {plans.map((plan, index) => (
           <PricingCard key={index} $featured={plan.featured}>
-            {plan.featured && (
+            {plan.popular && (
               <PopularTag>
                 <FaStar /> Most Popular
               </PopularTag>
             )}
+            
             <PlanName>{plan.name}</PlanName>
             <Description>{plan.description}</Description>
+            
             <PlanPrice>
               <Currency>₦</Currency>
-              <Amount $featured={plan.featured}>{plan.price}</Amount>
-              <Period>/month</Period>
+              <Amount $featured={plan.featured}>{plan.price.amount}</Amount>
+              <Period>{plan.price.period}</Period>
             </PlanPrice>
+            
             <FeatureList>
               {plan.features.map((feature, i) => (
                 <Feature key={i}>
-                  <FaCheck /> <span>{feature}</span>
+                  <FaCheck /> 
+                  <span>{feature}</span>
                 </Feature>
               ))}
             </FeatureList>
-            <PlanButton $featured={plan.featured}>
-              Get Started <FaArrowRight />
-            </PlanButton>
             
-            <BonusBadge>
-              {plan.bonus.icon}
-              <div>{plan.bonus.text}</div>
-            </BonusBadge>
+            <PlanButton $featured={plan.featured}>
+              {plan.buttonText} {plan.featured && <FaArrowRight />}
+            </PlanButton>
           </PricingCard>
         ))}
       </PricingGrid>
       
-      <Disclaimer>
-        All advisory packages include a no-obligation initial consultation. BloomVest Capital does not directly execute trades 
-        or manage investment accounts on your behalf - we provide expert guidance to help you make informed decisions.
-      </Disclaimer>
+      <InfoSection>
+        <InfoText>
+          Need a <strong>custom solution</strong> for your specific financial needs?
+        </InfoText>
+        <ContactButton>
+          Schedule a Consultation <FaArrowRight />
+        </ContactButton>
+      </InfoSection>
     </PricingSection>
   );
 };

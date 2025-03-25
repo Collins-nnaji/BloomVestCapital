@@ -1,12 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { 
-  FaUsers, 
+  FaUserTie, 
   FaChartBar, 
   FaHandshake, 
-  FaBook, 
-  FaGlobe, 
-  FaUserTie 
+  FaFileAlt,
+  FaArrowRight
 } from 'react-icons/fa';
 
 const Section = styled.section`
@@ -151,22 +150,6 @@ const ServiceDescription = styled.p`
   flex-grow: 1;
 `;
 
-const ServicePrice = styled.div`
-  color: #22c55e;
-  font-weight: 700;
-  font-size: 1.25rem;
-  margin: 0.5rem 0 1.5rem;
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  
-  span {
-    color: #64748b;
-    font-size: 0.9rem;
-    font-weight: 400;
-  }
-`;
-
 const ServiceFeatures = styled.ul`
   list-style: none;
   padding: 0;
@@ -199,100 +182,143 @@ const ServiceButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   
   &:hover {
     background: #1a365d;
     color: white;
+    
+    svg {
+      transform: translateX(5px);
+    }
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+`;
+
+const CustomServicesCTA = styled.div`
+  background: #ffffff;
+  padding: 4rem;
+  border-radius: 16px;
+  text-align: center;
+  margin-top: 4rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+`;
+
+const CTAContent = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const CTAHeading = styled.h2`
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+`;
+
+const CTAText = styled.p`
+  font-size: 1.2rem;
+  color: #64748b;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+`;
+
+const CTAButton = styled.button`
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: #1a945e;
+    transform: translateY(-3px);
+    
+    svg {
+      transform: translateX(5px);
+    }
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
   }
 `;
 
 const AdditionalServices = () => {
   const services = [
     {
-      icon: <FaUsers />,
-      title: "Naija-Bloom Mastermind",
-      price: "₦15,000/month",
-      description: "Join our exclusive community of like-minded Nigerian investors for regular group coaching, networking, and collaborative learning.",
+      icon: <FaUserTie />,
+      title: "Executive Financial Advisory",
+      description: "Personalized advisory services for executives and high-net-worth individuals focused on wealth optimization and growth.",
       features: [
-        "Bi-weekly group coaching sessions",
-        "Members-only investment insights",
-        "Peer networking opportunities",
-        "First access to special events"
+        "Dedicated financial advisor",
+        "Comprehensive wealth strategy",
+        "Tax optimization planning",
+        "Investment opportunity access"
       ]
     },
     {
       icon: <FaChartBar />,
-      title: "Business Investment Readiness",
-      price: "₦180,000 (one-time)",
-      description: "Comprehensive advisory package for SME owners seeking to attract investment or scale their business operations.",
+      title: "Strategic Financial Consulting",
+      description: "In-depth consulting engagements helping organizations solve complex financial challenges and implement solutions.",
       features: [
-        "Business valuation assessment",
-        "Financial structure optimization",
-        "Investor pitch preparation",
-        "Growth strategy development"
+        "Comprehensive assessment",
+        "Strategic planning workshops",
+        "Implementation roadmaps",
+        "Regular progress reviews"
       ]
     },
     {
       icon: <FaHandshake />,
-      title: "Real Estate Advisory",
-      price: "₦120,000/project",
-      description: "Specialized guidance for property investment decisions, from residential to commercial opportunities across Nigeria.",
+      title: "M&A Financial Advisory",
+      description: "Expert guidance for mergers, acquisitions, and business transitions with comprehensive financial analysis.",
       features: [
-        "Location analysis & valuation",
-        "ROI projection & modeling",
-        "Risk assessment & mitigation",
-        "Financing option advisory"
+        "Target valuation",
+        "Due diligence review",
+        "Transaction structuring",
+        "Post-merger optimization"
       ]
     },
     {
-      icon: <FaBook />,
-      title: "Financial Literacy Program",
-      price: "₦45,000 (8 weeks)",
-      description: "Structured education program to build your financial knowledge and investment decision-making capabilities.",
+      icon: <FaFileAlt />,
+      title: "Financial Reporting Services",
+      description: "Professional financial reporting services for companies needing accurate, compliant, and insightful documentation.",
       features: [
-        "8 comprehensive modules",
-        "Weekly coaching sessions",
-        "Practical exercises & case studies",
-        "Lifetime access to materials"
-      ]
-    },
-    {
-      icon: <FaGlobe />,
-      title: "Diaspora Investment Advisory",
-      price: "₦200,000/year",
-      description: "Specialized guidance for Nigerians abroad looking to make informed investment decisions back home.",
-      features: [
-        "Remote consultation sessions",
-        "Currency risk management",
-        "Legal & regulatory guidance",
-        "Local market representation"
-      ]
-    },
-    {
-      icon: <FaUserTie />,
-      title: "Executive Wealth Strategy",
-      price: "₦350,000/year",
-      description: "Premium advisory service for C-suite executives and high-income professionals with complex financial needs.",
-      features: [
-        "Comprehensive wealth strategy",
-        "Executive compensation optimization",
-        "Advanced tax planning",
-        "Succession & legacy planning"
+        "Custom financial statements",
+        "Compliance verification",
+        "Performance analysis",
+        "Stakeholder reports"
       ]
     }
   ];
 
   return (
-    <Section id="additional-services">
+    <Section id="specialized-services">
       <SectionPattern />
       <Container>
         <SectionHeader>
-          <Preheading>Specialized Services</Preheading>
-          <Title>Additional Advisory Opportunities</Title>
+          <Preheading>BloomVest Capital</Preheading>
+          <Title>Specialized Services</Title>
           <Subtitle>
-            Beyond our core services, we offer specialized advisory packages designed for 
-            specific needs and circumstances. Each service provides targeted guidance to help you 
-            achieve your unique financial goals.
+            Beyond our core offerings, we provide specialized financial services designed to address 
+            specific needs of individuals and organizations with complex financial requirements.
           </Subtitle>
         </SectionHeader>
         
@@ -301,19 +327,31 @@ const AdditionalServices = () => {
             <ServiceCard key={index}>
               <ServiceIcon>{service.icon}</ServiceIcon>
               <ServiceTitle>{service.title}</ServiceTitle>
-              <ServicePrice>
-                {service.price} <span>{service.price.includes('month') ? 'subscription' : 'package'}</span>
-              </ServicePrice>
               <ServiceDescription>{service.description}</ServiceDescription>
               <ServiceFeatures>
                 {service.features.map((feature, i) => (
                   <ServiceFeature key={i}>{feature}</ServiceFeature>
                 ))}
               </ServiceFeatures>
-              <ServiceButton>Learn More</ServiceButton>
+              <ServiceButton>
+                Request Information <FaArrowRight />
+              </ServiceButton>
             </ServiceCard>
           ))}
         </ServicesGrid>
+        
+        <CustomServicesCTA>
+          <CTAContent>
+            <CTAHeading>Need a customized solution?</CTAHeading>
+            <CTAText>
+              Our team can create tailor-made financial solutions for your unique challenges.
+              Contact us to discuss your specific requirements.
+            </CTAText>
+            <CTAButton>
+              Schedule a Consultation <FaArrowRight />
+            </CTAButton>
+          </CTAContent>
+        </CustomServicesCTA>
       </Container>
     </Section>
   );

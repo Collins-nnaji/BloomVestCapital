@@ -1,17 +1,12 @@
 import React from 'react';
 import TrainingSessions from '../components/TrainingSessions';
-
 import Events from '../components/Events';
 
-
-
-const FinancialEducationPage = () => (
+const EducationPage = () => (
   <>
     <TrainingSessions />
     <Events />
-   
-
   </>
 );
 
-export default FinancialEducationPage;
+export default EducationPage;

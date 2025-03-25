@@ -17,6 +17,10 @@ const Section = styled.section`
   background: var(--background);
   position: relative;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
 
   &::after {
     content: '';
@@ -46,6 +50,10 @@ const Container = styled.div`
   padding: 0 2rem;
   position: relative;
   z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const SectionHeader = styled.div`
@@ -175,6 +183,11 @@ const EventsGrid = styled.div`
   
   @media (max-width: 968px) {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 1.5rem;
   }
 `;
 
@@ -457,89 +470,63 @@ const Events = () => {
   
   const filters = [
     { id: 'all', name: 'All Events' },
-    { id: 'individual', name: 'Individual Events', icon: <FaUsers /> },
-    { id: 'corporate', name: 'Corporate Events', icon: <FaBuilding /> },
+    { id: 'individual', name: 'For Individuals', icon: <FaUserTie /> },
+    { id: 'corporate', name: 'For Businesses', icon: <FaBuilding /> },
     { id: 'upcoming', name: 'Upcoming' }
   ];
   
   const events = [
     {
       id: 1,
-      title: "Investment Strategy Masterclass",
+      title: "Financial Planning Basics Workshop",
       date: { month: "Mar", day: "15" },
-      time: "10:00 AM - 4:00 PM",
+      time: "10:00 AM - 1:00 PM",
       location: "BloomVest Finance HQ, Victoria Island, Lagos",
       format: "In-person workshop",
       type: "individual",
-      image: "/images/event-investment-strategy.jpg",
-      description: "A comprehensive full-day workshop on building an investment strategy tailored to your personal financial goals and risk tolerance.",
+      image: "/images/event-financial-planning.jpg",
+      description: "Learn essential budgeting techniques, debt management strategies, and how to set achievable financial goals for your future.",
       capacity: "Limited to 20 participants",
-      price: "₦25,000 per person"
-    },
-    {
-      id: 2,
-      title: "Corporate Financial Wellness Program",
-      date: { month: "Mar", day: "22" },
-      time: "9:00 AM - 5:00 PM",
-      location: "Client's Office or BloomVest Finance HQ",
-      format: "On-site training",
-      type: "corporate",
-      image: "/images/event-corporate-wellness.jpg",
-      description: "A customizable financial wellness program for your employees covering retirement planning, investment basics, and personal financial management.",
-      capacity: "Up to 50 employees per session",
-      price: "Custom pricing based on company size"
-    },
-    {
-      id: 3,
-      title: "Real Estate Investment Opportunities",
-      date: { month: "Apr", day: "05" },
-      time: "2:00 PM - 5:00 PM",
-      location: "Radisson Blu, Ikeja GRA, Lagos",
-      format: "Seminar & Networking",
-      type: "individual",
-      image: "/images/event-real-estate.jpg",
-      description: "Discover viable property investment opportunities in emerging Nigerian markets with guidance on evaluation metrics and financing options.",
-      capacity: "Limited to 30 participants",
       price: "₦15,000 per person"
     },
     {
-      id: 4,
-      title: "Executive Financial Leadership Summit",
-      date: { month: "Apr", day: "12" },
-      time: "9:00 AM - 3:00 PM",
-      location: "Eko Hotel & Suites, Victoria Island",
-      format: "Executive retreat",
+      id: 2,
+      title: "Business Financial Reporting Seminar",
+      date: { month: "Mar", day: "22" },
+      time: "9:00 AM - 12:00 PM",
+      location: "BloomVest Finance HQ, Victoria Island",
+      format: "In-person seminar",
       type: "corporate",
-      image: "/images/event-executive-summit.jpg",
-      description: "Designed for C-suite executives and board members, this summit focuses on strategic financial decision-making and wealth preservation strategies.",
-      capacity: "Limited to 15 executives",
-      price: "Custom pricing available"
+      image: "/images/event-corporate-finance.jpg",
+      description: "Develop effective financial reporting systems for your business to track performance, make informed decisions, and communicate results to stakeholders.",
+      capacity: "Up to 15 business owners/managers",
+      price: "₦25,000 per person"
     },
     {
-      id: 5,
-      title: "Personal Financial Planning Workshop",
-      date: { month: "Apr", day: "18" },
-      time: "10:00 AM - 1:00 PM",
+      id: 3,
+      title: "Investment Essentials Webinar",
+      date: { month: "Apr", day: "05" },
+      time: "2:00 PM - 4:00 PM",
       location: "Virtual Event (Zoom)",
-      format: "Interactive webinar",
+      format: "Online webinar",
       type: "individual",
-      image: "/images/event-financial-planning.jpg",
-      description: "A hands-on workshop where you'll create your personalized financial plan with guidance from our expert advisors, covering budgeting to investment.",
-      capacity: "Limited to 50 participants",
+      image: "/images/event-investment.jpg",
+      description: "Understand the basics of investing, different investment vehicles, risk assessment, and how to build a simple investment portfolio.",
+      capacity: "Limited to 30 participants",
       price: "₦10,000 per person"
     },
     {
-      id: 6,
-      title: "Treasury Management Masterclass",
-      date: { month: "Apr", day: "25" },
-      time: "9:00 AM - 4:00 PM",
-      location: "BloomVest Finance HQ or Client Location",
-      format: "Corporate training",
+      id: 4,
+      title: "Cash Flow Management for SMEs",
+      date: { month: "Apr", day: "19" },
+      time: "9:00 AM - 12:00 PM",
+      location: "Eko Hotel & Suites, Victoria Island",
+      format: "Workshop",
       type: "corporate",
-      image: "/images/event-treasury-management.jpg",
-      description: "Specialized training for finance teams on optimizing cash management, investment strategies, and risk mitigation for corporate treasuries.",
-      capacity: "Up to 20 finance professionals",
-      price: "Custom pricing based on training scope"
+      image: "/images/event-cash-flow.jpg",
+      description: "Learn practical techniques for managing business cash flow, forecasting, and ensuring your business maintains healthy finances.",
+      capacity: "Limited to 20 businesses",
+      price: "₦30,000 per business"
     }
   ];
   
@@ -558,7 +545,7 @@ const Events = () => {
           <Title>Financial Events & Workshops</Title>
           <Subtitle>
             Join our expert-led events designed to enhance your financial knowledge and help you 
-            make better decisions, whether you're an individual investor or representing a corporation.
+            make informed decisions for your personal or business financial goals.
           </Subtitle>
         </SectionHeader>
         
@@ -593,7 +580,7 @@ const Events = () => {
                 </DateBadge>
                 <EventBadge type={event.type}>
                   {event.type === 'individual' ? <FaUserTie /> : <FaBuilding />}
-                  {event.type === 'individual' ? 'Individual' : 'Corporate'}
+                  {event.type === 'individual' ? 'Individual' : 'Business'}
                 </EventBadge>
               </EventImage>
               <EventContent>
@@ -615,7 +602,7 @@ const Events = () => {
                 <EventDescription>{event.description}</EventDescription>
                 <ButtonsContainer>
                   <PrimaryButton>
-                    Book Now <FaArrowRight />
+                    Register Now <FaArrowRight />
                   </PrimaryButton>
                   <SecondaryButton>Details</SecondaryButton>
                 </ButtonsContainer>
@@ -626,17 +613,17 @@ const Events = () => {
         
         <BookingCTA>
           <BookingContent>
-            <BookingTitle>Need a Customized Financial Event?</BookingTitle>
+            <BookingTitle>Need a Customized Financial Workshop?</BookingTitle>
             <BookingText>
-              We can design tailored financial training sessions and workshops for your specific needs, 
-              whether you're looking for personal guidance or corporate financial education.
+              We can design tailored financial training sessions for your specific needs, 
+              whether you're an individual looking for personal guidance or a business seeking financial education for your team.
             </BookingText>
             <BookingButtons>
               <BookingButton className="primary">
-                <FaUsers /> Book for Individuals
+                <FaUserTie /> Individual Inquiry
               </BookingButton>
               <BookingButton className="secondary">
-                <FaBuilding /> Corporate Booking
+                <FaBuilding /> Business Inquiry
               </BookingButton>
             </BookingButtons>
           </BookingContent>

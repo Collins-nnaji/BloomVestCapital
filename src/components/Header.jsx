@@ -122,10 +122,9 @@ const Header = () => {
   
   const navItems = [
     { path: '/', label: 'Home' },
-    { path: '/hybrid-advisory', label: 'Hybrid Advisory' }, 
+    { path: '/services', label: 'Services' },
     { path: '/education', label: 'Education' },
-    { path: '/about', label: 'About Us' }, 
-   
+    { path: '/about', label: 'About Us' },
   ];
   
   return (

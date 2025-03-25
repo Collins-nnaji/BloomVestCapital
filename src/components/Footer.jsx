@@ -20,6 +20,10 @@ const FooterWrapper = styled.footer`
   position: relative;
   overflow: hidden;
 
+  @media (max-width: 768px) {
+    padding: 70px 0 30px;
+  }
+
   &::before {
     content: '';
     position: absolute;
@@ -61,6 +65,7 @@ const FooterGrid = styled.div`
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 2.5rem;
+    padding: 0 1.5rem;
   }
 `;
 
@@ -310,9 +315,9 @@ const Footer = () => {
         <FooterColumn>
           <CompanyInfo>
             <img src="/bloomvest.png" alt="BloomVest Finance" />
-            <Tagline>Hybrid Financial Advisory</Tagline>
+            <Tagline>Strategic Financial Advisory</Tagline>
             <p>
-              BloomVest Finance combines human expertise with AI-powered insights to deliver 
+              BloomVest Finance combines industry expertise with data-driven insights to deliver 
               exceptional financial advisory services. We empower individuals and businesses to make 
               informed decisions through personalized guidance and innovative solutions.
             </p>
@@ -342,14 +347,14 @@ const Footer = () => {
             <NavLink href="/about">
               <FaChevronRight /> About Us
             </NavLink>
-            <NavLink href="/hybrid-advisory">
-              <FaChevronRight /> Hybrid Advisory
+            <NavLink href="/services">
+              <FaChevronRight /> Our Services
             </NavLink>
             <NavLink href="/events">
               <FaChevronRight /> Events & Workshops
             </NavLink>
-            <NavLink href="/training">
-              <FaChevronRight /> Training Sessions
+            <NavLink href="/education">
+              <FaChevronRight /> Financial Education
             </NavLink>
             <NavLink href="/resources">
               <FaChevronRight /> Resources

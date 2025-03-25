@@ -21,6 +21,10 @@ const Section = styled.section`
   background: var(--background);
   position: relative;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
 `;
 
 const BackgroundPattern = styled.div`
@@ -41,6 +45,10 @@ const Container = styled.div`
   padding: 0 2rem;
   position: relative;
   z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const SectionHeader = styled.div`
@@ -86,6 +94,10 @@ const Subtitle = styled.p`
   font-size: 1.25rem;
   color: var(--text-secondary);
   line-height: 1.7;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const FilterSection = styled.div`
@@ -226,6 +238,10 @@ const CardTitle = styled.h3`
   font-weight: 700;
   margin-bottom: 0.75rem;
   line-height: 1.3;
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
 `;
 
 const CardMeta = styled.div`
@@ -241,7 +257,7 @@ const CardMetaItem = styled.div`
   gap: 0.5rem;
 `;
 
-const CardContent = styled.div`
+const CardBody = styled.div`
   padding: 1.5rem;
   flex-grow: 1;
   display: flex;
@@ -502,181 +518,186 @@ const CustomTrainingButton = styled.button`
   }
 `;
 
+const CardFooter = styled.div`
+  padding: 1.5rem;
+  border-top: 1px solid ${props => props.theme.colors.border};
+`;
+
+const CardRating = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+const RatingStars = styled.div`
+  display: flex;
+  color: #f59e0b;
+  font-size: 1rem;
+`;
+
+const RatingText = styled.div`
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+`;
+
+const CardPrice = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const CTAButton = styled.button`
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: #1a945e;
+    transform: translateY(-2px);
+  }
+`;
+
+const MetaItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const EmptyState = styled.div`
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16px;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+`;
+
+const EmptyIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 1rem;
+`;
+
+const EmptyTitle = styled.h3`
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+`;
+
+const EmptyText = styled.p`
+  color: var(--text-secondary);
+  font-size: 1rem;
+`;
+
 const TrainingSessions = () => {
   const [segmentType, setSegmentType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Sample training data
+  // Streamlined training data with fewer, more realistic offerings
   const trainings = [
     {
       id: 1,
-      title: "Investment Strategy Foundations",
+      title: "Personal Financial Planning",
       type: "individual",
-      isHybrid: true,
-      duration: "4 weeks",
-      sessions: "8 sessions",
-      description: "Learn essential investment strategies combining AI-powered analysis with expert human guidance for personal portfolio management.",
+      isHybrid: false,
+      duration: "2 weeks",
+      sessions: "4 sessions",
+      description: "Build a comprehensive personal financial plan covering budgeting, debt management, savings, and basic investment strategies.",
       features: [
-        "Personalized portfolio analysis",
-        "Risk assessment and management",
-        "Market trend identification",
-        "Hybrid advisory support"
+        "Personal budget creation",
+        "Debt reduction strategies",
+        "Emergency fund planning",
+        "Basic investment principles"
       ],
-      rating: 4.9,
-      reviews: 86,
-      price: "₦45,000",
-      category: "investment"
+      rating: 4.8,
+      reviews: 124,
+      price: "₦30,000",
+      category: "planning"
     },
     {
       id: 2,
-      title: "Corporate Treasury Optimization",
+      title: "Corporate Financial Management",
       type: "corporate",
-      isHybrid: true,
-      duration: "6 weeks",
-      sessions: "12 sessions",
-      description: "Comprehensive training for corporate finance teams on optimizing cash management and investment strategies with our hybrid approach.",
+      isHybrid: false,
+      duration: "4 weeks",
+      sessions: "8 sessions",
+      description: "Practical training for financial teams on optimizing capital management, cash flow, and financial reporting.",
       features: [
-        "Cash flow optimization techniques",
-        "Risk management frameworks",
-        "Investment policy development",
-        "AI-powered market analysis"
+        "Cash flow optimization",
+        "Financial statement analysis",
+        "Working capital management",
+        "Budgeting and forecasting"
       ],
-      rating: 4.8,
+      rating: 4.7,
       reviews: 42,
       price: "Custom",
       category: "corporate"
     },
     {
       id: 3,
-      title: "Personal Financial Planning",
+      title: "Investment Fundamentals",
       type: "individual",
       isHybrid: false,
       duration: "3 weeks",
       sessions: "6 sessions",
-      description: "Develop a comprehensive personal financial plan with guidance from our expert advisors, covering budgeting to retirement planning.",
+      description: "Learn essential investment principles, asset classes, risk management, and building a balanced portfolio.",
       features: [
-        "Customized financial roadmap",
-        "Budgeting and savings strategies",
-        "Debt management techniques",
-        "Long-term goal planning"
+        "Understanding asset classes",
+        "Risk and return principles",
+        "Portfolio construction basics",
+        "Investment goals alignment"
       ],
-      rating: 4.7,
-      reviews: 124,
-      price: "₦35,000",
-      category: "planning"
+      rating: 4.9,
+      reviews: 86,
+      price: "₦40,000",
+      category: "investment"
     },
     {
       id: 4,
-      title: "Executive Financial Leadership",
+      title: "Financial Reporting Workshop",
       type: "corporate",
-      isHybrid: true,
-      duration: "8 weeks",
-      sessions: "16 sessions",
-      description: "Advanced financial leadership training for executives combining strategic decision-making with AI-powered market intelligence.",
+      isHybrid: false,
+      duration: "2 weeks",
+      sessions: "4 sessions",
+      description: "Practical training on creating effective financial reports, analysis, and using reports for business decisions.",
       features: [
-        "Strategic financial planning",
-        "Capital allocation frameworks",
-        "Market opportunity analysis",
-        "AI-enhanced forecasting"
+        "Financial statement preparation",
+        "Key performance indicators",
+        "Variance analysis",
+        "Management reporting"
       ],
-      rating: 4.9,
-      reviews: 28,
+      rating: 4.8,
+      reviews: 35,
       price: "Custom",
-      category: "leadership"
+      category: "reporting"
     },
     {
       id: 5,
-      title: "Real Estate Investment Mastery",
-      type: "individual",
-      isHybrid: true,
-      duration: "5 weeks",
-      sessions: "10 sessions",
-      description: "Master property investment strategies in Nigeria with expert insights supported by AI-driven market analysis and forecasting.",
-      features: [
-        "Location analysis methodology",
-        "Property valuation techniques",
-        "Financing and leverage strategies",
-        "AI-powered market comparison"
-      ],
-      rating: 4.8,
-      reviews: 67,
-      price: "₦55,000",
-      category: "real-estate"
-    },
-    {
-      id: 6,
-      title: "Financial Risk Management",
-      type: "corporate",
-      isHybrid: false,
-      duration: "4 weeks",
-      sessions: "8 sessions",
-      description: "Comprehensive corporate training on identifying, assessing, and mitigating financial risks in the Nigerian business environment.",
-      features: [
-        "Risk assessment frameworks",
-        "Mitigation strategy development",
-        "Compliance best practices",
-        "Crisis management planning"
-      ],
-      rating: 4.7,
-      reviews: 35,
-      price: "Custom",
-      category: "risk"
-    },
-    {
-      id: 7,
-      title: "Stock Market Trading Fundamentals",
-      type: "individual",
-      isHybrid: true,
-      duration: "6 weeks",
-      sessions: "12 sessions",
-      description: "Learn how to analyze, select, and trade stocks on the Nigerian Stock Exchange with both human expertise and AI-powered tools.",
-      features: [
-        "Technical analysis techniques",
-        "Fundamental analysis methods",
-        "AI-assisted stock screening",
-        "Portfolio construction strategies"
-      ],
-      rating: 4.8,
-      reviews: 93,
-      price: "₦60,000",
-      category: "trading"
-    },
-    {
-      id: 8,
-      title: "Employee Financial Wellness Program",
-      type: "corporate",
-      isHybrid: true,
-      duration: "Customizable",
-      sessions: "Flexible",
-      description: "A comprehensive financial wellness program for organizations to improve employee financial literacy and well-being.",
-      features: [
-        "Retirement planning guidance",
-        "Personal budgeting workshops",
-        "Investment fundamentals training",
-        "Individual advisory sessions"
-      ],
-      rating: 4.9,
-      reviews: 54,
-      price: "Custom",
-      category: "wellness"
-    },
-    {
-      id: 9,
-      title: "Retirement Planning Workshop",
+      title: "Retirement Planning Essentials",
       type: "individual",
       isHybrid: false,
       duration: "2 weeks",
       sessions: "4 sessions",
-      description: "Develop a sustainable retirement plan tailored to the Nigerian economic context with guidance from retirement specialists.",
+      description: "Create a sustainable retirement plan with strategies for savings, investments, and building retirement income.",
       features: [
-        "Pension optimization strategies",
-        "Investment portfolio design",
-        "Income planning techniques",
-        "Healthcare cost planning"
+        "Retirement needs assessment",
+        "Savings rate strategies",
+        "Pension optimization",
+        "Tax-efficient planning"
       ],
       rating: 4.6,
       reviews: 48,
-      price: "₦30,000",
+      price: "₦25,000",
       category: "retirement"
     }
   ];
@@ -696,9 +717,6 @@ const TrainingSessions = () => {
     
     return typeMatch && searchMatch;
   });
-  
-  // Group trainings by category (for individuals section)
-  const individualTrainings = trainings.filter(training => training.type === 'individual');
   
   // Render stars for ratings
   const renderStars = (rating) => {
@@ -728,10 +746,10 @@ const TrainingSessions = () => {
       <Container>
         <SectionHeader>
           <Preheading>BloomVest Finance</Preheading>
-          <Title>Professional Training Sessions</Title>
+          <Title>Financial Education Programs</Title>
           <Subtitle>
-            Comprehensive financial training programs designed for both individuals and corporate clients,
-            featuring our unique hybrid approach combining human expertise with AI-powered insights.
+            Practical financial training programs designed for both individuals and corporate clients,
+            focused on building essential financial knowledge and skills for better decision-making.
           </Subtitle>
         </SectionHeader>
         
@@ -742,7 +760,7 @@ const TrainingSessions = () => {
             </SearchIcon>
             <SearchInput 
               type="text" 
-              placeholder="Search training sessions..." 
+              placeholder="Search programs..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -753,7 +771,7 @@ const TrainingSessions = () => {
               active={segmentType === 'all'} 
               onClick={() => setSegmentType('all')}
             >
-              <FaGraduationCap /> All Trainings
+              All Programs
             </SegmentButton>
             <SegmentButton 
               active={segmentType === 'individual'} 
@@ -767,172 +785,61 @@ const TrainingSessions = () => {
             >
               <FaBuilding /> Corporate
             </SegmentButton>
-            <SegmentButton 
-              active={segmentType === 'hybrid'} 
-              onClick={() => setSegmentType('hybrid')}
-            >
-              <FaRobot /> Hybrid Advisory
-            </SegmentButton>
           </SegmentedControl>
         </FilterSection>
         
         <TrainingsGrid>
-          {filteredTrainings.map(training => (
-            <TrainingCard key={training.id}>
-              <CardHeader hybrid={training.isHybrid} corporate={training.type === 'corporate'}>
-                <CardType>
-                  {training.type === 'individual' ? <FaUserTie /> : <FaBuilding />}
-                  {training.type === 'individual' ? 'Individual' : 'Corporate'}
-                  {training.isHybrid && ` • Hybrid Advisory`}
-                </CardType>
-                <CardTitle>{training.title}</CardTitle>
-                <CardMeta>
-                  <CardMetaItem>
-                    <FaCalendarAlt />
-                    <span>{training.duration}</span>
-                  </CardMetaItem>
-                  <CardMetaItem>
-                    <FaClock />
-                    <span>{training.sessions}</span>
-                  </CardMetaItem>
-                </CardMeta>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>{training.description}</CardDescription>
-                <FeaturesList>
-                  {training.features.map((feature, index) => (
-                    <Feature key={index}>
-                      <FaCheckCircle />
-                      <span>{feature}</span>
-                    </Feature>
-                  ))}
-                </FeaturesList>
-                <RatingContainer>
-                  <div className="stars">
-                    {renderStars(training.rating)}
-                  </div>
-                  <div className="rating-text">
-                    {training.rating} ({training.reviews} reviews)
-                  </div>
-                </RatingContainer>
-                <PriceRow>
-                  <Price>
-                    <span className="amount">{training.price}</span>
-                    {training.type === 'individual' && <span className="period"> / person</span>}
-                  </Price>
-                  <BookButton>
-                    Book Now <FaArrowRight />
-                  </BookButton>
-                </PriceRow>
-              </CardContent>
-            </TrainingCard>
-          ))}
-        </TrainingsGrid>
-        
-        <CategorySection>
-          <CategoryHeader>
-            <CategoryTitle>Popular Individual Training Programs</CategoryTitle>
-            <ViewAllLink href="#">
-              View All Individual Programs <FaArrowRight />
-            </ViewAllLink>
-          </CategoryHeader>
-          
-          <TrainingsGrid>
-            {individualTrainings.slice(0, 3).map(training => (
-              <TrainingCard key={`popular-${training.id}`}>
-                <CardHeader hybrid={training.isHybrid}>
-                  <CardType>
-                    <FaUserTie />
-                    Individual
-                    {training.isHybrid && ` • Hybrid Advisory`}
-                  </CardType>
+          {filteredTrainings.length > 0 ? (
+            filteredTrainings.map(training => (
+              <TrainingCard key={training.id}>
+                <CardHeader corporate={training.type === 'corporate'} hybrid={training.isHybrid}>
+                  <CardType>{training.type === 'corporate' ? 'Corporate' : 'Individual'}</CardType>
                   <CardTitle>{training.title}</CardTitle>
                   <CardMeta>
-                    <CardMetaItem>
-                      <FaCalendarAlt />
-                      <span>{training.duration}</span>
-                    </CardMetaItem>
-                    <CardMetaItem>
-                      <FaClock />
-                      <span>{training.sessions}</span>
-                    </CardMetaItem>
+                    <MetaItem>
+                      <FaCalendarAlt /> {training.duration}
+                    </MetaItem>
+                    <MetaItem>
+                      <FaClock /> {training.sessions}
+                    </MetaItem>
                   </CardMeta>
                 </CardHeader>
-                <CardContent>
+                
+                <CardBody>
                   <CardDescription>{training.description}</CardDescription>
+                  
                   <FeaturesList>
                     {training.features.map((feature, index) => (
-                      <Feature key={index}>
-                        <FaCheckCircle />
-                        <span>{feature}</span>
-                      </Feature>
+                      <FeatureItem key={index}><FaCheckCircle /> {feature}</FeatureItem>
                     ))}
                   </FeaturesList>
-                  <RatingContainer>
-                    <div className="stars">
-                      {renderStars(training.rating)}
-                    </div>
-                    <div className="rating-text">
+                </CardBody>
+                
+                <CardFooter>
+                  <CardRating>
+                    <RatingStars>{renderStars(training.rating)}</RatingStars>
+                    <RatingText>
                       {training.rating} ({training.reviews} reviews)
-                    </div>
-                  </RatingContainer>
-                  <PriceRow>
-                    <Price>
-                      <span className="amount">{training.price}</span>
-                      <span className="period"> / person</span>
-                    </Price>
-                    <BookButton>
-                      Book Now <FaArrowRight />
-                    </BookButton>
-                  </PriceRow>
-                </CardContent>
+                    </RatingText>
+                  </CardRating>
+                  
+                  <CardPrice>
+                    <Price>{training.price}</Price>
+                    <CTAButton>
+                      Enroll Now <FaArrowRight />
+                    </CTAButton>
+                  </CardPrice>
+                </CardFooter>
               </TrainingCard>
-            ))}
-          </TrainingsGrid>
-        </CategorySection>
-        
-        <CustomTrainingSection>
-          <CustomTrainingImage>
-            <img src="/images/custom-training.jpg" alt="Custom Corporate Training" />
-          </CustomTrainingImage>
-          <CustomTrainingContent>
-            <CustomTrainingTitle>Custom Training Solutions</CustomTrainingTitle>
-            <CustomTrainingText>
-              We design tailored financial training programs for corporations and organizations,
-              addressing your specific needs and challenges. Our hybrid approach combines expert
-              financial educators with AI-powered tools for maximum impact.
-            </CustomTrainingText>
-            <FeatureGrid>
-              <FeatureItem>
-                <FaCheckCircle />
-                <span>Customized curriculum</span>
-              </FeatureItem>
-              <FeatureItem>
-                <FaCheckCircle />
-                <span>Flexible scheduling</span>
-              </FeatureItem>
-              <FeatureItem>
-                <FaCheckCircle />
-                <span>On-site or virtual formats</span>
-              </FeatureItem>
-              <FeatureItem>
-                <FaCheckCircle />
-                <span>Industry-specific content</span>
-              </FeatureItem>
-              <FeatureItem>
-                <FaCheckCircle />
-                <span>Progress tracking</span>
-              </FeatureItem>
-              <FeatureItem>
-                <FaCheckCircle />
-                <span>Dedicated program manager</span>
-              </FeatureItem>
-            </FeatureGrid>
-            <CustomTrainingButton>
-              <FaUserFriends /> Request Custom Program
-            </CustomTrainingButton>
-          </CustomTrainingContent>
-        </CustomTrainingSection>
+            ))
+          ) : (
+            <EmptyState>
+              <EmptyIcon>🔍</EmptyIcon>
+              <EmptyTitle>No programs found</EmptyTitle>
+              <EmptyText>Try adjusting your search or filters to find what you're looking for.</EmptyText>
+            </EmptyState>
+          )}
+        </TrainingsGrid>
       </Container>
     </Section>
   );

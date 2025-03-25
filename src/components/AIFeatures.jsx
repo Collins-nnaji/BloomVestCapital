@@ -6,17 +6,17 @@ import {
   FaChartLine, 
   FaShieldAlt, 
   FaArrowRight, 
-  FaRegComments,
-  FaRegClock,
-  FaRegFileAlt,
-  FaUserTie,
-  FaRegChartBar,
-  FaMobile
+  FaDatabase,
+  FaBrain,
+  FaFileAlt,
+  FaRobot,
+  FaServer
 } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const Section = styled.section`
   padding: 120px 0;
-  background: #ffffff;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
   position: relative;
   overflow: hidden;
 `;
@@ -50,17 +50,34 @@ const SectionHeader = styled.div`
 const Preheading = styled.div`
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--accent-color);
+  color: #22c55e;
   margin-bottom: 1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(to right, #22c55e, #4ade80);
+    border-radius: 3px;
+  }
 `;
 
 const Title = styled.h2`
   font-size: 2.75rem;
-  font-weight: 700;
-  color: var(--primary-color);
+  font-weight: 800;
+  color: #1a365d;
   margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #1a365d 0%, #2d4e71 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   
   @media (max-width: 768px) {
     font-size: 2.25rem;
@@ -69,14 +86,113 @@ const Title = styled.h2`
 
 const Subtitle = styled.p`
   font-size: 1.2rem;
-  color: var(--text-secondary);
+  color: #64748b;
   line-height: 1.7;
+`;
+
+// Data Flow Section
+const DataFlowSection = styled.div`
+  margin-bottom: 100px;
+`;
+
+const ProcessSteps = styled.div`
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 60px 0;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50px;
+    left: 60px;
+    right: 60px;
+    height: 4px;
+    background: linear-gradient(to right, #22c55e, #4ade80);
+    z-index: 0;
+  }
+  
+  @media (max-width: 1024px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+    
+    &::after {
+      display: none;
+    }
+  }
+`;
+
+const ProcessStep = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
+  background: #ffffff;
+  padding: 0 10px;
+  width: 20%;
+  
+  @media (max-width: 1024px) {
+    width: 100%;
+    max-width: 300px;
+  }
+`;
+
+const StepIcon = styled.div`
+  width: 100px;
+  height: 100px;
+  background: ${props => props.bgColor || 'rgba(34, 197, 94, 0.1)'};
+  color: ${props => props.iconColor || '#22c55e'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  position: relative;
+  
+  &::after {
+    content: '${props => props.number}';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 35px;
+    height: 35px;
+    background: #1a365d;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+const StepTitle = styled.h3`
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 0.75rem;
+`;
+
+const StepDescription = styled.p`
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+`;
+
+// AI Capabilities Section
+const CapabilitiesSection = styled.div`
+  margin-bottom: 80px;
 `;
 
 const FeaturesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
+  gap: 2rem;
   
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
@@ -87,18 +203,21 @@ const FeaturesGrid = styled.div`
   }
 `;
 
-const FeatureCard = styled.div`
-  background: ${props => props.theme.colors.cardBg};
+const FeatureCard = styled(motion.div)`
+  background: #ffffff;
   border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: ${props => props.theme.shadows.lg};
-  border: 1px solid ${props => props.theme.colors.border};
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   }
   
   &:after {
@@ -108,11 +227,11 @@ const FeatureCard = styled.div`
     left: 0;
     right: 0;
     height: 4px;
-    background: var(--accent-color);
+    background: #22c55e;
     border-radius: 16px 16px 0 0;
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
   }
   
   &:hover:after {
@@ -129,12 +248,12 @@ const FeatureIcon = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.75rem;
-  color: var(--accent-color);
+  color: #22c55e;
   margin-bottom: 1.5rem;
   transition: all 0.3s ease;
   
   ${FeatureCard}:hover & {
-    background: var(--accent-color);
+    background: #22c55e;
     color: white;
     transform: rotate(5deg);
   }
@@ -142,25 +261,27 @@ const FeatureIcon = styled.div`
 
 const FeatureTitle = styled.h3`
   font-size: 1.4rem;
-  color: var(--primary-color);
+  color: #1a365d;
   margin-bottom: 1rem;
   font-weight: 600;
 `;
 
 const FeatureDescription = styled.p`
-  color: var(--text-secondary);
+  color: #64748b;
   font-size: 1rem;
-  line-height: 1.7;
+  line-height: 1.6;
   margin-bottom: 1.5rem;
+  flex-grow: 1;
 `;
 
 const FeatureList = styled.ul`
   padding-left: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
+  list-style: none;
 `;
 
 const FeatureListItem = styled.li`
-  color: #1a365d;
+  color: #64748b;
   margin-bottom: 0.75rem;
   font-size: 0.95rem;
   position: relative;
@@ -173,54 +294,39 @@ const FeatureListItem = styled.li`
   }
 `;
 
-const UseCaseBox = styled.div`
-  background: rgba(34, 197, 94, 0.05);
-  border-radius: 8px;
-  padding: 1.25rem;
-  margin-top: 1.5rem;
-  border-left: 3px solid #22c55e;
-`;
-
-const UseCaseTitle = styled.h4`
-  font-size: 1rem;
-  color: #1a365d;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  
-  svg {
-    color: #22c55e;
-  }
-`;
-
-const UseCaseText = styled.p`
-  color: #64748b;
-  font-size: 0.95rem;
-  line-height: 1.6;
-`;
-
-const CtaContainer = styled.div`
-  margin-top: 80px;
+// Demo Section
+const DemoSection = styled.div`
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   text-align: center;
+  margin-top: 80px;
 `;
 
-const CtaText = styled.p`
-  font-size: 1.25rem;
+const DemoTitle = styled.h3`
+  font-size: 1.75rem;
+  font-weight: 700;
   color: #1a365d;
-  margin-bottom: 2rem;
-  font-weight: 500;
+  margin-bottom: 1.5rem;
 `;
 
-const CtaButton = styled.button`
+const DemoDescription = styled.p`
+  color: #64748b;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+`;
+
+const DemoButton = styled.button`
   background: #22c55e;
   color: white;
+  padding: 1rem 2rem;
   border: none;
   border-radius: 8px;
-  padding: 1rem 2rem;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
@@ -228,154 +334,212 @@ const CtaButton = styled.button`
   gap: 0.75rem;
   
   &:hover {
-    background: #1a945e;
+    background: #15803d;
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.15);
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
+  }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover svg {
+    transform: translateX(5px);
   }
 `;
 
 const AIFeatures = () => {
-  const features = [
+  const processSteps = [
     {
-      icon: <FaChartPie />,
-      title: "5-Minute Risk Assessment",
-      description: "Discover your investment personality and risk tolerance through our comprehensive quiz.",
-      list: [
-        "Analyzes your financial goals and timeframes",
-        "Evaluates comfort with market volatility",
-        "Considers your income stability and debt",
-        "Creates a personalized risk profile"
-      ],
-      useCase: {
-        icon: <FaRegComments />,
-        title: "Real User Example",
-        text: "\"I was labeled a 'Growth-Focused Builder' and learned I could take more calculated risks with my long-term investments.\""
-      }
+      icon: <FaDatabase />,
+      title: "Data Collection",
+      description: "We securely gather financial data from various sources including accounting systems, ERPs, and market feeds.",
+      bgColor: "rgba(34, 197, 94, 0.1)",
+      iconColor: "#22c55e",
+      number: "1"
+    },
+    {
+      icon: <FaServer />,
+      title: "Data Processing",
+      description: "Our system cleans, normalizes, and structures your data to prepare it for advanced analysis.",
+      bgColor: "rgba(8, 145, 178, 0.1)",
+      iconColor: "#0891b2",
+      number: "2"
+    },
+    {
+      icon: <FaRobot />,
+      title: "AI Analysis",
+      description: "Advanced algorithms analyze the processed data to identify patterns, trends, and actionable insights.",
+      bgColor: "rgba(139, 92, 246, 0.1)",
+      iconColor: "#8b5cf6",
+      number: "3"
+    },
+    {
+      icon: <FaFileAlt />,
+      title: "Report Generation",
+      description: "The system automatically creates detailed financial reports with visualizations and key insights.",
+      bgColor: "rgba(2, 132, 199, 0.1)",
+      iconColor: "#0284c7",
+      number: "4"
     },
     {
       icon: <FaLightbulb />,
-      title: "Portfolio Simulator",
-      description: "Visualize potential outcomes of different investment strategies based on historical data.",
-      list: [
-        "Tests hypothetical investment mixes",
-        "Shows 5-year growth projections",
-        "Highlights volatility and risk factors",
-        "Compares against inflation benchmarks"
-      ],
-      useCase: {
-        icon: <FaRegClock />,
-        title: "Time-Saving",
-        text: "Analyze dozens of investment combinations in minutes instead of spending hours on manual research."
-      }
+      title: "Predictive Insights",
+      description: "Machine learning models provide forward-looking insights and strategic recommendations.",
+      bgColor: "rgba(245, 158, 11, 0.1)",
+      iconColor: "#f59e0b",
+      number: "5"
+    }
+  ];
+
+  const capabilities = [
+    {
+      icon: <FaChartPie />,
+      title: "Financial Performance Analysis",
+      description: "Our AI analyzes your financial data to identify strengths, weaknesses, and improvement opportunities.",
+      benefits: [
+        "Automatic ratio analysis and benchmarking",
+        "Trend identification with statistical validation",
+        "Anomaly detection with alert generation",
+        "Performance attribution analysis"
+      ]
     },
     {
       icon: <FaChartLine />,
-      title: "Financial Health Score",
-      description: "Get a comprehensive assessment of your current financial standing with actionable insights.",
-      list: [
-        "Evaluates savings rate and emergency fund",
-        "Analyzes debt-to-income ratio",
-        "Assesses retirement readiness",
-        "Provides specific improvement steps"
-      ],
-      useCase: {
-        icon: <FaRegFileAlt />,
-        title: "Improvement Tracking",
-        text: "Retake the assessment quarterly to track your progress and adjust your financial strategies."
-      }
+      title: "Predictive Forecasting",
+      description: "Machine learning models predict future financial performance with high accuracy.",
+      benefits: [
+        "Revenue and expense predictions",
+        "Cash flow forecasting",
+        "Working capital requirement projections",
+        "Budget variance predictions"
+      ]
+    },
+    {
+      icon: <FaLightbulb />,
+      title: "Automated Reporting",
+      description: "Generate comprehensive financial reports customized for different stakeholders automatically.",
+      benefits: [
+        "Executive-ready financial summaries",
+        "Detailed departmental performance reports",
+        "Regulatory compliance documentation",
+        "Investor-focused presentations"
+      ]
     },
     {
       icon: <FaShieldAlt />,
-      title: "Nigerian Market Navigator",
-      description: "Gain insights specific to the Nigerian investment landscape and economic conditions.",
-      list: [
-        "Highlights trending local assets",
-        "Explains current market conditions",
-        "Identifies inflation hedging options",
-        "Provides regulatory updates"
-      ],
-      useCase: {
-        icon: <FaUserTie />,
-        title: "Local Expertise",
-        text: "Get the same quality of market analysis that typically requires expensive local consultants."
-      }
+      title: "Risk Assessment",
+      description: "Identify and quantify financial risks before they impact your business.",
+      benefits: [
+        "Credit risk evaluation",
+        "Liquidity risk monitoring",
+        "Market risk exposure analysis",
+        "Operational risk identification"
+      ]
     },
     {
-      icon: <FaRegChartBar />,
-      title: "Goal-Based Roadmaps",
-      description: "Receive customized financial roadmaps tailored to your specific life goals and timeline.",
-      list: [
-        "Creates milestone-based plans",
-        "Suggests saving and investment targets",
-        "Adjusts for economic conditions",
-        "Provides progress checkpoints"
-      ],
-      useCase: {
-        icon: <FaLightbulb />,
-        title: "Strategic Planning",
-        text: "A user planning to buy land in 3 years received a step-by-step saving and investment strategy to reach their target."
-      }
+      icon: <FaFileAlt />,
+      title: "Strategic Recommendations",
+      description: "Receive AI-powered recommendations to improve financial performance.",
+      benefits: [
+        "Cost optimization suggestions",
+        "Revenue enhancement strategies",
+        "Investment prioritization guidance",
+        "Resource allocation recommendations"
+      ]
     },
     {
-      icon: <FaMobile />,
-      title: "AI Advisory Chat",
-      description: "Get instant answers to your financial questions through our AI-powered conversational assistant.",
-      list: [
-        "Answers investment questions 24/7",
-        "Explains complex financial concepts",
-        "Provides relevant educational resources",
-        "Suggests appropriate advisory services"
-      ],
-      useCase: {
-        icon: <FaRegComments />,
-        title: "Always Available",
-        text: "Get immediate guidance on financial decisions anytime, with human advisor follow-up for complex situations."
-      }
+      icon: <FaBrain />,
+      title: "Continuous Learning",
+      description: "Our AI system continuously learns from your data to improve accuracy over time.",
+      benefits: [
+        "Self-improving prediction models",
+        "Adaptive to your business changes",
+        "Industry-specific insight development",
+        "Seasonal pattern recognition"
+      ]
     }
   ];
 
   return (
-    <Section id="ai-features">
+    <Section id="ai-analytics">
       <BackgroundPattern />
       <Container>
         <SectionHeader>
-          <Preheading>AI-POWERED INSIGHTS</Preheading>
-          <Title>How Our Smart Technology Guides You</Title>
+          <Preheading>AI-Powered Analytics</Preheading>
+          <Title>How Our System Transforms Your Financial Data</Title>
           <Subtitle>
-            Our AI tools combine advanced analytics with Nigerian financial expertise to provide
-            personalized insights that would typically require hours of consultation.
+            Our advanced AI analytics platform turns your raw financial data into comprehensive reports
+            and predictive insights that drive better business decisions.
           </Subtitle>
         </SectionHeader>
         
-        <FeaturesGrid>
-          {features.map((feature, index) => (
-            <FeatureCard key={index}>
-              <FeatureIcon>{feature.icon}</FeatureIcon>
-              <FeatureTitle>{feature.title}</FeatureTitle>
-              <FeatureDescription>{feature.description}</FeatureDescription>
-              <FeatureList>
-                {feature.list.map((item, i) => (
-                  <FeatureListItem key={i}>{item}</FeatureListItem>
-                ))}
-              </FeatureList>
-              <UseCaseBox>
-                <UseCaseTitle>
-                  {feature.useCase.icon} {feature.useCase.title}
-                </UseCaseTitle>
-                <UseCaseText>{feature.useCase.text}</UseCaseText>
-              </UseCaseBox>
-            </FeatureCard>
-          ))}
-        </FeaturesGrid>
+        <DataFlowSection>
+          <h3 style={{ textAlign: 'center', color: '#1a365d', fontSize: '1.8rem', marginBottom: '2rem' }}>
+            The Data Analysis Process
+          </h3>
+          
+          <ProcessSteps>
+            {processSteps.map((step, index) => (
+              <ProcessStep
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <StepIcon 
+                  bgColor={step.bgColor} 
+                  iconColor={step.iconColor}
+                  number={step.number}
+                >
+                  {step.icon}
+                </StepIcon>
+                <StepTitle>{step.title}</StepTitle>
+                <StepDescription>{step.description}</StepDescription>
+              </ProcessStep>
+            ))}
+          </ProcessSteps>
+        </DataFlowSection>
         
-        <CtaContainer>
-          <CtaText>
-            Experience the power of AI-driven financial guidance tailored to your unique situation.
-          </CtaText>
-          <CtaButton>
-            Try BloomVest AI Tool Now <FaArrowRight />
-          </CtaButton>
-        </CtaContainer>
+        <CapabilitiesSection>
+          <h3 style={{ textAlign: 'center', color: '#1a365d', fontSize: '1.8rem', marginBottom: '2rem' }}>
+            AI Capabilities
+          </h3>
+          
+          <FeaturesGrid>
+            {capabilities.map((feature, index) => (
+              <FeatureCard 
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <FeatureIcon>{feature.icon}</FeatureIcon>
+                <FeatureTitle>{feature.title}</FeatureTitle>
+                <FeatureDescription>{feature.description}</FeatureDescription>
+                
+                <FeatureList>
+                  {feature.benefits.map((benefit, i) => (
+                    <FeatureListItem key={i}>{benefit}</FeatureListItem>
+                  ))}
+                </FeatureList>
+              </FeatureCard>
+            ))}
+          </FeaturesGrid>
+        </CapabilitiesSection>
+        
+        <DemoSection>
+          <DemoTitle>Experience Our AI Analytics Platform</DemoTitle>
+          <DemoDescription>
+            See how our AI can transform your financial data into actionable insights with a personalized demo.
+            Our experts will show you real examples using industry-specific data similar to your business.
+          </DemoDescription>
+          <DemoButton>
+            Schedule a Demo <FaArrowRight />
+          </DemoButton>
+        </DemoSection>
       </Container>
     </Section>
   );

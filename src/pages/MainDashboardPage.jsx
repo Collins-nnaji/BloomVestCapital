@@ -1,13 +1,15 @@
 import React from 'react';
-import Hero from '../components/Hero';
+import HomeContent from '../components/Homepage';
+import WhyChooseUs from '../components/WhyChooseUs';
 import Services from '../components/Services';
-import AIFeatures from '../components/AIFeatures';
+import Hero from '../components/Hero';
 
 const MainDashboardPage = () => (
   <>
-    <Hero />
+    <HomeContent />
+    <WhyChooseUs />
     <Services />
-    <AIFeatures />
+    <Hero />
   </>
 );
 
