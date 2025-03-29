@@ -11,7 +11,7 @@ const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const EducationPage = lazy(() => import('./pages/EducationPage'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
-const HybridAdvisoryPage = lazy(() => import('./pages/HybridAdvisoryPage'));
+
 
 function App() {
   return (
@@ -25,7 +25,7 @@ function App() {
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/education" element={<EducationPage />} />
               <Route path="/about" element={<AboutUsPage />} />
-              <Route path="/hybrid-advisory" element={<ServicesPage />} />
+
               {/* Add a 404 page if needed */}
               <Route path="*" element={<MainDashboardPage />} />
             </Routes>

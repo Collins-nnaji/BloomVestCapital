@@ -10,297 +10,209 @@ import {
   FaYoutube,
   FaFacebook,
   FaChevronRight,
-  FaWhatsapp
+  FaWhatsapp,
+  FaClock
 } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
-const FooterWrapper = styled.footer`
+const FooterContainer = styled.footer`
   background: #1a365d;
-  color: white;
-  padding: 100px 0 40px;
+  padding: 5rem 0 3rem;
+  color: #ffffff;
   position: relative;
   overflow: hidden;
-
-  @media (max-width: 768px) {
-    padding: 70px 0 30px;
-  }
-
+  width: 100%;
+  max-width: 100vw;
+  
   &::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+    height: 4px;
+    background: linear-gradient(to right, #22c55e, #15803d);
   }
 `;
 
-const FooterPattern = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
-  opacity: 0.5;
-`;
-
-const FooterGrid = styled.div`
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 4rem;
-  max-width: 1400px;
+const FooterContent = styled.div`
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
-  position: relative;
-  z-index: 1;
-
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, 1fr);
+  gap: 3rem;
+  
   @media (max-width: 1024px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: repeat(2, 1fr);
   }
-
+  
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
     gap: 2.5rem;
-    padding: 0 1.5rem;
   }
 `;
 
-const FooterColumn = styled.div`
-  h4 {
-    color: white;
-    font-size: 1.25rem;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    position: relative;
-    padding-bottom: 1rem;
-    
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 50px;
-      height: 2px;
-      background: #22c55e;
-    }
+const BrandColumn = styled.div`
+  @media (max-width: 1024px) {
+    grid-column: 1 / 3;
+  }
+  
+  @media (max-width: 768px) {
+    grid-column: 1;
   }
 `;
 
-const CompanyInfo = styled.div`
-  img {
-    height: 60px;
-    margin-bottom: 1.5rem;
+const FooterLogoLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: white;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+  margin-bottom: 1.25rem;
+  
+  span {
+    color: #4ade80;
   }
-
-  p {
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.7;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-  }
 `;
 
-const Tagline = styled.div`
-  display: inline-block;
-  background: rgba(34, 197, 94, 0.15);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  color: #22c55e;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-`;
-
-const QuickLinks = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const NavLink = styled.a`
+const CompanyDescription = styled.p`
   color: rgba(255, 255, 255, 0.8);
-  transition: all 0.3s ease;
   font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 1.75rem;
+  max-width: 400px;
+`;
+
+const SocialLinks = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+`;
+
+const SocialLink = styled.a`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-
-  svg {
-    font-size: 0.75rem;
-    transition: transform 0.3s ease;
-  }
-
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  
   &:hover {
-    color: #22c55e;
-    transform: translateX(2px);
-    
-    svg {
-      transform: translateX(3px);
-    }
+    background: #22c55e;
+    transform: translateY(-3px);
   }
 `;
 
-const ContactInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+const ColumnTitle = styled.h4`
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: #22c55e;
+  }
+`;
+
+const LinksList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const LinkItem = styled.li`
+  margin-bottom: 1rem;
+`;
+
+const FooterLink = styled.a`
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  
+  &:hover {
+    color: #22c55e;
+    transform: translateX(3px);
+  }
+  
+  svg {
+    margin-right: 0.75rem;
+    font-size: 0.85rem;
+    color: #22c55e;
+  }
 `;
 
 const ContactItem = styled.div`
   display: flex;
   align-items: flex-start;
   gap: 1rem;
+  margin-bottom: 1.25rem;
+`;
+
+const ContactIcon = styled.div`
+  color: #22c55e;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+`;
+
+const ContactText = styled.div`
   color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
-
-  svg {
-    color: #22c55e;
-    font-size: 1.25rem;
-    margin-top: 0.1rem;
-  }
-  
-  a {
-    color: rgba(255, 255, 255, 0.8);
-    transition: color 0.3s ease;
-    
-    &:hover {
-      color: #22c55e;
-    }
-  }
+  line-height: 1.6;
 `;
 
-const SocialLinks = styled.div`
-  display: flex;
-  gap: 1.25rem;
-  margin-top: 2rem;
-
-  a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.25rem;
-    transition: all 0.3s ease;
-
-    &:hover {
-      color: #22c55e;
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-    }
-  }
-`;
-
-const NewsletterBox = styled.div`
-  margin-top: 1.5rem;
-`;
-
-const NewsletterForm = styled.form`
-  display: flex;
-  margin-top: 1rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-  }
-`;
-
-const NewsletterInput = styled.input`
-  flex-grow: 1;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px 0 0 8px;
-  color: white;
-  font-size: 1rem;
-  
-  &::placeholder {
-    color: rgba(255, 255, 255, 0.5);
-  }
-  
-  &:focus {
-    outline: none;
-    border-color: #22c55e;
-  }
-  
-  @media (max-width: 768px) {
-    border-radius: 8px;
-  }
-`;
-
-const NewsletterButton = styled.button`
-  background: #22c55e;
-  color: white;
-  padding: 1rem 1.5rem;
-  border: none;
-  border-radius: 0 8px 8px 0;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: #1a945e;
-  }
-  
-  @media (max-width: 768px) {
-    border-radius: 8px;
-  }
-`;
-
-const Disclaimer = styled.p`
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin-top: 1rem;
-`;
-
-const BottomBar = styled.div`
+const CopyrightSection = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 2rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 4rem;
-  padding-top: 2rem;
+  margin-top: 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  position: relative;
-  z-index: 1;
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     text-align: center;
   }
 `;
 
 const Copyright = styled.p`
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 `;
 
 const LegalLinks = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   
   @media (max-width: 768px) {
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 1.5rem;
   }
 `;
 
 const LegalLink = styled.a`
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
-  transition: color 0.3s ease;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
   
   &:hover {
     color: #22c55e;
@@ -309,110 +221,141 @@ const LegalLink = styled.a`
 
 const Footer = () => {
   return (
-    <FooterWrapper>
-      <FooterPattern />
-      <FooterGrid>
-        <FooterColumn>
-          <CompanyInfo>
-            <img src="/bloomvest.png" alt="BloomVest Finance" />
-            <Tagline>Strategic Financial Advisory</Tagline>
-            <p>
-              BloomVest Finance combines industry expertise with data-driven insights to deliver 
-              exceptional financial advisory services. We empower individuals and businesses to make 
-              informed decisions through personalized guidance and innovative solutions.
-            </p>
-            <SocialLinks>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-                <FaLinkedin />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                <FaTwitter />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                <FaInstagram />
-              </a>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                <FaFacebook />
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                <FaYoutube />
-              </a>
-            </SocialLinks>
-          </CompanyInfo>
-        </FooterColumn>
-
-        <FooterColumn>
-          <h4>Quick Links</h4>
-          <QuickLinks>
-            <NavLink href="/about">
-              <FaChevronRight /> About Us
-            </NavLink>
-            <NavLink href="/services">
-              <FaChevronRight /> Our Services
-            </NavLink>
-            <NavLink href="/events">
-              <FaChevronRight /> Events & Workshops
-            </NavLink>
-            <NavLink href="/education">
-              <FaChevronRight /> Financial Education
-            </NavLink>
-            <NavLink href="/resources">
-              <FaChevronRight /> Resources
-            </NavLink>
-            <NavLink href="/contact">
-              <FaChevronRight /> Contact Us
-            </NavLink>
-          </QuickLinks>
-        </FooterColumn>
-
-        <FooterColumn>
-          <h4>Contact Us</h4>
-          <ContactInfo>
-            <ContactItem>
-              <FaPhone />
-              <span>
-                <a href="tel:+2341234567890">+234 123 456 7890</a>
-              </span>
-            </ContactItem>
-            <ContactItem>
-              <FaWhatsapp />
-              <span>
-                <a href="https://wa.me/2341234567890">+234 123 456 7890</a>
-              </span>
-            </ContactItem>
-            <ContactItem>
-              <FaEnvelope />
-              <span>
-                <a href="mailto:hello@bloomvestfinance.com">hello@bloomvestfinance.com</a>
-              </span>
-            </ContactItem>
-            <ContactItem>
+    <FooterContainer>
+      <FooterContent>
+        <BrandColumn>
+          <FooterLogoLink to="/">
+            <span>Bloom<strong>Vest</strong></span>
+          </FooterLogoLink>
+          <CompanyDescription>
+            BloomVest Finance provides strategic financial solutions through innovative methodologies and personalized service to help clients achieve sustainable growth and financial success.
+          </CompanyDescription>
+          <SocialLinks>
+            <SocialLink href="#" aria-label="Twitter">
+              <FaTwitter />
+            </SocialLink>
+            <SocialLink href="#" aria-label="LinkedIn">
+              <FaLinkedin />
+            </SocialLink>
+            <SocialLink href="#" aria-label="Facebook">
+              <FaFacebook />
+            </SocialLink>
+            <SocialLink href="#" aria-label="Instagram">
+              <FaInstagram />
+            </SocialLink>
+          </SocialLinks>
+        </BrandColumn>
+        
+        <div>
+          <ColumnTitle>Quick Links</ColumnTitle>
+          <LinksList>
+            <LinkItem>
+              <FooterLink href="/">
+                <FaChevronRight /> Home
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/about">
+                <FaChevronRight /> About Us
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/services">
+                <FaChevronRight /> Services
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/education">
+                <FaChevronRight /> Education
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/contact">
+                <FaChevronRight /> Contact
+              </FooterLink>
+            </LinkItem>
+          </LinksList>
+        </div>
+        
+        <div>
+          <ColumnTitle>Our Services</ColumnTitle>
+          <LinksList>
+            <LinkItem>
+              <FooterLink href="/services">
+                <FaChevronRight /> Financial Planning
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/services">
+                <FaChevronRight /> Investment Advisory
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/services">
+                <FaChevronRight /> Retirement Planning
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/services">
+                <FaChevronRight /> Tax Optimization
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink href="/services">
+                <FaChevronRight /> Estate Planning
+              </FooterLink>
+            </LinkItem>
+          </LinksList>
+        </div>
+        
+        <div>
+          <ColumnTitle>Contact Us</ColumnTitle>
+          <ContactItem>
+            <ContactIcon>
               <FaMapMarkerAlt />
-              <span>123 Victoria Island, Lagos, Nigeria</span>
-            </ContactItem>
-          </ContactInfo>
-          
-          <NewsletterBox>
-            <h4>Newsletter</h4>
-            <p>Subscribe for financial tips and insights</p>
-            <NewsletterForm>
-              <NewsletterInput type="email" placeholder="Your email address" />
-              <NewsletterButton type="submit">Subscribe</NewsletterButton>
-            </NewsletterForm>
-            <Disclaimer>We'll never share your email with third parties.</Disclaimer>
-          </NewsletterBox>
-        </FooterColumn>
-      </FooterGrid>
-
-      <BottomBar>
-        <Copyright>&copy; {new Date().getFullYear()} BloomVest Finance. All rights reserved.</Copyright>
+            </ContactIcon>
+            <ContactText>
+              123 Finance Boulevard, Victoria Island, Lagos, Nigeria
+            </ContactText>
+          </ContactItem>
+          <ContactItem>
+            <ContactIcon>
+              <FaPhone />
+            </ContactIcon>
+            <ContactText>
+              +234 123 456 7890
+            </ContactText>
+          </ContactItem>
+          <ContactItem>
+            <ContactIcon>
+              <FaEnvelope />
+            </ContactIcon>
+            <ContactText>
+              info@bloomvestfinance.com
+            </ContactText>
+          </ContactItem>
+          <ContactItem>
+            <ContactIcon>
+              <FaClock />
+            </ContactIcon>
+            <ContactText>
+              Monday - Friday: 9:00 AM - 5:00 PM
+            </ContactText>
+          </ContactItem>
+        </div>
+      </FooterContent>
+      
+      <CopyrightSection>
+        <Copyright>
+          © {new Date().getFullYear()} BloomVest Finance. All rights reserved.
+        </Copyright>
         <LegalLinks>
-          <LegalLink href="/terms">Terms of Service</LegalLink>
-          <LegalLink href="/privacy">Privacy Policy</LegalLink>
-          <LegalLink href="/disclaimer">Disclaimer</LegalLink>
+          <LegalLink href="#">Privacy Policy</LegalLink>
+          <LegalLink href="#">Terms of Service</LegalLink>
+          <LegalLink href="#">Cookie Policy</LegalLink>
         </LegalLinks>
-      </BottomBar>
-    </FooterWrapper>
+      </CopyrightSection>
+    </FooterContainer>
   );
 };
 

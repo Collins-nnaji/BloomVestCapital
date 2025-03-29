@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1a365d;
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  line-height: 1.7;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden;
+}
+
+/* Fix for iOS Safari viewport inconsistencies */
+@supports (-webkit-touch-callout: none) {
+  .vh-fix {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Prevent horizontal overflow that can cause page shaking */
+.container {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Apply smooth transitions for animations to prevent jarring movements */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Fix for elements that might cause horizontal overflow */
+.row {
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  body, html, #root {
+    overflow-x: hidden;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Prevent fixed elements from bouncing during scrolling on mobile */
+  .fixed-element {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+} 

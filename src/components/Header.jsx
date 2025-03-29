@@ -28,10 +28,16 @@ const LogoLink = styled(Link)`
   display: flex;
   align-items: center;
   text-decoration: none;
+`;
+
+const LogoText = styled.div`
+  font-weight: 800;
+  font-size: 1.75rem;
+  color: #1a365d;
+  letter-spacing: -0.5px;
   
-  img {
-    height: 50px;
-    width: auto;
+  span {
+    color: #22c55e;
   }
 `;
 
@@ -131,7 +137,7 @@ const Header = () => {
     <HeaderContainer>
       <NavContainer>
         <LogoLink to="/">
-          <img src="/bloomvest.png" alt="BloomVest Capital" />
+          <LogoText>Bloom<span>Vest</span></LogoText>
         </LogoLink>
         
         <MobileMenuToggle onClick={toggleMenu}>
