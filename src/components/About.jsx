@@ -272,100 +272,6 @@ const ValueDescription = styled.p`
   line-height: 1.7;
 `;
 
-const TeamSection = styled.div`
-  margin-bottom: 100px;
-`;
-
-const TeamHeading = styled.h3`
-  font-size: 2.5rem;
-  color: #1a365d;
-  margin-bottom: 2.5rem;
-  font-weight: 800;
-  text-align: center;
-  position: relative;
-  line-height: 1.2;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    height: 4px;
-    width: 80px;
-    background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.2));
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-`;
-
-const TeamGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const TeamMember = styled.div`
-  background: white;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-  }
-`;
-
-const MemberImage = styled.div`
-  height: 300px;
-  position: relative;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-  }
-  
-  &:hover img {
-    transform: scale(1.1);
-  }
-`;
-
-const MemberInfo = styled.div`
-  padding: 2rem;
-`;
-
-const MemberName = styled.h4`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a365d;
-  margin-bottom: 0.5rem;
-`;
-
-const MemberRole = styled.p`
-  font-size: 1.1rem;
-  color: #22c55e;
-  font-weight: 600;
-  margin-bottom: 1rem;
-`;
-
-const MemberBio = styled.p`
-  font-size: 1rem;
-  color: #475569;
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
-`;
-
 const ExpertiseGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -426,49 +332,49 @@ const About = () => {
   const values = [
     {
       icon: <FaUserShield />,
-      title: "Integrity",
-      text: "We uphold the highest ethical standards in all our interactions, providing transparent and honest financial guidance."
+      title: "Trust & Fiduciary Duty",
+      text: "We act as fiduciaries, always putting your interests first with unwavering integrity and transparency in every recommendation and decision."
     },
     {
       icon: <FaBalanceScale />,
-      title: "Independence",
-      text: "Our advice is unbiased and free from external influences, focused solely on what's best for your financial wellbeing."
+      title: "Holistic Approach",
+      text: "We consider all aspects of your financial life—investments, tax planning, estate strategies, and risk management—for truly comprehensive wealth management."
     },
     {
       icon: <FaAward />,
-      title: "Excellence",
-      text: "We are committed to delivering exceptional service and continually enhancing our expertise in the financial industry."
+      title: "Evidence-Based Strategy",
+      text: "Our investment philosophy is grounded in academic research and empirical evidence rather than speculation or market timing."
     },
     {
       icon: <FaHandshake />,
-      title: "Client-Focused",
-      text: "Your goals and needs are at the center of everything we do, guiding our personalized hybrid advisory approach."
+      title: "Relationship-Focused",
+      text: "We build deep, long-term relationships that evolve as your life changes, providing continuity and personalized care for generations."
     }
   ];
   
   const teamCategories = [
     {
       icon: <FaRegLightbulb />,
-      title: "Investment Experts",
-      text: "Seasoned financial strategists with deep knowledge of Nigerian and West African markets who craft personalized investment strategies.",
+      title: "Wealth Strategists",
+      text: "Certified financial planners and wealth advisors who develop comprehensive, tailored strategies to preserve and grow your wealth over generations.",
       gradient: "var(--primary-color), #2d4e71"
     },
     {
       icon: <FaRobot />,
-      title: "Technology Innovators",
-      text: "AI specialists and fintech engineers who develop our cutting-edge tools while ensuring data security and analytical precision.",
+      title: "Investment Specialists",
+      text: "Portfolio managers and analysts who construct diversified investment solutions based on your risk tolerance, time horizon, and financial goals.",
       gradient: "var(--accent-color), #4ade80"
     },
     {
       icon: <FaGraduationCap />,
-      title: "Financial Educators",
-      text: "Expert communicators who translate complex financial concepts into accessible knowledge through workshops and resources.",
+      title: "Legacy Planning Experts",
+      text: "Estate planning professionals who help you create meaningful legacies and efficient wealth transfer strategies for future generations.",
       gradient: "#6366F1, #A855F7"
     },
     {
       icon: <FaUsers />,
-      title: "Client Success Team",
-      text: "Dedicated professionals who ensure a seamless experience, guiding you through every step of your financial journey with BloomVest.",
+      title: "Client Experience Team",
+      text: "Dedicated professionals who provide concierge-level service, anticipating your needs and ensuring your experience exceeds expectations.",
       gradient: "#F59E0B, #EF4444"
     }
   ];
@@ -478,33 +384,24 @@ const About = () => {
       <Container>
         <SectionHeader>
           <Preheading>Our Mission</Preheading>
-          <Title>Empowering Financial Success</Title>
+          <Title>Preserving & Growing Your Wealth</Title>
           <Subtitle>
-            At <strong>BloomVest Finance</strong>, we believe that financial excellence comes from the perfect blend of
-            expert human guidance and cutting-edge technology.
+            At <strong>BloomVest Capital</strong>, we combine sophisticated wealth management strategies with personalized service to help you achieve your most important financial goals.
           </Subtitle>
         </SectionHeader>
         
         <StorySection>
           <StoryContent>
-            <StoryTitle>Our Story and Vision</StoryTitle>
+            <StoryTitle>Our Wealth Management Philosophy</StoryTitle>
             <StoryText>
               <p>
-                Founded in 2018, <strong>BloomVest Finance</strong> emerged from a vision to transform how 
-                Nigerians approach financial management and investment. Our team of finance veterans and data 
-                scientists came together with a shared mission: to democratize access to sophisticated financial 
-                insights that were previously available only to elite institutions.
+                Founded with a clear vision, <strong>BloomVest Capital</strong> was established to provide truly personalized wealth management solutions that go beyond typical financial planning. We recognized that high-net-worth individuals and families have unique needs that require specialized expertise and extraordinary attention to detail.
               </p>
               <p>
-                Today, we serve hundreds of clients across Nigeria, from individuals planning for significant life 
-                milestones to businesses navigating complex financial landscapes. Our approach combines <strong>deep 
-                financial expertise</strong> with <strong>proprietary data analytics</strong> to deliver solutions 
-                that are both innovative and grounded in sound financial principles.
+                Our approach integrates <strong>advanced investment strategies</strong> with <strong>comprehensive financial planning</strong> to create a holistic wealth management experience. We consider all aspects of your financial life—from investment management and tax efficiency to estate planning and philanthropic goals—creating strategies that work in harmony to optimize your overall financial position.
               </p>
               <p>
-                What sets us apart is our commitment to leveraging the power of advanced data science while maintaining 
-                the crucial human element that understands the unique cultural and economic context of Nigeria. We believe 
-                that the future of finance is <strong>both digital and human</strong>.
+                What truly sets BloomVest Capital apart is our commitment to providing institutional-quality investment solutions with boutique-level service. We maintain low client-to-advisor ratios to ensure you receive the dedicated attention your wealth deserves, while leveraging sophisticated investment capabilities typically available only to large institutional investors. This combination of <strong>personalized attention</strong> and <strong>investment expertise</strong> creates a wealth management experience that addresses both the technical and emotional aspects of managing significant wealth.
               </p>
             </StoryText>
           </StoryContent>
@@ -512,70 +409,17 @@ const About = () => {
           <StoryImage>
             <img 
               src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1742&q=80" 
-              alt="BloomVest Finance Team" 
+              alt="BloomVest Capital Wealth Management" 
             />
           </StoryImage>
         </StorySection>
         
-        <TeamSection>
-          <TeamHeading>Meet Our Leadership Team</TeamHeading>
-          <TeamGrid>
-            <TeamMember>
-              <MemberImage>
-                <img 
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Oluwaseun Adeyemi" 
-                />
-              </MemberImage>
-              <MemberInfo>
-                <MemberName>Oluwaseun Adeyemi</MemberName>
-                <MemberRole>Chief Executive Officer</MemberRole>
-                <MemberBio>
-                  With over 15 years of experience in investment banking and financial advisory, Oluwaseun previously led the corporate finance division at a major Nigerian bank. He holds an MBA from London Business School and is a Chartered Financial Analyst (CFA).
-                </MemberBio>
-              </MemberInfo>
-            </TeamMember>
-            
-            <TeamMember>
-              <MemberImage>
-                <img 
-                  src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Amina Ibrahim" 
-                />
-              </MemberImage>
-              <MemberInfo>
-                <MemberName>Amina Ibrahim</MemberName>
-                <MemberRole>Chief Data Officer</MemberRole>
-                <MemberBio>
-                  Amina leads our data science team, bringing 12 years of experience in quantitative analysis and AI application in financial markets. She earned her Ph.D. in Applied Mathematics from Imperial College London and previously worked at a global asset management firm.
-                </MemberBio>
-              </MemberInfo>
-            </TeamMember>
-            
-            <TeamMember>
-              <MemberImage>
-                <img 
-                  src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1287&q=80" 
-                  alt="Chukwudi Okonkwo" 
-                />
-              </MemberImage>
-              <MemberInfo>
-                <MemberName>Chukwudi Okonkwo</MemberName>
-                <MemberRole>Chief Investment Strategist</MemberRole>
-                <MemberBio>
-                  Chukwudi oversees our investment strategies with 18 years of experience across African financial markets. He previously managed a $500M portfolio at a pan-African investment firm and holds an MSc in Financial Economics from the University of Cape Town.
-                </MemberBio>
-              </MemberInfo>
-            </TeamMember>
-          </TeamGrid>
-        </TeamSection>
-        
         <ValuesSection>
           <SectionHeader>
             <Preheading>Our Core Values</Preheading>
-            <Title>What Drives Us</Title>
+            <Title>The Principles That Guide Us</Title>
             <Subtitle>
-              At <strong>BloomVest Finance</strong>, our values shape everything we do, from how we develop our services to how we interact with clients.
+              At <strong>BloomVest Capital</strong>, these fundamental values shape our client relationships and influence every recommendation we make.
             </Subtitle>
           </SectionHeader>
           
@@ -595,60 +439,28 @@ const About = () => {
         <div>
           <SectionHeader>
             <Preheading>Our Expertise</Preheading>
-            <Title>Where Data Meets Financial Wisdom</Title>
+            <Title>Comprehensive Wealth Management</Title>
             <Subtitle>
-              Our team combines decades of traditional financial experience with cutting-edge data science capabilities.
+              Our team of specialists works collaboratively to address every dimension of your financial life, providing truly integrated wealth management.
             </Subtitle>
           </SectionHeader>
           
           <ExpertiseGrid>
-            <ExpertiseItem>
-              <ExpertiseIcon bg="#ecfdf5" color="#15803d">
-                <FaRegLightbulb />
-              </ExpertiseIcon>
-              <ExpertiseContent>
-                <ExpertiseTitle>Deep Market Knowledge</ExpertiseTitle>
-                <ExpertiseText>
-                  Our team has a combined 75+ years of experience in African financial markets, with particular expertise in Nigerian equities, fixed income, and alternative investments. This on-the-ground experience provides invaluable context for our data-driven insights.
-                </ExpertiseText>
-              </ExpertiseContent>
-            </ExpertiseItem>
-            
-            <ExpertiseItem>
-              <ExpertiseIcon bg="#eff6ff" color="#3b82f6">
-                <FaRobot />
-              </ExpertiseIcon>
-              <ExpertiseContent>
-                <ExpertiseTitle>Advanced Data Analytics</ExpertiseTitle>
-                <ExpertiseText>
-                  Our data science team includes PhDs in mathematics, computer science, and economics who develop proprietary algorithms that analyze thousands of data points to identify market patterns and investment opportunities before they become obvious to the wider market.
-                </ExpertiseText>
-              </ExpertiseContent>
-            </ExpertiseItem>
-            
-            <ExpertiseItem>
-              <ExpertiseIcon bg="#fef2f2" color="#dc2626">
-                <FaGraduationCap />
-              </ExpertiseIcon>
-              <ExpertiseContent>
-                <ExpertiseTitle>Industry-Leading Certifications</ExpertiseTitle>
-                <ExpertiseText>
-                  Our advisory team holds prestigious certifications including CFA, CFP, FRM, and advanced degrees from top global institutions. We invest heavily in ongoing education to ensure our team remains at the cutting edge of financial knowledge.
-                </ExpertiseText>
-              </ExpertiseContent>
-            </ExpertiseItem>
-            
-            <ExpertiseItem>
-              <ExpertiseIcon bg="#eef2ff" color="#4f46e5">
-                <FaUsers />
-              </ExpertiseIcon>
-              <ExpertiseContent>
-                <ExpertiseTitle>Client-Centric Approach</ExpertiseTitle>
-                <ExpertiseText>
-                  Beyond technical expertise, our team excels in translating complex financial concepts into clear, actionable advice. We pride ourselves on building long-term relationships with clients through transparent communication and exceptional service.
-                </ExpertiseText>
-              </ExpertiseContent>
-            </ExpertiseItem>
+            {teamCategories.map((category, index) => (
+              <ExpertiseItem key={index}>
+                <ExpertiseIcon 
+                  style={{ 
+                    background: `linear-gradient(135deg, ${category.gradient})` 
+                  }}
+                >
+                  {category.icon}
+                </ExpertiseIcon>
+                <ExpertiseContent>
+                  <ExpertiseTitle>{category.title}</ExpertiseTitle>
+                  <ExpertiseText>{category.text}</ExpertiseText>
+                </ExpertiseContent>
+              </ExpertiseItem>
+            ))}
           </ExpertiseGrid>
         </div>
       </Container>

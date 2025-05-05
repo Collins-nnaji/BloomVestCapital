@@ -1,32 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { 
-  FaChartLine, 
-  FaPiggyBank, 
-  FaBriefcase, 
-  FaRegHandshake, 
-  FaCalculator, 
-  FaMobileAlt,
-  FaTimes,
-  FaCheckCircle,
-  FaRegCreditCard,
-  FaUserTie,
-  FaRegFileAlt,
-  FaRegLightbulb,
-  FaArrowRight,
-  FaDatabase,
-  FaChartBar,
-  FaRobot,
-  FaServer
-} from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FaChartLine, FaHandHoldingUsd, FaRegLightbulb, FaFileInvoiceDollar, FaHome, FaShieldAlt, FaUsers, FaRegChartBar, FaArrowRight, FaCheckCircle, FaTimes, FaInfoCircle, FaCalendarAlt, FaBook, FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 const ServicesSection = styled.section`
   padding: 120px 0;
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
   position: relative;
-  background-image: url('/white back.webp');
-  background-size: cover;
-  background-position: center;
   overflow: hidden;
   
   &::before {
@@ -34,349 +14,122 @@ const ServicesSection = styled.section`
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.9) 0%, rgba(241, 245, 249, 0.85) 100%);
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+      radial-gradient(rgba(26, 54, 93, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px, 30px 30px;
+    background-position: 0 0, 20px 20px;
+    opacity: 0.6;
     z-index: 0;
+    
+    @media (max-width: 768px) {
+      background-size: 60px 60px;
+      opacity: 0.4;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    padding: 80px 0;
   }
 `;
 
-const BackgroundPattern = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.8) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.8) 1px, transparent 1px), 
-    radial-gradient(rgba(26, 54, 93, 0.02) 1.5px, transparent 1.5px);
-  background-size: 50px 50px, 50px 50px, 30px 30px;
-  background-position: 0 0, 0 0, 15px 15px;
-  opacity: 0.5;
-  z-index: 0;
-  pointer-events: none;
-`;
-
-const CircleAccent = styled.div`
+const BackgroundDecoration = styled.div`
   position: absolute;
   border-radius: 50%;
+  filter: blur(80px);
   z-index: 0;
-
-  &:nth-child(1) {
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(34, 197, 94, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
-    top: -200px;
-    right: -200px;
+  will-change: transform, opacity;
+  
+  @media (max-width: 768px) {
+    filter: blur(40px);
   }
 
-  &:nth-child(2) {
+  &.top-left {
+    top: -150px;
+    left: -150px;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(26, 54, 93, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
-    bottom: -100px;
-    left: -100px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.05));
+    opacity: 0.5;
+  }
+  
+  &.bottom-right {
+    bottom: -200px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(34, 197, 94, 0.05));
+    opacity: 0.5;
   }
 `;
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 2rem;
   position: relative;
   z-index: 1;
 `;
 
-const ServiceTabs = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 3rem;
-  gap: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 0.75rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 0.5rem;
-    max-width: 400px;
-    gap: 0.5rem;
-  }
+const SectionHeader = styled.div`
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 70px;
 `;
 
-const ServiceTab = styled.div`
-  padding: 0.9rem 1.75rem;
-  background: ${props => props.active ? '#22c55e' : 'rgba(255, 255, 255, 0.9)'};
-  color: ${props => props.active ? '#ffffff' : '#64748b'};
-  border: ${props => props.active ? 'none' : '1px solid #e2e8f0'};
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  flex: 1;
-  font-weight: ${props => props.active ? '600' : '500'};
-  box-shadow: ${props => props.active ? '0 8px 20px rgba(34, 197, 94, 0.25)' : 'none'};
-  
-  &:hover {
-    background: ${props => props.active ? '#22c55e' : '#f8fafc'};
-    color: ${props => props.active ? '#ffffff' : '#1a365d'};
-    transform: translateY(-2px);
-  }
-  
-  svg {
-    font-size: 1.1rem;
-  }
-  
-  @media (max-width: 768px) {
-    padding: 0.8rem 1.5rem;
-  }
-`;
-
-const ServiceGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2.5rem;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const CardContent = styled.div`
-  padding: 3rem;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const ServiceCard = styled(motion.div)`
-  background: #ffffff;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  position: relative;
-  height: 100%;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: ${props => props.color || '#22c55e'};
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s ease;
-  }
-  
-  &:hover::before {
-    transform: scaleX(1);
-  }
-  
-  &:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-const IconWrapper = styled.div`
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${props => props.color || '#22c55e'};
-  color: white;
-  border-radius: 16px;
-  margin-bottom: 1.5rem;
-  font-size: 1.75rem;
-  transition: all 0.4s ease;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08);
-  
-  ${ServiceCard}:hover & {
-    transform: translateY(-5px) rotate(10deg);
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.12);
-  }
-`;
-
-const ServiceTitle = styled.h3`
-  font-size: 1.75rem;
+const SectionTitle = styled.h2`
+  font-size: 3rem;
   font-weight: 800;
   color: #1a365d;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.5px;
+  margin-bottom: 1.5rem;
   position: relative;
-  padding-bottom: 0.75rem;
+  display: inline-block;
+  
+  span {
+    color: #22c55e;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(34, 197, 94, 0.2);
+      z-index: -1;
+      border-radius: 4px;
+    }
+  }
   
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 40px;
-    height: 2px;
-    background: ${props => props.color || '#22c55e'};
-  }
-`;
-
-const ServiceDescription = styled.p`
-  color: #475569;
-  line-height: 1.8;
-  margin-bottom: 1.75rem;
-  font-size: 1.1rem;
-  flex-grow: 1;
-`;
-
-const LearnMore = styled(motion.button)`
-  display: inline-flex;
-  align-items: center;
-  font-weight: 700;
-  color: ${props => props.color || '#22c55e'};
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  background: transparent;
-  border: none;
-  padding: 0.75rem 0;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-top: auto;
-  
-  &:hover {
-    color: ${props => props.hoverColor || '#15803d'};
-    
-    svg {
-      transform: translateX(6px);
-    }
-  }
-  
-  svg {
-    transition: transform 0.3s ease;
-  }
-`;
-
-// Modal components
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-  overflow-y: auto;
-  backdrop-filter: blur(5px);
-`;
-
-const ModalContent = styled.div`
-  background: white;
-  border-radius: 1.5rem;
-  width: 90%;
-  max-width: 900px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-  position: relative;
-  
-  /* Custom scrollbar for better UX */
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.2));
     border-radius: 4px;
   }
   
-  &::-webkit-scrollbar-thumb {
-    background: #94a3b8;
-    border-radius: 4px;
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
   }
   
-  &::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
+  @media (max-width: 480px) {
+    font-size: 2.25rem;
   }
 `;
 
-const CloseButton = styled.button`
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  font-size: 1.25rem;
-  color: #64748b;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  z-index: 10;
-  
-  &:hover {
-    background: #f1f5f9;
-    color: #1a365d;
-    transform: rotate(90deg);
-  }
-`;
-
-const ModalHeader = styled.div`
-  padding: 4rem 3rem 2rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  position: relative;
-  background: ${props => `linear-gradient(135deg, rgba(${props.colorStart || '34, 197, 94'}, 0.1), rgba(${props.colorEnd || '26, 54, 93'}, 0.05))`};
-`;
-
-const ModalTagline = styled.p`
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: ${props => props.color || '#22c55e'};
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-`;
-
-const ModalTitle = styled.h2`
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: #1a365d;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(to right, #1a365d, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.5px;
-`;
-
-const ModalDescription = styled.p`
+const SectionDescription = styled.p`
   font-size: 1.2rem;
-  line-height: 1.8;
   color: #475569;
-  margin-bottom: 1.5rem;
-  max-width: 800px;
+  line-height: 1.8;
+  margin-top: 2rem;
   
   strong {
     color: #1a365d;
@@ -384,828 +137,764 @@ const ModalDescription = styled.p`
   }
 `;
 
-const ModalBody = styled.div`
-  padding: 0;
+const ServicesGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
 `;
 
-const ModalMainContent = styled.div`
-  width: 100%;
-`;
-
-const ModalSection = styled.div`
-  padding: 3rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+// Enhanced service card
+const ServiceCard = styled(motion.div)`
   background: white;
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transform: translateZ(0);
+`;
+
+const ServiceHeader = styled.div`
+  padding: 2.5rem;
+  position: relative;
+  background: ${props => props.expanded ? props.bg : 'white'};
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
   
-  &:nth-child(odd) {
-    background: #f8fafc;
+  &:hover {
+    background: ${props => props.expanded ? props.bg : '#f8fafc'};
   }
+`;
+
+const ServiceIconContainer = styled.div`
+  margin-right: 1.5rem;
+`;
+
+const ServiceIcon = styled.div`
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  background: ${props => props.expanded ? 'rgba(255, 255, 255, 0.15)' : props.bg || 'rgba(34, 197, 94, 0.1)'};
+  color: ${props => props.expanded ? 'white' : props.color || '#22c55e'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  transition: all 0.4s ease;
+  
+  @media (max-width: 768px) {
+    width: 60px;
+    height: 60px;
+    font-size: 1.75rem;
+  }
+`;
+
+const ServiceHeaderContent = styled.div`
+  flex: 1;
+`;
+
+const ServiceTitle = styled.h3`
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: ${props => props.expanded ? 'white' : '#1a365d'};
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+`;
+
+const ServiceDescription = styled.p`
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: ${props => props.expanded ? 'rgba(255, 255, 255, 0.9)' : '#475569'};
+  margin: 0;
+  transition: color 0.3s ease;
+`;
+
+const ToggleButton = styled.button`
+  background: ${props => props.expanded ? 'rgba(255, 255, 255, 0.2)' : 'rgba(226, 232, 240, 0.8)'};
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${props => props.expanded ? 'white' : '#1a365d'};
+  font-size: 1.25rem;
+  cursor: pointer;
+  margin-left: 1.5rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: ${props => props.expanded ? 'rgba(255, 255, 255, 0.3)' : 'rgba(226, 232, 240, 1)'};
+    transform: scale(1.05);
+  }
+`;
+
+// Service content sections
+const ServiceContent = styled(motion.div)`
+  overflow: hidden;
+`;
+
+const ServiceSection = styled.div`
+  padding: 3rem;
+  border-bottom: 1px solid #e2e8f0;
   
   &:last-child {
     border-bottom: none;
   }
+  
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+  }
 `;
 
-const ModalSectionTitle = styled.h3`
-  font-size: 1.75rem;
-  font-weight: 800;
+const ServiceSectionTitle = styled.h4`
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #1a365d;
-  margin-bottom: 2rem;
+  margin: 0 0 1.5rem;
   display: flex;
   align-items: center;
-  position: relative;
-  padding-bottom: 1rem;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: ${props => props.color || '#22c55e'};
-    border-radius: 3px;
-  }
   
   svg {
-    color: ${props => props.color || '#22c55e'};
-    margin-right: 1rem;
-    font-size: 1.5rem;
-  }
-`;
-
-const BenefitsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-`;
-
-const BenefitItem = styled.div`
-  display: flex;
-  margin-bottom: 1.5rem;
-  align-items: flex-start;
-  transition: all 0.3s ease;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid ${props => props.color || '#22c55e'};
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  svg {
-    color: ${props => props.color || '#22c55e'};
-    margin-right: 1.5rem;
-    font-size: 1.5rem;
-    flex-shrink: 0;
-    margin-top: 0.25rem;
+    margin-right: 0.75rem;
+    color: ${props => props.iconColor || '#22c55e'};
   }
   
   @media (max-width: 768px) {
-    padding: 1.25rem;
+    font-size: 1.3rem;
   }
 `;
 
-const BenefitContent = styled.div`
-  flex: 1;
+const FeaturesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 `;
 
-const BenefitTitle = styled.h4`
+const FeatureItem = styled.div`
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border-color: ${props => props.borderColor || 'rgba(34, 197, 94, 0.5)'};
+  }
+`;
+
+const FeatureTitle = styled.h5`
   font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  
+  svg {
+    margin-right: 0.75rem;
+    color: ${props => props.iconColor || '#22c55e'};
+    flex-shrink: 0;
+  }
+`;
+
+const FeatureDescription = styled.p`
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #475569;
+  margin: 0;
+`;
+
+// Events section
+const EventsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const EventCard = styled.div`
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border-color: ${props => props.borderColor || 'rgba(34, 197, 94, 0.5)'};
+  }
+`;
+
+const EventTitle = styled.h5`
+  font-size: 1.2rem;
   font-weight: 700;
   color: #1a365d;
   margin-bottom: 0.75rem;
 `;
 
-const BenefitDescription = styled.p`
-  color: #475569;
-  font-size: 1.1rem;
-  line-height: 1.7;
+const EventDate = styled.div`
+  display: flex;
+  align-items: center;
+  color: ${props => props.color || '#22c55e'};
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
 `;
 
-const services = [
-  {
-    icon: <FaDatabase />,
-    title: "BloomVest Analytics™",
-    description: "Our proprietary data analytics system provides real-time market insights and personalized recommendations through advanced AI algorithms and predictive modeling.",
-    color: "#4338ca", // Indigo color for data/AI service
-    details: {
-      fullDescription: "BloomVest Analytics™ is our exclusive proprietary system that combines advanced data mining, machine learning algorithms, and financial expertise to transform complex market data into actionable insights. Our platform continuously monitors global markets, economic indicators, and industry trends to identify opportunities and threats before they become mainstream.",
-      benefits: [
-        {
-          title: "Real-time Data Analysis",
-          description: "Access insights from over 150 global financial sources, updated in real-time to provide the most current market information available."
-        },
-        {
-          title: "AI-driven Predictive Modeling",
-          description: "Our proprietary algorithms achieve 87% accuracy in forecasting major market movements, helping you anticipate changes before they occur."
-        },
-        {
-          title: "Personalized Investment Insights",
-          description: "Receive recommendations tailored to your specific investment profile, risk tolerance, and financial goals."
-        },
-        {
-          title: "Early Trend Identification",
-          description: "Our pattern recognition algorithms detect emerging market trends weeks before they become apparent to most investors."
-        },
-        {
-          title: "Comprehensive Risk Assessment",
-          description: "Understand potential portfolio risks through sophisticated modeling based on historical volatility patterns and current market conditions."
-        }
-      ],
-      idealFor: "Investment professionals, portfolio managers, business strategists, and individual investors seeking data-driven insights to gain a competitive edge in today's rapidly changing markets.",
-      process: [
-        "Initial data integration and profile creation",
-        "Comprehensive market analysis and opportunity mapping",
-        "Strategic recommendation development with clear action steps",
-        "Ongoing monitoring and real-time alerts",
-        "Regular performance reviews and strategy refinement"
-      ],
-      technology: {
-        name: "FIBER Framework",
-        description: "Financial Intelligence for Business Enrichment & Results",
-        features: [
-          "Machine learning algorithms trained on 15+ years of Nigerian and global market data",
-          "Neural network pattern recognition systems that identify emerging trends",
-          "Real-time data processing with sub-second latency for timely insights",
-          "Natural language processing to analyze news and sentiment impact",
-          "Comprehensive backtesting against multiple market scenarios"
-        ],
-        performance: "Our system processes over 1.2 million data points daily and has demonstrated an 87% accuracy rate in predicting major market movements when tested against historical data. Clients using BloomVest Analytics™ have reported an average 28% improvement in decision-making efficiency."
-      },
-      pricing: [
-        {
-          tier: "Premium Analytics",
-          price: "₦950,000 Annually",
-          description: "Complete access to our proprietary BloomVest Analytics™ platform with personalized insights and real-time data.",
-          features: [
-            "Full access to the BloomVest Analytics™ dashboard",
-            "Customized alert system for market opportunities",
-            "Monthly strategy sessions with our data scientists",
-            "Quarterly predictive modeling reports",
-            "API access for integration with your existing systems",
-            "Priority support from our analytics team"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaChartLine />,
-    title: "Investment Advisory",
-    description: "Strategic investment guidance tailored to your financial goals and risk tolerance. Our advisors help you navigate diverse investment opportunities.",
-    color: "#22c55e",
-    details: {
-      fullDescription: "Comprehensive investment advisory services that analyze market trends, assess risk tolerance, and develop tailored strategies aligned with your financial goals.",
-      benefits: [
-        "Personalized investment strategies based on your financial goals",
-        "Regular portfolio reviews and rebalancing",
-        "Access to diverse investment opportunities across asset classes",
-        "Risk management guidance and wealth preservation strategies"
-      ],
-      idealFor: "Individuals and businesses seeking to optimize their investment portfolios and achieve long-term growth while managing risk effectively.",
-      pricing: [
-        {
-          tier: "Essential",
-          price: "₦250,000 Annually",
-          description: "Core investment advisory services for individuals starting their investment journey.",
-          features: [
-            "Personalized investment strategy",
-            "Quarterly portfolio review",
-            "Email and phone support",
-            "Basic investment education resources"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaPiggyBank />,
-    title: "Financial Planning",
-    description: "Comprehensive planning for individuals and families to achieve life goals through proper financial management and strategic resource allocation.",
-    color: "#0891b2",
-    details: {
-      fullDescription: "Holistic financial planning services that analyze your entire financial situation and develop comprehensive strategies to achieve your short and long-term goals.",
-      benefits: [
-        "Comprehensive assessment of your current financial position",
-        "Customized roadmap for achieving financial independence",
-        "Goal-based planning for major life milestones",
-        "Tax-efficient wealth building strategies"
-      ],
-      idealFor: "Individuals and families looking to create a structured approach to achieving financial goals like retirement, education funding, or major purchases.",
-      pricing: [
-        {
-          tier: "Comprehensive",
-          price: "₦350,000 Annually",
-          description: "Complete financial planning services covering all aspects of your financial life.",
-          features: [
-            "Detailed financial analysis",
-            "Comprehensive financial plan document",
-            "Semi-annual review meetings",
-            "Unlimited email and phone support",
-            "Access to financial planning tools"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaBriefcase />,
-    title: "Retirement Solutions",
-    description: "Forward-thinking retirement planning strategies to help you build, protect, and distribute retirement wealth for a secure financial future.",
-    color: "#f59e0b",
-    details: {
-      fullDescription: "Specialized retirement planning services designed to help you accumulate sufficient assets for retirement and develop strategies for sustainable income during retirement years.",
-      benefits: [
-        "Retirement needs analysis and goal setting",
-        "Pension optimization strategies",
-        "Investment portfolio design for retirement",
-        "Distribution and withdrawal planning"
-      ],
-      idealFor: "Individuals planning for retirement or already in retirement who need strategies to ensure financial security and lifestyle maintenance.",
-      pricing: [
-        {
-          tier: "Retirement Readiness",
-          price: "₦300,000 Annually",
-          description: "Comprehensive retirement planning services to prepare for and navigate retirement.",
-          features: [
-            "Retirement needs analysis",
-            "Social security optimization",
-            "Pension distribution strategies",
-            "Healthcare cost planning",
-            "Estate planning integration"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaRegHandshake />,
-    title: "Corporate Advisory",
-    description: "Strategic financial consulting for businesses of all sizes, focusing on capital management, business valuations, and growth strategies.",
-    color: "#7c3aed",
-    details: {
-      fullDescription: "Expert financial advisory services for businesses facing complex financial decisions, capital requirements, or strategic transformations.",
-      benefits: [
-        "Strategic financial planning for business growth",
-        "Capital structure optimization",
-        "Cash flow management and forecasting",
-        "Financial due diligence and risk assessment"
-      ],
-      idealFor: "Businesses seeking expert guidance on financial strategy, fundraising, acquisitions, or preparing for significant growth or transition phases.",
-      pricing: [
-        {
-          tier: "Business Growth",
-          price: "Customized Pricing",
-          description: "Tailored financial advisory services for businesses with specific needs and objectives.",
-          features: [
-            "Financial strategy development",
-            "Capital raising support",
-            "Financial modeling and projections",
-            "Executive team advisory sessions",
-            "Quarterly business performance review"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaCalculator />,
-    title: "Tax Optimization",
-    description: "Strategic tax planning services to help minimize tax liability through legal and ethical approaches tailored to your specific situation.",
-    color: "#db2777",
-    details: {
-      fullDescription: "Proactive tax planning strategies designed to legally minimize your tax liability while ensuring compliance with all relevant tax regulations.",
-      benefits: [
-        "Comprehensive tax strategy development",
-        "Year-round tax planning, not just tax season assistance",
-        "Identification of applicable deductions and credits",
-        "Coordination with other financial strategies"
-      ],
-      idealFor: "Individuals with complex financial situations and businesses looking to optimize their tax position while maintaining full compliance with tax laws.",
-      pricing: [
-        {
-          tier: "Tax Strategy",
-          price: "₦200,000 Annually",
-          description: "Comprehensive tax planning services to legally minimize tax liability.",
-          features: [
-            "Annual tax strategy session",
-            "Mid-year tax review",
-            "Tax projection analysis",
-            "Tax-efficient investment guidance",
-            "Year-end tax planning"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaMobileAlt />,
-    title: "Digital Finance Consulting",
-    description: "Innovative digital finance solutions including fintech integration, blockchain strategy, and digital transformation for traditional financial systems.",
-    color: "#4f46e5",
-    details: {
-      fullDescription: "Cutting-edge financial technology consulting to help businesses leverage digital innovations for improved financial operations, customer experience, and competitive advantage.",
-      benefits: [
-        "Digital financial transformation roadmap",
-        "Fintech solution selection and integration guidance",
-        "Blockchain strategy development",
-        "Digital payment systems optimization"
-      ],
-      idealFor: "Forward-thinking businesses looking to leverage financial technology to improve operations, enhance customer experience, or develop new business models.",
-      pricing: [
-        {
-          tier: "Digital Transformation",
-          price: "Customized Pricing",
-          description: "Tailored consulting services for businesses embracing digital finance solutions.",
-          features: [
-            "Digital finance assessment",
-            "Technology solution recommendation",
-            "Implementation planning",
-            "Staff training guidance",
-            "Ongoing optimization support"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    icon: <FaChartBar />,
-    title: "Data Visualization Suite",
-    description: "Transform complex financial data into intuitive visual displays that help you understand market trends and make informed decisions with confidence.",
-    color: "#8b5cf6", // Purple
-    details: {
-      fullDescription: "Our Data Visualization Suite translates intricate financial information into clear, interactive visualizations that reveal patterns and insights otherwise hidden in raw data. This tool makes complex market analysis accessible to everyone, regardless of technical expertise.",
-      benefits: [
-        "Interactive dashboard with customizable views and metrics",
-        "Real-time visual tracking of portfolio performance",
-        "Comparative analysis tools for benchmarking",
-        "Scenario testing with visual impact assessment",
-        "Export capabilities for reports and presentations"
-      ],
-      idealFor: "Executives, financial advisors, and investors who need to quickly understand complex financial information and communicate insights effectively to stakeholders.",
-      pricing: [
-        {
-          tier: "Visualization Premium",
-          price: "₦450,000 Annually",
-          description: "Full access to our comprehensive data visualization tools with customization options.",
-          features: [
-            "Full access to all visualization templates and tools",
-            "Custom dashboard creation",
-            "Integration with BloomVest Analytics™",
-            "Unlimited data exports and reporting",
-            "Presentation-ready chart generation",
-            "Team sharing capabilities"
-          ]
-        }
-      ]
-    }
+const EventDescription = styled.p`
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #475569;
+`;
+
+// CTA section
+const ServiceCTA = styled.div`
+  background: #f0fdf4;
+  padding: 2.5rem;
+  border-radius: 12px;
+  margin-top: 2rem;
+  text-align: center;
+`;
+
+const CTATitle = styled.h4`
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a365d;
+  margin-bottom: 1rem;
+`;
+
+const CTADescription = styled.p`
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #475569;
+  margin-bottom: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+`;
+
+const CTAButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: ${props => props.bg || 'linear-gradient(to right, #22c55e, #15803d)'};
+  color: white;
+  border-radius: 50px;
+  padding: 1rem 2.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  gap: 0.75rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
   }
-];
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover svg {
+    transform: translateX(3px);
+  }
+`;
 
 const Services = () => {
-  const [activeTab, setActiveTab] = useState('all');
-  const [activeService, setActiveService] = useState(null);
+  // Keep track of which service is expanded
+  const [expandedService, setExpandedService] = useState(null);
   
-  // Map services to categories
-  const serviceCategories = {
-    all: services.map(service => service.title),
-    personal: ['Financial Planning', 'Investment Advisory', 'Retirement Solutions', 'Tax Optimization'],
-    business: ['Corporate Advisory', 'BloomVest Analytics™', 'Tax Optimization'],
-    digital: ['Digital Finance Consulting', 'Data Visualization Suite', 'BloomVest Analytics™']
+  // Function to toggle expansion
+  const toggleService = (index) => {
+    if (expandedService === index) {
+      // Close if already open
+      setExpandedService(null);
+    } else {
+      // Open the clicked service
+      setExpandedService(index);
+    }
   };
-  
-  // Filter services based on active tab
-  const filteredServices = services.filter(service => 
-    serviceCategories[activeTab].includes(service.title)
-  );
-  
-  const openModal = (service) => {
-    setActiveService(service);
-    document.body.style.overflow = 'hidden'; // Prevent scrolling while modal is open
-  };
-  
-  const closeModal = () => {
-    setActiveService(null);
-    document.body.style.overflow = 'auto'; // Re-enable scrolling
-  };
+
+  const servicesList = [
+    {
+      icon: <FaChartLine />,
+      title: "Investment Management",
+      description: "Personalized investment strategies designed to help you reach your financial goals with an optimal balance of growth and risk management.",
+      features: [
+        "Custom portfolio construction",
+        "Risk-adjusted return optimization",
+        "Regular portfolio rebalancing",
+        "Ongoing performance monitoring"
+      ],
+      iconBg: "rgba(34, 197, 94, 0.1)",
+      iconColor: "#22c55e",
+      iconHoverBg: "#22c55e",
+      headerBg: "linear-gradient(135deg, #22c55e, #15803d)",
+      detailContent: {
+        description: "Our investment management services create tailored portfolio strategies aligned with your risk tolerance, time horizon, and financial objectives. We leverage both traditional and innovative investment approaches to optimize performance while managing risk.",
+        features: [
+          {
+            title: "Custom Portfolio Construction",
+            description: "We build personalized portfolios using a diverse range of asset classes selected specifically to align with your financial goals, risk tolerance, and time horizon.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Risk-Adjusted Return Optimization",
+            description: "Our approach focuses on maximizing returns relative to the level of risk taken, ensuring your investments work efficiently toward your objectives.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Regular Portfolio Rebalancing",
+            description: "We systematically adjust your portfolio to maintain your target asset allocation and risk profile as market conditions change.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Ongoing Performance Monitoring",
+            description: "Continuous assessment of your investments against relevant benchmarks and your personal goals, with regular reporting and reviews.",
+            icon: <FaCheckCircle />
+          }
+        ],
+        events: [
+          {
+            title: "Quarterly Market Outlook",
+            date: "September 15, 2023",
+            description: "Join our investment team for insights on market trends and positioning strategies."
+          },
+          {
+            title: "Investment Strategy Workshop",
+            date: "October 20, 2023",
+            description: "Interactive session on portfolio construction and management approaches."
+          }
+        ]
+      }
+    },
+    {
+      icon: <FaRegLightbulb />,
+      title: "Financial Planning",
+      description: "Comprehensive planning that addresses your entire financial picture and builds a roadmap to achieve your short and long-term objectives.",
+      features: [
+        "Retirement planning",
+        "Education funding strategies",
+        "Cash flow & budgeting analysis",
+        "Insurance & risk management"
+      ],
+      iconBg: "rgba(59, 130, 246, 0.1)",
+      iconColor: "#3b82f6",
+      iconHoverBg: "#3b82f6",
+      headerBg: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+      detailContent: {
+        description: "Our comprehensive financial planning process examines your entire financial picture to create an integrated strategy aligned with your life goals. We address both immediate needs and long-term objectives while adapting to life's changes and transitions.",
+        features: [
+          {
+            title: "Retirement Planning",
+            description: "Develop a clear roadmap for retirement with strategies for accumulation, distribution, and preservation of wealth to support your desired lifestyle.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Education Funding Strategies",
+            description: "Create effective plans to fund education expenses for children or grandchildren using tax-advantaged savings vehicles and other approaches.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Cash Flow & Budgeting Analysis",
+            description: "Optimize your income and expenses with structured planning to support your lifestyle goals while building wealth for the future.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Insurance & Risk Management",
+            description: "Comprehensive assessment of potential financial risks and implementation of appropriate insurance and mitigation strategies.",
+            icon: <FaCheckCircle />
+          }
+        ],
+        events: [
+          {
+            title: "Retirement Planning Seminar",
+            date: "September 25, 2023",
+            description: "In-depth workshop on building and executing an effective retirement strategy."
+          },
+          {
+            title: "Financial Planning for Business Owners",
+            date: "October 12, 2023",
+            description: "Specialized planning considerations for entrepreneurs and business owners."
+          }
+        ]
+      }
+    },
+    {
+      icon: <FaFileInvoiceDollar />,
+      title: "Tax Optimization",
+      description: "Strategic approaches to minimize tax impact on your investments and overall financial strategy while remaining fully compliant.",
+      features: [
+        "Tax-efficient investment strategies",
+        "Capital gains management",
+        "Strategic income timing",
+        "Tax-loss harvesting"
+      ],
+      iconBg: "rgba(245, 158, 11, 0.1)",
+      iconColor: "#f59e0b",
+      iconHoverBg: "#f59e0b",
+      headerBg: "linear-gradient(135deg, #f59e0b, #d97706)",
+      detailContent: {
+        description: "Our tax optimization services help you keep more of what you earn through legal, ethical strategies designed to reduce tax liabilities. We integrate tax planning with your overall financial strategy to enhance after-tax returns and wealth accumulation.",
+        features: [
+          {
+            title: "Tax-Efficient Investment Strategies",
+            description: "Strategic placement of investments across taxable and tax-advantaged accounts to minimize tax drag and maximize after-tax returns.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Capital Gains Management",
+            description: "Proactive planning to control the timing and character of capital gains to minimize their tax impact on your portfolio.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Strategic Income Timing",
+            description: "Coordinating income sources and timing of distributions to optimize your tax situation across different life phases.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Tax-Loss Harvesting",
+            description: "Systematic capture of investment losses to offset gains and potentially reduce taxable income, enhancing overall returns.",
+            icon: <FaCheckCircle />
+          }
+        ],
+        events: [
+          {
+            title: "Year-End Tax Planning Workshop",
+            date: "November 10, 2023",
+            description: "Strategies to implement before year-end to optimize your tax situation."
+          },
+          {
+            title: "Tax-Efficient Retirement Income",
+            date: "October 15, 2023",
+            description: "How to structure retirement withdrawals to minimize tax impact."
+          }
+        ]
+      }
+    },
+    {
+      icon: <FaHome />,
+      title: "Estate Planning",
+      description: "Preserve your legacy and ensure your assets are transferred according to your wishes while minimizing complications for your heirs.",
+      features: [
+        "Wealth transfer strategies",
+        "Trust establishment & management",
+        "Family legacy planning",
+        "Charitable giving strategies"
+      ],
+      iconBg: "rgba(139, 92, 246, 0.1)",
+      iconColor: "#8b5cf6",
+      iconHoverBg: "#8b5cf6",
+      headerBg: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+      detailContent: {
+        description: "Our estate planning services help preserve and efficiently transfer your wealth according to your wishes. We create comprehensive strategies to protect your assets, minimize taxes and fees, and ensure your legacy goals are achieved.",
+        features: [
+          {
+            title: "Wealth Transfer Strategies",
+            description: "Sophisticated approaches to efficiently transfer assets to heirs while minimizing taxes and potential complications.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Trust Establishment & Management",
+            description: "Creation and administration of appropriate trust structures to protect assets and achieve specific estate planning objectives.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Family Legacy Planning",
+            description: "Development of frameworks to preserve family values and prepare heirs for wealth responsibility across generations.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Charitable Giving Strategies",
+            description: "Structured approaches to philanthropy that maximize impact while providing potential tax benefits.",
+            icon: <FaCheckCircle />
+          }
+        ],
+        events: [
+          {
+            title: "Estate Planning Fundamentals",
+            date: "September 18, 2023",
+            description: "Essential workshop on protecting your assets and providing for loved ones."
+          },
+          {
+            title: "Advanced Wealth Transfer Strategies",
+            date: "November 5, 2023",
+            description: "Sophisticated approaches to minimizing taxes and maximizing legacy impact."
+          }
+        ]
+      }
+    },
+    {
+      icon: <FaHandHoldingUsd />,
+      title: "Retirement Planning",
+      description: "Develop a clear path to retirement with strategies that balance your current lifestyle needs with future financial security.",
+      features: [
+        "Retirement income modeling",
+        "Social security optimization",
+        "Pension & benefits analysis",
+        "Sustainable withdrawal strategies"
+      ],
+      iconBg: "rgba(236, 72, 153, 0.1)",
+      iconColor: "#ec4899",
+      iconHoverBg: "#ec4899",
+      headerBg: "linear-gradient(135deg, #ec4899, #db2777)",
+      detailContent: {
+        description: "Our retirement planning services create a roadmap for financial independence, helping you transition confidently from the accumulation phase to the distribution phase of life. We develop comprehensive strategies that address both your lifestyle goals and longevity risks.",
+        features: [
+          {
+            title: "Retirement Income Modeling",
+            description: "Detailed projections of retirement income needs and sources to ensure financial security throughout retirement.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Social Security Optimization",
+            description: "Strategic planning to maximize Social Security benefits based on your specific situation and other income sources.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Pension & Benefits Analysis",
+            description: "Evaluation of pension options and employer benefits to make optimal elections that align with your retirement goals.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Sustainable Withdrawal Strategies",
+            description: "Development of tax-efficient withdrawal approaches designed to provide reliable income while preserving assets throughout retirement.",
+            icon: <FaCheckCircle />
+          }
+        ],
+        events: [
+          {
+            title: "Pre-Retirement Planning Workshop",
+            date: "October 5, 2023",
+            description: "Critical steps to take in the five years before retirement."
+          },
+          {
+            title: "Retirement Income Strategies",
+            date: "November 15, 2023",
+            description: "How to create reliable, tax-efficient income streams in retirement."
+          }
+        ]
+      }
+    },
+    {
+      icon: <FaShieldAlt />,
+      title: "Risk Management",
+      description: "Protect your wealth and financial future with appropriate insurance strategies and risk mitigation techniques.",
+      features: [
+        "Insurance needs analysis",
+        "Liability protection review",
+        "Long-term care planning",
+        "Business risk assessment"
+      ],
+      iconBg: "rgba(20, 184, 166, 0.1)",
+      iconColor: "#14b8a6",
+      iconHoverBg: "#14b8a6",
+      headerBg: "linear-gradient(135deg, #14b8a6, #0f766e)",
+      detailContent: {
+        description: "Our risk management services help identify and address potential threats to your financial security. We develop comprehensive protection strategies that safeguard your assets and income while providing peace of mind for you and your family.",
+        features: [
+          {
+            title: "Insurance Needs Analysis",
+            description: "Thorough evaluation of your insurance requirements across life, disability, health, property and casualty to ensure appropriate coverage.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Liability Protection Review",
+            description: "Assessment of potential liability exposures and implementation of strategies to protect your assets from claims and litigation.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Long-term Care Planning",
+            description: "Development of strategies to address potential long-term care needs while protecting family resources.",
+            icon: <FaCheckCircle />
+          },
+          {
+            title: "Business Risk Assessment",
+            description: "Identification and mitigation of risks specific to business owners, including succession planning and key person protection.",
+            icon: <FaCheckCircle />
+          }
+        ],
+        events: [
+          {
+            title: "Wealth Protection Strategies",
+            date: "September 28, 2023",
+            description: "Comprehensive approach to protecting your assets from various risks."
+          },
+          {
+            title: "Long-term Care Planning Workshop",
+            date: "October 25, 2023",
+            description: "Options and strategies for addressing potential long-term care needs."
+          }
+        ]
+      }
+    }
+  ];
 
   return (
     <ServicesSection>
-      <BackgroundPattern />
-      <CircleAccent />
-      <CircleAccent />
+      <BackgroundDecoration className="top-left" />
+      <BackgroundDecoration className="bottom-right" />
+      
       <Container>
-        <ServiceTabs>
-          <ServiceTab 
-            active={activeTab === 'all'} 
-            onClick={() => setActiveTab('all')}
+        <SectionHeader>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, type: "spring" }}
+            viewport={{ once: true }}
           >
-            <FaRegLightbulb />
-            <span>All Services</span>
-          </ServiceTab>
-          
-          <ServiceTab 
-            active={activeTab === 'personal'} 
-            onClick={() => setActiveTab('personal')}
-          >
-            <FaRegHandshake />
-            <span>Personal Finance</span>
-          </ServiceTab>
-          
-          <ServiceTab 
-            active={activeTab === 'business'} 
-            onClick={() => setActiveTab('business')}
-          >
-            <FaBriefcase />
-            <span>Business Solutions</span>
-          </ServiceTab>
-          
-          <ServiceTab 
-            active={activeTab === 'digital'} 
-            onClick={() => setActiveTab('digital')}
-          >
-            <FaMobileAlt />
-            <span>Digital Services</span>
-          </ServiceTab>
-        </ServiceTabs>
+            <SectionTitle>Our <span>Wealth Management</span> Services</SectionTitle>
+            <SectionDescription>
+              We offer a comprehensive suite of wealth management services tailored to your unique financial situation, goals, and values. Our approach integrates <strong>sophisticated strategies</strong> with <strong>personalized guidance</strong> to optimize your financial life.
+            </SectionDescription>
+          </motion.div>
+        </SectionHeader>
         
-        <ServiceGrid>
-          {filteredServices.map((service, index) => (
+        <ServicesGrid>
+          {servicesList.map((service, index) => (
             <ServiceCard 
               key={index}
-              color={service.color}
-              whileHover={{ y: -10 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.6, 
+                delay: index * 0.1, 
+                type: "spring",
+                stiffness: 50
+              }}
+              viewport={{ once: true }}
             >
-              <CardContent>
-                <IconWrapper color={service.color}>
-                  {service.icon}
-                </IconWrapper>
-                <ServiceTitle color={service.color}>{service.title}</ServiceTitle>
-                <ServiceDescription>{service.description}</ServiceDescription>
-                <LearnMore 
-                  color={service.color}
-                  onClick={() => openModal(service)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Learn More <FaArrowRight />
-                </LearnMore>
-              </CardContent>
+              <ServiceHeader 
+                onClick={() => toggleService(index)}
+                expanded={expandedService === index}
+                bg={service.headerBg}
+              >
+                <ServiceIconContainer>
+                  <ServiceIcon 
+                    bg={service.iconBg} 
+                    color={service.iconColor}
+                    expanded={expandedService === index}
+                  >
+                    {service.icon}
+                  </ServiceIcon>
+                </ServiceIconContainer>
+                
+                <ServiceHeaderContent>
+                  <ServiceTitle expanded={expandedService === index}>
+                    {service.title}
+                  </ServiceTitle>
+                  <ServiceDescription expanded={expandedService === index}>
+                    {service.description}
+                  </ServiceDescription>
+                </ServiceHeaderContent>
+                
+                <ToggleButton expanded={expandedService === index}>
+                  {expandedService === index ? <FaAngleUp /> : <FaAngleDown />}
+                </ToggleButton>
+              </ServiceHeader>
+              
+              {/* Expandable content */}
+              <AnimatePresence>
+                {expandedService === index && (
+                  <ServiceContent
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    {/* Features Section */}
+                    <ServiceSection>
+                      <ServiceSectionTitle iconColor={service.iconColor}>
+                        <FaInfoCircle /> Our Approach
+                      </ServiceSectionTitle>
+                      <FeaturesGrid>
+                        {service.detailContent.features.map((feature, featureIndex) => (
+                          <FeatureItem 
+                            key={featureIndex} 
+                            borderColor={service.iconColor}
+                          >
+                            <FeatureTitle iconColor={service.iconColor}>
+                              {feature.icon} {feature.title}
+                            </FeatureTitle>
+                            <FeatureDescription>
+                              {feature.description}
+                            </FeatureDescription>
+                          </FeatureItem>
+                        ))}
+                      </FeaturesGrid>
+                    </ServiceSection>
+                    
+                    {/* Events Section */}
+                    <ServiceSection>
+                      <ServiceSectionTitle iconColor={service.iconColor}>
+                        <FaCalendarAlt /> Upcoming Events & Workshops
+                      </ServiceSectionTitle>
+                      <EventsGrid>
+                        {service.detailContent.events.map((event, eventIndex) => (
+                          <EventCard 
+                            key={eventIndex}
+                            borderColor={service.iconColor}
+                          >
+                            <EventTitle>{event.title}</EventTitle>
+                            <EventDate color={service.iconColor}>
+                              <FaCalendarAlt /> {event.date}
+                            </EventDate>
+                            <EventDescription>{event.description}</EventDescription>
+                          </EventCard>
+                        ))}
+                      </EventsGrid>
+                    </ServiceSection>
+                    
+                    {/* CTA Section */}
+                    <ServiceSection>
+                      <ServiceCTA>
+                        <CTATitle>Ready to take the next step?</CTATitle>
+                        <CTADescription>
+                          Our experts are ready to provide personalized guidance for your specific financial situation. 
+                          Schedule a no-obligation consultation to discuss how our {service.title.toLowerCase()} 
+                          services can help you achieve your financial goals.
+                        </CTADescription>
+                        <CTAButton 
+                          href="/consultation" 
+                          bg={service.headerBg}
+                        >
+                          Schedule a Consultation <FaArrowRight />
+                        </CTAButton>
+                      </ServiceCTA>
+                    </ServiceSection>
+                  </ServiceContent>
+                )}
+              </AnimatePresence>
             </ServiceCard>
           ))}
-        </ServiceGrid>
+        </ServicesGrid>
       </Container>
-      
-      <AnimatePresence>
-        {activeService && (
-          <Overlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeModal}
-          >
-            <ModalContent
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <ModalHeader colorStart={activeService.color === '#4338ca' ? '67, 56, 202' : '34, 197, 94'} colorEnd="26, 54, 93">
-                <ModalTagline color={activeService.color}>
-                  {activeService.title}
-                </ModalTagline>
-                <ModalTitle>
-                  {activeService.title === "BloomVest Analytics™" ? "Data-Driven Market Intelligence" : "Financial Excellence"}
-                </ModalTitle>
-                <ModalDescription>
-                  {activeService.details.fullDescription}
-                </ModalDescription>
-                <CloseButton onClick={closeModal}>
-                  <FaTimes />
-                </CloseButton>
-              </ModalHeader>
-              
-              <ModalBody>
-                <ModalMainContent>
-                  <ModalSection>
-                    <ModalSectionTitle color={activeService.color}>
-                      <FaRegLightbulb /> Key Benefits
-                    </ModalSectionTitle>
-                    <BenefitsList>
-                      {activeService.details.benefits.map((benefit, index) => (
-                        <BenefitItem key={index} color={activeService.color}>
-                          <FaCheckCircle />
-                          <BenefitContent>
-                            <BenefitTitle>{benefit.title || benefit}</BenefitTitle>
-                            <BenefitDescription>
-                              {benefit.description || benefit}
-                            </BenefitDescription>
-                          </BenefitContent>
-                        </BenefitItem>
-                      ))}
-                    </BenefitsList>
-                  </ModalSection>
-                  
-                  <ModalSection>
-                    <ModalSectionTitle color={activeService.color}>
-                      <FaUserTie /> Who This Service Is For
-                    </ModalSectionTitle>
-                    <p style={{ 
-                      color: '#475569', 
-                      lineHeight: '1.8', 
-                      fontSize: '1.1rem',
-                      padding: '1rem',
-                      background: 'rgba(241, 245, 249, 0.7)',
-                      borderRadius: '0.75rem',
-                      border: '1px solid rgba(226, 232, 240, 1)'
-                    }}>
-                      {activeService.details.idealFor || 'This service is designed for individuals and businesses seeking professional guidance in optimizing their financial strategy and achieving long-term goals.'}
-                    </p>
-                  </ModalSection>
-                  
-                  <ModalSection>
-                    <ModalSectionTitle color={activeService.color}>
-                      <FaRegFileAlt /> Our Process
-                    </ModalSectionTitle>
-                    <div style={{ 
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '1rem',
-                      marginTop: '1rem'
-                    }}>
-                      {(activeService.details.process || [
-                        "Initial consultation to understand your current situation",
-                        "Comprehensive analysis of your financial position",
-                        "Strategic plan development with clear action steps",
-                        "Implementation support and guidance",
-                        "Regular reviews and plan adjustments as needed"
-                      ]).map((step, index) => (
-                        <div key={index} style={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: '1rem',
-                          padding: '1.25rem',
-                          background: 'white',
-                          borderRadius: '0.75rem',
-                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-                          border: '1px solid rgba(226, 232, 240, 0.8)'
-                        }}>
-                          <div style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '50%',
-                            background: activeService.color,
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: '700',
-                            flexShrink: 0
-                          }}>
-                            {index + 1}
-                          </div>
-                          <div style={{
-                            fontSize: '1.1rem',
-                            color: '#334155',
-                            lineHeight: '1.7'
-                          }}>
-                            {step}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ModalSection>
-                  
-                  {activeService.title === "BloomVest Analytics™" && activeService.details.technology && (
-                    <ModalSection>
-                      <ModalSectionTitle color={activeService.color}>
-                        <FaRobot /> Our Proprietary Technology
-                      </ModalSectionTitle>
-                      <div style={{ marginBottom: '2rem' }}>
-                        <div style={{
-                          background: 'rgba(67, 56, 202, 0.05)',
-                          padding: '1.5rem 2rem',
-                          borderRadius: '1rem',
-                          marginBottom: '2rem',
-                          border: `1px solid rgba(${activeService.color === '#4338ca' ? '67, 56, 202' : '34, 197, 94'}, 0.15)`
-                        }}>
-                          <h4 style={{ 
-                            fontSize: '1.35rem', 
-                            fontWeight: '700', 
-                            color: '#1a365d', 
-                            marginBottom: '1rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.75rem'
-                          }}>
-                            <FaServer style={{ color: activeService.color }} />
-                            {activeService.details.technology.name} 
-                            <span style={{ 
-                              fontSize: '0.95rem', 
-                              fontWeight: '500',
-                              color: '#64748b',
-                              marginLeft: '0.5rem'
-                            }}>
-                              ({activeService.details.technology.description})
-                            </span>
-                          </h4>
-                          <p style={{ color: '#475569', lineHeight: '1.8', marginBottom: '1.5rem', fontSize: '1.1rem' }}>
-                            The BloomVest Analytics™ platform combines the following technologies:
-                          </p>
-                        </div>
-                        
-                        <div style={{ 
-                          display: 'grid', 
-                          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                          gap: '1.5rem',
-                          marginBottom: '2rem'
-                        }}>
-                          {activeService.details.technology.features.map((feature, idx) => (
-                            <div key={idx} style={{
-                              padding: '1.5rem',
-                              background: 'white',
-                              borderRadius: '0.75rem',
-                              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.05)',
-                              border: '1px solid rgba(226, 232, 240, 1)',
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: '0.75rem'
-                            }}>
-                              <div style={{
-                                width: '36px',
-                                height: '36px',
-                                borderRadius: '50%',
-                                background: `${activeService.color}15`,
-                                color: activeService.color,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1rem'
-                              }}>
-                                <FaCheckCircle />
-                              </div>
-                              <div style={{
-                                fontSize: '1rem',
-                                color: '#334155',
-                                lineHeight: '1.6'
-                              }}>
-                                {feature}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                        
-                        <div style={{ 
-                          padding: '1.5rem', 
-                          backgroundColor: 'rgba(67, 56, 202, 0.05)', 
-                          borderRadius: '12px',
-                          borderLeft: `4px solid ${activeService.color}`,
-                          marginTop: '2rem'
-                        }}>
-                          <h5 style={{ color: '#1a365d', marginBottom: '0.75rem', fontSize: '1.1rem', fontWeight: '600' }}>
-                            <FaServer style={{ marginRight: '0.75rem', color: activeService.color }} />
-                            System Performance
-                          </h5>
-                          <p style={{ color: '#334155', lineHeight: '1.7' }}>
-                            {activeService.details.technology.performance}
-                          </p>
-                        </div>
-                      </div>
-                    </ModalSection>
-                  )}
-                  
-                  <ModalSection>
-                    <ModalSectionTitle color={activeService.color}>
-                      <FaRegCreditCard /> Pricing & Investment
-                    </ModalSectionTitle>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-                      gap: '2rem',
-                      margin: '2rem 0'
-                    }}>
-                      {activeService.details.pricing.map((tier, index) => (
-                        <div 
-                          key={index}
-                          style={{
-                            padding: '2.5rem',
-                            backgroundColor: 'white',
-                            borderRadius: '1rem',
-                            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
-                            border: `1px solid ${activeService.color}25`,
-                            transition: 'all 0.3s ease',
-                            position: 'relative',
-                            overflow: 'hidden'
-                          }}
-                        >
-                          <div style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: '6px',
-                            background: activeService.color
-                          }} />
-                          
-                          <h4 style={{ fontSize: '1.4rem', color: '#1a365d', marginBottom: '0.5rem', fontWeight: '700' }}>
-                            {tier.tier}
-                          </h4>
-                          <div style={{ fontSize: '2rem', fontWeight: '800', color: activeService.color, marginBottom: '1.5rem' }}>
-                            {tier.price}
-                          </div>
-                          <p style={{ fontSize: '1.1rem', color: '#475569', marginBottom: '1.75rem', lineHeight: '1.6' }}>
-                            {tier.description}
-                          </p>
-                          <div style={{ marginBottom: '2rem' }}>
-                            <h5 style={{ 
-                              fontSize: '1.1rem', 
-                              color: '#1a365d', 
-                              marginBottom: '1rem', 
-                              fontWeight: '600',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.5rem'
-                            }}>
-                              <span style={{
-                                width: '24px',
-                                height: '24px',
-                                borderRadius: '50%',
-                                background: `${activeService.color}15`,
-                                color: activeService.color,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '0.8rem'
-                              }}>
-                                <FaCheckCircle />
-                              </span>
-                              What's included:
-                            </h5>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: '0' }}>
-                              {tier.features.map((feature, featureIndex) => (
-                                <li 
-                                  key={featureIndex} 
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    fontSize: '1rem',
-                                    color: '#334155',
-                                    marginBottom: '0.75rem',
-                                    gap: '0.75rem'
-                                  }}
-                                >
-                                  <span style={{
-                                    width: '20px',
-                                    height: '20px',
-                                    borderRadius: '50%',
-                                    background: `${activeService.color}15`,
-                                    color: activeService.color,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '0.7rem',
-                                    flexShrink: 0
-                                  }}>
-                                    <FaCheckCircle />
-                                  </span>
-                                  {feature}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <button
-                            style={{
-                              width: '100%',
-                              padding: '1rem',
-                              border: 'none',
-                              borderRadius: '0.75rem',
-                              background: activeService.color,
-                              color: 'white',
-                              fontWeight: '700',
-                              fontSize: '1.1rem',
-                              cursor: 'pointer',
-                              transition: 'all 0.3s ease',
-                              boxShadow: `0 8px 15px ${activeService.color}40`
-                            }}
-                          >
-                            Get Started
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </ModalSection>
-                </ModalMainContent>
-              </ModalBody>
-            </ModalContent>
-          </Overlay>
-        )}
-      </AnimatePresence>
     </ServicesSection>
   );
 };

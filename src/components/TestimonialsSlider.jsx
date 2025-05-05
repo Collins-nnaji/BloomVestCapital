@@ -5,30 +5,116 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Section = styled.section`
   padding: 120px 0;
-  background: #f8fafc;
+  background: linear-gradient(170deg, #f8fafc, #ffffff);
   position: relative;
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
+`;
+
+const BackgroundDecoration = styled.div`
+  position: absolute;
+  z-index: 0;
+  
+  &.top-left {
+    top: -100px;
+    left: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    filter: blur(60px);
+  }
+  
+  &.bottom-right {
+    bottom: -100px;
+    right: -100px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(26, 54, 93, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    filter: blur(60px);
+  }
+`;
+
+const FloatingShape = styled.div`
+  position: absolute;
+  z-index: 0;
+  opacity: 0.5;
+  
+  &.shape1 {
+    width: 120px;
+    height: 120px;
+    top: 15%;
+    right: 10%;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+    animation: float1 15s infinite ease-in-out;
+  }
+  
+  &.shape2 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 10%;
+    border-radius: 30% 70% 50% 50% / 50% 50% 70% 30%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    animation: float2 18s infinite ease-in-out;
+  }
+  
+  @keyframes float1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(15px, -15px) rotate(10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  
+  @keyframes float2 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-15px, 10px) rotate(-10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+`;
+
+const BackgroundPattern = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+    radial-gradient(rgba(26, 54, 93, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px, 30px 30px;
+  background-position: 0 0, 20px 20px;
+  opacity: 0.6;
+  z-index: 0;
 `;
 
 const Container = styled.div`
-  max-width: 1400px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 2rem;
   position: relative;
   z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const SectionHeader = styled.div`
   text-align: center;
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto 70px;
 `;
 
 const Preheading = styled.div`
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #22c55e;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   position: relative;
@@ -40,7 +126,7 @@ const Preheading = styled.div`
     bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 40px;
+    width: 50px;
     height: 3px;
     background: linear-gradient(to right, #22c55e, #4ade80);
     border-radius: 3px;
@@ -48,20 +134,61 @@ const Preheading = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 2.75rem;
+  font-size: 3rem;
   font-weight: 800;
   color: #1a365d;
   margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  
+  span {
+    color: #22c55e;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(34, 197, 94, 0.2);
+      z-index: -1;
+      border-radius: 4px;
+    }
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.2));
+    border-radius: 4px;
+  }
   
   @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (max-width: 480px) {
     font-size: 2.25rem;
   }
 `;
 
 const Subtitle = styled.p`
   font-size: 1.2rem;
-  color: #64748b;
-  line-height: 1.7;
+  color: #475569;
+  line-height: 1.8;
+  margin-top: 2rem;
+  
+  strong {
+    color: #1a365d;
+    font-weight: 600;
+  }
 `;
 
 const TestimonialsWrapper = styled.div`
@@ -78,24 +205,25 @@ const SliderControls = styled.div`
 `;
 
 const SliderButton = styled.button`
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: white;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(226, 232, 240, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1a365d;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  font-size: 1.1rem;
   
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     color: #22c55e;
-    border-color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.3);
   }
   
   &:disabled {
@@ -109,33 +237,51 @@ const SliderButton = styled.button`
       border-color: #e2e8f0;
     }
   }
+  
+  svg {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover svg:first-child {
+    transform: translateX(-3px);
+  }
+  
+  &:hover svg:last-child {
+    transform: translateX(3px);
+  }
 `;
 
 const SliderDots = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 `;
 
 const Dot = styled.button`
-  width: 8px;
+  width: ${props => props.active ? '28px' : '8px'};
   height: 8px;
-  border-radius: 50%;
-  background: ${props => props.active ? '#22c55e' : '#cbd5e1'};
+  border-radius: 50px;
+  background: ${props => props.active ? 
+    'linear-gradient(to right, #22c55e, #4ade80)' : 
+    'rgba(203, 213, 225, 0.5)'
+  };
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:hover {
-    background: ${props => props.active ? '#22c55e' : '#94a3b8'};
+    background: ${props => props.active ? 
+      'linear-gradient(to right, #22c55e, #4ade80)' : 
+      'rgba(148, 163, 184, 0.5)'
+    };
   }
 `;
 
 const SlideWrapper = styled(motion.div)`
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
   
   @media (max-width: 1024px) {
     flex-direction: column;
@@ -145,30 +291,47 @@ const SlideWrapper = styled(motion.div)`
 const TestimonialContainer = styled(motion.div)`
   flex: 1;
   background: #ffffff;
-  border-radius: 16px;
-  padding: 3rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  padding: 3.5rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
   position: relative;
   overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
   
-  &::after {
+  &::before {
     content: '';
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background: linear-gradient(to right, #22c55e, #4ade80);
-    opacity: 0.8;
+    inset: 0;
+    border-radius: 24px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3));
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
+  }
+  
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    
+    &::before {
+      opacity: 1;
+    }
   }
   
   @media (max-width: 768px) {
-    padding: 2rem;
+    padding: 2.5rem;
   }
 `;
 
@@ -176,13 +339,13 @@ const QuoteIcon = styled.div`
   color: rgba(34, 197, 94, 0.15);
   font-size: 4rem;
   line-height: 1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 `;
 
 const TestimonialText = styled.div`
   font-size: 1.25rem;
   color: #334155;
-  line-height: 1.7;
+  line-height: 1.8;
   margin-bottom: 2rem;
   font-style: italic;
   
@@ -193,7 +356,7 @@ const TestimonialText = styled.div`
 
 const RatingContainer = styled.div`
   display: flex;
-  gap: 0.25rem;
+  gap: 0.35rem;
   margin-bottom: 1.5rem;
   color: #f59e0b;
   font-size: 1.25rem;
@@ -204,21 +367,38 @@ const TestimonialFooter = styled.div`
   align-items: center;
   gap: 1.5rem;
   margin-top: auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
 `;
 
 const Avatar = styled.div`
   width: 70px;
   height: 70px;
-  border-radius: 50%;
+  border-radius: 18px;
   overflow: hidden;
   background: ${props => props.bgColor || '#e2e8f0'};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1a365d;
+  color: #ffffff;
   font-size: 2.5rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.2));
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 `;
 
 const ClientInfo = styled.div``;
@@ -231,7 +411,7 @@ const ClientName = styled.div`
 `;
 
 const ClientRole = styled.div`
-  color: #64748b;
+  color: #475569;
   font-size: 0.95rem;
 `;
 
@@ -240,19 +420,6 @@ const ClientCompany = styled.div`
   color: #22c55e;
   font-size: 0.95rem;
   margin-top: 0.25rem;
-`;
-
-const BackgroundPattern = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
-  background-size: 20px 20px;
-  opacity: 0.5;
-  z-index: 0;
 `;
 
 const TestimonialsSlider = () => {
@@ -360,14 +527,41 @@ const TestimonialsSlider = () => {
     })
   };
   
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.2,
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    })
+  };
+  
   return (
     <Section>
+      <BackgroundDecoration className="top-left" />
+      <BackgroundDecoration className="bottom-right" />
+      <FloatingShape className="shape1" />
+      <FloatingShape className="shape2" />
       <BackgroundPattern />
+      
       <Container>
         <SectionHeader>
-          <Preheading>Client Success Stories</Preheading>
-          <Title>What Our Clients Say</Title>
-          <Subtitle>Hear from business leaders and entrepreneurs who have transformed their financial strategies with our guidance.</Subtitle>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, type: "spring" }}
+            viewport={{ once: true }}
+          >
+            <Preheading>Client Success Stories</Preheading>
+            <Title>What Our <span>Clients</span> Say</Title>
+            <Subtitle>
+              Hear from business leaders and entrepreneurs who have transformed their financial strategies with our <strong>personalized guidance</strong> and <strong>expert advice</strong>.
+            </Subtitle>
+          </motion.div>
         </SectionHeader>
         
         <TestimonialsWrapper>
@@ -385,7 +579,14 @@ const TestimonialsSlider = () => {
               }}
             >
               {testimonials[currentSlide].slide.map((item, index) => (
-                <TestimonialContainer key={index}>
+                <TestimonialContainer 
+                  key={index}
+                  custom={index}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover={{ scale: 1.02 }}
+                >
                   <div>
                     <QuoteIcon>
                       <FaQuoteLeft />

@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import About from '../components/About';
-import WhyChooseUs from '../components/WhyChooseUs';
 
 // Styled components for the hero section
 const HeroSection = styled.section`
@@ -294,21 +293,20 @@ const AboutUsPage = () => {
               animate="visible"
               variants={titleVariants}
             >
-              About <span>BloomVest Finance</span>
+              About <span>BloomVest Capital</span>
             </MainHeading>
             <Description
               initial="hidden"
               animate="visible"
               variants={textVariants}
             >
-              Elevating financial services in Nigeria through <strong>innovation</strong>, <strong>integrity</strong>, and <strong>excellence</strong>. Discover our journey, our team, and our vision.
+              Your trusted partner in <strong>wealth management</strong>, providing sophisticated strategies and personalized guidance to help you achieve your most important financial goals.
             </Description>
           </HeroContent>
         </HeroContainer>
       </HeroSection>
       
       <About />
-      <WhyChooseUs />
     </>
   );
 };

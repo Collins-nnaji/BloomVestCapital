@@ -19,26 +19,101 @@ const Section = styled.section`
   background: linear-gradient(to bottom, #f8fafc, #ffffff);
   position: relative;
   overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+      radial-gradient(rgba(26, 54, 93, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px, 30px 30px;
+    background-position: 0 0, 20px 20px;
+    opacity: 0.6;
+    z-index: 0;
+  }
+  
+  @media (max-width: 768px) {
+    padding: 80px 0;
+  }
 `;
 
-const BackgroundPattern = styled.div`
+const BackgroundDecoration = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: linear-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
+  border-radius: 50%;
+  filter: blur(80px);
   z-index: 0;
+  
+  &.top-left {
+    top: -150px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.05));
+    opacity: 0.5;
+  }
+  
+  &.bottom-right {
+    bottom: -200px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(34, 197, 94, 0.05));
+    opacity: 0.5;
+  }
+`;
+
+const FloatingShape = styled.div`
+  position: absolute;
+  z-index: 0;
+  opacity: 0.5;
+  
+  &.shape1 {
+    width: 120px;
+    height: 120px;
+    top: 15%;
+    right: 10%;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+    animation: float1 15s infinite ease-in-out;
+  }
+  
+  &.shape2 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 10%;
+    border-radius: 30% 70% 50% 50% / 50% 50% 70% 30%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    animation: float2 18s infinite ease-in-out;
+  }
+  
+  @keyframes float1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(15px, -15px) rotate(10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  
+  @keyframes float2 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-15px, 10px) rotate(-10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
 `;
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 2rem;
   position: relative;
   z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const SectionHeader = styled.div`
@@ -48,10 +123,10 @@ const SectionHeader = styled.div`
 `;
 
 const Preheading = styled.div`
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: #22c55e;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   position: relative;
@@ -63,7 +138,7 @@ const Preheading = styled.div`
     bottom: -8px;
     left: 50%;
     transform: translateX(-50%);
-    width: 40px;
+    width: 50px;
     height: 3px;
     background: linear-gradient(to right, #22c55e, #4ade80);
     border-radius: 3px;
@@ -71,35 +146,74 @@ const Preheading = styled.div`
 `;
 
 const Title = styled.h2`
-  font-size: 2.75rem;
+  font-size: 3rem;
   font-weight: 800;
   color: #1a365d;
   margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, #1a365d 0%, #2d4e71 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+  
+  span {
+    color: #22c55e;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(34, 197, 94, 0.2);
+      z-index: -1;
+      border-radius: 4px;
+    }
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.2));
+    border-radius: 4px;
+  }
   
   @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (max-width: 480px) {
     font-size: 2.25rem;
   }
 `;
 
 const Subtitle = styled.p`
   font-size: 1.2rem;
-  color: #64748b;
-  line-height: 1.7;
+  color: #475569;
+  line-height: 1.8;
+  margin-top: 2rem;
+  
+  strong {
+    color: #1a365d;
+    font-weight: 600;
+  }
 `;
 
 // Data Flow Section
 const DataFlowSection = styled.div`
-  margin-bottom: 100px;
+  margin-bottom: 120px;
+  position: relative;
 `;
 
 const ProcessSteps = styled.div`
   display: flex;
   justify-content: space-between;
   position: relative;
-  margin: 60px 0;
+  margin: 80px 0;
   
   &::after {
     content: '';
@@ -108,14 +222,15 @@ const ProcessSteps = styled.div`
     left: 60px;
     right: 60px;
     height: 4px;
-    background: linear-gradient(to right, #22c55e, #4ade80);
+    background: linear-gradient(to right, #22c55e, #0891b2);
     z-index: 0;
+    border-radius: 2px;
   }
   
   @media (max-width: 1024px) {
     flex-direction: column;
     align-items: center;
-    gap: 60px;
+    gap: 70px;
     
     &::after {
       display: none;
@@ -132,10 +247,22 @@ const ProcessStep = styled(motion.div)`
   background: #ffffff;
   padding: 0 10px;
   width: 20%;
+  position: relative;
   
   @media (max-width: 1024px) {
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      width: 4px;
+      height: 70px;
+      background: linear-gradient(to bottom, #22c55e, transparent);
+      display: ${props => props.isLast ? 'none' : 'block'};
+    }
   }
 `;
 
@@ -149,9 +276,18 @@ const StepIcon = styled.div`
   justify-content: center;
   border-radius: 50%;
   font-size: 2.5rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
   position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  ${ProcessStep}:hover & {
+    transform: scale(1.1) translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    background: ${props => props.iconColor || '#22c55e'};
+    color: white;
+  }
   
   &::after {
     content: '${props => props.number}';
@@ -168,183 +304,166 @@ const StepIcon = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    border: 2px solid white;
   }
 `;
 
 const StepTitle = styled.h3`
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: #1a365d;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
 `;
 
 const StepDescription = styled.p`
-  color: #64748b;
-  font-size: 0.95rem;
-  line-height: 1.6;
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.7;
 `;
 
 // AI Capabilities Section
 const CapabilitiesSection = styled.div`
-  margin-bottom: 80px;
+  margin-bottom: 100px;
 `;
 
 const FeaturesGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2.5rem;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
+    gap: 2rem;
   }
 `;
 
 const FeatureCard = styled(motion.div)`
   background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  transition: all 0.3s ease;
+  border-radius: 20px;
+  padding: 2.25rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  z-index: 1;
   
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  }
-  
-  &:after {
+  &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: #22c55e;
-    border-radius: 16px 16px 0 0;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3));
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: -1;
   }
   
-  &:hover:after {
-    transform: scaleX(1);
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    
+    &::before {
+      opacity: 1;
+    }
   }
 `;
 
 const FeatureIcon = styled.div`
-  width: 60px;
-  height: 60px;
-  background: rgba(34, 197, 94, 0.1);
-  border-radius: 12px;
+  width: 70px;
+  height: 70px;
+  background: ${props => props.bg || 'rgba(34, 197, 94, 0.1)'};
+  color: ${props => props.color || '#22c55e'};
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
-  color: #22c55e;
+  font-size: 1.85rem;
   margin-bottom: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   
   ${FeatureCard}:hover & {
-    background: #22c55e;
+    transform: scale(1.1) rotate(5deg);
+    background: ${props => props.hoverBg || '#22c55e'};
     color: white;
-    transform: rotate(5deg);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
   }
 `;
 
 const FeatureTitle = styled.h3`
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: #1a365d;
   margin-bottom: 1rem;
-  font-weight: 600;
 `;
 
 const FeatureDescription = styled.p`
-  color: #64748b;
-  font-size: 1rem;
-  line-height: 1.6;
+  color: #475569;
+  font-size: 1.05rem;
+  line-height: 1.7;
   margin-bottom: 1.5rem;
   flex-grow: 1;
 `;
 
 const FeatureList = styled.ul`
-  padding-left: 1.5rem;
-  margin-bottom: 0;
   list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
 `;
 
-const FeatureListItem = styled.li`
-  color: #64748b;
+const FeatureItem = styled.li`
+  display: flex;
+  align-items: center;
   margin-bottom: 0.75rem;
-  font-size: 0.95rem;
-  position: relative;
   
   &:before {
-    content: '✓';
-    color: #22c55e;
-    position: absolute;
-    left: -1.5rem;
+    content: '';
+    min-width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    margin-right: 0.75rem;
+  }
+  
+  span {
+    color: #475569;
+    font-size: 1rem;
   }
 `;
 
-// Demo Section
-const DemoSection = styled.div`
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 3rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  margin-top: 80px;
-`;
-
-const DemoTitle = styled.h3`
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #1a365d;
-  margin-bottom: 1.5rem;
-`;
-
-const DemoDescription = styled.p`
-  color: #64748b;
-  font-size: 1.1rem;
-  line-height: 1.7;
-  max-width: 800px;
-  margin: 0 auto 2rem;
-`;
-
-const DemoButton = styled.button`
-  background: #22c55e;
-  color: white;
-  padding: 1rem 2rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+const LearnMoreButton = styled.a`
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  
-  &:hover {
-    background: #15803d;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.2);
-  }
+  background: transparent;
+  color: #22c55e;
+  font-weight: 600;
+  padding: 0;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: auto;
   
   svg {
     transition: transform 0.3s ease;
   }
   
-  &:hover svg {
-    transform: translateX(5px);
+  &:hover {
+    color: #15803d;
+    
+    svg {
+      transform: translateX(5px);
+    }
   }
 `;
 
@@ -353,7 +472,7 @@ const AIFeatures = () => {
     {
       icon: <FaDatabase />,
       title: "Data Collection",
-      description: "We securely gather financial data from various sources including accounting systems, ERPs, and market feeds.",
+      description: "We securely gather your financial data, investment history, and goals to create a comprehensive profile.",
       bgColor: "rgba(34, 197, 94, 0.1)",
       iconColor: "#22c55e",
       number: "1"
@@ -361,7 +480,7 @@ const AIFeatures = () => {
     {
       icon: <FaServer />,
       title: "Data Processing",
-      description: "Our system cleans, normalizes, and structures your data to prepare it for advanced analysis.",
+      description: "Our system analyzes your financial information to understand your unique circumstances and opportunities.",
       bgColor: "rgba(8, 145, 178, 0.1)",
       iconColor: "#0891b2",
       number: "2"
@@ -369,25 +488,25 @@ const AIFeatures = () => {
     {
       icon: <FaRobot />,
       title: "AI Analysis",
-      description: "Advanced algorithms analyze the processed data to identify patterns, trends, and actionable insights.",
+      description: "Advanced algorithms identify patterns and insights that inform optimal wealth management strategies.",
       bgColor: "rgba(139, 92, 246, 0.1)",
       iconColor: "#8b5cf6",
       number: "3"
     },
     {
-      icon: <FaFileAlt />,
-      title: "Report Generation",
-      description: "The system automatically creates detailed financial reports with visualizations and key insights.",
-      bgColor: "rgba(2, 132, 199, 0.1)",
-      iconColor: "#0284c7",
+      icon: <FaBrain />,
+      title: "Strategy Development",
+      description: "Our advisors combine AI insights with their expertise to develop personalized financial strategies.",
+      bgColor: "rgba(245, 158, 11, 0.1)",
+      iconColor: "#f59e0b",
       number: "4"
     },
     {
-      icon: <FaLightbulb />,
-      title: "Predictive Insights",
-      description: "Machine learning models provide forward-looking insights and strategic recommendations.",
-      bgColor: "rgba(245, 158, 11, 0.1)",
-      iconColor: "#f59e0b",
+      icon: <FaFileAlt />,
+      title: "Implementation",
+      description: "We execute your customized strategy with precision, continuously monitoring for optimal performance.",
+      bgColor: "rgba(236, 72, 153, 0.1)",
+      iconColor: "#ec4899",
       number: "5"
     }
   ];
@@ -395,101 +514,78 @@ const AIFeatures = () => {
   const capabilities = [
     {
       icon: <FaChartPie />,
-      title: "Financial Performance Analysis",
-      description: "Our AI analyzes your financial data to identify strengths, weaknesses, and improvement opportunities.",
-      benefits: [
-        "Automatic ratio analysis and benchmarking",
-        "Trend identification with statistical validation",
-        "Anomaly detection with alert generation",
-        "Performance attribution analysis"
-      ]
+      title: "Portfolio Optimization",
+      description: "Our AI dynamically balances your investment portfolio to maximize returns while adhering to your risk tolerance.",
+      features: ["Smart asset allocation", "Tax-efficient rebalancing", "Risk-adjusted returns"],
+      color: "#22c55e",
+      bg: "rgba(34, 197, 94, 0.1)",
+      hoverBg: "#22c55e"
     },
     {
       icon: <FaChartLine />,
-      title: "Predictive Forecasting",
-      description: "Machine learning models predict future financial performance with high accuracy.",
-      benefits: [
-        "Revenue and expense predictions",
-        "Cash flow forecasting",
-        "Working capital requirement projections",
-        "Budget variance predictions"
-      ]
+      title: "Market Prediction",
+      description: "Advanced algorithms analyze market trends and economic indicators to anticipate shifts before they occur.",
+      features: ["Pattern recognition", "Anomaly detection", "Trend forecasting"],
+      color: "#0891b2",
+      bg: "rgba(8, 145, 178, 0.1)",
+      hoverBg: "#0891b2"
     },
     {
       icon: <FaLightbulb />,
-      title: "Automated Reporting",
-      description: "Generate comprehensive financial reports customized for different stakeholders automatically.",
-      benefits: [
-        "Executive-ready financial summaries",
-        "Detailed departmental performance reports",
-        "Regulatory compliance documentation",
-        "Investor-focused presentations"
-      ]
+      title: "Strategic Insights",
+      description: "AI-generated recommendations identify opportunities and strategies uniquely suited to your financial goals.",
+      features: ["Personalized suggestions", "Goal-based planning", "Opportunity identification"],
+      color: "#8b5cf6",
+      bg: "rgba(139, 92, 246, 0.1)",
+      hoverBg: "#8b5cf6"
     },
     {
       icon: <FaShieldAlt />,
-      title: "Risk Assessment",
-      description: "Identify and quantify financial risks before they impact your business.",
-      benefits: [
-        "Credit risk evaluation",
-        "Liquidity risk monitoring",
-        "Market risk exposure analysis",
-        "Operational risk identification"
-      ]
-    },
-    {
-      icon: <FaFileAlt />,
-      title: "Strategic Recommendations",
-      description: "Receive AI-powered recommendations to improve financial performance.",
-      benefits: [
-        "Cost optimization suggestions",
-        "Revenue enhancement strategies",
-        "Investment prioritization guidance",
-        "Resource allocation recommendations"
-      ]
-    },
-    {
-      icon: <FaBrain />,
-      title: "Continuous Learning",
-      description: "Our AI system continuously learns from your data to improve accuracy over time.",
-      benefits: [
-        "Self-improving prediction models",
-        "Adaptive to your business changes",
-        "Industry-specific insight development",
-        "Seasonal pattern recognition"
-      ]
+      title: "Risk Management",
+      description: "Continuous monitoring of market conditions and your portfolio to identify and mitigate potential risks.",
+      features: ["Early warning system", "Volatility protection", "Downside mitigation"],
+      color: "#f59e0b",
+      bg: "rgba(245, 158, 11, 0.1)",
+      hoverBg: "#f59e0b"
     }
   ];
 
   return (
-    <Section id="ai-analytics">
-      <BackgroundPattern />
+    <Section>
+      <BackgroundDecoration className="top-left" />
+      <BackgroundDecoration className="bottom-right" />
+      <FloatingShape className="shape1" />
+      <FloatingShape className="shape2" />
+      
       <Container>
         <SectionHeader>
-          <Preheading>AI-Powered Analytics</Preheading>
-          <Title>How Our System Transforms Your Financial Data</Title>
-          <Subtitle>
-            Our advanced AI analytics platform turns your raw financial data into comprehensive reports
-            and predictive insights that drive better business decisions.
-          </Subtitle>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, type: "spring" }}
+            viewport={{ once: true }}
+          >
+            <Preheading>AI-Powered Wealth Management</Preheading>
+            <Title>Intelligent <span>Technology</span> for Smarter Wealth Strategies</Title>
+            <Subtitle>
+              Our advanced AI technology works alongside our human advisors to provide <strong>deeper insights</strong>, <strong>better forecasting</strong>, and <strong>optimized strategies</strong> for your wealth management journey.
+            </Subtitle>
+          </motion.div>
         </SectionHeader>
         
         <DataFlowSection>
-          <h3 style={{ textAlign: 'center', color: '#1a365d', fontSize: '1.8rem', marginBottom: '2rem' }}>
-            The Data Analysis Process
-          </h3>
-          
           <ProcessSteps>
             {processSteps.map((step, index) => (
-              <ProcessStep
+              <ProcessStep 
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
+                isLast={index === processSteps.length - 1}
               >
                 <StepIcon 
-                  bgColor={step.bgColor} 
+                  bgColor={step.bgColor}
                   iconColor={step.iconColor}
                   number={step.number}
                 >
@@ -503,43 +599,57 @@ const AIFeatures = () => {
         </DataFlowSection>
         
         <CapabilitiesSection>
-          <h3 style={{ textAlign: 'center', color: '#1a365d', fontSize: '1.8rem', marginBottom: '2rem' }}>
-            AI Capabilities
-          </h3>
+          <SectionHeader>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <Title>Our AI <span>Capabilities</span></Title>
+              <Subtitle>
+                Leveraging cutting-edge artificial intelligence to transform financial data into actionable wealth management strategies that give you a <strong>competitive advantage</strong>.
+              </Subtitle>
+            </motion.div>
+          </SectionHeader>
           
           <FeaturesGrid>
-            {capabilities.map((feature, index) => (
-              <FeatureCard 
+            {capabilities.map((capability, index) => (
+              <FeatureCard
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.15,
+                  type: "spring",
+                  stiffness: 50
+                }}
                 viewport={{ once: true }}
               >
-                <FeatureIcon>{feature.icon}</FeatureIcon>
-                <FeatureTitle>{feature.title}</FeatureTitle>
-                <FeatureDescription>{feature.description}</FeatureDescription>
-                
+                <FeatureIcon 
+                  color={capability.color}
+                  bg={capability.bg}
+                  hoverBg={capability.hoverBg}
+                >
+                  {capability.icon}
+                </FeatureIcon>
+                <FeatureTitle>{capability.title}</FeatureTitle>
+                <FeatureDescription>{capability.description}</FeatureDescription>
                 <FeatureList>
-                  {feature.benefits.map((benefit, i) => (
-                    <FeatureListItem key={i}>{benefit}</FeatureListItem>
+                  {capability.features.map((feature, featureIndex) => (
+                    <FeatureItem key={featureIndex}>
+                      <span>{feature}</span>
+                    </FeatureItem>
                   ))}
                 </FeatureList>
+                <LearnMoreButton href="#">
+                  Learn more <FaArrowRight />
+                </LearnMoreButton>
               </FeatureCard>
             ))}
           </FeaturesGrid>
         </CapabilitiesSection>
-        
-        <DemoSection>
-          <DemoTitle>Experience Our AI Analytics Platform</DemoTitle>
-          <DemoDescription>
-            See how our AI can transform your financial data into actionable insights with a personalized demo.
-            Our experts will show you real examples using industry-specific data similar to your business.
-          </DemoDescription>
-          <DemoButton>
-            Schedule a Demo <FaArrowRight />
-          </DemoButton>
-        </DemoSection>
       </Container>
     </Section>
   );

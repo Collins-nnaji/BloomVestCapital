@@ -3,9 +3,6 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import HomeContent from '../components/Homepage';
 import WhyChooseUs from '../components/WhyChooseUs';
-
-
-import MarketInsights from '../components/MarketInsights';
 import TestimonialsSlider from '../components/TestimonialsSlider';
 import CallToAction from '../components/CallToAction';
 
@@ -36,14 +33,9 @@ const MainDashboardPage = () => (
       <WhyChooseUs />
     </motion.div>
     <motion.div variants={fadeInVariants}>
-      <MarketInsights />
-    </motion.div>
-    <motion.div variants={fadeInVariants}>
-
       <TestimonialsSlider />
     </motion.div>
     <motion.div variants={fadeInVariants}>
-     
       <CallToAction />
     </motion.div>
   </PageWrapper>

@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import AIFeatures from '../components/AIFeatures';
 import Services from '../components/Services';
 
+// Page wrapper for consistent styling
+const PageWrapper = styled.div`
+  overflow-x: hidden;
+  background: #fcfcfd;
+  transform: translateZ(0); /* Hardware acceleration */
+  backface-visibility: hidden;
+  perspective: 1000;
+`;
+
 // Styled components for the hero section
 const HeroSection = styled.section`
-  padding: 100px 5% 120px;
+  padding: 120px 5% 140px;
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, #1a365d 0%, #2d4e71 100%);
-  min-height: 60vh;
+  min-height: 65vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -48,6 +57,19 @@ const MainHeading = styled(motion.h1)`
   
   span {
     color: #4ade80;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(74, 222, 128, 0.3);
+      z-index: -1;
+      border-radius: 4px;
+    }
   }
   
   @media (max-width: 1024px) {
@@ -82,6 +104,11 @@ const BackgroundDecoration = styled.div`
   border-radius: 50%;
   filter: blur(70px);
   z-index: 1;
+  will-change: transform, opacity; /* Optimize animation */
+  
+  @media (max-width: 768px) {
+    filter: blur(40px); /* Reduce blur on mobile */
+  }
   
   &.top-left {
     top: -150px;
@@ -125,6 +152,11 @@ const GridPattern = styled.div`
   background-position: center center;
   opacity: 0.4;
   z-index: 1;
+  
+  @media (max-width: 768px) {
+    background-size: 60px 60px; /* Simpler pattern on mobile */
+    opacity: 0.3;
+  }
 `;
 
 const FloatingElement = styled(motion.div)`
@@ -135,6 +167,12 @@ const FloatingElement = styled(motion.div)`
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px);
+  will-change: transform; /* Optimize animation */
+  
+  @media (max-width: 768px) {
+    backdrop-filter: none; /* Remove expensive backdrop filter on mobile */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+  }
   
   &.element-1 {
     width: 120px;
@@ -192,6 +230,93 @@ const ShapedElement = styled(motion.div)`
   }
 `;
 
+// Section divider with wave pattern - optimize for mobile
+const SectionDivider = styled.div`
+  height: 120px;
+  background: white;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -2px;
+    height: 120px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' style='fill: %231a365d;'/%3E%3C/svg%3E");
+    background-size: cover;
+    background-position: center;
+    transform: rotate(180deg);
+    will-change: transform; /* Optimize animation */
+  }
+  
+  &.inverted {
+    &::before {
+      transform: rotate(0deg);
+      top: auto;
+      bottom: -2px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    height: 80px; /* Smaller for mobile */
+    
+    &::before {
+      height: 80px;
+    }
+  }
+`;
+
+const ScrollIndicator = styled.div`
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  
+  @media (max-width: 768px) {
+    display: none; /* Hide on mobile to reduce animations */
+  }
+  
+  .mouse {
+    width: 30px;
+    height: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    
+    &::before {
+      content: '';
+      width: 4px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 2px;
+      margin-top: 10px;
+      animation: scroll 1.5s infinite;
+      will-change: transform, opacity; /* Optimize animation */
+    }
+  }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(15px);
+      opacity: 0;
+    }
+  }
+`;
+
 // Animation variants
 const titleVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -246,46 +371,89 @@ const rotateVariants = {
   }
 };
 
+// Add mobile-optimized animation variants
+const floatingMobileVariants = {
+  animate: {
+    y: [0, -5, 0], // Smaller movement range
+    transition: {
+      duration: 8, // Slower animation
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut"
+    }
+  }
+};
+
 const ServicesPage = () => {
+  // Add state to detect mobile devices
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    // Initial check
+    checkMobile();
+    
+    // Add event listener
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+  
   return (
-    <>
+    <PageWrapper>
       <HeroSection>
         <BackgroundDecoration className="top-left" />
         <BackgroundDecoration className="bottom-right" />
         <BackgroundDecoration className="center" />
         <GridPattern />
         
-        <FloatingElement 
-          className="element-1" 
-          variants={floatingVariants1} 
-          animate="animate"
-        />
-        <FloatingElement 
-          className="element-2" 
-          variants={floatingVariants2} 
-          animate="animate"
-        />
-        <FloatingElement 
-          className="element-3" 
-          variants={floatingVariants2} 
-          animate="animate"
-        />
-        <FloatingElement 
-          className="element-4" 
-          variants={floatingVariants1} 
-          animate="animate"
-        />
+        {/* Conditionally render or use simpler animations on mobile */}
+        {!isMobile && (
+          <>
+            <FloatingElement 
+              className="element-1" 
+              variants={isMobile ? floatingMobileVariants : floatingVariants1} 
+              animate="animate"
+            />
+            <FloatingElement 
+              className="element-2" 
+              variants={isMobile ? floatingMobileVariants : floatingVariants2} 
+              animate="animate"
+            />
+            <FloatingElement 
+              className="element-3" 
+              variants={isMobile ? floatingMobileVariants : floatingVariants2} 
+              animate="animate"
+            />
+            <FloatingElement 
+              className="element-4" 
+              variants={isMobile ? floatingMobileVariants : floatingVariants1} 
+              animate="animate"
+            />
+          </>
+        )}
         
-        <ShapedElement 
-          className="triangle" 
-          variants={rotateVariants} 
-          animate="animate"
-        />
-        <ShapedElement 
-          className="square" 
-          variants={rotateVariants} 
-          animate="animate"
-        />
+        {/* Only show decorative elements on desktop */}
+        {!isMobile && (
+          <>
+            <ShapedElement 
+              className="triangle" 
+              variants={rotateVariants} 
+              animate="animate"
+            />
+            <ShapedElement 
+              className="square" 
+              variants={rotateVariants} 
+              animate="animate"
+            />
+          </>
+        )}
         
         <HeroContainer>
           <HeroContent>
@@ -294,22 +462,32 @@ const ServicesPage = () => {
               animate="visible"
               variants={titleVariants}
             >
-              Our <span>Financial</span> Services
+              Our <span>Wealth Management</span> Solutions
             </MainHeading>
             <Description
               initial="hidden"
               animate="visible"
               variants={textVariants}
             >
-              BloomVest Finance offers a comprehensive suite of <strong>financial services</strong> tailored to the Nigerian market, helping individuals and businesses make <strong>informed decisions</strong> and achieve their <strong>financial goals</strong>.
+              BloomVest Capital delivers comprehensive <strong>wealth management services</strong> tailored to your unique financial goals and needs, helping you build, protect, and grow your <strong>wealth</strong> for generations to come.
             </Description>
           </HeroContent>
         </HeroContainer>
+        
+        <ScrollIndicator>
+          <div className="mouse"></div>
+          <span>SCROLL DOWN</span>
+        </ScrollIndicator>
       </HeroSection>
       
+      <SectionDivider />
+      
       <Services />
+      
+      <SectionDivider className="inverted" />
+      
       <AIFeatures />
-    </>
+    </PageWrapper>
   );
 };
 

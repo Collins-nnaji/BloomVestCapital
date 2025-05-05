@@ -54,7 +54,7 @@ const Logo = styled(RouterLink)`
   letter-spacing: -0.5px;
   
   img {
-    height: 40px;
+    height: 45px;
     margin-right: 0.5rem;
   }
   
@@ -266,8 +266,7 @@ const Navbar = () => {
     <NavbarContainer scrolled={scrolled}>
       <NavWrapper scrolled={scrolled}>
         <Logo to="/">
-          <img src="/logo.png" alt="BloomVest Finance" />
-          <span>Bloom<strong>Vest</strong></span>
+          <img src="/bloomvestlogo.png" alt="Bloomvest Capital" />
         </Logo>
         
         <NavLinks>

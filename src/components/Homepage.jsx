@@ -1,23 +1,45 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FaArrowRight, FaChartLine, FaFileAlt, FaRegLightbulb, FaCheck, FaShieldAlt, FaUsers, FaGlobe, FaCheckCircle } from 'react-icons/fa';
-import { motion } from 'framer-motion';
+import { motion, useAnimation, useInView } from 'framer-motion';
+import { Link as RouterLink } from 'react-router-dom';
 
 const HeroSection = styled.section`
-  padding: 100px 5% 120px;
+  padding: 130px 5% 160px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a365d 0%, #2d4e71 100%);
-  min-height: 80vh;
+  min-height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: white;
   
   @media (max-width: 768px) {
-    padding: 80px 5% 100px;
-    min-height: auto;
+    padding: 100px 5% 120px;
+    min-height: 80vh;
   }
+`;
+
+const VideoBackground = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transform: scale(1.05);
+`;
+
+const VideoOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(26, 54, 93, 0.9) 0%, rgba(45, 78, 113, 0.85) 100%);
+  z-index: 1;
+  backdrop-filter: blur(2px);
 `;
 
 const HeroContainer = styled.div`
@@ -161,70 +183,214 @@ const GridPattern = styled.div`
 
 const HeroContent = styled.div`
   text-align: center;
-  max-width: 850px;
-  margin: 0 auto 4rem;
+  max-width: 1000px;
+  margin: 0 auto;
   position: relative;
   z-index: 2;
+  padding: 1rem;
 `;
 
 const SubHeading = styled(motion.p)`
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #4ade80;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   position: relative;
   display: inline-block;
   
   &::after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -6px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
+    width: 50px;
     height: 3px;
-    background: #22c55e;
+    background: linear-gradient(to right, #22c55e, #4ade80);
+    border-radius: 3px;
   }
 `;
 
 const MainHeading = styled(motion.h1)`
-  font-size: 4.5rem;
-  font-weight: 900;
+  font-size: 4.8rem;
+  font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1.75rem;
   color: white;
   letter-spacing: -1px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   
   span {
-    color: #4ade80;
+    color: #22c55e;
+    display: inline-block;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: rgba(34, 197, 94, 0.25);
+      border-radius: 5px;
+      transform: translateY(8px);
+    }
   }
   
   @media (max-width: 1024px) {
-    font-size: 3.75rem;
+    font-size: 4rem;
   }
   
   @media (max-width: 768px) {
-    font-size: 3rem;
+    font-size: 3.2rem;
   }
   
   @media (max-width: 480px) {
     font-size: 2.5rem;
-    letter-spacing: -0.5px;
   }
 `;
 
 const Description = styled(motion.p)`
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 3rem;
-  line-height: 1.8;
+  line-height: 1.7;
   font-weight: 400;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
   
   strong {
     color: #4ade80;
     font-weight: 600;
+  }
+`;
+
+const CTAButtons = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 1.2rem;
+    align-items: center;
+  }
+`;
+
+const PrimaryButton = styled(RouterLink)`
+  background: linear-gradient(to right, #22c55e, #15803d);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.45);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(to right, #15803d, #0f5c2d);
+    z-index: -1;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50px;
+  }
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(34, 197, 94, 0.6);
+    
+    &::before {
+      width: 100%;
+    }
+  }
+  
+  svg {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  &:hover svg {
+    transform: translateX(5px);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.1rem 2.25rem;
+    font-size: 1.05rem;
+  }
+`;
+
+const SecondaryButton = styled(RouterLink)`
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 1.2rem 2.75rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 1.1rem 2.25rem;
+    font-size: 1.05rem;
+  }
+`;
+
+const ScrollIndicator = styled(motion.div)`
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  z-index: 10;
+  cursor: pointer;
+  
+  .arrow {
+    margin-top: 8px;
+    width: 24px;
+    height: 24px;
+    border-left: 2px solid rgba(255, 255, 255, 0.7);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.7);
+    transform: rotate(-45deg);
+  }
+  
+  @media (max-width: 768px) {
+    display: none;
   }
 `;
 
@@ -318,81 +484,6 @@ const FeatureText = styled.p`
   line-height: 1.6;
 `;
 
-const CTAContainer = styled(motion.div)`
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2rem;
-  
-  @media (max-width: 640px) {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-  }
-`;
-
-const CTAButton = styled(motion.button)`
-  background: linear-gradient(to right, #22c55e, #15803d);
-  color: white;
-  border: none;
-  padding: 1.2rem 2.75rem;
-  font-size: 1.15rem;
-  font-weight: 700;
-  border-radius: 50px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.45);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(34, 197, 94, 0.6);
-  }
-  
-  svg {
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover svg {
-    transform: translateX(5px);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-`;
-
-const SecondaryButton = styled(motion.button)`
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 1.2rem 2.75rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-  border-radius: 50px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-`;
-
 const WaveSeparator = styled.div`
   position: absolute;
   bottom: -1px;
@@ -407,75 +498,47 @@ const WaveSeparator = styled.div`
 
 const FeaturesSection = styled.section`
   padding: 120px 5%;
-  background: #ffffff;
+  background: linear-gradient(to bottom, #fff, #f8fafc);
   position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      radial-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+      radial-gradient(rgba(26, 54, 93, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px, 30px 30px;
+    background-position: 0 0, 20px 20px;
+    opacity: 0.6;
+    z-index: 0;
+  }
   
   @media (max-width: 768px) {
     padding: 80px 5%;
   }
 `;
 
-const StatisticsSection = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 4rem auto 0;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const StatItem = styled(motion.div)`
-  text-align: center;
-  padding: 2rem;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    border-color: rgba(34, 197, 94, 0.3);
-  }
-`;
-
-const StatValue = styled.div`
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #1a365d;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #1a365d 0%, #22c55e 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-`;
-
-const StatLabel = styled.div`
-  font-size: 1rem;
-  color: #64748b;
-  font-weight: 500;
-`;
-
 const SectionHeader = styled.div`
   text-align: center;
-  max-width: 700px;
-  margin: 0 auto 70px;
+  max-width: 800px;
+  margin: 0 auto 60px;
+  position: relative;
+  z-index: 1;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 2.75rem;
+  font-size: 2.8rem;
   font-weight: 800;
   color: #1a365d;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   position: relative;
   display: inline-block;
+  line-height: 1.3;
   
   &::after {
     content: '';
@@ -486,7 +549,7 @@ const SectionTitle = styled.h2`
     width: 80px;
     height: 4px;
     background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.2));
-    border-radius: 2px;
+    border-radius: 4px;
   }
   
   @media (max-width: 768px) {
@@ -494,26 +557,47 @@ const SectionTitle = styled.h2`
   }
   
   @media (max-width: 480px) {
-    font-size: 1.75rem;
+    font-size: 1.9rem;
   }
 `;
 
 const SectionDescription = styled.p`
   font-size: 1.2rem;
-  color: #64748b;
-  line-height: 1.7;
+  color: #475569;
+  line-height: 1.8;
   margin-top: 2rem;
+  
+  strong {
+    color: #1a365d;
+    font-weight: 600;
+  }
 `;
 
 const FeatureGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 2.5rem;
-  margin-top: 4rem;
+  margin-top: 3.5rem;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+`;
+
+const StatisticsSection = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 6rem auto 0;
+  position: relative;
+  z-index: 1;
   
   @media (max-width: 1024px) {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
   }
   
   @media (max-width: 640px) {
@@ -522,7 +606,360 @@ const FeatureGrid = styled.div`
   }
 `;
 
+const StatItem = styled(motion.div)`
+  text-align: center;
+  padding: 2.5rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3));
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+`;
+
+const StatValue = styled.div`
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #1a365d 0%, #22c55e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.3));
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 3px;
+  }
+`;
+
+const StatLabel = styled.div`
+  font-size: 1.1rem;
+  color: #475569;
+  font-weight: 600;
+  margin-top: 0.5rem;
+`;
+
+const AboutSection = styled.section`
+  padding: 120px 0;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(rgba(34, 197, 94, 0.03) 2px, transparent 2px);
+    background-size: 30px 30px;
+    opacity: 0.8;
+    z-index: 0;
+  }
+`;
+
+const AboutContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+`;
+
+const AboutImage = styled.div`
+  position: relative;
+  
+  img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 3px;
+    background: linear-gradient(135deg, #22c55e, #0891b2);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.7;
+    z-index: 1;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: -20px;
+    bottom: -20px;
+    border: 2px solid rgba(34, 197, 94, 0.4);
+    border-radius: 20px;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+  }
+  
+  &:hover {
+    img {
+      transform: scale(1.02);
+    }
+    
+    &::after {
+      top: 15px;
+      left: 15px;
+      right: -15px;
+      bottom: -15px;
+      border-color: rgba(34, 197, 94, 0.7);
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+`;
+
+const AboutImageDecoration = styled.div`
+  position: absolute;
+  z-index: -1;
+  
+  &.circle-1 {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(8, 145, 178, 0.1));
+    bottom: -30px;
+    right: -40px;
+    filter: blur(3px);
+  }
+  
+  &.circle-2 {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(8, 145, 178, 0.15), rgba(59, 130, 246, 0.15));
+    top: -20px;
+    left: -30px;
+    filter: blur(2px);
+  }
+`;
+
+const AboutContent = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+const AboutSubtitle = styled.p`
+  color: #22c55e;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(to right, #22c55e, #4ade80);
+    border-radius: 3px;
+  }
+`;
+
+const AboutTitle = styled.h2`
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #1a365d;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  
+  span {
+    color: #22c55e;
+  position: relative;
+  display: inline-block;
+    z-index: 1;
+  
+  &::after {
+    content: '';
+    position: absolute;
+      bottom: 6px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(34, 197, 94, 0.2);
+      z-index: -1;
+      border-radius: 4px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2.25rem;
+  }
+`;
+
+const AboutDescription = styled.p`
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #475569;
+  margin-bottom: 0.5rem;
+  
+  strong {
+    color: #1a365d;
+    font-weight: 600;
+  }
+`;
+
+const AboutFeatures = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+
+  @media (min-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem; 
+  }
+`;
+
+const AboutFeature = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    border-color: rgba(34, 197, 94, 0.5);
+  }
+  
+  svg {
+    color: #22c55e;
+    font-size: 1.4rem;
+    background: rgba(34, 197, 94, 0.1);
+    padding: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover svg {
+    transform: scale(1.1);
+    background: #22c55e;
+    color: white;
+  }
+`;
+
+const AboutFeatureText = styled.p`
+  font-weight: 600;
+  color: #1a365d;
+  font-size: 1rem;
+  line-height: 1.5;
+`;
+
+const AboutCTA = styled(motion.div)`
+  margin-top: 2rem;
+  
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 2rem;
+    background: linear-gradient(to right, #22c55e, #15803d);
+    color: white;
+    font-weight: 600;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 8px 15px rgba(34, 197, 94, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px rgba(34, 197, 94, 0.4);
+      
+      svg {
+        transform: translateX(3px);
+      }
+    }
+    
+    svg {
+      transition: transform 0.3s ease;
+    }
+  }
+`;
+
 const HomeContent = () => {
+  const heroRef = useRef(null);
+  const heroInView = useInView(heroRef, { once: false });
+  const heroControls = useAnimation();
+  
+  useEffect(() => {
+    if (heroInView) {
+      heroControls.start('visible');
+    }
+  }, [heroInView, heroControls]);
+
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -531,6 +968,25 @@ const HomeContent = () => {
       transition: { 
         staggerChildren: 0.1,
         delayChildren: 0.2
+      }
+    }
+  };
+
+  const scrollIndicatorVariants = {
+    animate: {
+      y: [0, 10, 0],
+      opacity: [0.7, 1, 0.7],
+      transition: {
+        y: {
+          repeat: Infinity,
+          duration: 2,
+          ease: "easeInOut"
+        },
+        opacity: {
+          repeat: Infinity,
+          duration: 2,
+          ease: "easeInOut"
+        }
       }
     }
   };
@@ -583,41 +1039,52 @@ const HomeContent = () => {
     }
   };
 
+  // Updated features content focused on wealth management
   const features = [
     {
       icon: <FaCheckCircle />,
-      title: "Personalized Financial Strategies",
-      description: "Customized plans tailored to your unique financial goals and circumstances."
+      title: "Customized Wealth Planning",
+      description: "Tailored financial roadmaps designed around your unique goals, values, and life circumstances."
     },
     {
       icon: <FaChartLine />,
-      title: "Data-Driven Investment Insights",
-      description: "Evidence-based approaches to maximize returns and minimize risk for your portfolio."
+      title: "Strategic Investment Guidance",
+      description: "Data-driven investment strategies based on your risk tolerance and long-term financial objectives."
     },
     {
-      icon: <FaUsers />,
-      title: "Expert Financial Advisory",
-      description: "Ongoing support from seasoned professionals focused on your long-term success."
+      icon: <FaShieldAlt />,
+      title: "Wealth Preservation",
+      description: "Sophisticated approaches to protect and grow your assets while navigating market fluctuations."
     }
   ];
 
+  // Updated statistics content focused on wealth management
   const statistics = [
-    { value: "95%", label: "Client Retention Rate" },
-    { value: "₦850M+", label: "Managed Assets" },
-    { value: "250+", label: "Satisfied Clients" },
-    { value: "35%", label: "Average ROI" }
+    { value: "15+ Yrs", label: "Wealth Advisory Experience" },
+    { value: "97%", label: "Client Retention" },
+    { value: "Tailored", label: "Financial Solutions" },
+    { value: "Holistic", label: "Wealth Management" } 
   ];
+
+  const scrollToContent = () => {
+    const aboutSection = document.querySelector('#about-section');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
-      <HeroSection>
+      <HeroSection ref={heroRef}>
+        <VideoBackground autoPlay loop muted playsInline>
+          <source src="/video2.mp4" type="video/mp4" />
+        </VideoBackground>
+        <VideoOverlay />
         <BackgroundDecoration className="top-left" />
         <BackgroundDecoration className="bottom-right" />
         <BackgroundDecoration className="center" />
         <GridPattern />
-        <WaveSeparator />
         
-        {/* Animated floating elements */}
         <FloatingElement 
           className="element-1"
           animate={floatingAnimation1}
@@ -628,147 +1095,144 @@ const HomeContent = () => {
         />
         <FloatingElement 
           className="element-3"
-          animate={{
-            ...floatingAnimation2,
-            x: [0, 15, 0],
-            transition: {
-              y: {
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut"
-              },
-              x: {
-                duration: 9,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
-            }
-          }}
+          animate={floatingAnimation2}
         />
         <FloatingElement 
           className="element-4"
-          animate={{
-            ...floatingAnimation1,
-            x: [0, -10, 0],
-            transition: {
-              y: {
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut"
-              },
-              x: {
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1
-              }
-            }
-          }}
+          animate={floatingAnimation1}
         />
         
         <ShapedElement 
           className="triangle"
           animate={rotateAnimation}
-          style={{ originX: 0.5, originY: 0.5 }}
         />
         <ShapedElement 
           className="square"
-          animate={{
-            rotate: [45, 225, 45],
-            transition: {
-              rotate: {
-                duration: 15,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
-            }
-          }}
+          animate={rotateAnimation}
         />
         
         <HeroContainer>
           <HeroContent>
             <SubHeading
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              animate={heroControls}
+              variants={{
+                visible: { opacity: 1, y: 0, transition: { duration: 0.7 } },
+                hidden: { opacity: 0, y: 20 }
+              }}
             >
-              Financial Excellence
+              Building Financial Legacies
             </SubHeading>
-            
             <MainHeading
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={heroControls}
+              variants={{
+                visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.2 } },
+                hidden: { opacity: 0, y: 30 }
+              }}
             >
-              Strategic <span>Financial Solutions</span> for Nigerian Growth
+              Premier <span>Wealth Management</span> Solutions
             </MainHeading>
-            
             <Description
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={heroControls}
+              variants={{
+                visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.4 } },
+                hidden: { opacity: 0, y: 30 }
+              }}
             >
-              BloomVest Finance combines <strong>proven financial expertise</strong> with innovative methodologies 
-              to help businesses and individuals make informed decisions and achieve strategic growth.
+              Bloomvest Capital delivers <strong>personalized wealth management strategies</strong> that align with your unique financial goals. Our expert advisors guide you through every stage of your wealth journey, from accumulation to preservation and transfer.
             </Description>
+            <CTAButtons
+              initial={{ opacity: 0, y: 30 }}
+              animate={heroControls}
+              variants={{
+                visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.6 } },
+                hidden: { opacity: 0, y: 30 }
+              }}
+            >
+              <PrimaryButton to="/services">
+                Explore Our Services <FaArrowRight />
+              </PrimaryButton>
+              <SecondaryButton to="/about">
+                About Bloomvest
+              </SecondaryButton>
+            </CTAButtons>
           </HeroContent>
-          
-          <FeaturesCards
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={index}
-                custom={index}
-                variants={cardVariants}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <FeatureIcon>{feature.icon}</FeatureIcon>
-                <FeatureContent>
-                  <FeatureTitle>{feature.title}</FeatureTitle>
-                  <FeatureText>{feature.description}</FeatureText>
-                </FeatureContent>
-              </FeatureCard>
-            ))}
-          </FeaturesCards>
-          
-          <CTAContainer
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-          >
-            <CTAButton
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Get Started <FaArrowRight />
-            </CTAButton>
-            
-            <SecondaryButton
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Learn More
-            </SecondaryButton>
-          </CTAContainer>
         </HeroContainer>
+        
+        <ScrollIndicator 
+          onClick={scrollToContent}
+          animate="animate"
+          variants={scrollIndicatorVariants}
+        >
+          <span>Scroll Down</span>
+          <div className="arrow"></div>
+        </ScrollIndicator>
       </HeroSection>
+      
+      <AboutSection id="about-section">
+        <AboutContainer>
+          <AboutImage>
+            <AboutImageDecoration className="circle-1" />
+            <AboutImageDecoration className="circle-2" />
+            <img src="/bloomvest.png" alt="Bloomvest Capital wealth management team" />
+          </AboutImage>
+          <AboutContent
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, type: "spring" }}
+            viewport={{ once: true }}
+          >
+            <AboutSubtitle>Our Approach</AboutSubtitle>
+            <AboutTitle>Your <span>Wealth Journey</span> Is Our Mission</AboutTitle>
+            <AboutDescription>
+              At Bloomvest Capital, we understand that wealth management is deeply personal. Our advisors take time to know <strong>you, your goals, and what matters most</strong>. We develop comprehensive strategies for growing and preserving your wealth while planning for current needs and future generations.
+            </AboutDescription>
+            <AboutFeatures>
+              {[
+                "Personalized Financial Planning",
+                "Tax-Efficient Investment Strategies",
+                "Retirement & Estate Planning",
+                "Legacy & Wealth Transfer"
+              ].map((feature, index) => (
+                <AboutFeature 
+                key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <FaCheckCircle />
+                  <AboutFeatureText>{feature}</AboutFeatureText>
+                </AboutFeature>
+              ))}
+            </AboutFeatures>
+            <AboutCTA
+            initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              viewport={{ once: true }}
+            >
+              <RouterLink to="/services">
+                Learn More About Our Services <FaArrowRight />
+              </RouterLink>
+            </AboutCTA>
+          </AboutContent>
+        </AboutContainer>
+      </AboutSection>
       
       <FeaturesSection>
         <SectionHeader>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.7, type: "spring" }}
             viewport={{ once: true }}
           >
-            <SectionTitle>How We Transform Your Finances</SectionTitle>
+            <SectionTitle>Comprehensive Wealth Management</SectionTitle>
             <SectionDescription>
-              We provide comprehensive financial services that help you optimize performance 
-              and make informed decisions for long-term success.
+              Our integrated approach addresses all aspects of your financial life, ensuring that each element works in harmony to <strong>support your overall wealth objectives</strong>.
             </SectionDescription>
           </motion.div>
         </SectionHeader>
@@ -779,15 +1243,22 @@ const HomeContent = () => {
               key={index}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.6, delay: index * 0.15, type: "spring" }}
               viewport={{ once: true }}
-              whileHover={{ y: -10 }}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
               style={{ 
                 background: "white", 
-                borderColor: "rgba(226, 232, 240, 0.8)"
+                borderColor: "rgba(226, 232, 240, 0.8)",
+                border: "1px solid rgba(226, 232, 240, 0.8)",
+                borderRadius: "16px"
               }}
             >
-              <FeatureIcon>{feature.icon}</FeatureIcon>
+              <FeatureIcon 
+                 style={{
+                    background: "rgba(34, 197, 94, 0.1)",
+                    color: "#22c55e"
+                 }}
+              >{feature.icon}</FeatureIcon>
               <FeatureContent>
                 <FeatureTitle style={{ color: "#1a365d" }}>{feature.title}</FeatureTitle>
                 <FeatureText style={{ color: "#475569" }}>{feature.description}</FeatureText>
@@ -802,7 +1273,7 @@ const HomeContent = () => {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.15 }}
               viewport={{ once: true }}
             >
               <StatValue>{stat.value}</StatValue>

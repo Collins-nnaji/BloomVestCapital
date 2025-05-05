@@ -19,7 +19,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Section = styled.section`
-  padding: 6rem 0;
+  padding: 8rem 0;
   position: relative;
   overflow: hidden;
   background: linear-gradient(170deg, #f8fafc 0%, #eff6ff 100%);
@@ -30,31 +30,41 @@ const Section = styled.section`
     top: 0;
     left: 0;
     right: 0;
-    height: 6px;
+    height: 8px;
     background: linear-gradient(to right, #22c55e, #15803d);
+  }
+  
+  @media (max-width: 768px) {
+    padding: 6rem 0;
   }
 `;
 
 const BackgroundAccent = styled.div`
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(34, 197, 94, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
+  bottom: -200px;
+  right: -200px;
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle, rgba(34, 197, 94, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
   z-index: 0;
+  opacity: 0.8;
+  filter: blur(40px);
+  transform: rotate(-15deg);
 `;
 
 const BackgroundAccent2 = styled.div`
   position: absolute;
-  top: -150px;
-  left: -150px;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(26, 54, 93, 0.03) 0%, rgba(255, 255, 255, 0) 70%);
+  top: -200px;
+  left: -200px;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(26, 54, 93, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
   z-index: 0;
+  opacity: 0.8;
+  filter: blur(40px);
+  transform: rotate(15deg);
 `;
 
 const BackgroundPattern = styled.div`
@@ -69,30 +79,97 @@ const BackgroundPattern = styled.div`
     radial-gradient(rgba(26, 54, 93, 0.03) 1.5px, transparent 1.5px);
   background-size: 50px 50px, 50px 50px, 30px 30px;
   background-position: 0 0, 0 0, 15px 15px;
-  opacity: 0.4;
+  opacity: 0.3;
   z-index: 0;
   pointer-events: none;
+  transform: perspective(1000px) rotateX(2deg);
+`;
+
+const FloatingShape = styled.div`
+  position: absolute;
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+  border-radius: ${props => props.round ? '50%' : '0'};
+  z-index: 0;
+  opacity: 0.6;
+  
+  &.shape1 {
+    width: 120px;
+    height: 120px;
+    top: 15%;
+    right: 10%;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(59, 130, 246, 0.1));
+    animation: float1 15s infinite ease-in-out;
+  }
+  
+  &.shape2 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 10%;
+    border-radius: 30% 70% 50% 50% / 50% 50% 70% 30%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    animation: float2 18s infinite ease-in-out;
+  }
+  
+  @keyframes float1 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(15px, -15px) rotate(10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  
+  @keyframes float2 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(-15px, 10px) rotate(-10deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
 `;
 
 const Container = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
+  position: relative;
+  z-index: 1;
+  
+  @media (max-width: 768px) {
+    padding: 0 1.5rem;
+  }
 `;
 
 const Heading = styled.h2`
   text-align: center;
-  font-size: 3.25rem;
+  font-size: 3.5rem;
   font-weight: 900;
   margin-bottom: 1.5rem;
   color: #1a365d;
   background: linear-gradient(to right, #1a365d, #3b82f6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   letter-spacing: -1px;
+  line-height: 1.1;
+  position: relative;
+  display: inline-block;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 5px;
+    background: linear-gradient(to right, #22c55e, rgba(34, 197, 94, 0.2));
+    border-radius: 5px;
+  }
   
   @media (max-width: 768px) {
-    font-size: 2.75rem;
+    font-size: 2.8rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
   }
 `;
 
@@ -101,12 +178,27 @@ const Description = styled.p`
   font-size: 1.35rem;
   line-height: 1.8;
   color: #475569;
-  max-width: 800px;
-  margin: 0 auto 4rem;
+  max-width: 850px;
+  margin: 2.5rem auto 5rem;
   
   strong {
     font-weight: 600;
     color: #1a365d;
+    position: relative;
+    display: inline-block;
+    z-index: 1;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: rgba(34, 197, 94, 0.15);
+      z-index: -1;
+      border-radius: 2px;
+    }
   }
 `;
 
@@ -801,7 +893,7 @@ const WhyChooseUs = () => {
       <Container>
         <Heading data-aos="fade-up">Why Choose BloomVest</Heading>
         <Description data-aos="fade-up" data-aos-delay="100">
-          We combine <strong>advanced technology</strong> with <strong>deep financial expertise</strong> to deliver exceptional value and results for our clients
+          We combine <strong>advanced technology</strong> with <strong>deep financial expertise</strong> to deliver exceptional wealth management solutions for individuals and families
         </Description>
         
         <Grid>
