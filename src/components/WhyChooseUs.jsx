@@ -604,62 +604,62 @@ const WhyChooseUs = () => {
     {
       icon: <FaUserShield />,
       gradient: 'linear-gradient(135deg, #1a365d, #3b82f6)',
-      title: "Independent Expertise",
-      tagline: "Unbiased human guidance",
-      description: "Our advisors provide objective guidance with no hidden agendas or platform-specific incentives. We focus solely on what's best for your financial growth and long-term success.",
+      title: "Rigorous Due Diligence",
+      tagline: "Methodical evaluation framework",
+      description: "Our comprehensive startup evaluation process goes beyond financials to assess market potential, founding team dynamics, technology validation, and sustainable competitive advantages.",
       features: [
-        "Objective analysis free from conflicts of interest",
-        "Transparent fee structure with no hidden costs",
-        "Advisors who serve as fiduciaries, putting your interests first",
-        "Personalized recommendations based on your unique situation"
+        "Proprietary startup evaluation framework",
+        "Domain expert consultation for technology validation",
+        "Customer discovery interviews for market validation",
+        "Financial model stress-testing and analysis"
       ],
       stats: [
-        { number: "15+", label: "Years Experience" },
-        { number: "100%", label: "Independent Advice" }
+        { number: "300+", label: "Startups Evaluated Annually" },
+        { number: "9%", label: "Investment Selection Rate" }
       ],
       details: {
         content: [
           {
-            title: "Our Fiduciary Commitment",
-            description: "As fiduciaries, our advisors are legally obligated to act in your best interest. This means providing transparent advice without hidden agendas or conflicting incentives that could compromise the quality of our recommendations."
+            title: "Market Opportunity Assessment",
+            description: "We analyze total addressable market size, growth trajectory, competitive landscape, and market entry barriers to validate the startup's growth potential and long-term sustainability."
           },
           {
-            title: "Objective Research Methodology",
-            description: "Our research team conducts thorough, unbiased analysis of financial products and services. We maintain independence from product providers, allowing us to recommend only what truly serves your financial goals."
+            title: "Founder & Team Evaluation",
+            description: "We assess founders' domain expertise, leadership capabilities, resilience, and team dynamics—critical factors that often determine a startup's ability to navigate challenges during early growth stages."
           },
           {
-            title: "Transparent Fee Structure",
-            description: "We believe you should know exactly what you're paying for. Our fee structure is clear and straightforward, with no hidden costs or surprise charges. We disclose all fees upfront and explain the value you receive."
+            title: "Technology & Product Validation",
+            description: "Our network of industry experts conducts thorough technical due diligence to validate the technology's feasibility, scalability, and defensibility against potential competitors."
           }
         ],
         events: [
           {
-            title: "Financial Independence Workshop",
-            date: "May 15, 2025",
-            description: "A comprehensive workshop on building financial independence without conflicting advice."
+            title: "Due Diligence Workshop for Startups",
+            date: "Monthly",
+            description: "Helping entrepreneurs prepare for investor scrutiny and strengthen their business fundamentals."
           },
           {
-            title: "Understanding Fiduciary Responsibility",
-            date: "June 3, 2025",
-            description: "Learn what it means to work with a fiduciary advisor and why it matters for your finances."
+            title: "Deal Evaluation Masterclass",
+            date: "Quarterly",
+            description: "Investment methodology insights for angel investors and venture capital partners."
           }
         ],
         resources: [
           {
-            title: "The Fiduciary Difference Guide",
+            title: "Startup Investment Evaluation Framework",
             type: "PDF Guide",
             color: "#1a365d",
             bg: "rgba(59, 130, 246, 0.1)"
           },
           {
-            title: "Conflicts of Interest in Financial Advice",
+            title: "Red Flags in Early-Stage Investments",
             type: "Whitepaper",
             color: "#1a365d",
             bg: "rgba(59, 130, 246, 0.1)"
           },
           {
-            title: "Evaluating Financial Advisor Independence",
-            type: "Checklist",
+            title: "Pre-Investment Checklist for Founders",
+            type: "Interactive Tool",
             color: "#1a365d",
             bg: "rgba(59, 130, 246, 0.1)"
           }
@@ -667,64 +667,64 @@ const WhyChooseUs = () => {
       }
     },
     {
-      icon: <FaRobot />,
+      icon: <FaRegLightbulb />,
       gradient: 'linear-gradient(135deg, #22c55e, #4ade80)',
-      title: "AI-Powered Insights",
-      tagline: "Data-driven intelligence",
-      description: "Our proprietary AI systems analyze vast amounts of market data to identify patterns and opportunities that human analysis alone might miss, giving you a competitive advantage.",
+      title: "Strategic Growth Support",
+      tagline: "Beyond financial capital",
+      description: "We provide extensive post-investment support to accelerate our portfolio companies' growth through strategic partnerships, operational guidance, and exclusive access to our extensive business network.",
       features: [
-        "Real-time market analysis across global markets",
-        "Pattern recognition that identifies emerging opportunities",
-        "Risk assessment algorithms that predict market volatility",
-        "Continuous learning systems that improve over time"
+        "Executive mentorship from industry veterans",
+        "Network access to potential clients and partners",
+        "Go-to-market strategy optimization",
+        "Talent acquisition support for key positions"
       ],
       stats: [
-        { number: "24/7", label: "Market Monitoring" },
-        { number: "10M+", label: "Data Points Analyzed Daily" }
+        { number: "3.5x", label: "Average Revenue Acceleration" },
+        { number: "500+", label: "Strategic Introductions Annually" }
       ],
       details: {
         content: [
           {
-            title: "Proprietary AI Technology",
-            description: "Our advanced AI algorithms continuously scan global markets, processing millions of data points to identify opportunities and risks. These systems analyze price movements, economic indicators, company fundamentals, and market sentiment in real-time."
+            title: "Expert Advisory Network",
+            description: "Our portfolio companies gain access to our network of over 200 industry executives, technical experts, and successful entrepreneurs who provide targeted advice and strategic introductions."
           },
           {
-            title: "Pattern Recognition Engine",
-            description: "Our pattern recognition technology detects market trends before they become obvious to the average investor. This enables our clients to position themselves advantageously ahead of market movements."
+            title: "Operational Growth Framework",
+            description: "We implement a structured methodology for operational excellence, focusing on key metrics, growth levers, and process optimization to help startups scale efficiently without common pitfalls."
           },
           {
-            title: "Predictive Analytics Framework",
-            description: "Using machine learning models trained on decades of financial data, our systems forecast potential market scenarios and assess their probability, helping you prepare for various outcomes."
+            title: "Partnership Acceleration",
+            description: "Our strategic relationship with enterprise companies across industries enables portfolio startups to access potential customers, distribution channels, and partnership opportunities otherwise inaccessible to early-stage companies."
           }
         ],
         events: [
           {
-            title: "AI in Investment Decision-Making",
-            date: "May 22, 2025",
-            description: "Discover how artificial intelligence is transforming investment strategies and decision processes."
+            title: "Portfolio Synergy Summit",
+            date: "Semi-annually",
+            description: "Bringing together our portfolio companies to identify collaboration opportunities and share best practices."
           },
           {
-            title: "Data-Driven Portfolio Construction",
-            date: "June 18, 2025",
-            description: "Learn how our AI tools help construct optimized portfolios based on your risk profile."
+            title: "Scaling Excellence Workshop Series",
+            date: "Monthly",
+            description: "Tactical sessions on growth marketing, sales excellence, and operational scaling."
           }
         ],
         resources: [
           {
-            title: "Understanding AI in Finance",
-            type: "E-Book",
+            title: "Early-Stage Scaling Playbook",
+            type: "Interactive Guide",
             color: "#22c55e",
             bg: "rgba(34, 197, 94, 0.1)"
           },
           {
-            title: "Market Anomaly Detection Systems",
-            type: "Case Study",
+            title: "Go-to-Market Strategy Templates",
+            type: "Toolkit",
             color: "#22c55e",
             bg: "rgba(34, 197, 94, 0.1)"
           },
           {
-            title: "BloomVest AI Dashboard Tutorial",
-            type: "Video",
+            title: "Key Metrics Dashboard Framework",
+            type: "Software Template",
             color: "#22c55e",
             bg: "rgba(34, 197, 94, 0.1)"
           }
@@ -734,62 +734,62 @@ const WhyChooseUs = () => {
     {
       icon: <FaGraduationCap />,
       gradient: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
-      title: "Financial Education",
-      tagline: "Empowering your decisions",
-      description: "We believe in empowering our clients through education. Our comprehensive resources help you understand the 'why' behind our recommendations and build financial literacy.",
+      title: "Investment Structuring",
+      tagline: "Optimized deal architecture",
+      description: "We structure investment deals that balance founder incentives with investor protection, creating alignment between all stakeholders while preserving the operational flexibility startups need to thrive.",
       features: [
-        "Personalized learning plans tailored to your knowledge level",
-        "Regular workshops and webinars on timely financial topics",
-        "Clear explanations of complex financial concepts",
-        "Investment simulation tools to practice without risk"
+        "Term sheet development and negotiation",
+        "Equity stake optimization",
+        "Investor protection provisions",
+        "Exit strategy planning"
       ],
       stats: [
-        { number: "500+", label: "Educational Resources" },
-        { number: "92%", label: "Client Knowledge Growth" }
+        { number: "150+", label: "Transactions Structured" },
+        { number: "95%", label: "Founder Satisfaction" }
       ],
       details: {
         content: [
           {
-            title: "Personalized Learning Paths",
-            description: "Our education platform adapts to your knowledge level and learning pace. We create customized learning paths that progressively build your financial literacy while addressing your specific financial situation and goals."
+            title: "Balanced Term Sheet Development",
+            description: "We create transparent term sheets that protect investor interests while maintaining founder motivation and operational control—ensuring all stakeholders remain aligned through multiple growth stages."
           },
           {
-            title: "Multi-Format Learning Resources",
-            description: "We provide diverse learning formats including interactive modules, video courses, written guides, and live workshops. This multi-channel approach ensures you can learn in the way that works best for you."
+            title: "Valuation Methodology",
+            description: "Our systematic approach to startup valuation combines market comparables, growth potential, technology value, and team assessment to establish fair valuations that attract follow-on investment."
           },
           {
-            title: "Real-World Application Support",
-            description: "Our advisors help bridge the gap between theory and practice, working with you to apply what you've learned to your actual financial decisions and strategies."
+            title: "Future Funding Optimization",
+            description: "We structure initial investments with future funding rounds in mind, creating clean capitalization tables and clear governance structures that facilitate smoother follow-on investment processes."
           }
         ],
         events: [
           {
-            title: "Investment Fundamentals Bootcamp",
-            date: "May 8-9, 2025",
-            description: "A two-day intensive course covering essential investment principles and strategies."
+            title: "Term Sheet Masterclass",
+            date: "Quarterly",
+            description: "A comprehensive overview of investment terms and their implications for founders and investors."
           },
           {
-            title: "Retirement Planning Workshop Series",
-            date: "June 5, 12, 19, 2025",
-            description: "Three-part workshop series on building and executing an effective retirement strategy."
+            title: "Valuation Workshop",
+            date: "Monthly",
+            description: "Practical sessions on startup valuation methodologies and negotiation strategies."
           }
         ],
         resources: [
           {
-            title: "Financial Literacy Fundamentals",
-            type: "Course",
+            title: "Startup Valuation Guide",
+            type: "E-Book",
             color: "#f59e0b",
             bg: "rgba(245, 158, 11, 0.1)"
           },
           {
-            title: "Investment Term Glossary",
-            type: "Reference Guide",
+            title: "Term Sheet Template Library",
+            type: "Document Templates",
             color: "#f59e0b",
             bg: "rgba(245, 158, 11, 0.1)"
           },
           {
-            title: "Market Simulation Platform",
-            type: "Interactive Tool",
+            title: "Cap Table Management Tool",
+            type: "Software",
             color: "#f59e0b",
             bg: "rgba(245, 158, 11, 0.1)"
           }
@@ -797,64 +797,64 @@ const WhyChooseUs = () => {
       }
     },
     {
-      icon: <FaGlobeAfrica />,
+      icon: <FaRobot />,
       gradient: 'linear-gradient(135deg, #8b5cf6, #a78bfa)',
-      title: "Global Perspective",
-      tagline: "Worldwide market access",
-      description: "From developed to emerging markets, our global perspective helps diversify your portfolio and capitalize on international growth opportunities beyond your local economy.",
+      title: "Investor Experience",
+      tagline: "Curated investment opportunities",
+      description: "We provide our investor network with exclusive access to vetted, high-potential startup opportunities, comprehensive investment analysis, and transparent portfolio performance reporting.",
       features: [
-        "Access to opportunities across six continents",
-        "Local market insights from regional specialists",
-        "Currency risk management strategies",
-        "International tax optimization guidance"
+        "Curated deal flow for qualified investors",
+        "Detailed investment memoranda",
+        "Regular portfolio performance updates",
+        "Co-investment opportunities with leading VCs"
       ],
       stats: [
-        { number: "40+", label: "Countries Covered" },
-        { number: "24/5", label: "Global Trading Support" }
+        { number: "28%", label: "Average IRR" },
+        { number: "Quarterly", label: "Performance Reporting" }
       ],
       details: {
         content: [
           {
-            title: "Global Market Access",
-            description: "We provide access to investment opportunities across developed, emerging, and frontier markets worldwide. Our global network enables you to diversify geographically and benefit from growth in various economic regions."
+            title: "Opportunity Access Platform",
+            description: "Our digital platform provides investors with secure access to curated investment opportunities, complete with comprehensive due diligence materials, financial projections, and founder presentations."
           },
           {
-            title: "Local Market Expertise",
-            description: "Our team includes specialists with deep knowledge of regional markets and economies. They provide insights on local business practices, regulations, and market dynamics that affect investment performance."
+            title: "Portfolio Analytics Dashboard",
+            description: "Investors receive access to our real-time portfolio performance dashboard, enabling transparent tracking of investment performance, key milestones, and growth metrics across portfolio companies."
           },
           {
-            title: "Currency Risk Management",
-            description: "We help you navigate the complexities of currency exposure when investing internationally. Our strategies can help protect your investments from adverse currency movements while capitalizing on favorable trends."
+            title: "Investor Education Resources",
+            description: "We provide comprehensive educational resources on early-stage investing, risk management strategies, portfolio construction principles, and market trend analysis to help investors make informed decisions."
           }
         ],
         events: [
           {
-            title: "Emerging Markets Investment Forum",
-            date: "May 26, 2025",
-            description: "Explore growth opportunities in fast-developing economies around the world."
+            title: "Exclusive Startup Pitch Events",
+            date: "Monthly",
+            description: "Curated showcases featuring our most promising investment candidates."
           },
           {
-            title: "Global Diversification Strategies",
-            date: "June 29, 2025",
-            description: "Learn effective approaches to building a globally diversified investment portfolio."
+            title: "Investor Network Roundtables",
+            date: "Quarterly",
+            description: "Facilitated discussions on investment strategies, market trends, and portfolio company updates."
           }
         ],
         resources: [
           {
-            title: "Global Market Quarterly Outlook",
-            type: "Report",
+            title: "Early-Stage Portfolio Construction Guide",
+            type: "Strategic Framework",
             color: "#8b5cf6",
             bg: "rgba(139, 92, 246, 0.1)"
           },
           {
-            title: "International Investing Essentials",
-            type: "Guide",
+            title: "Investment Memorandum Samples",
+            type: "Reference Documents",
             color: "#8b5cf6",
             bg: "rgba(139, 92, 246, 0.1)"
           },
           {
-            title: "Currency Hedging Strategies",
-            type: "Whitepaper",
+            title: "Startup Investment Risk Assessment",
+            type: "Analytical Tool",
             color: "#8b5cf6",
             bg: "rgba(139, 92, 246, 0.1)"
           }
@@ -887,14 +887,24 @@ const WhyChooseUs = () => {
 
   return (
     <Section>
+      <BackgroundPattern />
       <BackgroundAccent />
       <BackgroundAccent2 />
-      <BackgroundPattern />
+      <FloatingShape className="shape1" />
+      <FloatingShape className="shape2" />
+      
       <Container>
-        <Heading data-aos="fade-up">Why Choose BloomVest</Heading>
-        <Description data-aos="fade-up" data-aos-delay="100">
-          We combine <strong>advanced technology</strong> with <strong>deep financial expertise</strong> to deliver exceptional wealth management solutions for individuals and families
-        </Description>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          viewport={{ once: true }}
+        >
+          <Heading>Why Choose BloomVest</Heading>
+          <Description>
+            BloomVest delivers exceptional value to both <strong>promising startups and strategic investors</strong>. Our comprehensive approach combines rigorous investment selection, operational expertise, and extensive industry connections to maximize growth potential and investment returns in the early-stage ecosystem.
+          </Description>
+        </motion.div>
         
         <Grid>
           {reasons.map((reason, index) => (

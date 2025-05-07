@@ -11,7 +11,8 @@ import {
   FaFacebook,
   FaChevronRight,
   FaWhatsapp,
-  FaClock
+  FaClock,
+  FaGithub
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -64,17 +65,19 @@ const BrandColumn = styled.div`
 `;
 
 const FooterLogoLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: white;
-  text-decoration: none;
-  letter-spacing: -0.5px;
-  margin-bottom: 1.25rem;
+  display: inline-block;
+  margin-bottom: 1.5rem;
   
-  span {
-    color: #4ade80;
+  img {
+    height: 40px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
   }
 `;
 
@@ -107,6 +110,7 @@ const SocialLink = styled.a`
   &:hover {
     background: #22c55e;
     transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(34, 197, 94, 0.2);
   }
 `;
 
@@ -139,12 +143,13 @@ const LinkItem = styled.li`
   margin-bottom: 1rem;
 `;
 
-const FooterLink = styled.a`
+const FooterLink = styled(Link)`
   color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
+  text-decoration: none;
   
   &:hover {
     color: #22c55e;
@@ -225,20 +230,20 @@ const Footer = () => {
       <FooterContent>
         <BrandColumn>
           <FooterLogoLink to="/">
-            <span>Bloom<strong>Vest</strong></span>
+            <img src="/bloomvestlogo.png" alt="BloomVest" />
           </FooterLogoLink>
           <CompanyDescription>
-            BloomVest Finance provides strategic financial solutions through innovative methodologies and personalized service to help clients achieve sustainable growth and financial success.
+            BloomVest is an early-stage investment firm focused on providing strategic capital, resources, and expertise to founders building innovative startups with high growth potential.
           </CompanyDescription>
           <SocialLinks>
             <SocialLink href="#" aria-label="Twitter">
               <FaTwitter />
             </SocialLink>
-            <SocialLink href="#" aria-label="LinkedIn">
+            <SocialLink href="https://www.linkedin.com/company/bloomvest-finance" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
               <FaLinkedin />
             </SocialLink>
-            <SocialLink href="#" aria-label="Facebook">
-              <FaFacebook />
+            <SocialLink href="#" aria-label="GitHub">
+              <FaGithub />
             </SocialLink>
             <SocialLink href="#" aria-label="Instagram">
               <FaInstagram />
@@ -250,27 +255,27 @@ const Footer = () => {
           <ColumnTitle>Quick Links</ColumnTitle>
           <LinksList>
             <LinkItem>
-              <FooterLink href="/">
+              <FooterLink to="/">
                 <FaChevronRight /> Home
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/about">
+              <FooterLink to="/about">
                 <FaChevronRight /> About Us
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/services">
+              <FooterLink to="/services">
                 <FaChevronRight /> Services
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/education">
-                <FaChevronRight /> Education
+              <FooterLink to="/tools">
+                <FaChevronRight /> Tools
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/contact">
+              <FooterLink to="/contact">
                 <FaChevronRight /> Contact
               </FooterLink>
             </LinkItem>
@@ -281,28 +286,28 @@ const Footer = () => {
           <ColumnTitle>Our Services</ColumnTitle>
           <LinksList>
             <LinkItem>
-              <FooterLink href="/services">
-                <FaChevronRight /> Financial Planning
+              <FooterLink to="/services">
+                <FaChevronRight /> Startup Funding
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/services">
-                <FaChevronRight /> Investment Advisory
+              <FooterLink to="/services">
+                <FaChevronRight /> Seed Investments
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/services">
-                <FaChevronRight /> Retirement Planning
+              <FooterLink to="/services">
+                <FaChevronRight /> Growth Capital
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/services">
-                <FaChevronRight /> Tax Optimization
+              <FooterLink to="/services">
+                <FaChevronRight /> Founder Support
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink href="/services">
-                <FaChevronRight /> Estate Planning
+              <FooterLink to="/services">
+                <FaChevronRight /> Strategic Advisory
               </FooterLink>
             </LinkItem>
           </LinksList>
@@ -347,7 +352,7 @@ const Footer = () => {
       
       <CopyrightSection>
         <Copyright>
-          © {new Date().getFullYear()} BloomVest Finance. All rights reserved.
+          © {new Date().getFullYear()} BloomVest. All rights reserved.
         </Copyright>
         <LegalLinks>
           <LegalLink href="#">Privacy Policy</LegalLink>

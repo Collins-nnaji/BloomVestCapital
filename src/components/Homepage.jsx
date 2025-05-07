@@ -1039,31 +1039,31 @@ const HomeContent = () => {
     }
   };
 
-  // Updated features content focused on wealth management
+  // Updated features content focused on startup investment
   const features = [
     {
       icon: <FaCheckCircle />,
-      title: "Customized Wealth Planning",
-      description: "Tailored financial roadmaps designed around your unique goals, values, and life circumstances."
+      title: "Startup Funding",
+      description: "Strategic capital deployment through seed rounds, Series A participation, convertible notes, and SAFE arrangements tailored to each venture's growth stage."
     },
     {
       icon: <FaChartLine />,
-      title: "Strategic Investment Guidance",
-      description: "Data-driven investment strategies based on your risk tolerance and long-term financial objectives."
+      title: "Due Diligence Excellence",
+      description: "Comprehensive evaluation frameworks analyzing market potential, founder dynamics, technology validation, and scalability factors for informed investment decisions."
     },
     {
       icon: <FaShieldAlt />,
-      title: "Wealth Preservation",
-      description: "Sophisticated approaches to protect and grow your assets while navigating market fluctuations."
+      title: "Growth Acceleration",
+      description: "Beyond capital, we provide strategic partnership connections, industry expert introductions, and operational guidance to maximize startup success."
     }
   ];
 
-  // Updated statistics content focused on wealth management
+  // Updated statistics content focused on startup investments
   const statistics = [
-    { value: "15+ Yrs", label: "Wealth Advisory Experience" },
-    { value: "97%", label: "Client Retention" },
-    { value: "Tailored", label: "Financial Solutions" },
-    { value: "Holistic", label: "Wealth Management" } 
+    { value: "85+", label: "Portfolio Companies" },
+    { value: "92%", label: "Startups Still Active" },
+    { value: "$180M+", label: "Capital Deployed" },
+    { value: "12", label: "Successful Exits" } 
   ];
 
   const scrollToContent = () => {
@@ -1121,7 +1121,7 @@ const HomeContent = () => {
                 hidden: { opacity: 0, y: 20 }
               }}
             >
-              Building Financial Legacies
+              Fueling Innovation Through Strategic Investments
             </SubHeading>
             <MainHeading
               initial={{ opacity: 0, y: 30 }}
@@ -1131,7 +1131,7 @@ const HomeContent = () => {
                 hidden: { opacity: 0, y: 30 }
               }}
             >
-              Premier <span>Wealth Management</span> Solutions
+              Helping Startups <span>Bloom</span> Into Industry Leaders
             </MainHeading>
             <Description
               initial={{ opacity: 0, y: 30 }}
@@ -1141,7 +1141,7 @@ const HomeContent = () => {
                 hidden: { opacity: 0, y: 30 }
               }}
             >
-              Bloomvest Capital delivers <strong>personalized wealth management strategies</strong> that align with your unique financial goals. Our expert advisors guide you through every stage of your wealth journey, from accumulation to preservation and transfer.
+              BloomVest specializes in <strong>early-stage investment services</strong> that propel promising startups toward sustainable growth. We bridge the gap between visionary founders and strategic capital, combining financial expertise with operational guidance to transform innovative ideas into market-leading companies.
             </Description>
             <CTAButtons
               initial={{ opacity: 0, y: 30 }}
@@ -1152,10 +1152,10 @@ const HomeContent = () => {
               }}
             >
               <PrimaryButton to="/services">
-                Explore Our Services <FaArrowRight />
+                Explore Investment Opportunities <FaArrowRight />
               </PrimaryButton>
               <SecondaryButton to="/about">
-                About Bloomvest
+                For Startups
               </SecondaryButton>
             </CTAButtons>
           </HeroContent>
@@ -1176,7 +1176,7 @@ const HomeContent = () => {
           <AboutImage>
             <AboutImageDecoration className="circle-1" />
             <AboutImageDecoration className="circle-2" />
-            <img src="/bloomvest.png" alt="Bloomvest Capital wealth management team" />
+            <img src="/bloomvest.png" alt="BloomVest investment team" />
           </AboutImage>
           <AboutContent
             initial={{ opacity: 0, x: 50 }}
@@ -1184,17 +1184,17 @@ const HomeContent = () => {
             transition={{ duration: 0.8, type: "spring" }}
             viewport={{ once: true }}
           >
-            <AboutSubtitle>Our Approach</AboutSubtitle>
-            <AboutTitle>Your <span>Wealth Journey</span> Is Our Mission</AboutTitle>
+            <AboutSubtitle>Our Investment Approach</AboutSubtitle>
+            <AboutTitle>Venture Portfolio <span>Management</span></AboutTitle>
             <AboutDescription>
-              At Bloomvest Capital, we understand that wealth management is deeply personal. Our advisors take time to know <strong>you, your goals, and what matters most</strong>. We develop comprehensive strategies for growing and preserving your wealth while planning for current needs and future generations.
+              At BloomVest, we craft <strong>diversified early-stage investment portfolios</strong> that balance innovation potential with strategic risk management. Our expertise spans multiple industries, enabling us to identify promising startups with strong market positioning, exceptional founding teams, and scalable business models—the fundamental elements for extraordinary growth and successful exits.
             </AboutDescription>
             <AboutFeatures>
               {[
-                "Personalized Financial Planning",
-                "Tax-Efficient Investment Strategies",
-                "Retirement & Estate Planning",
-                "Legacy & Wealth Transfer"
+                "Seed & Series A Investments",
+                "Convertible Note Financing",
+                "SAFE Arrangements",
+                "Secondary Market Opportunities"
               ].map((feature, index) => (
                 <AboutFeature 
                 key={index}
@@ -1215,7 +1215,7 @@ const HomeContent = () => {
               viewport={{ once: true }}
             >
               <RouterLink to="/services">
-                Learn More About Our Services <FaArrowRight />
+                Discover Our Investment Process <FaArrowRight />
               </RouterLink>
             </AboutCTA>
           </AboutContent>
@@ -1230,9 +1230,9 @@ const HomeContent = () => {
             transition={{ duration: 0.7, type: "spring" }}
             viewport={{ once: true }}
           >
-            <SectionTitle>Comprehensive Wealth Management</SectionTitle>
+            <SectionTitle>Beyond Capital Investment</SectionTitle>
             <SectionDescription>
-              Our integrated approach addresses all aspects of your financial life, ensuring that each element works in harmony to <strong>support your overall wealth objectives</strong>.
+              We believe exceptional returns come from <strong>active partnership with founders</strong>. Our comprehensive approach combines strategic capital with operational expertise, network access, and growth resources—everything promising startups need to accelerate their journey from concept to market leadership.
             </SectionDescription>
           </motion.div>
         </SectionHeader>

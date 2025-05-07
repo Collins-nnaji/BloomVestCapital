@@ -332,49 +332,49 @@ const About = () => {
   const values = [
     {
       icon: <FaUserShield />,
-      title: "Trust & Fiduciary Duty",
-      text: "We act as fiduciaries, always putting your interests first with unwavering integrity and transparency in every recommendation and decision."
+      title: "Founder-First Approach",
+      text: "We prioritize exceptional founders, recognizing that the right team with the right values is the foundation of every successful startup journey."
     },
     {
       icon: <FaBalanceScale />,
-      title: "Holistic Approach",
-      text: "We consider all aspects of your financial life—investments, tax planning, estate strategies, and risk management—for truly comprehensive wealth management."
+      title: "Strategic Partnership",
+      text: "We're more than capital providers—we're active partners offering strategic guidance, operational expertise, and invaluable connections throughout your growth journey."
     },
     {
       icon: <FaAward />,
-      title: "Evidence-Based Strategy",
-      text: "Our investment philosophy is grounded in academic research and empirical evidence rather than speculation or market timing."
+      title: "Data-Driven Decisions",
+      text: "Our investment process combines rigorous quantitative analysis with qualitative evaluation to identify promising opportunities with the highest growth potential."
     },
     {
       icon: <FaHandshake />,
-      title: "Relationship-Focused",
-      text: "We build deep, long-term relationships that evolve as your life changes, providing continuity and personalized care for generations."
+      title: "Long-Term Alignment",
+      text: "We structure investments that create true alignment between founders and investors, focusing on sustainable growth rather than short-term metrics."
     }
   ];
   
   const teamCategories = [
     {
       icon: <FaRegLightbulb />,
-      title: "Wealth Strategists",
-      text: "Certified financial planners and wealth advisors who develop comprehensive, tailored strategies to preserve and grow your wealth over generations.",
+      title: "Investment Strategists",
+      text: "Experienced investors who identify promising startups, conduct thorough due diligence, and structure deals that align founder and investor interests.",
       gradient: "var(--primary-color), #2d4e71"
     },
     {
       icon: <FaRobot />,
-      title: "Investment Specialists",
-      text: "Portfolio managers and analysts who construct diversified investment solutions based on your risk tolerance, time horizon, and financial goals.",
+      title: "Technology Analysts",
+      text: "Technical experts who evaluate product architecture, technology differentiation, and scalability potential of startup solutions across various sectors.",
       gradient: "var(--accent-color), #4ade80"
     },
     {
       icon: <FaGraduationCap />,
-      title: "Legacy Planning Experts",
-      text: "Estate planning professionals who help you create meaningful legacies and efficient wealth transfer strategies for future generations.",
+      title: "Growth Acceleration Team",
+      text: "Operational specialists who help portfolio companies optimize go-to-market strategies, build high-performing teams, and scale efficiently.",
       gradient: "#6366F1, #A855F7"
     },
     {
       icon: <FaUsers />,
-      title: "Client Experience Team",
-      text: "Dedicated professionals who provide concierge-level service, anticipating your needs and ensuring your experience exceeds expectations.",
+      title: "Ecosystem Network",
+      text: "Relationship managers who leverage our extensive connections with industry partners, later-stage investors, and corporate stakeholders to create opportunities.",
       gradient: "#F59E0B, #EF4444"
     }
   ];
@@ -384,32 +384,32 @@ const About = () => {
       <Container>
         <SectionHeader>
           <Preheading>Our Mission</Preheading>
-          <Title>Preserving & Growing Your Wealth</Title>
+          <Title>Helping Startups Bloom</Title>
           <Subtitle>
-            At <strong>BloomVest Capital</strong>, we combine sophisticated wealth management strategies with personalized service to help you achieve your most important financial goals.
+            At <strong>BloomVest Capital</strong>, we partner with exceptional founders to transform innovative ideas into category-defining companies through strategic capital, hands-on support, and valuable connections.
           </Subtitle>
         </SectionHeader>
         
         <StorySection>
           <StoryContent>
-            <StoryTitle>Our Wealth Management Philosophy</StoryTitle>
+            <StoryTitle>Our Investment Philosophy</StoryTitle>
             <StoryText>
               <p>
-                Founded with a clear vision, <strong>BloomVest Capital</strong> was established to provide truly personalized wealth management solutions that go beyond typical financial planning. We recognized that high-net-worth individuals and families have unique needs that require specialized expertise and extraordinary attention to detail.
+                Founded with a clear vision, <strong>BloomVest Capital</strong> was established to provide more than just capital to early-stage companies. We recognized that truly exceptional startups need partners who understand both the technical challenges and human elements of building innovative companies from the ground up.
               </p>
               <p>
-                Our approach integrates <strong>advanced investment strategies</strong> with <strong>comprehensive financial planning</strong> to create a holistic wealth management experience. We consider all aspects of your financial life—from investment management and tax efficiency to estate planning and philanthropic goals—creating strategies that work in harmony to optimize your overall financial position.
+                Our approach integrates <strong>rigorous due diligence</strong> with <strong>founder-friendly terms</strong> to create investment partnerships built on mutual trust and shared objectives. We evaluate opportunities across multiple dimensions—from technical innovation and market potential to team dynamics and execution capability—creating a comprehensive understanding of each startup's growth trajectory.
               </p>
               <p>
-                What truly sets BloomVest Capital apart is our commitment to providing institutional-quality investment solutions with boutique-level service. We maintain low client-to-advisor ratios to ensure you receive the dedicated attention your wealth deserves, while leveraging sophisticated investment capabilities typically available only to large institutional investors. This combination of <strong>personalized attention</strong> and <strong>investment expertise</strong> creates a wealth management experience that addresses both the technical and emotional aspects of managing significant wealth.
+                What truly sets BloomVest Capital apart is our hands-on approach after investment. Our team works closely with portfolio companies, providing strategic guidance, operational support, and valuable connections when needed, while respecting founders' autonomy to build their vision. This balance of <strong>active engagement</strong> and <strong>founder independence</strong> creates a partnership model that maximizes growth potential while maintaining entrepreneurial spirit.
               </p>
             </StoryText>
           </StoryContent>
           
           <StoryImage>
             <img 
-              src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1742&q=80" 
-              alt="BloomVest Capital Wealth Management" 
+              src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1742&q=80" 
+              alt="BloomVest Capital Investment Team" 
             />
           </StoryImage>
         </StorySection>
@@ -419,7 +419,7 @@ const About = () => {
             <Preheading>Our Core Values</Preheading>
             <Title>The Principles That Guide Us</Title>
             <Subtitle>
-              At <strong>BloomVest Capital</strong>, these fundamental values shape our client relationships and influence every recommendation we make.
+              At <strong>BloomVest Capital</strong>, these fundamental values shape our investment decisions and partnerships with innovative founders.
             </Subtitle>
           </SectionHeader>
           
@@ -439,9 +439,9 @@ const About = () => {
         <div>
           <SectionHeader>
             <Preheading>Our Expertise</Preheading>
-            <Title>Comprehensive Wealth Management</Title>
+            <Title>Comprehensive Startup Support</Title>
             <Subtitle>
-              Our team of specialists works collaboratively to address every dimension of your financial life, providing truly integrated wealth management.
+              Our multidisciplinary team brings diverse expertise to help founders navigate the challenges of early-stage growth and scale successfully.
             </Subtitle>
           </SectionHeader>
           

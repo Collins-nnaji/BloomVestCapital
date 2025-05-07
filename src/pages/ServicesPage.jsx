@@ -7,26 +7,139 @@ import Services from '../components/Services';
 // Page wrapper for consistent styling
 const PageWrapper = styled.div`
   overflow-x: hidden;
-  background: #fcfcfd;
+  background: linear-gradient(to bottom, #fcfcfd, #f8fafc);
   transform: translateZ(0); /* Hardware acceleration */
   backface-visibility: hidden;
   perspective: 1000;
 `;
 
-// Styled components for the hero section
-const HeroSection = styled.section`
-  padding: 120px 5% 140px;
+// Video Background Components
+const VideoBackground = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.25;
+  z-index: 1;
+`;
+
+const VideoOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(26, 54, 93, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%);
+  z-index: 2;
+`;
+
+// Featured Video Section
+const FeaturedVideoSection = styled.section`
+  padding: 100px 0;
+  background: linear-gradient(to bottom, #ffffff, #f8fafc);
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a365d 0%, #2d4e71 100%);
-  min-height: 65vh;
+`;
+
+const VideoContainer = styled.div`
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+`;
+
+const VideoHeader = styled.div`
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 4rem;
+`;
+
+const VideoTitle = styled.h2`
+  font-size: 3rem;
+  font-weight: 800;
+  color: #1a365d;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+  
+  span {
+    color: #22c55e;
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      width: 100%;
+      height: 8px;
+      background: rgba(34, 197, 94, 0.2);
+      z-index: -1;
+      border-radius: 4px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+`;
+
+const VideoDescription = styled.p`
+  font-size: 1.2rem;
+  color: #475569;
+  line-height: 1.8;
+`;
+
+const MainVideoWrapper = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  margin: 0 auto;
+  
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`;
+
+// Styled components for the hero section
+const HeroSection = styled.section`
+  padding: 120px 5% 130px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1a365d 0%, #0f172a 100%);
+  min-height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: white;
   
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.08;
+    z-index: 3;
+  }
+  
   @media (max-width: 768px) {
-    padding: 80px 5% 100px;
+    padding: 90px 5% 100px;
     min-height: auto;
   }
 `;
@@ -44,7 +157,19 @@ const HeroContent = styled.div`
   max-width: 850px;
   margin: 0 auto;
   position: relative;
-  z-index: 2;
+  z-index: 5;
+  
+  /* Add subtle glass morphism effect */
+  padding: 3rem;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+  }
 `;
 
 const MainHeading = styled(motion.h1)`
@@ -56,7 +181,9 @@ const MainHeading = styled(motion.h1)`
   letter-spacing: -1px;
   
   span {
-    color: #4ade80;
+    background: linear-gradient(90deg, #4ade80 0%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     position: relative;
     
     &::after {
@@ -66,7 +193,7 @@ const MainHeading = styled(motion.h1)`
       left: 0;
       width: 100%;
       height: 8px;
-      background: rgba(74, 222, 128, 0.3);
+      background: rgba(74, 222, 128, 0.15);
       z-index: -1;
       border-radius: 4px;
     }
@@ -87,7 +214,7 @@ const MainHeading = styled(motion.h1)`
 `;
 
 const Description = styled(motion.p)`
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 3rem;
   line-height: 1.8;
@@ -102,40 +229,40 @@ const Description = styled(motion.p)`
 const BackgroundDecoration = styled.div`
   position: absolute;
   border-radius: 50%;
-  filter: blur(70px);
+  filter: blur(80px);
   z-index: 1;
-  will-change: transform, opacity; /* Optimize animation */
+  will-change: transform, opacity;
   
   @media (max-width: 768px) {
-    filter: blur(40px); /* Reduce blur on mobile */
+    filter: blur(50px);
   }
   
   &.top-left {
-    top: -150px;
-    left: -100px;
-    width: 500px;
-    height: 500px;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(16, 185, 129, 0.1));
-    opacity: 0.6;
+    top: -100px;
+    left: -80px;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.05));
+    opacity: 0.5;
   }
   
   &.bottom-right {
-    bottom: -200px;
-    right: -150px;
-    width: 600px;
-    height: 600px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(34, 197, 94, 0.1));
-    opacity: 0.6;
+    bottom: -120px;
+    right: -80px;
+    width: 450px;
+    height: 450px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(34, 197, 94, 0.05));
+    opacity: 0.5;
   }
   
   &.center {
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 800px;
-    height: 800px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
-    opacity: 0.4;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    opacity: 0.3;
   }
 `;
 
@@ -146,32 +273,27 @@ const GridPattern = styled.div`
   right: 0;
   bottom: 0;
   background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
   background-position: center center;
   opacity: 0.4;
-  z-index: 1;
-  
-  @media (max-width: 768px) {
-    background-size: 60px 60px; /* Simpler pattern on mobile */
-    opacity: 0.3;
-  }
+  z-index: 2;
 `;
 
 const FloatingElement = styled(motion.div)`
   position: absolute;
-  z-index: 2;
-  border-radius: 50%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 4;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px);
-  will-change: transform; /* Optimize animation */
+  will-change: transform;
   
   @media (max-width: 768px) {
-    backdrop-filter: none; /* Remove expensive backdrop filter on mobile */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+    backdrop-filter: none;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
   
   &.element-1 {
@@ -179,6 +301,7 @@ const FloatingElement = styled(motion.div)`
     height: 120px;
     top: 15%;
     left: 10%;
+    transform: rotate(15deg);
   }
   
   &.element-2 {
@@ -186,13 +309,15 @@ const FloatingElement = styled(motion.div)`
     height: 80px;
     bottom: 20%;
     left: 15%;
+    transform: rotate(-10deg);
   }
   
   &.element-3 {
-    width: 150px;
-    height: 150px;
+    width: 160px;
+    height: 160px;
     top: 20%;
     right: 10%;
+    transform: rotate(5deg);
   }
   
   &.element-4 {
@@ -200,210 +325,123 @@ const FloatingElement = styled(motion.div)`
     height: 100px;
     bottom: 25%;
     right: 15%;
+    transform: rotate(-20deg);
   }
 `;
 
-const ShapedElement = styled(motion.div)`
-  position: absolute;
-  z-index: 2;
-  opacity: 0.8;
-  
-  &.triangle {
-    width: 0;
-    height: 0;
-    border-left: 50px solid transparent;
-    border-right: 50px solid transparent;
-    border-bottom: 86px solid rgba(34, 197, 94, 0.15);
-    top: 30%;
-    left: 20%;
-    filter: blur(2px);
-  }
-  
-  &.square {
-    width: 70px;
-    height: 70px;
-    background: rgba(59, 130, 246, 0.15);
-    bottom: 35%;
-    right: 25%;
-    transform: rotate(45deg);
-    filter: blur(2px);
-  }
-`;
-
-// Section divider with wave pattern - optimize for mobile
+// Section divider with a cleaner, more modern approach
 const SectionDivider = styled.div`
-  height: 120px;
-  background: white;
+  height: 50px;
   position: relative;
-  overflow: hidden;
+  background: linear-gradient(to bottom, #1a365d, #ffffff);
   
-  &::before {
+  &::after {
     content: '';
     position: absolute;
+    bottom: 0;
     left: 0;
-    right: 0;
-    top: -2px;
-    height: 120px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z' style='fill: %231a365d;'/%3E%3C/svg%3E");
-    background-size: cover;
-    background-position: center;
-    transform: rotate(180deg);
-    will-change: transform; /* Optimize animation */
-  }
-  
-  &.inverted {
-    &::before {
-      transform: rotate(0deg);
-      top: auto;
-      bottom: -2px;
-    }
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
   }
   
   @media (max-width: 768px) {
-    height: 80px; /* Smaller for mobile */
-    
-    &::before {
-      height: 80px;
-    }
+    height: 40px;
   }
 `;
-
-const ScrollIndicator = styled.div`
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-  letter-spacing: 1px;
-  
-  @media (max-width: 768px) {
-    display: none; /* Hide on mobile to reduce animations */
-  }
-  
-  .mouse {
-    width: 30px;
-    height: 50px;
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-    
-    &::before {
-      content: '';
-      width: 4px;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 2px;
-      margin-top: 10px;
-      animation: scroll 1.5s infinite;
-      will-change: transform, opacity; /* Optimize animation */
-    }
-  }
-  
-  @keyframes scroll {
-    0% {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(15px);
-      opacity: 0;
-    }
-  }
-`;
-
-// Animation variants
-const titleVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.7, ease: "easeOut" } 
-  }
-};
-
-const textVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.7, delay: 0.2, ease: "easeOut" } 
-  }
-};
-
-const floatingVariants1 = {
-  animate: {
-    y: [0, -15, 0],
-    transition: {
-      duration: 6,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"
-    }
-  }
-};
-
-const floatingVariants2 = {
-  animate: {
-    y: [0, 15, 0],
-    transition: {
-      duration: 7,
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"
-    }
-  }
-};
-
-const rotateVariants = {
-  animate: {
-    rotate: [0, 360],
-    transition: {
-      duration: 20,
-      repeat: Infinity,
-      ease: "linear"
-    }
-  }
-};
-
-// Add mobile-optimized animation variants
-const floatingMobileVariants = {
-  animate: {
-    y: [0, -5, 0], // Smaller movement range
-    transition: {
-      duration: 8, // Slower animation
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"
-    }
-  }
-};
 
 const ServicesPage = () => {
-  // Add state to detect mobile devices
   const [isMobile, setIsMobile] = useState(false);
   
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    
-    // Initial check
     checkMobile();
-    
-    // Add event listener
     window.addEventListener('resize', checkMobile);
-    
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
+  
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+  
+  const animationVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.8, ease: [0.1, 0.9, 0.2, 1] }
+    }
+  };
+  
+  const floatingAnimation1 = {
+    y: [0, -15, 0],
+    rotate: ['-15deg', '-10deg', '-15deg'],
+    transition: {
+      y: {
+        duration: 6,
+        repeat: Infinity,
+        ease: "easeInOut"
+      },
+      rotate: {
+        duration: 10,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  const floatingAnimation2 = {
+    y: [0, -20, 0],
+    rotate: ['10deg', '15deg', '10deg'],
+    transition: {
+      y: {
+        duration: 7,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: 0.5
+      },
+      rotate: {
+        duration: 12,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  const floatingAnimation3 = {
+    y: [0, -12, 0],
+    rotate: ['-5deg', '-8deg', '-5deg'],
+    transition: {
+      y: {
+        duration: 8,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: 1
+      },
+      rotate: {
+        duration: 9,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  const floatingAnimation4 = {
+    y: [0, -18, 0],
+    rotate: ['20deg', '25deg', '20deg'],
+    transition: {
+      y: {
+        duration: 9,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: 1.5
+      },
+      rotate: {
+        duration: 11,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
   
   return (
     <PageWrapper>
@@ -413,44 +451,23 @@ const ServicesPage = () => {
         <BackgroundDecoration className="center" />
         <GridPattern />
         
-        {/* Conditionally render or use simpler animations on mobile */}
         {!isMobile && (
           <>
             <FloatingElement 
-              className="element-1" 
-              variants={isMobile ? floatingMobileVariants : floatingVariants1} 
-              animate="animate"
+              className="element-1"
+              animate={floatingAnimation1}
             />
             <FloatingElement 
-              className="element-2" 
-              variants={isMobile ? floatingMobileVariants : floatingVariants2} 
-              animate="animate"
+              className="element-2"
+              animate={floatingAnimation2}
             />
             <FloatingElement 
-              className="element-3" 
-              variants={isMobile ? floatingMobileVariants : floatingVariants2} 
-              animate="animate"
+              className="element-3"
+              animate={floatingAnimation3}
             />
             <FloatingElement 
-              className="element-4" 
-              variants={isMobile ? floatingMobileVariants : floatingVariants1} 
-              animate="animate"
-            />
-          </>
-        )}
-        
-        {/* Only show decorative elements on desktop */}
-        {!isMobile && (
-          <>
-            <ShapedElement 
-              className="triangle" 
-              variants={rotateVariants} 
-              animate="animate"
-            />
-            <ShapedElement 
-              className="square" 
-              variants={rotateVariants} 
-              animate="animate"
+              className="element-4"
+              animate={floatingAnimation4}
             />
           </>
         )}
@@ -460,31 +477,72 @@ const ServicesPage = () => {
             <MainHeading
               initial="hidden"
               animate="visible"
-              variants={titleVariants}
+              variants={animationVariants}
             >
-              Our <span>Wealth Management</span> Solutions
+              Early-Stage <span>Investment</span> Services
             </MainHeading>
+            
             <Description
               initial="hidden"
               animate="visible"
-              variants={textVariants}
+              variants={{
+                ...animationVariants,
+                visible: {
+                  ...animationVariants.visible,
+                  transition: {
+                    delay: 0.2,
+                    duration: 0.8,
+                    ease: [0.1, 0.9, 0.2, 1]
+                  }
+                }
+              }}
             >
-              BloomVest Capital delivers comprehensive <strong>wealth management services</strong> tailored to your unique financial goals and needs, helping you build, protect, and grow your <strong>wealth</strong> for generations to come.
+              BloomVest provides comprehensive investment services for <strong>promising startups</strong> and <strong>strategic investors</strong>, combining rigorous due diligence, tailored capital deployment, and hands-on growth acceleration.
             </Description>
           </HeroContent>
         </HeroContainer>
-        
-        <ScrollIndicator>
-          <div className="mouse"></div>
-          <span>SCROLL DOWN</span>
-        </ScrollIndicator>
       </HeroSection>
       
       <SectionDivider />
+
+      <FeaturedVideoSection>
+        <VideoContainer>
+          <VideoHeader>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, type: "spring" }}
+              viewport={{ once: true }}
+            >
+              <VideoTitle>Our <span>Investment</span> Philosophy</VideoTitle>
+              <VideoDescription>
+                Learn how BloomVest identifies and nurtures exceptional startups, providing the strategic capital and expertise needed to accelerate their journey from innovative concept to market leader.
+              </VideoDescription>
+            </motion.div>
+          </VideoHeader>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, type: "spring" }}
+            viewport={{ once: true }}
+          >
+            <MainVideoWrapper>
+              <video 
+                autoPlay
+                loop
+                muted
+                playsInline
+              >
+                <source src="/wealthmanagement.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </MainVideoWrapper>
+          </motion.div>
+        </VideoContainer>
+      </FeaturedVideoSection>
       
       <Services />
-      
-      <SectionDivider className="inverted" />
       
       <AIFeatures />
     </PageWrapper>

@@ -430,59 +430,59 @@ const TestimonialsSlider = () => {
     {
       slide: [
         {
-          text: "Working with Bloomvest Capital transformed our financial strategy. Their personalized approach and expert guidance helped us navigate complex market conditions with confidence.",
+          text: "BloomVest's deep due diligence process and founder-friendly approach made them the ideal partner for our Series A. Beyond capital, their strategic introductions accelerated our enterprise sales by 215% within six months.",
           rating: 5,
-          name: "Jennifer Richards",
-          role: "CFO",
-          company: "Nexus Technologies",
-          avatarBg: "linear-gradient(135deg, #667eea, #764ba2)"
-        },
-        {
-          text: "The combination of AI-powered insights and human expertise made all the difference. Their team identified opportunities we would have never found on our own.",
-          rating: 5,
-          name: "Robert Chen",
-          role: "Investment Director",
-          company: "Global Ventures Ltd",
-          avatarBg: "linear-gradient(135deg, #667eea, #764ba2)"
-        }
-      ]
-    },
-    {
-      slide: [
-        {
-          text: "Bloomvest Capital's educational resources and workshops have empowered our team to make better financial decisions across the board. Their commitment to client success is evident in everything they do.",
-          rating: 5,
-          name: "Sarah Johnson",
-          role: "CEO",
-          company: "Innovate Partners",
-          avatarBg: "linear-gradient(135deg, #22c55e, #4ade80)"
-        },
-        {
-          text: "The market insights provided by Bloomvest have been invaluable for our long-term investment strategy. Their team has a remarkable ability to explain complex concepts in simple terms.",
-          rating: 4,
-          name: "Michael Thompson",
-          role: "Portfolio Manager",
-          company: "Equity First",
-          avatarBg: "linear-gradient(135deg, #22c55e, #4ade80)"
-        }
-      ]
-    },
-    {
-      slide: [
-        {
-          text: "As a startup founder, navigating financial strategies was overwhelming until we partnered with Bloomvest. Their tailored approach and patience with our questions made all the difference.",
-          rating: 5,
-          name: "David Rodriguez",
+          name: "Sophia Martinez",
           role: "Founder & CEO",
-          company: "Futurewave Tech",
+          company: "Quantum ML",
+          avatarBg: "linear-gradient(135deg, #667eea, #764ba2)"
+        },
+        {
+          text: "As a first-time founder, navigating term sheets was overwhelming until BloomVest stepped in. They structured fair terms that protected both our team's upside and their investment, creating perfect alignment.",
+          rating: 5,
+          name: "James Chen",
+          role: "Co-founder",
+          company: "Cirrus Logistics",
+          avatarBg: "linear-gradient(135deg, #667eea, #764ba2)"
+        }
+      ]
+    },
+    {
+      slide: [
+        {
+          text: "BloomVest's portfolio companies benefit from an incredible network effect. Their team connected us with three enterprise clients and our perfect VP of Sales, accelerating our growth trajectory dramatically.",
+          rating: 5,
+          name: "Alex Johnson",
+          role: "Founder & CTO",
+          company: "EdgeAI Systems",
+          avatarBg: "linear-gradient(135deg, #22c55e, #4ade80)"
+        },
+        {
+          text: "The strategic growth support from BloomVest has been invaluable. Their operational framework helped us optimize our unit economics and prepare for scale, which was crucial for our successful Series B.",
+          rating: 5,
+          name: "Priya Sharma",
+          role: "CEO",
+          company: "FinanceFlow",
+          avatarBg: "linear-gradient(135deg, #22c55e, #4ade80)"
+        }
+      ]
+    },
+    {
+      slide: [
+        {
+          text: "BloomVest's curated deal flow has consistently outperformed market benchmarks. Their rigorous screening and due diligence process gives me confidence to invest in promising startups I would otherwise never discover.",
+          rating: 5,
+          name: "Michael Rodriguez",
+          role: "Angel Investor",
+          company: "Highland Angels",
           avatarBg: "linear-gradient(135deg, #f97316, #fb923c)"
         },
         {
-          text: "The strategic financial planning services from Bloomvest helped us identify inefficiencies and optimize our capital allocation. Our ROI has improved significantly since implementing their recommendations.",
+          text: "After a decade of angel investing, partnering with BloomVest has transformed my early-stage portfolio. Their sector expertise and founder evaluation framework has increased my successful exits from 10% to over 30%.",
           rating: 5,
-          name: "Aisha Patel",
-          role: "Financial Director",
-          company: "Horizon Group",
+          name: "Sarah Goldstein",
+          role: "Limited Partner",
+          company: "Sequoia Ventures",
           avatarBg: "linear-gradient(135deg, #f97316, #fb923c)"
         }
       ]
@@ -556,10 +556,10 @@ const TestimonialsSlider = () => {
             transition={{ duration: 0.7, type: "spring" }}
             viewport={{ once: true }}
           >
-            <Preheading>Client Success Stories</Preheading>
-            <Title>What Our <span>Clients</span> Say</Title>
+            <Preheading>Success Stories</Preheading>
+            <Title>From <span>Founders</span> & Investors</Title>
             <Subtitle>
-              Hear from business leaders and entrepreneurs who have transformed their financial strategies with our <strong>personalized guidance</strong> and <strong>expert advice</strong>.
+              Hear from innovative founders and strategic investors who have partnered with BloomVest to achieve <strong>exceptional growth</strong> and <strong>investment returns</strong> in the early-stage ecosystem.
             </Subtitle>
           </motion.div>
         </SectionHeader>

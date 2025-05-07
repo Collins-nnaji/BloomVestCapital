@@ -8,7 +8,7 @@ import Loader from './components/Loader';
 // Lazy load pages for better performance
 const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
-const CaseStudiesAndInsightsPage = lazy(() => import('./pages/CaseStudiesAndInsightsPage'));
+const StartupToolsPage = lazy(() => import('./pages/StartupToolsPage'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
 
 
@@ -22,7 +22,7 @@ function App() {
             <Routes>
               <Route path="/" element={<MainDashboardPage />} />
               <Route path="/services" element={<ServicesPage />} />
-              <Route path="/insights" element={<CaseStudiesAndInsightsPage />} />
+              <Route path="/tools" element={<StartupToolsPage />} />
               <Route path="/about" element={<AboutUsPage />} />
 
               {/* Add a 404 page if needed */}

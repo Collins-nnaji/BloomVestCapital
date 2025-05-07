@@ -327,6 +327,10 @@ const CapabilitiesSection = styled.div`
   margin-bottom: 100px;
 `;
 
+const FeaturesSection = styled.div`
+  margin-bottom: 80px;
+`;
+
 const FeaturesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -358,7 +362,7 @@ const FeatureCard = styled(motion.div)`
     inset: 0;
     border-radius: 20px;
     padding: 2px;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3));
+    background: linear-gradient(135deg, ${props => props.borderGradient || 'rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3)'});
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -391,12 +395,13 @@ const FeatureIcon = styled.div`
   font-size: 1.85rem;
   margin-bottom: 1.5rem;
   transition: all 0.4s ease;
+  box-shadow: 0 10px 15px ${props => props.shadowColor || 'rgba(0, 0, 0, 0.05)'};
   
   ${FeatureCard}:hover & {
     transform: scale(1.1) rotate(5deg);
     background: ${props => props.hoverBg || '#22c55e'};
     color: white;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 20px ${props => props.hoverShadow || 'rgba(0, 0, 0, 0.1)'};
   }
 `;
 
@@ -405,148 +410,235 @@ const FeatureTitle = styled.h3`
   font-weight: 700;
   color: #1a365d;
   margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: ${props => props.underlineColor || '#22c55e'};
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+  
+  ${FeatureCard}:hover &::after {
+    width: 100px;
+  }
 `;
 
 const FeatureDescription = styled.p`
   color: #475569;
   font-size: 1.05rem;
   line-height: 1.7;
-  margin-bottom: 1.5rem;
   flex-grow: 1;
 `;
 
-const FeatureList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0 0 1.5rem;
+// Define CTA section components
+const CTASection = styled.div`
+  background: #f0fdf4;
+  padding: 4rem;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
+  }
 `;
 
-const FeatureItem = styled.li`
+const CTATitle = styled.h3`
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #1a365d;
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
+`;
+
+const CTADescription = styled.p`
+  font-size: 1.2rem;
+  color: #475569;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto 2.5rem;
+`;
+
+const CTAButtons = styled.div`
   display: flex;
-  align-items: center;
-  margin-bottom: 0.75rem;
+  justify-content: center;
+  gap: 1.5rem;
   
-  &:before {
-    content: '';
-    min-width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #22c55e;
-    margin-right: 0.75rem;
-  }
-  
-  span {
-    color: #475569;
-    font-size: 1rem;
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
   }
 `;
 
-const LearnMoreButton = styled.a`
+const PrimaryButton = styled.a`
   display: inline-flex;
   align-items: center;
-  background: transparent;
-  color: #22c55e;
+  justify-content: center;
+  background: linear-gradient(to right, #22c55e, #15803d);
+  color: white;
+  border-radius: 50px;
+  padding: 1rem 2.5rem;
   font-weight: 600;
-  padding: 0;
-  gap: 0.5rem;
-  border: none;
-  cursor: pointer;
+  font-size: 1.1rem;
+  text-decoration: none;
   transition: all 0.3s ease;
-  margin-top: auto;
+  gap: 0.75rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
   
   svg {
     transition: transform 0.3s ease;
   }
   
+  &:hover svg {
+    transform: translateX(3px);
+  }
+`;
+
+const SecondaryButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  color: #1a365d;
+  border: 2px solid #e2e8f0;
+  border-radius: 50px;
+  padding: 1rem 2.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  
   &:hover {
-    color: #15803d;
-    
-    svg {
-      transform: translateX(5px);
-    }
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border-color: #22c55e;
   }
 `;
 
 const AIFeatures = () => {
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.7, ease: "easeOut" }
+    }
+  };
+
+  const processStepVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.2,
+        duration: 0.7,
+        ease: "easeOut"
+      }
+    })
+  };
+
+  const featureVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.15,
+        duration: 0.7,
+        ease: "easeOut"
+      }
+    })
+  };
+
+  // Data for the process steps
   const processSteps = [
     {
       icon: <FaDatabase />,
       title: "Data Collection",
-      description: "We securely gather your financial data, investment history, and goals to create a comprehensive profile.",
-      bgColor: "rgba(34, 197, 94, 0.1)",
-      iconColor: "#22c55e",
-      number: "1"
-    },
-    {
-      icon: <FaServer />,
-      title: "Data Processing",
-      description: "Our system analyzes your financial information to understand your unique circumstances and opportunities.",
-      bgColor: "rgba(8, 145, 178, 0.1)",
-      iconColor: "#0891b2",
-      number: "2"
-    },
-    {
-      icon: <FaRobot />,
-      title: "AI Analysis",
-      description: "Advanced algorithms identify patterns and insights that inform optimal wealth management strategies.",
-      bgColor: "rgba(139, 92, 246, 0.1)",
-      iconColor: "#8b5cf6",
-      number: "3"
+      description: "Gathering startup metrics, market data, and industry benchmarks from multiple sources"
     },
     {
       icon: <FaBrain />,
-      title: "Strategy Development",
-      description: "Our advisors combine AI insights with their expertise to develop personalized financial strategies.",
-      bgColor: "rgba(245, 158, 11, 0.1)",
-      iconColor: "#f59e0b",
-      number: "4"
+      title: "AI Analysis",
+      description: "Algorithmic processing using machine learning models to identify patterns and insights"
     },
     {
       icon: <FaFileAlt />,
-      title: "Implementation",
-      description: "We execute your customized strategy with precision, continuously monitoring for optimal performance.",
-      bgColor: "rgba(236, 72, 153, 0.1)",
-      iconColor: "#ec4899",
-      number: "5"
+      title: "Opportunity Scoring",
+      description: "Quantitative evaluation of startups against success predictors and risk factors"
+    },
+    {
+      icon: <FaRobot />,
+      title: "Decision Support",
+      description: "AI-enhanced recommendations to augment human investment judgment"
+    },
+    {
+      icon: <FaServer />,
+      title: "Performance Tracking",
+      description: "Continuous monitoring of portfolio companies' growth metrics and milestones"
     }
   ];
 
-  const capabilities = [
+  // Data for AI-powered features
+  const aiFeatures = [
     {
       icon: <FaChartPie />,
-      title: "Portfolio Optimization",
-      description: "Our AI dynamically balances your investment portfolio to maximize returns while adhering to your risk tolerance.",
-      features: ["Smart asset allocation", "Tax-efficient rebalancing", "Risk-adjusted returns"],
+      title: "Deal Flow Optimization",
+      description: "Our AI-powered deal sourcing system continuously scans thousands of startups across multiple ecosystems, identifying promising opportunities that match our investment criteria before they reach mainstream visibility.",
       color: "#22c55e",
-      bg: "rgba(34, 197, 94, 0.1)",
-      hoverBg: "#22c55e"
-    },
-    {
-      icon: <FaChartLine />,
-      title: "Market Prediction",
-      description: "Advanced algorithms analyze market trends and economic indicators to anticipate shifts before they occur.",
-      features: ["Pattern recognition", "Anomaly detection", "Trend forecasting"],
-      color: "#0891b2",
-      bg: "rgba(8, 145, 178, 0.1)",
-      hoverBg: "#0891b2"
+      bgLight: "rgba(34, 197, 94, 0.1)",
+      hoverShadow: "rgba(34, 197, 94, 0.2)",
+      underlineColor: "#22c55e",
+      borderGradient: "rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3)"
     },
     {
       icon: <FaLightbulb />,
-      title: "Strategic Insights",
-      description: "AI-generated recommendations identify opportunities and strategies uniquely suited to your financial goals.",
-      features: ["Personalized suggestions", "Goal-based planning", "Opportunity identification"],
-      color: "#8b5cf6",
-      bg: "rgba(139, 92, 246, 0.1)",
-      hoverBg: "#8b5cf6"
+      title: "Founder Success Prediction",
+      description: "Our proprietary algorithm analyzes over 50 founder and team attributes correlated with startup success, helping identify exceptional entrepreneurial talent with the highest probability of building category-defining companies.",
+      color: "#3b82f6",
+      bgLight: "rgba(59, 130, 246, 0.1)",
+      hoverShadow: "rgba(59, 130, 246, 0.2)",
+      underlineColor: "#3b82f6",
+      borderGradient: "rgba(59, 130, 246, 0.5), rgba(26, 54, 93, 0.3)"
+    },
+    {
+      icon: <FaChartLine />,
+      title: "Market Opportunity Sizing",
+      description: "Advanced data analytics tools provide precise total addressable market calculations and growth trajectory forecasts, validated against real-world adoption patterns from similar technology deployments.",
+      color: "#f59e0b",
+      bgLight: "rgba(245, 158, 11, 0.1)",
+      hoverShadow: "rgba(245, 158, 11, 0.2)",
+      underlineColor: "#f59e0b",
+      borderGradient: "rgba(245, 158, 11, 0.5), rgba(26, 54, 93, 0.3)"
     },
     {
       icon: <FaShieldAlt />,
-      title: "Risk Management",
-      description: "Continuous monitoring of market conditions and your portfolio to identify and mitigate potential risks.",
-      features: ["Early warning system", "Volatility protection", "Downside mitigation"],
-      color: "#f59e0b",
-      bg: "rgba(245, 158, 11, 0.1)",
-      hoverBg: "#f59e0b"
+      title: "Risk Modeling & Mitigation",
+      description: "Sophisticated risk assessment algorithms identify potential challenges in business models, technology implementation, or market adoption, enabling preemptive strategy adjustments that improve startup success rates.",
+      color: "#8b5cf6",
+      bgLight: "rgba(139, 92, 246, 0.1)",
+      hoverShadow: "rgba(139, 92, 246, 0.2)",
+      underlineColor: "#8b5cf6",
+      borderGradient: "rgba(139, 92, 246, 0.5), rgba(26, 54, 93, 0.3)"
     }
   ];
 
@@ -560,15 +652,15 @@ const AIFeatures = () => {
       <Container>
         <SectionHeader>
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, type: "spring" }}
+            initial="hidden"
+            whileInView="visible"
             viewport={{ once: true }}
+            variants={fadeIn}
           >
-            <Preheading>AI-Powered Wealth Management</Preheading>
-            <Title>Intelligent <span>Technology</span> for Smarter Wealth Strategies</Title>
+            <Preheading>Technology-Enhanced Investing</Preheading>
+            <Title>Our <span>Data-Driven</span> Approach</Title>
             <Subtitle>
-              Our advanced AI technology works alongside our human advisors to provide <strong>deeper insights</strong>, <strong>better forecasting</strong>, and <strong>optimized strategies</strong> for your wealth management journey.
+              BloomVest combines human expertise with advanced technology to identify <strong>promising investment opportunities</strong> and accelerate startup growth through <strong>data-driven insights</strong> and strategic guidance.
             </Subtitle>
           </motion.div>
         </SectionHeader>
@@ -576,19 +668,15 @@ const AIFeatures = () => {
         <DataFlowSection>
           <ProcessSteps>
             {processSteps.map((step, index) => (
-              <ProcessStep 
+              <ProcessStep
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                custom={index}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
-                isLast={index === processSteps.length - 1}
+                variants={processStepVariants}
               >
-                <StepIcon 
-                  bgColor={step.bgColor}
-                  iconColor={step.iconColor}
-                  number={step.number}
-                >
+                <StepIcon>
                   {step.icon}
                 </StepIcon>
                 <StepTitle>{step.title}</StepTitle>
@@ -598,58 +686,38 @@ const AIFeatures = () => {
           </ProcessSteps>
         </DataFlowSection>
         
-        <CapabilitiesSection>
-          <SectionHeader>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <Title>Our AI <span>Capabilities</span></Title>
-              <Subtitle>
-                Leveraging cutting-edge artificial intelligence to transform financial data into actionable wealth management strategies that give you a <strong>competitive advantage</strong>.
-              </Subtitle>
-            </motion.div>
-          </SectionHeader>
-          
+        <FeaturesSection>
           <FeaturesGrid>
-            {capabilities.map((capability, index) => (
+            {aiFeatures.map((feature, index) => (
               <FeatureCard
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.15,
-                  type: "spring",
-                  stiffness: 50
-                }}
-                viewport={{ once: true }}
+                custom={index}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+                variants={featureVariants}
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                borderGradient={feature.borderGradient}
               >
                 <FeatureIcon 
-                  color={capability.color}
-                  bg={capability.bg}
-                  hoverBg={capability.hoverBg}
+                  bg={feature.bgLight} 
+                  color={feature.color}
+                  hoverBg={feature.color}
+                  shadowColor={feature.shadowColor}
+                  hoverShadow={feature.hoverShadow}
                 >
-                  {capability.icon}
+                  {feature.icon}
                 </FeatureIcon>
-                <FeatureTitle>{capability.title}</FeatureTitle>
-                <FeatureDescription>{capability.description}</FeatureDescription>
-                <FeatureList>
-                  {capability.features.map((feature, featureIndex) => (
-                    <FeatureItem key={featureIndex}>
-                      <span>{feature}</span>
-                    </FeatureItem>
-                  ))}
-                </FeatureList>
-                <LearnMoreButton href="#">
-                  Learn more <FaArrowRight />
-                </LearnMoreButton>
+                <FeatureTitle underlineColor={feature.underlineColor}>
+                  {feature.title}
+                </FeatureTitle>
+                <FeatureDescription>
+                  {feature.description}
+                </FeatureDescription>
               </FeatureCard>
             ))}
           </FeaturesGrid>
-        </CapabilitiesSection>
+        </FeaturesSection>
       </Container>
     </Section>
   );
