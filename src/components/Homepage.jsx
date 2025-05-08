@@ -5,18 +5,18 @@ import { motion, useAnimation, useInView } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
 const HeroSection = styled.section`
-  padding: 130px 5% 160px;
+  padding: 150px 5% 180px;
   position: relative;
   overflow: hidden;
-  min-height: 90vh;
+  min-height: 95vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: white;
   
   @media (max-width: 768px) {
-    padding: 100px 5% 120px;
-    min-height: 80vh;
+    padding: 120px 5% 140px;
+    min-height: 88vh;
   }
 `;
 
@@ -28,7 +28,7 @@ const VideoBackground = styled.video`
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  transform: scale(1.05);
+  transform: scale(1.08);
 `;
 
 const VideoOverlay = styled.div`
@@ -37,9 +37,9 @@ const VideoOverlay = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(26, 54, 93, 0.9) 0%, rgba(45, 78, 113, 0.85) 100%);
+  background: linear-gradient(135deg, rgba(18, 40, 76, 0.94) 0%, rgba(32, 58, 84, 0.9) 100%);
   z-index: 1;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 `;
 
 const HeroContainer = styled.div`
@@ -191,36 +191,36 @@ const HeroContent = styled.div`
 `;
 
 const SubHeading = styled(motion.p)`
-  font-size: 1.25rem;
+  font-size: 1.45rem;
   font-weight: 700;
   color: #4ade80;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
   position: relative;
   display: inline-block;
   
   &::after {
     content: '';
     position: absolute;
-    bottom: -6px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px;
-    height: 3px;
+    width: 70px;
+    height: 4px;
     background: linear-gradient(to right, #22c55e, #4ade80);
-    border-radius: 3px;
+    border-radius: 4px;
   }
 `;
 
 const MainHeading = styled(motion.h1)`
-  font-size: 4.8rem;
+  font-size: 5.2rem;
   font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 1.75rem;
+  line-height: 1.05;
+  margin-bottom: 2.25rem;
   color: white;
-  letter-spacing: -1px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  letter-spacing: -1.2px;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
   
   span {
     color: #22c55e;
@@ -233,33 +233,33 @@ const MainHeading = styled(motion.h1)`
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 5px;
-      background: rgba(34, 197, 94, 0.25);
-      border-radius: 5px;
+      height: 6px;
+      background: rgba(34, 197, 94, 0.28);
+      border-radius: 6px;
       transform: translateY(8px);
     }
   }
   
   @media (max-width: 1024px) {
-    font-size: 4rem;
+    font-size: 4.5rem;
   }
   
   @media (max-width: 768px) {
-    font-size: 3.2rem;
+    font-size: 3.8rem;
   }
   
   @media (max-width: 480px) {
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 `;
 
 const Description = styled(motion.p)`
-  font-size: 1.35rem;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 3rem;
-  line-height: 1.7;
+  font-size: 1.6rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 4rem;
+  line-height: 1.8;
   font-weight: 400;
-  max-width: 800px;
+  max-width: 880px;
   margin-left: auto;
   margin-right: auto;
   
@@ -272,34 +272,28 @@ const Description = styled(motion.p)`
 const CTAButtons = styled(motion.div)`
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
-  margin-top: 2.5rem;
-  
-  @media (max-width: 640px) {
-    flex-direction: column;
-    gap: 1.2rem;
-    align-items: center;
-  }
+  margin-top: 3.5rem;
 `;
 
 const PrimaryButton = styled(RouterLink)`
   background: linear-gradient(to right, #22c55e, #15803d);
   color: white;
   border: none;
-  padding: 1.2rem 2.75rem;
-  font-size: 1.15rem;
+  padding: 1.5rem 3.5rem;
+  font-size: 1.3rem;
   font-weight: 700;
   border-radius: 50px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 10px 25px rgba(34, 197, 94, 0.45);
+  gap: 1rem;
+  box-shadow: 0 15px 35px rgba(34, 197, 94, 0.55);
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   position: relative;
   overflow: hidden;
   z-index: 1;
+  letter-spacing: 0.5px;
   
   &::before {
     content: '';
@@ -315,8 +309,8 @@ const PrimaryButton = styled(RouterLink)`
   }
   
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(34, 197, 94, 0.6);
+    transform: translateY(-7px);
+    box-shadow: 0 20px 40px rgba(34, 197, 94, 0.7);
     
     &::before {
       width: 100%;
@@ -325,45 +319,16 @@ const PrimaryButton = styled(RouterLink)`
   
   svg {
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.3rem;
   }
   
   &:hover svg {
-    transform: translateX(5px);
+    transform: translateX(8px);
   }
   
   @media (max-width: 768px) {
-    padding: 1.1rem 2.25rem;
-    font-size: 1.05rem;
-  }
-`;
-
-const SecondaryButton = styled(RouterLink)`
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 1.2rem 2.75rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-  border-radius: 50px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  backdrop-filter: blur(10px);
-  
-  &:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-    border-color: rgba(255, 255, 255, 0.5);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1.1rem 2.25rem;
-    font-size: 1.05rem;
+    padding: 1.3rem 3rem;
+    font-size: 1.2rem;
   }
 `;
 
@@ -575,15 +540,15 @@ const SectionDescription = styled.p`
 
 const FeatureGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2.5rem;
-  margin-top: 3.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 3rem;
+  margin-top: 4rem;
   position: relative;
   z-index: 1;
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 2.5rem;
   }
 `;
 
@@ -675,7 +640,7 @@ const StatLabel = styled.div`
 `;
 
 const AboutSection = styled.section`
-  padding: 120px 0;
+  padding: 140px 0;
   background: linear-gradient(to bottom, #f8fafc, #ffffff);
   position: relative;
   overflow: hidden;
@@ -687,7 +652,7 @@ const AboutSection = styled.section`
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(rgba(34, 197, 94, 0.03) 2px, transparent 2px);
+    background-image: radial-gradient(rgba(34, 197, 94, 0.04) 2px, transparent 2px);
     background-size: 30px 30px;
     opacity: 0.8;
     z-index: 0;
@@ -695,19 +660,19 @@ const AboutSection = styled.section`
 `;
 
 const AboutContainer = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  gap: 5rem;
   align-items: center;
   position: relative;
   z-index: 1;
   
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 4rem;
   }
 `;
 
@@ -716,8 +681,8 @@ const AboutImage = styled.div`
   
   img {
     width: 100%;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
   
@@ -725,7 +690,7 @@ const AboutImage = styled.div`
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 20px;
+    border-radius: 24px;
     padding: 3px;
     background: linear-gradient(135deg, #22c55e, #0891b2);
     -webkit-mask: 
@@ -733,39 +698,39 @@ const AboutImage = styled.div`
       linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.7;
+    opacity: 0.8;
     z-index: 1;
   }
   
   &::after {
     content: '';
     position: absolute;
-    top: 20px;
-    left: 20px;
-    right: -20px;
-    bottom: -20px;
-    border: 2px solid rgba(34, 197, 94, 0.4);
-    border-radius: 20px;
+    top: 25px;
+    left: 25px;
+    right: -25px;
+    bottom: -25px;
+    border: 2px solid rgba(34, 197, 94, 0.5);
+    border-radius: 24px;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: -1;
   }
   
   &:hover {
     img {
-      transform: scale(1.02);
+      transform: scale(1.03);
     }
     
     &::after {
-      top: 15px;
-      left: 15px;
-      right: -15px;
-      bottom: -15px;
-      border-color: rgba(34, 197, 94, 0.7);
+      top: 18px;
+      left: 18px;
+      right: -18px;
+      bottom: -18px;
+      border-color: rgba(34, 197, 94, 0.8);
     }
   }
   
   @media (max-width: 1024px) {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
   }
 `;
@@ -1043,27 +1008,27 @@ const HomeContent = () => {
   const features = [
     {
       icon: <FaCheckCircle />,
-      title: "Startup Funding",
-      description: "Strategic capital deployment through seed rounds, Series A participation, convertible notes, and SAFE arrangements tailored to each venture's growth stage."
+      title: "Investor Matching",
+      description: "Our proprietary algorithm connects startups with investors whose investment thesis and portfolio strategy align with the startup's sector, stage, and vision."
     },
     {
       icon: <FaChartLine />,
-      title: "Due Diligence Excellence",
-      description: "Comprehensive evaluation frameworks analyzing market potential, founder dynamics, technology validation, and scalability factors for informed investment decisions."
+      title: "Due Diligence Support",
+      description: "We help startups prepare for investor scrutiny by analyzing business models, financial projections, market positioning, and competitive landscapes."
     },
     {
       icon: <FaShieldAlt />,
-      title: "Growth Acceleration",
-      description: "Beyond capital, we provide strategic partnership connections, industry expert introductions, and operational guidance to maximize startup success."
+      title: "Funding Navigation",
+      description: "Our platform guides founders through the complexities of term sheets, valuation discussions, and funding structures to secure favorable investment terms."
     }
   ];
 
   // Updated statistics content focused on startup investments
   const statistics = [
-    { value: "85+", label: "Portfolio Companies" },
-    { value: "92%", label: "Startups Still Active" },
-    { value: "$180M+", label: "Capital Deployed" },
-    { value: "12", label: "Successful Exits" } 
+    { value: "750+", label: "Startups Connected" },
+    { value: "320+", label: "Active Investors" },
+    { value: "$250M+", label: "Facilitated Funding" },
+    { value: "92%", label: "Success Rate" } 
   ];
 
   const scrollToContent = () => {
@@ -1121,7 +1086,7 @@ const HomeContent = () => {
                 hidden: { opacity: 0, y: 20 }
               }}
             >
-              Fueling Innovation Through Strategic Investments
+              Connecting Visionary Startups With Capital
             </SubHeading>
             <MainHeading
               initial={{ opacity: 0, y: 30 }}
@@ -1131,7 +1096,7 @@ const HomeContent = () => {
                 hidden: { opacity: 0, y: 30 }
               }}
             >
-              Helping Startups <span>Bloom</span> Into Industry Leaders
+              We Help Startups <span>Connect</span> With The Right Investors
             </MainHeading>
             <Description
               initial={{ opacity: 0, y: 30 }}
@@ -1141,7 +1106,7 @@ const HomeContent = () => {
                 hidden: { opacity: 0, y: 30 }
               }}
             >
-              BloomVest specializes in <strong>early-stage investment services</strong> that propel promising startups toward sustainable growth. We bridge the gap between visionary founders and strategic capital, combining financial expertise with operational guidance to transform innovative ideas into market-leading companies.
+              BloomVest specializes in <strong>connecting promising startups</strong> with strategic investors to fuel sustainable growth. Our platform bridges the gap between visionary founders and capital sources, combining market expertise with extensive networks to transform innovative ideas into market-leading companies.
             </Description>
             <CTAButtons
               initial={{ opacity: 0, y: 30 }}
@@ -1152,11 +1117,8 @@ const HomeContent = () => {
               }}
             >
               <PrimaryButton to="/services">
-                Explore Investment Opportunities <FaArrowRight />
+                Connect With Investors <FaArrowRight />
               </PrimaryButton>
-              <SecondaryButton to="/about">
-                For Startups
-              </SecondaryButton>
             </CTAButtons>
           </HeroContent>
         </HeroContainer>
@@ -1176,7 +1138,7 @@ const HomeContent = () => {
           <AboutImage>
             <AboutImageDecoration className="circle-1" />
             <AboutImageDecoration className="circle-2" />
-            <img src="/bloomvest.png" alt="BloomVest investment team" />
+            <img src="/bloomvest.png" alt="BloomVest team" />
           </AboutImage>
           <AboutContent
             initial={{ opacity: 0, x: 50 }}
@@ -1184,17 +1146,17 @@ const HomeContent = () => {
             transition={{ duration: 0.8, type: "spring" }}
             viewport={{ once: true }}
           >
-            <AboutSubtitle>Our Investment Approach</AboutSubtitle>
-            <AboutTitle>Venture Portfolio <span>Management</span></AboutTitle>
+            <AboutSubtitle>Our Approach</AboutSubtitle>
+            <AboutTitle>Startup-Investor <span>Matchmaking</span></AboutTitle>
             <AboutDescription>
-              At BloomVest, we craft <strong>diversified early-stage investment portfolios</strong> that balance innovation potential with strategic risk management. Our expertise spans multiple industries, enabling us to identify promising startups with strong market positioning, exceptional founding teams, and scalable business models—the fundamental elements for extraordinary growth and successful exits.
+              At BloomVest, we connect <strong>promising startups with suitable investors</strong> by understanding both sides' needs. Our platform helps founders navigate the complex investment landscape while giving investors access to vetted opportunities aligned with their investment thesis and risk profile.
             </AboutDescription>
             <AboutFeatures>
               {[
-                "Seed & Series A Investments",
-                "Convertible Note Financing",
-                "SAFE Arrangements",
-                "Secondary Market Opportunities"
+                "Seed & Series A Connections",
+                "Investor Network Access",
+                "Pitch Deck Optimization",
+                "Due Diligence Support"
               ].map((feature, index) => (
                 <AboutFeature 
                 key={index}
@@ -1215,7 +1177,7 @@ const HomeContent = () => {
               viewport={{ once: true }}
             >
               <RouterLink to="/services">
-                Discover Our Investment Process <FaArrowRight />
+                Explore Our Matching Process <FaArrowRight />
               </RouterLink>
             </AboutCTA>
           </AboutContent>
@@ -1230,9 +1192,9 @@ const HomeContent = () => {
             transition={{ duration: 0.7, type: "spring" }}
             viewport={{ once: true }}
           >
-            <SectionTitle>Beyond Capital Investment</SectionTitle>
+            <SectionTitle>Beyond Connections</SectionTitle>
             <SectionDescription>
-              We believe exceptional returns come from <strong>active partnership with founders</strong>. Our comprehensive approach combines strategic capital with operational expertise, network access, and growth resources—everything promising startups need to accelerate their journey from concept to market leadership.
+              We believe exceptional startups deserve <strong>more than just introductions</strong>. Our comprehensive approach combines investor matching with strategic guidance, network access, and growth resources—everything promising startups need to accelerate their journey from concept to market leadership.
             </SectionDescription>
           </motion.div>
         </SectionHeader>

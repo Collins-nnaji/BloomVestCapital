@@ -37,7 +37,7 @@ const VideoOverlay = styled.div`
 
 // Featured Video Section
 const FeaturedVideoSection = styled.section`
-  padding: 100px 0;
+  padding: 120px 0;
   background: linear-gradient(to bottom, #ffffff, #f8fafc);
   position: relative;
   overflow: hidden;
@@ -56,15 +56,15 @@ const VideoContainer = styled.div`
 
 const VideoHeader = styled.div`
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 4rem;
+  max-width: 860px;
+  margin: 0 auto 4.5rem;
 `;
 
 const VideoTitle = styled.h2`
-  font-size: 3rem;
+  font-size: 3.2rem;
   font-weight: 800;
   color: #1a365d;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
   position: relative;
   display: inline-block;
   
@@ -86,26 +86,27 @@ const VideoTitle = styled.h2`
   }
   
   @media (max-width: 768px) {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
   }
 `;
 
 const VideoDescription = styled.p`
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #475569;
-  line-height: 1.8;
+  line-height: 1.9;
 `;
 
 const MainVideoWrapper = styled.div`
   width: 100%;
   max-width: 1200px;
-  border-radius: 16px;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.18);
   position: relative;
   aspect-ratio: 16 / 9;
   background: #000;
   margin: 0 auto;
+  transform: translateZ(0);
   
   video {
     width: 100%;
@@ -116,11 +117,11 @@ const MainVideoWrapper = styled.div`
 
 // Styled components for the hero section
 const HeroSection = styled.section`
-  padding: 120px 5% 130px;
+  padding: 140px 5% 150px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1a365d 0%, #0f172a 100%);
-  min-height: 60vh;
+  background: linear-gradient(135deg, #0f2942 0%, #0b1829 100%);
+  min-height: 65vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -133,13 +134,13 @@ const HeroSection = styled.section`
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.08;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.1;
     z-index: 3;
   }
   
   @media (max-width: 768px) {
-    padding: 90px 5% 100px;
+    padding: 100px 5% 120px;
     min-height: auto;
   }
 `;
@@ -154,29 +155,29 @@ const HeroContainer = styled.div`
 
 const HeroContent = styled.div`
   text-align: center;
-  max-width: 850px;
+  max-width: 900px;
   margin: 0 auto;
   position: relative;
   z-index: 5;
   
-  /* Add subtle glass morphism effect */
-  padding: 3rem;
-  background: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(10px);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  /* Enhanced glass morphism effect */
+  padding: 3.5rem;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(15px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
   
   @media (max-width: 768px) {
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 1.75rem;
   }
 `;
 
 const MainHeading = styled(motion.h1)`
-  font-size: 4.5rem;
+  font-size: 4.8rem;
   font-weight: 900;
   line-height: 1.1;
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
   color: white;
   letter-spacing: -1px;
   
@@ -193,28 +194,28 @@ const MainHeading = styled(motion.h1)`
       left: 0;
       width: 100%;
       height: 8px;
-      background: rgba(74, 222, 128, 0.15);
+      background: rgba(74, 222, 128, 0.2);
       z-index: -1;
       border-radius: 4px;
     }
   }
   
   @media (max-width: 1024px) {
-    font-size: 3.75rem;
+    font-size: 4rem;
   }
   
   @media (max-width: 768px) {
-    font-size: 3rem;
+    font-size: 3.2rem;
   }
   
   @media (max-width: 480px) {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
     letter-spacing: -0.5px;
   }
 `;
 
 const Description = styled(motion.p)`
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 3rem;
   line-height: 1.8;
@@ -479,7 +480,7 @@ const ServicesPage = () => {
               animate="visible"
               variants={animationVariants}
             >
-              Early-Stage <span>Investment</span> Services
+              Startup-Investor <span>Connection</span> Services
             </MainHeading>
             
             <Description
@@ -497,7 +498,7 @@ const ServicesPage = () => {
                 }
               }}
             >
-              BloomVest provides comprehensive investment services for <strong>promising startups</strong> and <strong>strategic investors</strong>, combining rigorous due diligence, tailored capital deployment, and hands-on growth acceleration.
+              BloomVest provides a comprehensive platform connecting <strong>innovative startups</strong> with <strong>strategic investors</strong>, offering matchmaking services, due diligence support, and networking opportunities to facilitate successful funding partnerships.
             </Description>
           </HeroContent>
         </HeroContainer>
@@ -514,9 +515,9 @@ const ServicesPage = () => {
               transition={{ duration: 0.7, type: "spring" }}
               viewport={{ once: true }}
             >
-              <VideoTitle>Our <span>Investment</span> Philosophy</VideoTitle>
+              <VideoTitle>Our <span>Connection</span> Approach</VideoTitle>
               <VideoDescription>
-                Learn how BloomVest identifies and nurtures exceptional startups, providing the strategic capital and expertise needed to accelerate their journey from innovative concept to market leader.
+                Discover how BloomVest bridges the gap between promising startups and strategic investors, creating valuable connections that transform innovative ideas into successful businesses through our comprehensive matching platform.
               </VideoDescription>
             </motion.div>
           </VideoHeader>

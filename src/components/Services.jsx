@@ -625,14 +625,14 @@ const Services = () => {
 
   const servicesList = [
     {
-      icon: <FaChartLine />,
-      title: "Startup Funding",
-      description: "Strategic capital deployment through various funding mechanisms tailored to your startup's growth stage, needs, and long-term objectives.",
+      icon: <FaUsers />,
+      title: "Investor Matching",
+      description: "Our proprietary algorithm connects startups with investors whose investment thesis and portfolio strategy align with your sector, stage, and vision.",
       features: [
-        "Seed round investments",
-        "Series A participation",
-        "Convertible note financing",
-        "SAFE arrangements"
+        "Personalized investor matching",
+        "Industry-specific connections",
+        "Investment size compatibility",
+        "Strategic fit assessment"
       ],
       iconBg: "rgba(34, 197, 94, 0.1)",
       iconColor: "#22c55e",
@@ -642,52 +642,52 @@ const Services = () => {
       buttonHoverBg: "rgba(34, 197, 94, 0.2)",
       headerBg: "linear-gradient(135deg, #22c55e, #15803d)",
       detailContent: {
-        description: "Our startup funding services provide flexible capital solutions that match your company's current stage and projected growth trajectory. We structure investments that align founder incentives with investor interests, creating a foundation for sustainable growth.",
+        description: "Our investor matching service uses advanced algorithms and personal expertise to find the perfect investor matches for your startup. We consider industry expertise, investment history, strategic value-add, and personal chemistry to create meaningful connections.",
         features: [
           {
-            title: "Seed Round Investments",
-            description: "Early capital infusions typically ranging from $250K to $1M to help transform promising concepts into market-ready products with initial traction.",
+            title: "Personalized Investor Matching",
+            description: "Custom matching based on your startup's unique value proposition, growth stage, and capital needs to identify investors with complementary investment theses.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Series A Participation",
-            description: "Growth capital investments of $1M-$3M for startups with product-market fit seeking to scale operations, expand market presence, and accelerate revenue growth.",
+            title: "Industry-Specific Connections",
+            description: "Access to our network of investors organized by sector expertise, allowing you to connect with backers who understand your industry's nuances and challenges.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Convertible Note Financing",
-            description: "Flexible debt instruments that convert to equity at a future funding round, providing bridge capital while deferring valuation discussions.",
+            title: "Investment Size Compatibility",
+            description: "Strategic matching that considers your funding requirements and typical investment amounts to ensure alignment with investor capabilities.",
             icon: <FaCheckCircle />
           },
           {
-            title: "SAFE Arrangements",
-            description: "Simple Agreement for Future Equity providing streamlined investment vehicles with founder-friendly terms and minimal negotiation complexity.",
+            title: "Strategic Fit Assessment",
+            description: "Evaluation of potential value-add beyond capital, including network access, operational expertise, and strategic guidance relevant to your growth needs.",
             icon: <FaCheckCircle />
           }
         ],
         events: [
           {
-            title: "Fundraising Strategy Workshop",
+            title: "Monthly Investor Meetups",
             date: "Monthly",
-            description: "Guidance on structuring your funding rounds and preparing compelling investor materials."
+            description: "Curated small-group meetings with pre-qualified investors interested in your sector."
           },
           {
-            title: "Term Sheet Masterclass",
+            title: "Startup-Investor Matchmaking Forum",
             date: "Quarterly",
-            description: "Detailed walkthrough of investment terms and their implications for founders."
+            description: "Structured networking events connecting founders with compatible investors."
           }
         ]
       }
     },
     {
       icon: <FaRegLightbulb />,
-      title: "Due Diligence Services",
-      description: "Comprehensive evaluation frameworks across multiple dimensions to validate investment potential and identify growth opportunities and challenges.",
+      title: "Pitch Optimization",
+      description: "Comprehensive refinement of your pitch materials and presentation skills to effectively communicate your value proposition to potential investors.",
       features: [
-        "Market opportunity assessment",
-        "Technology validation",
-        "Team evaluation",
-        "Financial projection analysis"
+        "Pitch deck enhancement",
+        "Narrative development",
+        "Presentation coaching",
+        "Investor Q&A preparation"
       ],
       iconBg: "rgba(59, 130, 246, 0.1)",
       iconColor: "#3b82f6",
@@ -697,52 +697,52 @@ const Services = () => {
       buttonHoverBg: "rgba(59, 130, 246, 0.2)",
       headerBg: "linear-gradient(135deg, #3b82f6, #1d4ed8)",
       detailContent: {
-        description: "Our rigorous due diligence process combines quantitative analysis with qualitative assessment to thoroughly evaluate early-stage companies. We analyze market potential, technology differentiation, team dynamics, and financial fundamentals to identify promising investment opportunities.",
+        description: "Our pitch optimization service helps you craft a compelling investment story that resonates with your target investors. We fine-tune your pitch materials and presentation approach to maximize your chances of securing funding.",
         features: [
           {
-            title: "Market Opportunity Assessment",
-            description: "In-depth analysis of total addressable market size, competitive landscape, industry trends, and go-to-market strategy viability.",
+            title: "Pitch Deck Enhancement",
+            description: "Expert refinement of your pitch deck's structure, visual design, and content to effectively communicate your value proposition, market opportunity, and growth potential.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Technology Validation",
-            description: "Rigorous evaluation of technical architecture, scalability, defensibility, and potential implementation challenges by domain experts.",
+            title: "Narrative Development",
+            description: "Crafting a compelling story around your startup that highlights your unique insights, momentum indicators, and competitive advantages in a memorable way.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Team Evaluation",
-            description: "Assessment of founding team's domain expertise, execution capability, leadership qualities, and organizational culture.",
+            title: "Presentation Coaching",
+            description: "One-on-one sessions to refine your verbal pitch, body language, pace, and overall delivery to convey confidence and credibility to investors.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Financial Projection Analysis",
-            description: "Critical examination of business model, unit economics, revenue projections, cash flow requirements, and underlying assumptions.",
+            title: "Investor Q&A Preparation",
+            description: "Anticipating potential investor questions and concerns, with structured preparation for addressing challenging topics around market size, competition, and financial projections.",
             icon: <FaCheckCircle />
           }
         ],
         events: [
           {
-            title: "Startup Evaluation Frameworks",
+            title: "Pitch Deck Masterclass",
             date: "Monthly",
-            description: "Methodologies for evaluating early-stage companies across critical dimensions."
+            description: "Workshop covering the essential elements of a compelling investor pitch deck."
           },
           {
-            title: "Financial Modeling for Startups",
-            date: "Quarterly",
-            description: "Best practices for creating credible financial projections for early-stage ventures."
+            title: "Pitch Practice Sessions",
+            date: "Bi-Weekly",
+            description: "Opportunities to present to experienced investors and receive constructive feedback."
           }
         ]
       }
     },
     {
       icon: <FaFileInvoiceDollar />,
-      title: "Investment Structuring",
-      description: "Tailored investment terms that balance founder incentives with investor protection, creating alignment between all stakeholders.",
+      title: "Due Diligence Support",
+      description: "Preparation assistance for investor scrutiny, helping you organize financial data, market analysis, and operational information to facilitate investment decisions.",
       features: [
-        "Term sheet development",
-        "Equity stake optimization",
-        "Investor protection provisions",
-        "Exit strategy planning"
+        "Financial review preparation",
+        "Market validation support",
+        "Operational assessment",
+        "Documentation organization"
       ],
       iconBg: "rgba(245, 158, 11, 0.1)",
       iconColor: "#f59e0b",
@@ -752,52 +752,52 @@ const Services = () => {
       buttonHoverBg: "rgba(245, 158, 11, 0.2)",
       headerBg: "linear-gradient(135deg, #f59e0b, #d97706)",
       detailContent: {
-        description: "Our investment structuring services create deal terms that incentivize growth while protecting capital. We design balanced frameworks that give founders operational flexibility while providing investors with appropriate governance and financial protections.",
+        description: "Our due diligence support service prepares you to successfully navigate investor scrutiny. We help you organize, validate, and present your business data in a way that builds investor confidence and accelerates the funding process.",
         features: [
           {
-            title: "Term Sheet Development",
-            description: "Creation of clear, fair term sheets that address valuation, investment amount, liquidation preferences, governance rights, and other key provisions.",
+            title: "Financial Review Preparation",
+            description: "Comprehensive organization and review of your financial statements, projections, and models to ensure accuracy, defensibility, and alignment with industry benchmarks.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Equity Stake Optimization",
-            description: "Strategic determination of ownership percentages that properly value current contributions while leaving room for future funding rounds.",
+            title: "Market Validation Support",
+            description: "Assistance gathering and presenting market research, customer testimonials, and usage metrics that validate your market opportunity and product-market fit.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Investor Protection Provisions",
-            description: "Appropriate protective terms including information rights, pro-rata participation, and anti-dilution clauses balanced with founder flexibility.",
+            title: "Operational Assessment",
+            description: "Review of your operational processes, team structure, and technology infrastructure to identify and address potential investor concerns proactively.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Exit Strategy Planning",
-            description: "Proactive consideration of potential exit scenarios including acquisitions, IPOs, or secondary sales to align stakeholder expectations.",
+            title: "Documentation Organization",
+            description: "Creation of a structured virtual data room containing all necessary legal, financial, and operational documents required for thorough investor due diligence.",
             icon: <FaCheckCircle />
           }
         ],
         events: [
           {
-            title: "Negotiation Strategies for Founders",
+            title: "Due Diligence Preparation Workshop",
             date: "Monthly",
-            description: "Effective approaches to term sheet negotiation that preserve equity and control."
+            description: "Step-by-step guidance on preparing for investor scrutiny and information requests."
           },
           {
-            title: "Cap Table Management",
+            title: "Financial Modeling Workshop",
             date: "Quarterly",
-            description: "Best practices for equity management across multiple funding rounds."
+            description: "Hands-on support for creating robust financial projections that withstand investor scrutiny."
           }
         ]
       }
     },
     {
-      icon: <FaUsers />,
-      title: "Growth Acceleration",
-      description: "Post-investment support that goes beyond capital to provide strategic guidance, operational expertise, and valuable connections.",
+      icon: <FaHandHoldingUsd />,
+      title: "Funding Strategy",
+      description: "Expert guidance on optimal funding approaches, investment structures, and negotiation strategies to secure favorable terms and maintain founder control.",
       features: [
-        "Strategic partnership connections",
-        "Executive mentorship",
-        "Operational optimization",
-        "Talent acquisition support"
+        "Funding route optimization",
+        "Term sheet guidance",
+        "Valuation strategy",
+        "Negotiation support"
       ],
       iconBg: "rgba(139, 92, 246, 0.1)",
       iconColor: "#8b5cf6",
@@ -807,39 +807,39 @@ const Services = () => {
       buttonHoverBg: "rgba(139, 92, 246, 0.2)",
       headerBg: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
       detailContent: {
-        description: "Our growth acceleration services help portfolio companies scale efficiently through strategic guidance, operational support, and access to our extensive network. We actively engage with founders to overcome growth challenges and capitalize on market opportunities.",
+        description: "Our funding strategy service helps you navigate the complexities of startup financing. We provide guidance on funding approaches, investment structures, and negotiation strategies tailored to your specific growth stage and business needs.",
         features: [
           {
-            title: "Strategic Partnership Connections",
-            description: "Facilitated introductions to potential customers, channel partners, and technology collaborators from our extensive industry network.",
+            title: "Funding Route Optimization",
+            description: "Strategic advice on choosing between equity financing, convertible notes, SAFE agreements, or alternative funding sources based on your capital needs and growth objectives.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Executive Mentorship",
-            description: "One-on-one guidance from experienced operators and industry experts who have successfully scaled startups across various sectors.",
+            title: "Term Sheet Guidance",
+            description: "Expert review and explanation of term sheet provisions, highlighting potential impacts on control, future rounds, and exit scenarios to help you make informed decisions.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Operational Optimization",
-            description: "Hands-on support for developing scalable processes, implementing metrics frameworks, and enhancing operational efficiency.",
+            title: "Valuation Strategy",
+            description: "Data-driven approaches to determining appropriate valuation ranges based on your market, traction, team, and comparable transactions.",
             icon: <FaCheckCircle />
           },
           {
-            title: "Talent Acquisition Support",
-            description: "Access to our talent network and recruiting expertise to help build high-performing teams for critical growth roles.",
+            title: "Negotiation Support",
+            description: "Behind-the-scenes guidance throughout investor negotiations, helping you balance favorable terms with relationship building for successful long-term partnerships.",
             icon: <FaCheckCircle />
           }
         ],
         events: [
           {
-            title: "Founder Mastermind Sessions",
+            title: "Term Sheet Masterclass",
             date: "Monthly",
-            description: "Collaborative problem-solving forums with fellow portfolio company founders."
+            description: "Detailed walkthrough of investment terms and their implications for founders."
           },
           {
-            title: "Go-to-Market Excellence Workshop",
+            title: "Negotiation Strategy Workshop",
             date: "Quarterly",
-            description: "Strategies for efficient customer acquisition and sales process optimization."
+            description: "Effective approaches to investor negotiations that preserve equity and control."
           }
         ]
       }
@@ -859,9 +859,9 @@ const Services = () => {
             transition={{ duration: 0.7, type: "spring" }}
             viewport={{ once: true }}
           >
-            <SectionTitle>Our <span>Investment</span> Services</SectionTitle>
+            <SectionTitle>Our <span>Connection</span> Services</SectionTitle>
             <SectionDescription>
-              BloomVest provides a comprehensive suite of services supporting <strong>both startups and investors</strong> through every stage of the early-stage investment lifecycle—from rigorous due diligence and strategic funding to hands-on growth acceleration.
+              BloomVest offers a comprehensive suite of services designed to <strong>bridge the gap between startups and investors</strong>—from personalized investor matching and pitch optimization to due diligence support and funding strategy guidance.
             </SectionDescription>
           </motion.div>
         </SectionHeader>
