@@ -293,14 +293,14 @@ const AboutUsPage = () => {
               animate="visible"
               variants={titleVariants}
             >
-              About <span>BloomVest Capital</span>
+              About <span>BloomVest</span>
             </MainHeading>
             <Description
               initial="hidden"
               animate="visible"
               variants={textVariants}
             >
-              Your trusted partner in <strong>wealth management</strong>, providing sophisticated strategies and personalized guidance to help you achieve your most important financial goals.
+              Your trusted partner in <strong>startup-investor connections</strong>, providing strategic guidance and valuable networks to help innovative companies find the right investors and achieve their growth objectives.
             </Description>
           </HeroContent>
         </HeroContainer>

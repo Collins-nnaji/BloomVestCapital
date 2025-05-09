@@ -160,6 +160,11 @@ const StoryImage = styled.div`
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
   height: 500px;
   position: relative;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
   
   &::before {
     content: '';
@@ -168,15 +173,18 @@ const StoryImage = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to top, rgba(26, 54, 93, 0.3), transparent);
+    background: linear-gradient(to top, rgba(26, 54, 93, 0.05), transparent);
     z-index: 1;
   }
   
   img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
     transition: transform 0.8s ease;
+    position: relative;
+    z-index: 2;
   }
   
   &:hover img {
@@ -386,30 +394,30 @@ const About = () => {
           <Preheading>Our Mission</Preheading>
           <Title>Helping Startups Bloom</Title>
           <Subtitle>
-            At <strong>BloomVest Capital</strong>, we partner with exceptional founders to transform innovative ideas into category-defining companies through strategic capital, hands-on support, and valuable connections.
+            At <strong>BloomVest</strong>, we partner with exceptional founders to transform innovative ideas into category-defining companies through strategic guidance, hands-on support, and valuable connections.
           </Subtitle>
         </SectionHeader>
         
         <StorySection>
           <StoryContent>
-            <StoryTitle>Our Investment Philosophy</StoryTitle>
+            <StoryTitle>Our Connection Philosophy</StoryTitle>
             <StoryText>
               <p>
-                Founded with a clear vision, <strong>BloomVest Capital</strong> was established to provide more than just capital to early-stage companies. We recognized that truly exceptional startups need partners who understand both the technical challenges and human elements of building innovative companies from the ground up.
+                Founded with a clear vision, <strong>BloomVest</strong> was established to provide more than just connections to early-stage companies. We recognized that truly exceptional startups need partners who understand both the technical challenges and human elements of building innovative companies from the ground up.
               </p>
               <p>
-                Our approach integrates <strong>rigorous due diligence</strong> with <strong>founder-friendly terms</strong> to create investment partnerships built on mutual trust and shared objectives. We evaluate opportunities across multiple dimensions—from technical innovation and market potential to team dynamics and execution capability—creating a comprehensive understanding of each startup's growth trajectory.
+                Our approach integrates <strong>rigorous evaluation</strong> with <strong>founder-friendly guidance</strong> to create partnerships built on mutual trust and shared objectives. We evaluate opportunities across multiple dimensions—from technical innovation and market potential to team dynamics and execution capability—creating a comprehensive understanding of each startup's growth trajectory.
               </p>
               <p>
-                What truly sets BloomVest Capital apart is our hands-on approach after investment. Our team works closely with portfolio companies, providing strategic guidance, operational support, and valuable connections when needed, while respecting founders' autonomy to build their vision. This balance of <strong>active engagement</strong> and <strong>founder independence</strong> creates a partnership model that maximizes growth potential while maintaining entrepreneurial spirit.
+                What truly sets BloomVest apart is our hands-on approach to connecting startups with the right investors. Our team works closely with founders, providing strategic guidance, operational support, and valuable connections when needed, while respecting founders' autonomy to build their vision. This balance of <strong>active engagement</strong> and <strong>founder independence</strong> creates a partnership model that maximizes growth potential while maintaining entrepreneurial spirit.
               </p>
             </StoryText>
           </StoryContent>
           
           <StoryImage>
             <img 
-              src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1742&q=80" 
-              alt="BloomVest Capital Investment Team" 
+              src="/bloomvestlogo.png" 
+              alt="BloomVest Logo" 
             />
           </StoryImage>
         </StorySection>
@@ -419,7 +427,7 @@ const About = () => {
             <Preheading>Our Core Values</Preheading>
             <Title>The Principles That Guide Us</Title>
             <Subtitle>
-              At <strong>BloomVest Capital</strong>, these fundamental values shape our investment decisions and partnerships with innovative founders.
+              At <strong>BloomVest</strong>, these fundamental values shape our investment decisions and partnerships with innovative founders.
             </Subtitle>
           </SectionHeader>
           

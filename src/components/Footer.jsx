@@ -41,7 +41,7 @@ const FooterContent = styled.div`
   margin: 0 auto;
   padding: 0 2rem;
   display: grid;
-  grid-template-columns: 1.5fr repeat(3, 1fr);
+  grid-template-columns: 1.5fr repeat(2, 1fr);
   gap: 3rem;
   
   @media (max-width: 1024px) {
@@ -233,19 +233,16 @@ const Footer = () => {
             <img src="/bloomvestlogo.png" alt="BloomVest" />
           </FooterLogoLink>
           <CompanyDescription>
-            BloomVest is an early-stage investment firm focused on providing strategic capital, resources, and expertise to founders building innovative startups with high growth potential.
+            BloomVest is a startup-investor connection platform focused on providing strategic guidance, valuable networks, and expert support to help innovative startups find the right investors and achieve their growth objectives.
           </CompanyDescription>
           <SocialLinks>
-            <SocialLink href="#" aria-label="Twitter">
-              <FaTwitter />
-            </SocialLink>
             <SocialLink href="https://www.linkedin.com/company/bloomvest-finance" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
               <FaLinkedin />
             </SocialLink>
-            <SocialLink href="#" aria-label="GitHub">
-              <FaGithub />
+            <SocialLink href="https://twitter.com/bloomvest" aria-label="Twitter" target="_blank" rel="noopener noreferrer">
+              <FaTwitter />
             </SocialLink>
-            <SocialLink href="#" aria-label="Instagram">
+            <SocialLink href="https://instagram.com/bloomvest" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
               <FaInstagram />
             </SocialLink>
           </SocialLinks>
@@ -270,44 +267,13 @@ const Footer = () => {
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink to="/tools">
-                <FaChevronRight /> Tools
+              <FooterLink to="/education">
+                <FaChevronRight /> Education
               </FooterLink>
             </LinkItem>
             <LinkItem>
               <FooterLink to="/contact">
                 <FaChevronRight /> Contact
-              </FooterLink>
-            </LinkItem>
-          </LinksList>
-        </div>
-        
-        <div>
-          <ColumnTitle>Our Services</ColumnTitle>
-          <LinksList>
-            <LinkItem>
-              <FooterLink to="/services">
-                <FaChevronRight /> Startup Funding
-              </FooterLink>
-            </LinkItem>
-            <LinkItem>
-              <FooterLink to="/services">
-                <FaChevronRight /> Seed Investments
-              </FooterLink>
-            </LinkItem>
-            <LinkItem>
-              <FooterLink to="/services">
-                <FaChevronRight /> Growth Capital
-              </FooterLink>
-            </LinkItem>
-            <LinkItem>
-              <FooterLink to="/services">
-                <FaChevronRight /> Founder Support
-              </FooterLink>
-            </LinkItem>
-            <LinkItem>
-              <FooterLink to="/services">
-                <FaChevronRight /> Strategic Advisory
               </FooterLink>
             </LinkItem>
           </LinksList>
@@ -336,7 +302,7 @@ const Footer = () => {
               <FaEnvelope />
             </ContactIcon>
             <ContactText>
-              info@bloomvestfinance.com
+              info@bloomvest.com
             </ContactText>
           </ContactItem>
           <ContactItem>
@@ -355,9 +321,9 @@ const Footer = () => {
           © {new Date().getFullYear()} BloomVest. All rights reserved.
         </Copyright>
         <LegalLinks>
-          <LegalLink href="#">Privacy Policy</LegalLink>
-          <LegalLink href="#">Terms of Service</LegalLink>
-          <LegalLink href="#">Cookie Policy</LegalLink>
+          <LegalLink href="/privacy">Privacy Policy</LegalLink>
+          <LegalLink href="/terms">Terms of Service</LegalLink>
+          <LegalLink href="/cookies">Cookie Policy</LegalLink>
         </LegalLinks>
       </CopyrightSection>
     </FooterContainer>
