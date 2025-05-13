@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import HomeContent from '../components/Homepage';
 import WhyChooseUs from '../components/WhyChooseUs';
 import OurProcess from '../components/OurProcess';
-import TestimonialsSlider from '../components/TestimonialsSlider';
 import CallToAction from '../components/CallToAction';
 
 const PageWrapper = styled(motion.div)`
@@ -35,9 +34,6 @@ const MainDashboardPage = () => (
     </motion.div>
     <motion.div variants={fadeInVariants}>
       <OurProcess />
-    </motion.div>
-    <motion.div variants={fadeInVariants}>
-      <TestimonialsSlider />
     </motion.div>
     <motion.div variants={fadeInVariants}>
       <CallToAction />

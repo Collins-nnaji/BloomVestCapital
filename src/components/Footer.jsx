@@ -7,18 +7,15 @@ import {
   FaPhone, 
   FaEnvelope, 
   FaMapMarkerAlt,
-  FaYoutube,
-  FaFacebook,
   FaChevronRight,
-  FaWhatsapp,
-  FaClock,
-  FaGithub
+  FaClock
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
   background: #1a365d;
-  padding: 5rem 0 3rem;
+  background-image: linear-gradient(0deg, #0f2744 0%, #1a365d 100%);
+  padding: 4rem 0 2rem;
   color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -37,11 +34,11 @@ const FooterContainer = styled.footer`
 `;
 
 const FooterContent = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   display: grid;
-  grid-template-columns: 1.5fr repeat(2, 1fr);
+  grid-template-columns: 1.2fr repeat(2, 1fr);
   gap: 3rem;
   
   @media (max-width: 1024px) {
@@ -66,10 +63,10 @@ const BrandColumn = styled.div`
 
 const FooterLogoLink = styled(Link)`
   display: inline-block;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   
   img {
-    height: 40px;
+    height: 38px;
     width: auto;
     filter: brightness(0) invert(1);
     transition: all 0.3s ease;
@@ -83,29 +80,29 @@ const FooterLogoLink = styled(Link)`
 
 const CompanyDescription = styled.p`
   color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  line-height: 1.8;
-  margin-bottom: 1.75rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
   max-width: 400px;
 `;
 
 const SocialLinks = styled.div`
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
 `;
 
 const SocialLink = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   transition: all 0.3s ease;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   
   &:hover {
     background: #22c55e;
@@ -116,9 +113,9 @@ const SocialLink = styled.a`
 
 const ColumnTitle = styled.h4`
   color: white;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
   position: relative;
   padding-bottom: 0.75rem;
   
@@ -130,6 +127,7 @@ const ColumnTitle = styled.h4`
     width: 40px;
     height: 3px;
     background: #22c55e;
+    border-radius: 2px;
   }
 `;
 
@@ -140,12 +138,12 @@ const LinksList = styled.ul`
 `;
 
 const LinkItem = styled.li`
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 `;
 
 const FooterLink = styled(Link)`
   color: rgba(255, 255, 255, 0.7);
-  font-size: 1rem;
+  font-size: 0.95rem;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
@@ -157,8 +155,8 @@ const FooterLink = styled(Link)`
   }
   
   svg {
-    margin-right: 0.75rem;
-    font-size: 0.85rem;
+    margin-right: 0.6rem;
+    font-size: 0.8rem;
     color: #22c55e;
   }
 `;
@@ -166,58 +164,62 @@ const FooterLink = styled(Link)`
 const ContactItem = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
 `;
 
 const ContactIcon = styled.div`
   color: #22c55e;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
-  margin-top: 0.25rem;
+  margin-top: 0.2rem;
 `;
 
 const ContactText = styled.div`
   color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  line-height: 1.5;
 `;
 
 const CopyrightSection = styled.div`
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 2rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 3rem;
+  padding: 1.5rem 1.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   
   @media (max-width: 768px) {
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     text-align: center;
+    padding-top: 1.25rem;
   }
 `;
 
 const Copyright = styled.p`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
 `;
 
 const LegalLinks = styled.div`
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   
   @media (max-width: 768px) {
-    gap: 1.5rem;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 `;
 
 const LegalLink = styled.a`
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
   transition: all 0.3s ease;
+  text-decoration: none;
   
   &:hover {
     color: #22c55e;
@@ -233,7 +235,7 @@ const Footer = () => {
             <img src="/bloomvestlogo.png" alt="BloomVest" />
           </FooterLogoLink>
           <CompanyDescription>
-            BloomVest is a startup-investor connection platform focused on providing strategic guidance, valuable networks, and expert support to help innovative startups find the right investors and achieve their growth objectives.
+            BloomVest is a startup-investor connection platform that helps innovative startups find the right investors through strategic guidance, valuable networks, and expert support.
           </CompanyDescription>
           <SocialLinks>
             <SocialLink href="https://www.linkedin.com/company/bloomvest-finance" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
@@ -262,18 +264,8 @@ const Footer = () => {
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink to="/services">
-                <FaChevronRight /> Services
-              </FooterLink>
-            </LinkItem>
-            <LinkItem>
-              <FooterLink to="/education">
-                <FaChevronRight /> Education
-              </FooterLink>
-            </LinkItem>
-            <LinkItem>
-              <FooterLink to="/contact">
-                <FaChevronRight /> Contact
+              <FooterLink to="/tools">
+                <FaChevronRight /> Tools
               </FooterLink>
             </LinkItem>
           </LinksList>

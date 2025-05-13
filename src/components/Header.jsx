@@ -10,15 +10,15 @@ const HeaderContainer = styled(motion.header)`
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  padding: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+  padding: 0.4rem 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &.scrolled {
-    padding: 0.3rem 0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 0.2rem 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
   }
 `;
 
@@ -28,12 +28,12 @@ const NavContainer = styled.div`
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   position: relative;
-  height: 70px;
+  height: 60px;
   
   @media (max-width: 768px) {
-    height: 60px;
+    height: 55px;
   }
 `;
 
@@ -290,7 +290,6 @@ const Header = () => {
   
   const navItems = [
     { path: '/', label: 'Home' },
-    { path: '/services', label: 'Services' },
     { path: '/tools', label: 'Tools' },
     { path: '/about', label: 'About Us' },
   ];
@@ -301,7 +300,7 @@ const Header = () => {
     <HeaderContainer className={scrolled ? 'scrolled' : ''}>
       <NavContainer>
         <LogoLink to="/">
-          <img src="/bloomvestlogo.png" alt="Bloomvest Capital" />
+          <img src="/bloomvestlogo.png" alt="BloomVest" />
         </LogoLink>
         
         <NavWrapper>

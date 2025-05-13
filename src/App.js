@@ -7,7 +7,6 @@ import Loader from './components/Loader';
 
 // Lazy load pages for better performance
 const MainDashboardPage = lazy(() => import('./pages/MainDashboardPage'));
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const StartupToolsPage = lazy(() => import('./pages/StartupToolsPage'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
 
@@ -21,7 +20,6 @@ function App() {
           <Layout>
             <Routes>
               <Route path="/" element={<MainDashboardPage />} />
-              <Route path="/services" element={<ServicesPage />} />
               <Route path="/tools" element={<StartupToolsPage />} />
               <Route path="/about" element={<AboutUsPage />} />
 
