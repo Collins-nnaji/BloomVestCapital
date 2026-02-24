@@ -323,20 +323,26 @@ const Navbar = () => {
             <NavLink to="/" className={location.pathname === '/' ? 'active' : ''}>
               Home
             </NavLink>
-            <NavLink to="/tools" className={location.pathname === '/tools' ? 'active' : ''}>
-              Tools
+            <NavLink to="/learn" className={location.pathname === '/learn' ? 'active' : ''}>
+              Learn
+            </NavLink>
+            <NavLink to="/demo" className={location.pathname === '/demo' ? 'active' : ''}>
+              Demo Trading
+            </NavLink>
+            <NavLink to="/ai-tutor" className={location.pathname === '/ai-tutor' ? 'active' : ''}>
+              AI Tutor
             </NavLink>
             <NavLink to="/about" className={location.pathname === '/about' ? 'active' : ''}>
-              About Us
+              About
             </NavLink>
           </NavLinks>
           
           <NavActions>
             <ActionButton 
-              to="/tools" 
+              to="/demo" 
               className="primary"
             >
-              Get Started <FaArrowRight />
+              Start Trading <FaArrowRight />
             </ActionButton>
           </NavActions>
           
@@ -356,11 +362,17 @@ const Navbar = () => {
         <MobileNavLink to="/" className={location.pathname === '/' ? 'active' : ''}>
           Home <FaChevronRight />
         </MobileNavLink>
-        <MobileNavLink to="/tools" className={location.pathname === '/tools' ? 'active' : ''}>
-          Tools <FaChevronRight />
+        <MobileNavLink to="/learn" className={location.pathname === '/learn' ? 'active' : ''}>
+          Learn <FaChevronRight />
+        </MobileNavLink>
+        <MobileNavLink to="/demo" className={location.pathname === '/demo' ? 'active' : ''}>
+          Demo Trading <FaChevronRight />
+        </MobileNavLink>
+        <MobileNavLink to="/ai-tutor" className={location.pathname === '/ai-tutor' ? 'active' : ''}>
+          AI Tutor <FaChevronRight />
         </MobileNavLink>
         <MobileNavLink to="/about" className={location.pathname === '/about' ? 'active' : ''}>
-          About Us <FaChevronRight />
+          About <FaChevronRight />
         </MobileNavLink>
       </MobileMenu>
     </>

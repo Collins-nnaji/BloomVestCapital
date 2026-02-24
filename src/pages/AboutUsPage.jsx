@@ -300,7 +300,7 @@ const AboutUsPage = () => {
               animate="visible"
               variants={textVariants}
             >
-              Your trusted partner in <strong>startup-investor connections</strong>, providing strategic guidance and valuable networks to help innovative companies find the right investors and achieve their growth objectives.
+              Your interactive <strong>investment education platform</strong>, teaching people how to invest through live demo scenarios, AI-powered tutoring, and hands-on practice with virtual money — no risk, all the knowledge.
             </Description>
           </HeroContent>
         </HeroContainer>

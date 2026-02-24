@@ -235,7 +235,7 @@ const Footer = () => {
             <img src="/bloomvestlogo.png" alt="BloomVest" />
           </FooterLogoLink>
           <CompanyDescription>
-            BloomVest is a startup-investor connection platform that helps innovative startups find the right investors through strategic guidance, valuable networks, and expert support.
+            BloomVest is an interactive investment education platform that teaches you how to invest through live demo scenarios, AI-powered tutoring, and hands-on practice with virtual money.
           </CompanyDescription>
           <SocialLinks>
             <SocialLink href="https://www.linkedin.com/company/bloomvest-finance" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
@@ -259,13 +259,23 @@ const Footer = () => {
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink to="/about">
-                <FaChevronRight /> About Us
+              <FooterLink to="/learn">
+                <FaChevronRight /> Lessons
               </FooterLink>
             </LinkItem>
             <LinkItem>
-              <FooterLink to="/tools">
-                <FaChevronRight /> Tools
+              <FooterLink to="/demo">
+                <FaChevronRight /> Demo Trading
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink to="/ai-tutor">
+                <FaChevronRight /> AI Tutor
+              </FooterLink>
+            </LinkItem>
+            <LinkItem>
+              <FooterLink to="/about">
+                <FaChevronRight /> About
               </FooterLink>
             </LinkItem>
           </LinksList>
