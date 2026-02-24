@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { FaArrowUp, FaArrowDown, FaWallet, FaChartLine, FaShoppingCart, FaHistory, FaInfoCircle, FaTimes, FaSearch } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaWallet, FaChartLine, FaShoppingCart, FaHistory, FaInfoCircle, FaTimes, FaSearch, FaCheckCircle } from 'react-icons/fa';
 import { stocks, marketIndices, sectors } from '../data/stockData';
 import { scenarios, difficultyColors } from '../data/scenarios';
 
@@ -859,8 +859,5 @@ const DemoTrading = () => {
     </PageContainer>
   );
 };
-
-// Re-use FaCheckCircle from import
-const FaCheckCircle2 = FaInfoCircle;
 
 export default DemoTrading;
