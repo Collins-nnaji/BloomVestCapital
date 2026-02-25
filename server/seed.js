@@ -2096,6 +2096,326 @@ async function seed() {
       ]
     );
 
+    // =====================================================
+    // COURSE 4: Personal Finance Foundations
+    // =====================================================
+    console.log('\n💳 Inserting Course 4: Personal Finance Foundations...');
+    const course4 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['Personal Finance Foundations', 'Build a strong financial foundation before you invest. Master budgeting, eliminate debt, build emergency savings, and understand credit — the essential prerequisites to successful investing.', 'beginner', '💳', '#f59e0b', 4]
+    );
+    const c4 = course4.rows[0].id;
+
+    // Module 10
+    console.log('  📦 Module 10: Money Management Basics');
+    const m10 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c4, 'Money Management Basics', 'Master the fundamentals of managing your money effectively', 1]);
+    const m10id = m10.rows[0].id;
+
+    const pfLessons = [
+      { title: 'Budgeting: The 50/30/20 Rule', desc: 'Learn the most popular budgeting framework used by financial experts worldwide.', dur: '9 min', icon: '📋', sort: 29,
+        content: [
+          { heading: 'Why Budgeting Matters', text: 'A budget is simply a plan for your money. Without one, studies show people overspend by 20-30% on average. Budgeting is not about restriction — it is about making intentional choices so your money goes toward what matters most to you.' },
+          { heading: 'The 50/30/20 Framework', text: 'Senator Elizabeth Warren popularized this rule: allocate 50% of after-tax income to needs (rent, groceries, insurance), 30% to wants (dining, entertainment, shopping), and 20% to savings and debt repayment. For someone earning $4,000/month after taxes, that means $2,000 for needs, $1,200 for wants, and $800 for savings.' },
+          { heading: 'Tracking Your Spending', text: 'Start by tracking every dollar for 30 days using apps like Mint, YNAB, or a simple spreadsheet. Most people are shocked to discover where their money actually goes. Common surprises include subscriptions, food delivery, and impulse purchases that add up to hundreds per month.' },
+          { heading: 'Automating Your Finances', text: 'Set up automatic transfers on payday: savings first, then bills, then spending money. This "pay yourself first" approach ensures you always save before you spend. Automation removes willpower from the equation and makes good financial habits effortless.' }
+        ],
+        takeaways: ['The 50/30/20 rule: 50% needs, 30% wants, 20% savings', 'Track spending for 30 days to find hidden expenses', 'Automate savings on payday — pay yourself first', 'Budgeting is about intentional choices, not restriction'],
+        quiz: [
+          { question: 'In the 50/30/20 rule, what percentage goes to savings?', options: ['50%', '30%', '20%', '10%'], answer: 2 },
+          { question: 'What does "pay yourself first" mean?', options: ['Buy things you want before bills', 'Save/invest before spending on wants', 'Pay off credit cards first', 'Prioritize salary negotiation'], answer: 1 },
+          { question: 'Why is tracking spending for 30 days recommended?', options: ['Tax purposes', 'To discover where money actually goes', 'Banks require it', 'It is legally required'], answer: 1 }
+        ]
+      },
+      { title: 'Building Your Emergency Fund', desc: 'Create a financial safety net that protects you from unexpected expenses and job loss.', dur: '8 min', icon: '🛡️', sort: 30,
+        content: [
+          { heading: 'What Is an Emergency Fund?', text: 'An emergency fund is 3-6 months of essential expenses saved in a liquid, easily accessible account. It is your financial safety net — the buffer between you and debt when life throws curveballs like job loss, medical bills, or car repairs.' },
+          { heading: 'How Much Do You Need?', text: 'Calculate your monthly essential expenses (rent, food, utilities, insurance, minimum debt payments). Multiply by 3 for a starter fund, or 6 for full security. If your essentials are $2,500/month, aim for $7,500 to $15,000. Single-income households and freelancers should target 6+ months.' },
+          { heading: 'Where to Keep It', text: 'Use a high-yield savings account (HYSA) earning 4-5% APY — not a regular savings account earning 0.01%. Keep it separate from your checking account to avoid temptation. Good options include Marcus, Ally, or Discover savings accounts. Never invest your emergency fund in stocks.' },
+          { heading: 'Building It Step by Step', text: 'Start with a $1,000 mini emergency fund, then build to 3 months, then 6. Automate $100-500/month transfers. Use windfalls (tax refunds, bonuses) to accelerate. It typically takes 6-18 months to build a full emergency fund, and that is perfectly fine.' }
+        ],
+        takeaways: ['Save 3-6 months of essential expenses', 'Use a high-yield savings account (4-5% APY)', 'Start with $1,000 then build gradually', 'Never invest your emergency fund in stocks'],
+        quiz: [
+          { question: 'How many months of expenses should an emergency fund cover?', options: ['1-2 months', '3-6 months', '12 months', '24 months'], answer: 1 },
+          { question: 'Where should you keep your emergency fund?', options: ['Under your mattress', 'In stocks', 'In a high-yield savings account', 'In cryptocurrency'], answer: 2 },
+          { question: 'What is a good first milestone for an emergency fund?', options: ['$100', '$500', '$1,000', '$50,000'], answer: 2 }
+        ]
+      },
+      { title: 'Destroying Debt: Strategies That Work', desc: 'Learn proven strategies to eliminate debt and free up money for investing.', dur: '11 min', icon: '⛓️', sort: 31,
+        content: [
+          { heading: 'Good Debt vs. Bad Debt', text: 'Not all debt is equal. Good debt (mortgages at 3-7%, student loans for high-earning degrees) can build wealth. Bad debt (credit cards at 18-25%, payday loans at 400%+) destroys wealth. Prioritize eliminating high-interest bad debt before investing beyond your employer match.' },
+          { heading: 'The Debt Avalanche Method', text: 'List all debts by interest rate, highest first. Pay minimums on everything, then throw all extra money at the highest-rate debt. This method saves the most money mathematically. Example: paying off a $5,000 credit card at 22% before a $10,000 student loan at 5% saves thousands in interest.' },
+          { heading: 'The Debt Snowball Method', text: 'List all debts by balance, smallest first. Pay minimums on everything, then attack the smallest balance. When it is paid off, roll that payment into the next smallest. This method builds psychological momentum — quick wins keep you motivated. Dave Ramsey popularized this approach.' },
+          { heading: 'When to Invest vs. Pay Off Debt', text: 'Always get your full employer 401k match (it is free money). Then pay off any debt above 7-8% interest before investing. For debt below 5%, you can invest simultaneously since market returns historically exceed the interest cost. Student loans at 4% can coexist with investing.' }
+        ],
+        takeaways: ['Pay off high-interest debt (above 7-8%) before investing', 'Avalanche method saves the most money; Snowball builds momentum', 'Always capture your full employer 401k match first', 'Good debt at low rates can coexist with investing'],
+        quiz: [
+          { question: 'Which method pays off highest interest rate debt first?', options: ['Snowball', 'Avalanche', 'Consolidation', 'Minimum payments'], answer: 1 },
+          { question: 'At what interest rate should you prioritize paying off debt over investing?', options: ['Any rate', 'Above 2%', 'Above 7-8%', 'Never — always invest'], answer: 2 },
+          { question: 'What should you always do before aggressively paying off debt?', options: ['Buy a house', 'Get your full employer 401k match', 'Open a brokerage account', 'Build a stock portfolio'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of pfLessons) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m10id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    // Module 11
+    console.log('  📦 Module 11: Credit & Insurance');
+    const m11 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c4, 'Credit & Insurance', 'Understand credit scores and protect your wealth with proper insurance', 2]);
+    const m11id = m11.rows[0].id;
+
+    const creditLessons = [
+      { title: 'Understanding Credit Scores', desc: 'How credit scores work and why they affect your financial life.', dur: '9 min', icon: '📊', sort: 32,
+        content: [
+          { heading: 'What Is a Credit Score?', text: 'A credit score is a three-digit number (300-850) that represents your creditworthiness. Lenders use it to decide whether to lend you money and at what interest rate. A higher score means lower interest rates, saving you tens of thousands of dollars over your lifetime on mortgages, auto loans, and credit cards.' },
+          { heading: 'The Five Factors', text: 'FICO scores are calculated from: Payment History (35%) — never miss a payment; Credit Utilization (30%) — keep balances below 30% of limits; Length of History (15%) — older accounts help; Credit Mix (10%) — variety of account types; New Credit (10%) — avoid opening many accounts at once.' },
+          { heading: 'Building and Improving Your Score', text: 'Set up autopay for all bills to never miss a payment. Keep credit utilization below 30% (below 10% is ideal). Do not close old credit cards even if unused — they help your average age of accounts. Check your credit report annually at AnnualCreditReport.com for errors. A score above 740 gets you the best rates.' }
+        ],
+        takeaways: ['Credit scores range from 300-850; aim for 740+', 'Payment history (35%) and utilization (30%) matter most', 'Keep credit card balances below 30% of limits', 'Never close old credit cards — they help your score'],
+        quiz: [
+          { question: 'What is the most important factor in your credit score?', options: ['Length of history', 'Payment history (35%)', 'Credit mix', 'New credit inquiries'], answer: 1 },
+          { question: 'What credit utilization percentage should you stay below?', options: ['50%', '80%', '30%', '100%'], answer: 2 },
+          { question: 'Why should you keep old credit cards open?', options: ['To spend more', 'They help your average age of accounts', 'Banks require it', 'For emergencies only'], answer: 1 }
+        ]
+      },
+      { title: 'Insurance: Protecting Your Wealth', desc: 'Learn which insurance policies you need and which you can skip.', dur: '10 min', icon: '🏥', sort: 33,
+        content: [
+          { heading: 'Why Insurance Matters for Investors', text: 'Insurance protects the wealth you are building. Without it, a single medical emergency, car accident, or lawsuit could wipe out years of investing. Think of insurance as a defensive investment — you hope you never use it, but it prevents catastrophic financial loss.' },
+          { heading: 'Essential Insurance Types', text: 'Health insurance is non-negotiable — medical bankruptcy is the #1 cause of personal bankruptcy. Auto insurance is legally required. Renters/homeowners insurance protects your belongings. Term life insurance is critical if anyone depends on your income (get 10-12x your annual salary in coverage). Disability insurance replaces income if you cannot work.' },
+          { heading: 'Insurance You Can Skip', text: 'Avoid whole life insurance (buy term and invest the difference). Skip extended warranties on electronics. Avoid credit card insurance, flight insurance, and most add-on policies. If the premium is small but the loss would not be financially devastating, you probably do not need the insurance.' }
+        ],
+        takeaways: ['Insurance protects the wealth you are building', 'Health, auto, renters/home, and term life are essential', 'Get term life insurance at 10-12x your annual salary', 'Skip whole life insurance — buy term and invest the difference'],
+        quiz: [
+          { question: 'What is the #1 cause of personal bankruptcy in the US?', options: ['Credit card debt', 'Student loans', 'Medical bills', 'Mortgage default'], answer: 2 },
+          { question: 'How much term life insurance coverage should you get?', options: ['1x salary', '3x salary', '10-12x salary', '50x salary'], answer: 2 },
+          { question: 'Which insurance type should most people avoid?', options: ['Health insurance', 'Whole life insurance', 'Auto insurance', 'Renters insurance'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of creditLessons) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m11id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    // =====================================================
+    // COURSE 5: Crypto & Digital Assets
+    // =====================================================
+    console.log('\n🪙 Inserting Course 5: Crypto & Digital Assets...');
+    const course5 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['Crypto & Digital Assets', 'Understand blockchain technology, Bitcoin, Ethereum, and the crypto ecosystem. Learn to evaluate digital assets, manage risks, and decide if crypto belongs in your portfolio.', 'intermediate', '🪙', '#f97316', 5]
+    );
+    const c5 = course5.rows[0].id;
+
+    console.log('  📦 Module 12: Blockchain & Bitcoin');
+    const m12 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c5, 'Blockchain & Bitcoin', 'Understand the technology and the original cryptocurrency', 1]);
+    const m12id = m12.rows[0].id;
+
+    const cryptoLessons1 = [
+      { title: 'Blockchain Technology Explained', desc: 'Understand the revolutionary technology behind cryptocurrencies.', dur: '11 min', icon: '🔗', sort: 34,
+        content: [
+          { heading: 'What Is a Blockchain?', text: 'A blockchain is a distributed digital ledger that records transactions across thousands of computers. Once data is recorded, it cannot be altered without changing every subsequent block — making it virtually tamper-proof. Think of it as a shared Google Doc that everyone can read but no single person controls.' },
+          { heading: 'How It Works', text: 'Transactions are grouped into blocks. Each block contains a cryptographic hash of the previous block, creating a chain. Miners (or validators) verify transactions through complex computations. Once verified, the block is added permanently. This decentralized verification eliminates the need for banks or intermediaries.' },
+          { heading: 'Beyond Cryptocurrency', text: 'Blockchain has applications far beyond money: supply chain tracking (knowing exactly where your food came from), digital identity verification, smart contracts that execute automatically, decentralized finance (DeFi), and NFTs. Major companies like IBM, Walmart, and JPMorgan are using blockchain technology.' }
+        ],
+        takeaways: ['Blockchain is a decentralized, tamper-proof digital ledger', 'Transactions are verified by a network, not a central authority', 'Applications extend beyond crypto: supply chain, identity, contracts', 'Understanding the technology helps evaluate crypto investments'],
+        quiz: [
+          { question: 'What makes blockchain tamper-proof?', options: ['Government regulation', 'Each block contains a hash of the previous block', 'It is stored on one secure server', 'Banks verify every transaction'], answer: 1 },
+          { question: 'Who verifies transactions on a blockchain?', options: ['Banks', 'The government', 'A distributed network of validators', 'The blockchain CEO'], answer: 2 },
+          { question: 'Which is NOT a blockchain application?', options: ['Supply chain tracking', 'Smart contracts', 'Printing physical money', 'Decentralized finance'], answer: 2 }
+        ]
+      },
+      { title: 'Bitcoin: Digital Gold?', desc: 'Learn about Bitcoin — the first and largest cryptocurrency by market cap.', dur: '12 min', icon: '₿', sort: 35,
+        content: [
+          { heading: 'What Is Bitcoin?', text: 'Created in 2009 by the pseudonymous Satoshi Nakamoto, Bitcoin is the first decentralized digital currency. It has a fixed supply of 21 million coins — unlike government currencies that can be printed infinitely. This scarcity is why some call it "digital gold." As of recent years, Bitcoin has a market cap exceeding $1 trillion.' },
+          { heading: 'The Bull Case', text: 'Proponents argue Bitcoin is a hedge against inflation and currency debasement. Its fixed supply makes it deflationary. Institutional adoption is growing — BlackRock, Fidelity, and major banks now offer Bitcoin products. El Salvador adopted it as legal tender. The Bitcoin ETF approval brought billions in institutional money.' },
+          { heading: 'The Bear Case & Risks', text: 'Bitcoin has dropped 50-80% multiple times in its history. It produces no cash flow (unlike stocks with earnings). Environmental concerns around energy-intensive mining persist. Regulatory crackdowns could impact adoption. It remains highly speculative and volatile — not suitable as a core portfolio holding for most investors.' },
+          { heading: 'How to Size Your Position', text: 'Most financial advisors suggest limiting crypto to 1-5% of your total portfolio. Only invest money you can afford to lose entirely. Use dollar-cost averaging rather than lump-sum buying. Store long-term holdings in a hardware wallet for security. Never invest in crypto before building your core stock/bond portfolio.' }
+        ],
+        takeaways: ['Bitcoin has a fixed supply of 21 million coins', 'It has dropped 50-80% multiple times — extreme volatility', 'Limit crypto to 1-5% of your total portfolio', 'Build your core stock/bond portfolio before adding crypto'],
+        quiz: [
+          { question: 'What is the maximum supply of Bitcoin?', options: ['1 million', '21 million', '100 million', 'Unlimited'], answer: 1 },
+          { question: 'What percentage of a portfolio do most advisors recommend for crypto?', options: ['25-50%', '10-20%', '1-5%', '0% — crypto is a scam'], answer: 2 },
+          { question: 'What is a key risk of Bitcoin?', options: ['Fixed supply', 'It has dropped 50-80% multiple times', 'Too many use cases', 'It is regulated like stocks'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of cryptoLessons1) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m12id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    console.log('  📦 Module 13: The Broader Crypto Ecosystem');
+    const m13 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c5, 'The Broader Crypto Ecosystem', 'Explore Ethereum, DeFi, stablecoins, and emerging trends', 2]);
+    const m13id = m13.rows[0].id;
+
+    const cryptoLessons2 = [
+      { title: 'Ethereum & Smart Contracts', desc: 'Understand the programmable blockchain that powers DeFi and NFTs.', dur: '11 min', icon: '💠', sort: 36,
+        content: [
+          { heading: 'What Makes Ethereum Different', text: 'While Bitcoin is primarily digital money, Ethereum is a programmable blockchain — a platform for building decentralized applications (dApps). Created by Vitalik Buterin in 2015, Ethereum introduced smart contracts: self-executing programs that run exactly as coded without intermediaries.' },
+          { heading: 'Smart Contracts Explained', text: 'A smart contract is code that automatically executes when conditions are met. Example: a freelancer and client agree to a smart contract — when the work is delivered and verified, payment is released automatically. No bank, no escrow service, no delays. This powers everything from decentralized exchanges to lending protocols.' },
+          { heading: 'The Ethereum Ecosystem', text: 'Ethereum hosts thousands of dApps including Uniswap (decentralized exchange), Aave (lending), OpenSea (NFT marketplace), and stablecoins like USDC. Ethereum transitioned to Proof of Stake in 2022 (The Merge), reducing energy consumption by 99.95%. It processes about 15-30 transactions per second, with Layer 2 solutions scaling this further.' }
+        ],
+        takeaways: ['Ethereum is a programmable blockchain for building applications', 'Smart contracts execute automatically when conditions are met', 'The ecosystem includes DeFi, NFTs, stablecoins, and more', 'Proof of Stake reduced energy usage by 99.95%'],
+        quiz: [
+          { question: 'What makes Ethereum different from Bitcoin?', options: ['Ethereum has a fixed supply', 'Ethereum supports programmable smart contracts', 'Ethereum is more scarce', 'Ethereum was created first'], answer: 1 },
+          { question: 'What is a smart contract?', options: ['A legal document', 'Self-executing code that runs when conditions are met', 'A type of cryptocurrency', 'An exchange for trading'], answer: 1 },
+          { question: 'What did The Merge accomplish for Ethereum?', options: ['Doubled the price', 'Reduced energy consumption by 99.95%', 'Created more Ethereum coins', 'Merged with Bitcoin'], answer: 1 }
+        ]
+      },
+      { title: 'DeFi, Stablecoins & Crypto Risks', desc: 'Navigate the evolving landscape of decentralized finance safely.', dur: '12 min', icon: '🏦', sort: 37,
+        content: [
+          { heading: 'Decentralized Finance (DeFi)', text: 'DeFi recreates traditional financial services (lending, borrowing, trading, insurance) without banks or brokers. Instead of depositing money in a bank earning 0.01%, you could lend it through a DeFi protocol earning higher yields. However, DeFi carries significant risks: smart contract bugs, hacking, and "rug pulls" where developers steal funds.' },
+          { heading: 'Stablecoins Explained', text: 'Stablecoins are cryptocurrencies pegged to stable assets like the US dollar. USDC and USDT each maintain a roughly $1 value. They serve as a bridge between traditional and crypto finance. However, they carry risk — the TerraUST stablecoin collapsed in 2022, losing $40 billion. Stick to fully-backed stablecoins like USDC from regulated issuers.' },
+          { heading: 'Critical Crypto Risks', text: 'Exchange risk: centralized exchanges can fail (FTX collapse lost $8 billion in customer funds). Regulatory risk: governments may ban or heavily regulate crypto. Security risk: lost private keys mean permanently lost funds. Scam risk: fake tokens, phishing, and Ponzi schemes are rampant. Always use reputable exchanges (Coinbase, Kraken) and hardware wallets for storage.' }
+        ],
+        takeaways: ['DeFi offers higher yields but carries smart contract and hacking risks', 'Only use fully-backed stablecoins from regulated issuers', 'The FTX collapse and TerraUST failure show crypto risks are real', 'Use reputable exchanges and hardware wallets for security'],
+        quiz: [
+          { question: 'What is DeFi?', options: ['A cryptocurrency coin', 'Decentralized financial services without banks', 'A type of stock exchange', 'A government-backed currency'], answer: 1 },
+          { question: 'Why did the TerraUST stablecoin collapse?', options: ['Government ban', 'It was not fully backed by real assets', 'Bitcoin price dropped', 'Hackers attacked it'], answer: 1 },
+          { question: 'What is the safest way to store cryptocurrency long-term?', options: ['On an exchange', 'In a text file', 'In a hardware wallet', 'In your email'], answer: 2 }
+        ]
+      },
+    ];
+
+    for (const l of cryptoLessons2) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m13id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    // =====================================================
+    // COURSE 6: Real Estate Investing
+    // =====================================================
+    console.log('\n🏠 Inserting Course 6: Real Estate Investing...');
+    const course6 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['Real Estate Investing', 'Explore real estate as an investment — from REITs and crowdfunding to rental properties. Learn how to generate passive income and build wealth through property without needing millions to start.', 'intermediate', '🏠', '#ec4899', 6]
+    );
+    const c6 = course6.rows[0].id;
+
+    console.log('  📦 Module 14: Real Estate Fundamentals');
+    const m14 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c6, 'Real Estate Fundamentals', 'Understand the different ways to invest in real estate', 1]);
+    const m14id = m14.rows[0].id;
+
+    const reLessons = [
+      { title: 'REITs: Real Estate Without the Hassle', desc: 'Invest in real estate through the stock market with zero property management.', dur: '10 min', icon: '🏢', sort: 38,
+        content: [
+          { heading: 'What Are REITs?', text: 'Real Estate Investment Trusts (REITs) are companies that own, operate, or finance income-producing real estate. They trade on stock exchanges just like regular stocks, making real estate investing accessible to everyone. REITs are legally required to distribute at least 90% of taxable income as dividends, making them popular income investments.' },
+          { heading: 'Types of REITs', text: 'Equity REITs own physical properties (apartments, offices, malls, data centers). Mortgage REITs lend money for real estate. Specialty REITs focus on cell towers (American Tower), data centers (Equinix), or healthcare facilities. Each type has different risk-return profiles. Data center and industrial REITs have been top performers.' },
+          { heading: 'REITs in Your Portfolio', text: 'REITs provide diversification since real estate does not move in perfect sync with stocks. Typical allocation is 5-15% of a portfolio. The Vanguard Real Estate ETF (VNQ) holds 150+ REITs in a single fund. REIT dividends are taxed as ordinary income, so hold them in tax-advantaged accounts (IRA, 401k) when possible.' }
+        ],
+        takeaways: ['REITs must distribute 90% of income as dividends', 'They trade like stocks — no property management needed', 'Allocate 5-15% of your portfolio to real estate', 'Hold REITs in tax-advantaged accounts when possible'],
+        quiz: [
+          { question: 'What percentage of income must REITs distribute as dividends?', options: ['50%', '70%', '90%', '100%'], answer: 2 },
+          { question: 'What is VNQ?', options: ['A cryptocurrency', 'A Vanguard Real Estate ETF', 'A type of mortgage', 'A real estate license'], answer: 1 },
+          { question: 'Where should you ideally hold REITs?', options: ['Taxable brokerage account', 'Tax-advantaged accounts like IRAs', 'Savings account', 'Cryptocurrency wallet'], answer: 1 }
+        ]
+      },
+      { title: 'Rental Properties & Cash Flow', desc: 'Learn the fundamentals of generating income through rental real estate.', dur: '12 min', icon: '🔑', sort: 39,
+        content: [
+          { heading: 'The Appeal of Rental Properties', text: 'Rental properties generate monthly cash flow (rent minus expenses), build equity as tenants pay down your mortgage, appreciate in value over time, and offer tax benefits (depreciation deductions). A well-chosen rental property can produce 8-12% total returns annually from a combination of cash flow and appreciation.' },
+          { heading: 'The 1% Rule and Cap Rate', text: 'The 1% Rule is a quick screening tool: monthly rent should be at least 1% of the purchase price. A $200,000 property should rent for at least $2,000/month. Cap rate (Net Operating Income / Purchase Price) measures return without financing. A 6-8% cap rate is generally considered good for residential properties.' },
+          { heading: 'Costs Most People Forget', text: 'Beyond the mortgage, budget for: property taxes (1-2% of value), insurance, maintenance (1% of value annually), vacancy (assume 5-10% of the year), property management (8-10% of rent), and capital expenditures (roof, HVAC). A rental that looks profitable on paper can quickly become a money pit without accounting for all costs.' }
+        ],
+        takeaways: ['The 1% rule: monthly rent should be 1% of purchase price', 'Cap rate measures return: aim for 6-8% for residential', 'Budget for vacancy, maintenance, management, and capex', 'Rental properties offer cash flow, equity, appreciation, and tax benefits'],
+        quiz: [
+          { question: 'Using the 1% rule, what rent should a $300,000 property generate monthly?', options: ['$1,000', '$2,000', '$3,000', '$5,000'], answer: 2 },
+          { question: 'What is a cap rate?', options: ['Maximum price you should pay', 'Net Operating Income divided by Purchase Price', 'Monthly rental income', 'Property tax rate'], answer: 1 },
+          { question: 'What percentage of the year should you budget for vacancy?', options: ['0%', '1-2%', '5-10%', '50%'], answer: 2 }
+        ]
+      },
+      { title: 'Real Estate Crowdfunding', desc: 'Access institutional-quality real estate deals with as little as $10.', dur: '9 min', icon: '🌐', sort: 40,
+        content: [
+          { heading: 'What Is Real Estate Crowdfunding?', text: 'Platforms like Fundrise, RealtyMogul, and CrowdStreet pool money from many investors to fund real estate projects. You can invest in commercial properties, apartment complexes, and development projects that previously required millions. Minimum investments range from $10 (Fundrise) to $25,000 (CrowdStreet).' },
+          { heading: 'Returns and Liquidity', text: 'Crowdfunding platforms have historically delivered 8-12% annual returns through a mix of dividends and appreciation. However, these investments are illiquid — your money is typically locked up for 3-7 years. You cannot sell as easily as stocks or REITs. This illiquidity is the tradeoff for potentially higher returns.' },
+          { heading: 'Risks and Due Diligence', text: 'Real estate crowdfunding is relatively new and less regulated than public markets. Platform risk exists — if the platform goes bankrupt, your investments could be affected. Individual deal risk means some projects may lose money. Always diversify across multiple deals and platforms. Only invest money you will not need for 5+ years.' }
+        ],
+        takeaways: ['Crowdfunding lets you invest in real estate from $10', 'Historical returns of 8-12% but money is locked 3-7 years', 'Diversify across multiple deals and platforms', 'Only invest money you will not need for 5+ years'],
+        quiz: [
+          { question: 'What is the typical lockup period for real estate crowdfunding?', options: ['1 month', '6 months', '3-7 years', '30 years'], answer: 2 },
+          { question: 'What is the minimum investment on some platforms like Fundrise?', options: ['$10', '$1,000', '$10,000', '$100,000'], answer: 0 },
+          { question: 'What is the main tradeoff of crowdfunding vs REITs?', options: ['Higher fees', 'Illiquidity — money is locked up', 'Lower returns', 'More regulation'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of reLessons) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m14id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    // =====================================================
+    // COURSE 7: Retirement & Tax Planning
+    // =====================================================
+    console.log('\n🏖️ Inserting Course 7: Retirement & Tax Planning...');
+    const course7 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['Retirement & Tax Planning', 'Plan your financial future with confidence. Master retirement account strategies, understand tax optimization, and calculate exactly how much you need to retire comfortably.', 'intermediate', '🏖️', '#06b6d4', 7]
+    );
+    const c7 = course7.rows[0].id;
+
+    console.log('  📦 Module 15: Retirement Accounts');
+    const m15 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c7, 'Retirement Accounts', 'Understand and optimize your retirement account options', 1]);
+    const m15id = m15.rows[0].id;
+
+    const retLessons = [
+      { title: '401(k) & Employer Plans', desc: 'Maximize your workplace retirement benefits and free employer money.', dur: '11 min', icon: '🏛️', sort: 41,
+        content: [
+          { heading: 'How 401(k) Plans Work', text: 'A 401(k) is an employer-sponsored retirement account. You contribute pre-tax dollars (reducing your taxable income today), and the money grows tax-deferred until withdrawal in retirement. In 2024, you can contribute up to $23,000 per year ($30,500 if over 50). Many employers match contributions — typically 3-6% of your salary.' },
+          { heading: 'The Employer Match: Free Money', text: 'If your employer offers a 100% match on the first 4% of salary, and you earn $75,000, contributing 4% ($3,000) gets you an additional $3,000 from your employer — that is an instant 100% return on your money. Not contributing enough to get the full match is literally leaving free money on the table. This should be your first investment priority.' },
+          { heading: 'Choosing Your Investments', text: 'Most 401(k) plans offer target-date funds (set it and forget it based on retirement year), index funds (low-cost S&P 500 or total market), and actively managed funds (usually more expensive). Choose the lowest-cost index fund options available. A target-date fund is excellent if you want simplicity. Avoid funds with expense ratios above 0.5%.' }
+        ],
+        takeaways: ['Always contribute enough to get your full employer match', 'Max contribution is $23,000/year ($30,500 if over 50)', 'Choose low-cost index funds or target-date funds', 'Employer match is an instant 100% return — do not leave it on the table'],
+        quiz: [
+          { question: 'What is the 2024 401(k) contribution limit for someone under 50?', options: ['$6,500', '$10,000', '$23,000', '$50,000'], answer: 2 },
+          { question: 'If your employer matches 100% of the first 4%, and you earn $80,000, how much is the match?', options: ['$800', '$3,200', '$4,000', '$8,000'], answer: 1 },
+          { question: 'What should be your first investment priority?', options: ['Individual stocks', 'Cryptocurrency', 'Getting your full employer 401k match', 'Paying off your mortgage'], answer: 2 }
+        ]
+      },
+      { title: 'IRA vs. Roth IRA', desc: 'Understand the two most powerful individual retirement accounts and when to use each.', dur: '10 min', icon: '⚖️', sort: 42,
+        content: [
+          { heading: 'Traditional IRA', text: 'A Traditional IRA lets you contribute pre-tax dollars (up to $7,000/year, $8,000 if over 50 in 2024). Your contributions may be tax-deductible, reducing your tax bill today. The money grows tax-deferred. You pay taxes when you withdraw in retirement. Required Minimum Distributions (RMDs) start at age 73. Best if you expect to be in a lower tax bracket in retirement.' },
+          { heading: 'Roth IRA', text: 'A Roth IRA uses after-tax dollars — no tax deduction today. But the magic is that all growth and withdrawals in retirement are completely tax-free. No RMDs ever. You can withdraw contributions (not earnings) anytime penalty-free. Income limits apply: single filers earning above ~$161,000 cannot contribute directly. Best if you expect to be in a higher tax bracket in retirement.' },
+          { heading: 'Which One Should You Choose?', text: 'If you are early in your career and in a low tax bracket now, choose Roth — you pay low taxes today and withdraw tax-free when earning more later. If you are in your peak earning years in a high tax bracket, Traditional may be better — deduct now, pay lower taxes in retirement. Many experts recommend having both for tax diversification in retirement.' }
+        ],
+        takeaways: ['Traditional IRA: tax deduction now, pay taxes in retirement', 'Roth IRA: no deduction now, but completely tax-free in retirement', 'Young/low-income: Roth is usually better', 'High earners: Traditional or backdoor Roth strategy'],
+        quiz: [
+          { question: 'What is the main advantage of a Roth IRA?', options: ['Tax deduction today', 'Tax-free withdrawals in retirement', 'No contribution limits', 'Employer matching'], answer: 1 },
+          { question: 'What is the 2024 IRA contribution limit for someone under 50?', options: ['$3,000', '$7,000', '$23,000', '$50,000'], answer: 1 },
+          { question: 'When are Roth IRAs typically better?', options: ['When you are in a high tax bracket', 'When you are early in your career with lower income', 'Right before retirement', 'When you are self-employed'], answer: 1 }
+        ]
+      },
+      { title: 'How Much Do You Need to Retire?', desc: 'Calculate your retirement number and create a plan to reach it.', dur: '11 min', icon: '🧮', sort: 43,
+        content: [
+          { heading: 'The 4% Rule', text: 'The Trinity Study found that withdrawing 4% of your portfolio in the first year of retirement (then adjusting for inflation) gives you a very high probability of your money lasting 30+ years. This means you need 25x your annual expenses saved. If you spend $50,000/year, you need $1.25 million. If you spend $80,000/year, you need $2 million.' },
+          { heading: 'Calculating Your Number', text: 'Step 1: Estimate annual retirement expenses (typically 70-80% of pre-retirement spending). Step 2: Subtract guaranteed income (Social Security, pensions). Step 3: Multiply the remaining annual need by 25. Example: $60,000 expenses minus $24,000 Social Security = $36,000 needed from portfolio. $36,000 × 25 = $900,000 target.' },
+          { heading: 'Closing the Gap', text: 'If you are 30 and need $1 million by 65, investing $500/month at 8% returns gets you there. Starting at 35 requires $750/month. At 40, you need $1,200/month. The earlier you start, the less you need to save monthly because compound interest does the heavy lifting. Every year of delay significantly increases the monthly savings required.' }
+        ],
+        takeaways: ['The 4% rule: save 25x your annual expenses', 'Subtract Social Security from your annual need before calculating', 'Starting early dramatically reduces required monthly savings', 'A $50K/year retirement needs about $1.25 million saved'],
+        quiz: [
+          { question: 'According to the 4% rule, how much do you need if annual expenses are $40,000?', options: ['$400,000', '$500,000', '$1,000,000', '$4,000,000'], answer: 2 },
+          { question: 'What does the 25x rule calculate?', options: ['Your monthly savings amount', 'Your total retirement savings target', 'Your Social Security benefit', 'Your tax rate in retirement'], answer: 1 },
+          { question: 'Why does starting earlier require less monthly savings?', options: ['Inflation decreases over time', 'Compound interest does more of the work', 'Taxes are lower for younger investors', 'Stocks perform better for young people'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of retLessons) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m15id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
     // Final summary
     const courseCount = await pool.query('SELECT COUNT(*) FROM courses');
     const moduleCount = await pool.query('SELECT COUNT(*) FROM modules');
