@@ -8,6 +8,10 @@
   ESLINT_NO_DEV_ERRORS = "true"
   CI = "false"
 
+[functions]
+  node_bundler = "nft"
+  external_node_modules = ["pg", "pg-native", "pg-pool"]
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/api/:splat"
