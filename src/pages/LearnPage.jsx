@@ -949,8 +949,28 @@ const LearnPage = () => {
         completedIds: progressData.completedIds || [],
       });
     } catch (err) {
-      console.error('Failed to load courses:', err);
-      setError(err.message || 'Failed to load courses');
+      console.log('Backend unavailable, loading static lesson data');
+      const { lessons, levelInfo } = await import('../data/lessons');
+      const saved = JSON.parse(localStorage.getItem('bloomvest_completed_lessons') || '[]');
+      const staticCourses = [
+        { id: 1, title: 'Investing Fundamentals', description: 'Master the essentials of investing.', level: 'beginner', icon: '📚', color: '#22c55e',
+          totalLessons: lessons.filter(l => l.level === 'beginner').length,
+          completedLessons: lessons.filter(l => l.level === 'beginner' && saved.includes(l.id)).length,
+          modules: [{ id: 1, title: 'Core Lessons', description: 'Beginner investment concepts',
+            lessons: lessons.filter(l => l.level === 'beginner').map(l => ({ id: l.id, title: l.title, duration: l.duration, icon: l.icon, completed: saved.includes(l.id) })) }] },
+        { id: 2, title: 'Intermediate Concepts', description: 'Deepen your investing knowledge.', level: 'intermediate', icon: '📊', color: '#3b82f6',
+          totalLessons: lessons.filter(l => l.level === 'intermediate').length,
+          completedLessons: lessons.filter(l => l.level === 'intermediate' && saved.includes(l.id)).length,
+          modules: [{ id: 2, title: 'Core Lessons', description: 'Intermediate investment concepts',
+            lessons: lessons.filter(l => l.level === 'intermediate').map(l => ({ id: l.id, title: l.title, duration: l.duration, icon: l.icon, completed: saved.includes(l.id) })) }] },
+        { id: 3, title: 'Advanced Strategies', description: 'Master advanced investment strategies.', level: 'advanced', icon: '🎓', color: '#a855f7',
+          totalLessons: lessons.filter(l => l.level === 'advanced').length,
+          completedLessons: lessons.filter(l => l.level === 'advanced' && saved.includes(l.id)).length,
+          modules: [{ id: 3, title: 'Core Lessons', description: 'Advanced investment concepts',
+            lessons: lessons.filter(l => l.level === 'advanced').map(l => ({ id: l.id, title: l.title, duration: l.duration, icon: l.icon, completed: saved.includes(l.id) })) }] },
+      ];
+      setCourses(staticCourses);
+      setProgress({ totalLessons: lessons.length, completedLessons: saved.length, completedIds: saved });
     } finally {
       setLoading(false);
     }
@@ -968,8 +988,23 @@ const LearnPage = () => {
       const data = await api.getLesson(lessonId);
       setLessonData(data.lesson);
     } catch (err) {
-      console.error('Failed to load lesson:', err);
-      setLessonData(null);
+      console.log('Backend unavailable, loading lesson from static data');
+      try {
+        const { lessons } = await import('../data/lessons');
+        const lesson = lessons.find(l => l.id === lessonId);
+        if (lesson) {
+          const saved = JSON.parse(localStorage.getItem('bloomvest_completed_lessons') || '[]');
+          setLessonData({
+            id: lesson.id, title: lesson.title, description: lesson.description,
+            duration: lesson.duration, icon: lesson.icon,
+            content: lesson.content, keyTakeaways: lesson.keyTakeaways || lesson.key_takeaways,
+            quiz: lesson.quiz, completed: saved.includes(lesson.id),
+            courseTitle: '', moduleTitle: '',
+            nextLessonId: lessons[lessons.indexOf(lesson) + 1]?.id || null,
+            prevLessonId: lessons[lessons.indexOf(lesson) - 1]?.id || null,
+          });
+        }
+      } catch (e) { setLessonData(null); }
     } finally {
       setLessonLoading(false);
     }
@@ -1014,7 +1049,11 @@ const LearnPage = () => {
     try {
       await api.completeLessonV2(lessonData.id, score);
     } catch (err) {
-      console.error('Failed to complete lesson:', err);
+      const saved = JSON.parse(localStorage.getItem('bloomvest_completed_lessons') || '[]');
+      if (!saved.includes(lessonData.id)) {
+        saved.push(lessonData.id);
+        localStorage.setItem('bloomvest_completed_lessons', JSON.stringify(saved));
+      }
     }
     closeLesson();
     setCompleting(false);

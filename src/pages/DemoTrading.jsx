@@ -307,13 +307,23 @@ const DemoTrading = () => {
   const [notification, setNotification] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [useLocal, setUseLocal] = useState(false);
+
   const loadPortfolio = useCallback(async () => {
     try {
       const data = await api.getPortfolio();
       setBalance(data.balance);
       setHoldings(data.holdings);
       setTransactions(data.transactions);
-    } catch (e) { console.log('Could not load portfolio from server'); }
+    } catch (e) {
+      setUseLocal(true);
+      const sb = localStorage.getItem('bloomvest_balance');
+      const sh = localStorage.getItem('bloomvest_holdings');
+      const st = localStorage.getItem('bloomvest_transactions');
+      if (sb) setBalance(parseFloat(sb));
+      if (sh) setHoldings(JSON.parse(sh));
+      if (st) setTransactions(JSON.parse(st));
+    }
     setLoading(false);
   }, []);
 
@@ -324,31 +334,66 @@ const DemoTrading = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  const saveLocal = (b, h, t) => {
+    localStorage.setItem('bloomvest_balance', b.toString());
+    localStorage.setItem('bloomvest_holdings', JSON.stringify(h));
+    localStorage.setItem('bloomvest_transactions', JSON.stringify(t));
+  };
+
   const executeTrade = async (type) => {
     const qty = parseInt(tradeQuantity);
     if (!qty || qty <= 0) return;
+    const totalCost = qty * selectedStock.price;
 
-    try {
-      const data = await api.trade(type, selectedStock.symbol, qty, selectedStock.price);
-      setBalance(data.balance);
-      setHoldings(data.holdings);
-      const totalCost = qty * selectedStock.price;
-      showNotification(`${type === 'BUY' ? 'Bought' : 'Sold'} ${qty} shares of ${selectedStock.symbol} for $${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
-      loadPortfolio();
-    } catch (err) {
-      showNotification(err.message || 'Trade failed', 'error');
+    if (!useLocal) {
+      try {
+        const data = await api.trade(type, selectedStock.symbol, qty, selectedStock.price);
+        setBalance(data.balance);
+        setHoldings(data.holdings);
+        showNotification(`${type === 'BUY' ? 'Bought' : 'Sold'} ${qty} shares of ${selectedStock.symbol} for $${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
+        loadPortfolio();
+        setTradeQuantity('');
+        return;
+      } catch (err) {
+        setUseLocal(true);
+      }
+    }
+
+    if (type === 'BUY') {
+      if (balance < totalCost) { showNotification('Insufficient funds', 'error'); return; }
+      const nb = balance - totalCost;
+      const ei = holdings.findIndex(h => h.symbol === selectedStock.symbol);
+      let nh = [...holdings];
+      if (ei >= 0) { const o = nh[ei]; const ts = o.shares + qty; nh[ei] = { ...o, shares: ts, avgPrice: (o.avgPrice * o.shares + totalCost) / ts }; }
+      else nh.push({ symbol: selectedStock.symbol, shares: qty, avgPrice: selectedStock.price });
+      const nt = [{ type: 'BUY', symbol: selectedStock.symbol, shares: qty, price: selectedStock.price, total: totalCost, date: new Date().toISOString() }, ...transactions].slice(0, 50);
+      setBalance(nb); setHoldings(nh); setTransactions(nt); saveLocal(nb, nh, nt);
+      showNotification(`Bought ${qty} shares of ${selectedStock.symbol} for $${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
+    } else {
+      const ei = holdings.findIndex(h => h.symbol === selectedStock.symbol);
+      if (ei < 0 || holdings[ei].shares < qty) { showNotification('Not enough shares', 'error'); return; }
+      const nb = balance + totalCost;
+      let nh = [...holdings];
+      if (nh[ei].shares === qty) nh.splice(ei, 1);
+      else nh[ei] = { ...nh[ei], shares: nh[ei].shares - qty };
+      const nt = [{ type: 'SELL', symbol: selectedStock.symbol, shares: qty, price: selectedStock.price, total: totalCost, date: new Date().toISOString() }, ...transactions].slice(0, 50);
+      setBalance(nb); setHoldings(nh); setTransactions(nt); saveLocal(nb, nh, nt);
+      showNotification(`Sold ${qty} shares of ${selectedStock.symbol} for $${totalCost.toLocaleString(undefined, {minimumFractionDigits: 2})}`);
     }
     setTradeQuantity('');
   };
 
   const resetPortfolio = async () => {
     try {
-      await api.resetPortfolio();
-      setBalance(INITIAL_BALANCE);
-      setHoldings([]);
-      setTransactions([]);
-      showNotification('Portfolio reset to $100,000');
-    } catch (e) { showNotification('Reset failed', 'error'); }
+      if (!useLocal) await api.resetPortfolio();
+    } catch (e) { /* fallback below */ }
+    setBalance(INITIAL_BALANCE);
+    setHoldings([]);
+    setTransactions([]);
+    localStorage.removeItem('bloomvest_balance');
+    localStorage.removeItem('bloomvest_holdings');
+    localStorage.removeItem('bloomvest_transactions');
+    showNotification('Portfolio reset to $100,000');
   };
 
   const portfolioValue = holdings.reduce((total, h) => {
