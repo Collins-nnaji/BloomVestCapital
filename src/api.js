@@ -70,4 +70,27 @@ export const api = {
       body: JSON.stringify({ sessionId: getSessionId(), lessonId, quizScore }),
     });
   },
+
+  async getCourses() {
+    return request(`/courses?sessionId=${getSessionId()}`);
+  },
+
+  async getCourse(courseId) {
+    return request(`/courses/${courseId}?sessionId=${getSessionId()}`);
+  },
+
+  async getLesson(lessonId) {
+    return request(`/courses/lessons/${lessonId}?sessionId=${getSessionId()}`);
+  },
+
+  async completeLessonV2(lessonId, quizScore) {
+    return request(`/courses/lessons/${lessonId}/complete`, {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), quizScore }),
+    });
+  },
+
+  async getCourseProgress() {
+    return request(`/courses/progress?sessionId=${getSessionId()}`);
+  },
 };

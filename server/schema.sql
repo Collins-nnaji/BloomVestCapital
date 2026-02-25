@@ -25,6 +25,37 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS courses (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  level VARCHAR(20) NOT NULL DEFAULT 'beginner',
+  icon VARCHAR(10),
+  color VARCHAR(20),
+  sort_order INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS modules (
+  id SERIAL PRIMARY KEY,
+  course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  sort_order INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS lessons (
+  id SERIAL PRIMARY KEY,
+  module_id INTEGER REFERENCES modules(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  duration VARCHAR(20),
+  icon VARCHAR(10),
+  content JSONB NOT NULL DEFAULT '[]',
+  key_takeaways JSONB NOT NULL DEFAULT '[]',
+  quiz JSONB NOT NULL DEFAULT '[]',
+  sort_order INTEGER DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS lesson_progress (
   id SERIAL PRIMARY KEY,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -47,3 +78,5 @@ CREATE INDEX IF NOT EXISTS idx_holdings_user ON holdings(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_lesson_progress_user ON lesson_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_user ON chat_messages(user_id);
+CREATE INDEX IF NOT EXISTS idx_modules_course ON modules(course_id);
+CREATE INDEX IF NOT EXISTS idx_lessons_module ON lessons(module_id);
