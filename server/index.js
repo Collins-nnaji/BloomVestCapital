@@ -8,7 +8,6 @@ const progressRoutes = require('./routes/progress');
 const coursesRoutes = require('./routes/courses');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -22,16 +21,22 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-async function start() {
-  try {
+let dbInitialized = false;
+async function ensureDb() {
+  if (!dbInitialized) {
     await initializeDatabase();
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error('Failed to start server:', err);
-    process.exit(1);
+    dbInitialized = true;
   }
 }
 
-start();
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  ensureDb().then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  }).catch(err => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  });
+}
+
+module.exports = { app, ensureDb };
