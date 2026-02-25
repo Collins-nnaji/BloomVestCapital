@@ -6,6 +6,7 @@ const aiRoutes = require('./routes/ai');
 const portfolioRoutes = require('./routes/portfolio');
 const progressRoutes = require('./routes/progress');
 const coursesRoutes = require('./routes/courses');
+const scenarioRoutes = require('./routes/scenario');
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/progress', progressRoutes);
 app.use('/api/courses', coursesRoutes);
+app.use('/api/scenario', scenarioRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -93,4 +93,18 @@ export const api = {
   async getCourseProgress() {
     return request(`/courses/progress?sessionId=${getSessionId()}`);
   },
+
+  async getScenarioAdvice(action, scenarioTitle, details, portfolio, objectives) {
+    return request('/scenario/advisor', {
+      method: 'POST',
+      body: JSON.stringify({
+        sessionId: getSessionId(),
+        action,
+        scenarioTitle,
+        details,
+        portfolio,
+        objectives,
+      }),
+    });
+  },
 };
