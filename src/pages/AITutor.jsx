@@ -1,58 +1,63 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPaperPlane, FaRobot, FaUser, FaLightbulb, FaBookOpen, FaChartLine, FaShieldAlt, FaCoins, FaBrain } from 'react-icons/fa';
-import { getAIResponse } from '../data/aiResponses';
+import { FaPaperPlane, FaRobot, FaUser, FaLightbulb, FaBookOpen, FaChartLine, FaShieldAlt, FaCoins, FaBrain, FaTrash } from 'react-icons/fa';
+import { api } from '../api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #0a0f1c 0%, #111827 100%);
   display: flex;
   flex-direction: column;
 `;
 
 const Header = styled.section`
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
-  padding: 3.5rem 1.5rem 2.5rem;
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: -30%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);
-  }
+  background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(139,92,246,0.05) 100%);
+  border-bottom: 1px solid rgba(139,92,246,0.15);
+  padding: 2rem 1.5rem 1.5rem;
 `;
 
 const HeaderContent = styled.div`
   max-width: 900px;
   margin: 0 auto;
-  position: relative;
-  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
+const HeaderLeft = styled.div``;
+
 const HeaderTitle = styled.h1`
-  font-size: 2.2rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: white;
-  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-
+  gap: 0.6rem;
+  margin-bottom: 0.25rem;
   span { color: #a78bfa; }
-  svg { color: #a78bfa; }
-  @media (max-width: 768px) { font-size: 1.8rem; }
+  svg { color: #a78bfa; font-size: 1.3rem; }
 `;
 
 const HeaderSubtitle = styled.p`
-  color: rgba(255,255,255,0.6);
-  font-size: 1rem;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+`;
+
+const ClearButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px;
+  color: #f87171;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  &:hover { background: rgba(239,68,68,0.2); }
 `;
 
 const ChatArea = styled.div`
@@ -75,70 +80,66 @@ const MessagesContainer = styled.div`
 const MessageGroup = styled(motion.div)`
   display: flex;
   gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   align-items: flex-start;
-  flex-direction: ${props => props.isUser ? 'row-reverse' : 'row'};
+  flex-direction: ${props => props.$isUser ? 'row-reverse' : 'row'};
 `;
 
 const Avatar = styled.div`
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 1rem;
-  background: ${props => props.isUser ? '#0f172a' : 'linear-gradient(135deg, #7c3aed, #a78bfa)'};
+  font-size: 0.9rem;
+  background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #334155)' : 'linear-gradient(135deg, #7c3aed, #a78bfa)'};
   color: white;
+  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.1)' : 'rgba(167,139,250,0.3)'};
 `;
 
 const MessageBubble = styled.div`
-  max-width: 80%;
-  padding: 1rem 1.25rem;
-  border-radius: ${props => props.isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px'};
-  background: ${props => props.isUser ? '#0f172a' : 'white'};
-  color: ${props => props.isUser ? 'white' : '#334155'};
-  box-shadow: ${props => props.isUser ? 'none' : '0 2px 8px rgba(0,0,0,0.06)'};
-  border: ${props => props.isUser ? 'none' : '1px solid #e2e8f0'};
-  font-size: 0.95rem;
+  max-width: 78%;
+  padding: 1rem 1.15rem;
+  border-radius: ${props => props.$isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};
+  background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #1e293b)' : 'rgba(255,255,255,0.05)'};
+  color: ${props => props.$isUser ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.85)'};
+  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.06)'};
+  font-size: 0.9rem;
   line-height: 1.7;
   white-space: pre-wrap;
-
-  strong { font-weight: 700; }
-
-  @media (max-width: 768px) { max-width: 90%; }
+  strong { font-weight: 700; color: #a78bfa; }
+  @media (max-width: 768px) { max-width: 88%; }
 `;
 
 const InputArea = styled.div`
-  background: white;
-  border-radius: 16px;
-  border: 2px solid #e2e8f0;
-  padding: 0.75rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 0.6rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   transition: border-color 0.3s;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-
-  &:focus-within { border-color: #8b5cf6; }
+  &:focus-within { border-color: rgba(139,92,246,0.4); }
 `;
 
 const ChatInput = styled.input`
   flex: 1;
   border: none;
   outline: none;
-  font-size: 1rem;
-  color: #334155;
-  padding: 0.5rem;
-
-  &::placeholder { color: #94a3b8; }
+  font-size: 0.95rem;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  &::placeholder { color: rgba(255,255,255,0.3); }
 `;
 
 const SendButton = styled.button`
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   background: linear-gradient(135deg, #7c3aed, #8b5cf6);
   color: white;
   border: none;
@@ -148,44 +149,38 @@ const SendButton = styled.button`
   justify-content: center;
   transition: all 0.3s;
   flex-shrink: 0;
-
-  &:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(124,58,237,0.3); }
-  &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  &:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 `;
 
 const SuggestionsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.6rem;
   margin-bottom: 1.5rem;
 `;
 
 const SuggestionCard = styled(motion.button)`
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.9rem;
   text-align: left;
   cursor: pointer;
   transition: all 0.3s;
-
-  &:hover {
-    border-color: #8b5cf6;
-    box-shadow: 0 4px 12px rgba(139,92,246,0.1);
-    transform: translateY(-2px);
-  }
+  &:hover { border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.05); transform: translateY(-1px); }
 `;
 
 const SuggestionIcon = styled.div`
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
-  color: #8b5cf6;
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+  color: #a78bfa;
 `;
 
 const SuggestionText = styled.div`
   font-weight: 600;
-  font-size: 0.85rem;
-  color: #334155;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
   line-height: 1.3;
 `;
 
@@ -196,10 +191,18 @@ const TypingIndicator = styled(motion.div)`
 `;
 
 const TypingDot = styled(motion.div)`
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #8b5cf6;
+  background: #a78bfa;
+`;
+
+const PoweredBy = styled.div`
+  text-align: center;
+  padding: 0.75rem;
+  color: rgba(255,255,255,0.25);
+  font-size: 0.7rem;
+  font-weight: 500;
 `;
 
 const suggestedQuestions = [
@@ -221,34 +224,48 @@ const AITutor = () => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hello! 👋 I'm your **AI Investment Tutor**. I'm here to help you learn about investing in a clear, easy-to-understand way.\n\nAsk me anything about stocks, bonds, ETFs, portfolio building, risk management, or any investing topic. No question is too basic!\n\nYou can also try the suggested topics below to get started."
+      content: "Hello! 👋 I'm **BloomVest AI**, your personal investment tutor powered by GPT-4. Ask me anything about investing — from the basics to advanced strategies. I remember our conversation, so feel free to build on previous questions!"
     }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
+  useEffect(() => { scrollToBottom(); }, [messages, isTyping]);
+
+  const loadHistory = useCallback(async () => {
+    try {
+      const data = await api.getChatHistory();
+      if (data.messages && data.messages.length > 0) {
+        setMessages(data.messages.map(m => ({ role: m.role, content: m.content })));
+      }
+    } catch (e) {
+      console.log('Could not load chat history');
+    }
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => { loadHistory(); }, [loadHistory]);
 
   const sendMessage = async (text) => {
-    if (!text.trim()) return;
+    if (!text.trim() || isTyping) return;
 
     const userMessage = { role: 'user', content: text.trim() };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsTyping(true);
 
-    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 1200));
-
-    const response = getAIResponse(text);
-    setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+    try {
+      const data = await api.chat(text.trim());
+      setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
+    } catch (err) {
+      setMessages(prev => [...prev, { role: 'assistant', content: "I'm having trouble connecting right now. Please try again in a moment." }]);
+    }
     setIsTyping(false);
   };
 
@@ -257,8 +274,16 @@ const AITutor = () => {
     sendMessage(input);
   };
 
-  const handleSuggestion = (text) => {
-    sendMessage(text);
+  const clearHistory = async () => {
+    try {
+      await api.clearChatHistory();
+      setMessages([{
+        role: 'assistant',
+        content: "Chat cleared! 🧹 I'm ready for a fresh start. What would you like to learn about investing?"
+      }]);
+    } catch (e) {
+      console.error('Failed to clear history');
+    }
   };
 
   const showSuggestions = messages.length <= 1;
@@ -267,12 +292,13 @@ const AITutor = () => {
     <PageContainer>
       <Header>
         <HeaderContent>
-          <HeaderTitle>
-            <FaRobot /> AI Investment <span>Tutor</span>
-          </HeaderTitle>
-          <HeaderSubtitle>
-            Ask any investment question and get instant, clear explanations.
-          </HeaderSubtitle>
+          <HeaderLeft>
+            <HeaderTitle><FaRobot /> BloomVest <span>AI</span></HeaderTitle>
+            <HeaderSubtitle>Powered by GPT-4 — Ask anything about investing</HeaderSubtitle>
+          </HeaderLeft>
+          <ClearButton onClick={clearHistory}>
+            <FaTrash /> Clear Chat
+          </ClearButton>
         </HeaderContent>
       </Header>
 
@@ -281,46 +307,43 @@ const AITutor = () => {
           {messages.map((msg, index) => (
             <MessageGroup
               key={index}
-              isUser={msg.role === 'user'}
-              initial={{ opacity: 0, y: 10 }}
+              $isUser={msg.role === 'user'}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25 }}
             >
-              <Avatar isUser={msg.role === 'user'}>
+              <Avatar $isUser={msg.role === 'user'}>
                 {msg.role === 'user' ? <FaUser /> : <FaRobot />}
               </Avatar>
               <MessageBubble
-                isUser={msg.role === 'user'}
+                $isUser={msg.role === 'user'}
                 dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }}
               />
             </MessageGroup>
           ))}
 
           {isTyping && (
-            <MessageGroup isUser={false}>
-              <Avatar isUser={false}><FaRobot /></Avatar>
-              <MessageBubble isUser={false}>
+            <MessageGroup $isUser={false}>
+              <Avatar $isUser={false}><FaRobot /></Avatar>
+              <MessageBubble $isUser={false}>
                 <TypingIndicator>
-                  <TypingDot animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
-                  <TypingDot animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} />
-                  <TypingDot animate={{ y: [0, -8, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }} />
+                  <TypingDot animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
+                  <TypingDot animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.15 }} />
+                  <TypingDot animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.3 }} />
                 </TypingIndicator>
               </MessageBubble>
             </MessageGroup>
           )}
-
           <div ref={messagesEndRef} />
         </MessagesContainer>
 
         {showSuggestions && (
           <SuggestionsGrid>
             {suggestedQuestions.map((q, i) => (
-              <SuggestionCard
-                key={i}
-                onClick={() => handleSuggestion(q.text)}
-                initial={{ opacity: 0, y: 10 }}
+              <SuggestionCard key={i} onClick={() => sendMessage(q.text)}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
+                transition={{ delay: i * 0.04 }}
               >
                 <SuggestionIcon>{q.icon}</SuggestionIcon>
                 <SuggestionText>{q.text}</SuggestionText>
@@ -332,7 +355,6 @@ const AITutor = () => {
         <form onSubmit={handleSubmit}>
           <InputArea>
             <ChatInput
-              ref={inputRef}
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Ask me anything about investing..."
@@ -343,6 +365,7 @@ const AITutor = () => {
             </SendButton>
           </InputArea>
         </form>
+        <PoweredBy>Powered by OpenAI GPT-4 — For educational purposes only</PoweredBy>
       </ChatArea>
     </PageContainer>
   );
