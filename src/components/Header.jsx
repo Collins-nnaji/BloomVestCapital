@@ -291,9 +291,9 @@ const Header = () => {
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/learn', label: 'Learn' },
-    { path: '/demo', label: 'Demo Trading' },
+    { path: '/scenario', label: 'Scenarios' },
+    { path: '/demo', label: 'Trading' },
     { path: '/ai-tutor', label: 'AI Tutor' },
-    { path: '/about', label: 'About' },
   ];
   
   const isActive = (path) => location.pathname === path;
