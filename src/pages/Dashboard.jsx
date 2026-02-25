@@ -582,7 +582,7 @@ const Dashboard = () => {
 
         <SectionHeader>
           <SectionTitle><FaTrophy /> Demo Scenarios</SectionTitle>
-          <SectionLink to="/demo">
+          <SectionLink to="/scenario">
             View All <FaArrowRight />
           </SectionLink>
         </SectionHeader>
@@ -591,7 +591,7 @@ const Dashboard = () => {
           {scenarios.slice(0, 3).map((scenario, index) => (
             <ScenarioCard
               key={scenario.id}
-              to="/demo"
+              to="/scenario"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

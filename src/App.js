@@ -10,6 +10,7 @@ const LearnPage = lazy(() => import('./pages/LearnPage'));
 const DemoTrading = lazy(() => import('./pages/DemoTrading'));
 const AITutor = lazy(() => import('./pages/AITutor'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
+const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
               <Route path="/demo" element={<DemoTrading />} />
               <Route path="/ai-tutor" element={<AITutor />} />
               <Route path="/about" element={<AboutUsPage />} />
+              <Route path="/scenario" element={<ScenarioPage />} />
               <Route path="*" element={<Dashboard />} />
             </Routes>
           </Layout>
