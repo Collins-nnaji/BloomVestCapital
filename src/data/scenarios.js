@@ -6,7 +6,7 @@ export const scenarios = [
     duration: '15 min',
     icon: '🌱',
     description: 'You just received $10,000 and want to start investing. The AI advisor will guide you through building a diversified portfolio from scratch.',
-    briefing: 'Imagine you have saved $10,000 and are ready to make your first investments. Your goal is to build a diversified portfolio across multiple sectors. The AI advisor will explain each step and help you understand why diversification matters.',
+    briefing: 'In this simulation, you\'ll learn how to build a diversified portfolio from scratch. Your AI tutor will teach you about sector allocation, position sizing, and why putting all your eggs in one basket is risky. Every stock you buy, I\'ll explain what makes it a good or bad choice and why diversification protects your money.',
     startingBalance: 10000,
     objectives: [
       { id: 'buy-first', label: 'Make your first stock purchase', check: (h) => h.length >= 1 },
@@ -39,7 +39,7 @@ export const scenarios = [
     duration: '20 min',
     icon: '💰',
     description: 'Create a portfolio focused on generating passive income through dividends. The AI advisor will teach you about yield, payout ratios, and income investing.',
-    briefing: 'Your goal is to build a portfolio that generates passive income through dividends. You will learn to identify quality dividend-paying stocks, understand dividend yield, and balance income with growth potential.',
+    briefing: 'Your AI tutor will teach you how dividends work — how companies share their profits with you as a shareholder. You\'ll learn to evaluate dividend yield, check if dividends are sustainable, and build a portfolio that pays you regular income. I\'ll explain every concept as you invest.',
     startingBalance: 25000,
     objectives: [
       { id: 'buy-dividend', label: 'Buy a stock with dividend yield above 2%', check: (h, stocks) => h.some(holding => (stocks.find(s => s.symbol === holding.symbol)?.dividend || 0) >= 2) },
@@ -65,7 +65,7 @@ export const scenarios = [
     duration: '20 min',
     icon: '🚀',
     description: 'Build a growth-oriented tech portfolio and learn why growth stocks trade at premium valuations. The AI will explain P/E ratios and growth metrics.',
-    briefing: 'Technology stocks often trade at higher valuations because investors expect rapid future growth. Your challenge is to build a tech-focused portfolio while understanding the tradeoff between growth potential and valuation risk.',
+    briefing: 'Your AI tutor will teach you why tech stocks trade at premium prices (high P/E ratios) and when that\'s justified by growth. You\'ll learn the difference between growth and value investing, understand P/E ratios in context, and discover why even a growth portfolio needs some defensive balance.',
     startingBalance: 20000,
     objectives: [
       { id: 'buy-tech', label: 'Buy at least 2 technology stocks', check: (h, stocks) => h.filter(holding => stocks.find(s => s.symbol === holding.symbol)?.sector === 'Technology').length >= 2 },
@@ -88,7 +88,7 @@ export const scenarios = [
     duration: '15 min',
     icon: '📉',
     description: 'Your portfolio just dropped 25%. Do you sell, hold, or buy more? The AI advisor helps you navigate fear and make rational decisions during a downturn.',
-    briefing: 'Markets have crashed — your portfolio is down significantly. History shows that panic selling is the worst thing you can do. This scenario teaches you how to think rationally during fear, when to buy the dip, and why long-term investors actually benefit from crashes.',
+    briefing: 'Your AI tutor will walk you through the psychology of a market crash. You\'ll learn why panic selling destroys wealth, how legendary investors like Warren Buffett profit from crashes, and the historical data showing markets always recover. Every action you take, I\'ll teach you the mindset behind smart crisis investing.',
     startingBalance: 50000,
     objectives: [
       { id: 'buy-dip', label: 'Buy stocks during the "crash" (buy any stock)', check: (h) => h.length >= 1 },
@@ -111,7 +111,7 @@ export const scenarios = [
     duration: '20 min',
     icon: '🏖️',
     description: 'Build a long-term retirement portfolio. The AI advisor teaches asset allocation, the importance of starting early, and balancing growth with stability.',
-    briefing: 'You are 30 years old with $50,000 to invest for retirement at 65. Your challenge is to build an age-appropriate portfolio that balances growth (stocks) with stability. The AI advisor will explain the "110 minus age" rule and why time horizon matters.',
+    briefing: 'Your AI tutor will teach you the "110 minus age" rule, why time horizon is the most powerful factor in investing, and how to balance growth with stability at different life stages. You\'ll build a retirement portfolio and learn exactly why each allocation decision matters for your future.',
     startingBalance: 50000,
     objectives: [
       { id: 'growth-focus', label: 'Allocate at least 60% to growth stocks', check: (h, stocks, balance) => {

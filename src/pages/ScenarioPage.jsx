@@ -829,7 +829,7 @@ const ScenarioPage = () => {
       setMessages([{ text: result.advice, isAi: true, time: timeNow() }]);
     } catch (err) {
       setMessages([{
-        text: `Welcome to **${scenario.title}**! ${scenario.briefing}\n\nYou have **$${scenario.startingBalance.toLocaleString()}** to invest. Take a look at the available stocks and start building your portfolio!`,
+        text: `🎓 **Welcome to: ${scenario.title}**\n\n${scenario.briefing}\n\n💰 You have **$${scenario.startingBalance.toLocaleString()}** in virtual cash to invest.\n\n📋 **Your learning objectives are on the left** — I'll help you complete each one and explain the concepts as you go.\n\nI'm your AI tutor — I'll explain every trade you make, teach you the concepts behind your decisions, and guide you step by step. **Let's start!** Click on a stock from the list to begin.`,
         isAi: true,
         time: timeNow(),
       }]);
@@ -1016,8 +1016,8 @@ const ScenarioPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <PageTitle>Investment Scenarios</PageTitle>
-            <PageSubtitle>AI-guided simulations to master investing</PageSubtitle>
+            <PageTitle>Investment <span style={{color:'#22c55e'}}>Scenarios</span></PageTitle>
+            <PageSubtitle style={{maxWidth:600,margin:'0.5rem auto 0'}}>Step-by-step investing simulations with a personal <strong style={{color:'#a78bfa'}}>AI tutor</strong> that teaches, explains every decision, and coaches you in real time.</PageSubtitle>
           </PageHeader>
 
           <ScenariosGrid>
@@ -1038,9 +1038,15 @@ const ScenarioPage = () => {
                 </ScenarioCardHeader>
                 <ScenarioCardTitle>{scenario.title}</ScenarioCardTitle>
                 <ScenarioCardDesc>{scenario.description}</ScenarioCardDesc>
+                <div style={{background:'rgba(139,92,246,0.06)',border:'1px solid rgba(139,92,246,0.12)',borderRadius:10,padding:'0.65rem 0.85rem',marginBottom:'1rem',display:'flex',alignItems:'flex-start',gap:'0.6rem'}}>
+                  <FaRobot style={{color:'#a78bfa',flexShrink:0,marginTop:2,fontSize:'0.9rem'}} />
+                  <span style={{color:'rgba(255,255,255,0.55)',fontSize:'0.78rem',lineHeight:1.45}}>
+                    <strong style={{color:'#a78bfa'}}>AI Tutor guides you</strong> — explains every trade, coaches your decisions, and teaches {scenario.learningGoals.slice(0,2).join(' & ').toLowerCase()} step by step.
+                  </span>
+                </div>
                 <ScenarioCardMeta>
                   <Duration><FaClock /> {scenario.duration}</Duration>
-                  <StartLabel><FaPlay /> Start Scenario</StartLabel>
+                  <StartLabel><FaPlay /> Start Simulation</StartLabel>
                 </ScenarioCardMeta>
                 <GoalsWrap>
                   {scenario.learningGoals.map(g => (
@@ -1270,10 +1276,14 @@ const ScenarioPage = () => {
           <Card style={{ display: 'flex', flexDirection: 'column', maxHeight: 'calc(100vh - 3rem)' }}>
             <AdvisorHeader>
               <FaRobot />
-              <AdvisorTitle>AI Advisor</AdvisorTitle>
+              <div>
+                <AdvisorTitle>AI Investment Tutor</AdvisorTitle>
+                <div style={{fontSize:'0.7rem',color:'rgba(255,255,255,0.35)',marginTop:1}}>Teaches & explains every step</div>
+              </div>
             </AdvisorHeader>
 
             <ObjectivesList>
+              <div style={{fontSize:'0.7rem',color:'rgba(255,255,255,0.3)',textTransform:'uppercase',letterSpacing:'0.5px',fontWeight:700,marginBottom:'0.3rem'}}>📋 Learning Objectives</div>
               <ObjectivesCounter>
                 {completedObjectives.length}/{activeScenario?.objectives.length || 0} completed
               </ObjectivesCounter>
@@ -1312,13 +1322,13 @@ const ScenarioPage = () => {
 
             <QuickActions>
               <QuickBtn onClick={() => handleQuickAction('advice')} disabled={aiLoading}>
-                <FaLightbulb style={{ marginRight: '0.2rem' }} /> What should I buy next?
+                <FaLightbulb style={{ marginRight: '0.2rem' }} /> Teach me what to buy next
               </QuickBtn>
               <QuickBtn onClick={() => handleQuickAction('progress')} disabled={aiLoading}>
-                <FaTrophy style={{ marginRight: '0.2rem' }} /> Check my progress
+                <FaTrophy style={{ marginRight: '0.2rem' }} /> Review my progress
               </QuickBtn>
               <QuickBtn onClick={() => handleQuickAction('explain')} disabled={aiLoading}>
-                <FaSearch style={{ marginRight: '0.2rem' }} /> Explain this stock
+                <FaSearch style={{ marginRight: '0.2rem' }} /> Explain this stock to me
               </QuickBtn>
             </QuickActions>
 
