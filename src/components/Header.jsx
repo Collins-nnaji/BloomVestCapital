@@ -1,358 +1,329 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaBars, FaTimes, FaArrowRight } from 'react-icons/fa';
+import { FaBars, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const HeaderContainer = styled(motion.header)`
+const HeaderContainer = styled.header`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-  padding: 0.4rem 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &.scrolled {
-    padding: 0.2rem 0;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-  }
+  height: 64px;
+  display: flex;
+  align-items: center;
+  background: ${props => props.$scrolled
+    ? 'rgba(4,6,12,0.95)'
+    : 'rgba(6,9,16,0.85)'};
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: background 0.3s ease;
 `;
 
 const NavContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
+  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 0 1.5rem;
-  position: relative;
-  height: 60px;
-  
-  @media (max-width: 768px) {
-    height: 55px;
-  }
 `;
 
-const LogoLink = styled(Link)`
+const Logo = styled(Link)`
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-decoration: none;
+  color: #fff;
   display: flex;
   align-items: center;
-  text-decoration: none;
-  position: relative;
   z-index: 1021;
-  
-  img {
-    height: 45px;
-    transition: all 0.3s ease;
-    
-    @media (max-width: 768px) {
-      height: 38px;
-    }
-  }
-`;
 
-const MobileMenuToggle = styled.button`
-  display: none;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #1a365d;
-  cursor: pointer;
-  z-index: 1021;
-  transition: all 0.3s ease;
-  
-  &:hover {
+  span {
     color: #22c55e;
-    transform: scale(1.1);
-  }
-  
-  @media (max-width: 1024px) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 `;
 
 const NavWrapper = styled.nav`
   display: flex;
   align-items: center;
-  gap: 2.5rem;
-  
-  @media (max-width: 1024px) {
+  gap: 2rem;
+
+  @media (max-width: 768px) {
     display: none;
   }
 `;
 
-const MobileNavOverlay = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1010;
-  backdrop-filter: blur(5px);
-`;
-
-const MobileNavWrapper = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 300px;
-  height: 100vh;
-  background: white;
-  box-shadow: -5px 0 30px rgba(0, 0, 0, 0.15);
-  z-index: 1020;
-  padding: 100px 2rem 2rem;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  
-  @media (max-width: 400px) {
-    width: 85%;
-  }
-`;
-
 const NavLink = styled(Link)`
-  color: #1a365d;
+  font-family: 'DM Sans', sans-serif;
+  color: ${props => props.$active ? '#22c55e' : 'rgba(255,255,255,0.75)'};
   text-decoration: none;
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 500;
   position: relative;
-  padding: 0.5rem 0;
-  transition: all 0.3s ease;
-  
+  padding: 0.35rem 0;
+  transition: color 0.25s ease;
+
   &::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -2px;
     left: 0;
-    width: 0;
+    width: ${props => props.$active ? '100%' : '0'};
     height: 2px;
     background: #22c55e;
-    transition: width 0.3s ease;
+    transition: width 0.25s ease;
+    border-radius: 1px;
   }
-  
-  &:hover, &.active {
+
+  &:hover {
     color: #22c55e;
-    
+
     &::after {
       width: 100%;
     }
   }
 `;
 
-const MobileNavLink = styled(Link)`
-  color: #1a365d;
-  text-decoration: none;
-  font-size: 1.25rem;
-  font-weight: 600;
-  padding: 1rem 0;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  
-  &:hover, &.active {
-    color: #22c55e;
-    transform: translateX(10px);
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: rgba(0, 0, 0, 0.05);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #1a365d;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: rgba(0, 0, 0, 0.1);
-    transform: rotate(90deg);
-    color: #22c55e;
-  }
-`;
-
-const ActionButtons = styled.div`
+const RightSection = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-top: 2rem;
-  
-  @media (max-width: 1024px) {
+`;
+
+const CTAButton = styled(Link)`
+  font-family: 'DM Sans', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 1rem;
+  background: #22c55e;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #16a34a;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(34,197,94,0.35);
+  }
+
+  @media (max-width: 768px) {
     display: none;
   }
 `;
 
-const MobileActionButtons = styled.div`
+const HamburgerButton = styled.button`
+  display: none;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  font-size: 1.25rem;
+  cursor: pointer;
+  z-index: 1021;
+  padding: 0.25rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: #22c55e;
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+`;
+
+const MobileOverlay = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1010;
+  backdrop-filter: blur(4px);
+`;
+
+const MobilePanel = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100vh;
+  height: 100dvh;
+  background: #0a0f1c;
+  z-index: 1020;
+  padding: 5rem 1.5rem 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
+  border-left: 1px solid rgba(255,255,255,0.06);
+
+  @media (max-width: 320px) {
+    width: 100%;
+  }
 `;
 
-const ActionButton = styled(Link)`
-  display: inline-flex;
+const MobileCloseButton = styled.button`
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: ${props => props.primary ? '0.75rem 1.5rem' : '0.7rem 1.25rem'};
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  
-  ${props => props.primary ? `
-    background: #22c55e;
-    color: white;
-    box-shadow: 0 5px 15px rgba(34, 197, 94, 0.25);
-    
-    &:hover {
-      background: #15803d;
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.35);
-    }
-    
-    svg {
-      transition: transform 0.3s ease;
-    }
-    
-    &:hover svg {
-      transform: translateX(3px);
-    }
-  ` : `
-    background: transparent;
-    color: #1a365d;
-    border: 2px solid #1a365d;
-    
-    &:hover {
-      background: rgba(26, 54, 93, 0.05);
-      transform: translateY(-3px);
-    }
-  `}
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #22c55e;
+    border-color: rgba(34,197,94,0.3);
+  }
 `;
 
+const MobileNavLink = styled(Link)`
+  font-family: 'DM Sans', sans-serif;
+  color: ${props => props.$active ? '#22c55e' : 'rgba(255,255,255,0.6)'};
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.2s ease;
+  display: block;
+
+  &:hover {
+    color: #22c55e;
+    padding-left: 0.5rem;
+  }
+`;
+
+const MobileCTA = styled(Link)`
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+  padding: 0.7rem 1.25rem;
+  background: #22c55e;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.25s ease;
+
+  &:hover {
+    background: #16a34a;
+  }
+`;
+
+const navItems = [
+  { path: '/', label: 'Home' },
+  { path: '/learn', label: 'Learn' },
+  { path: '/scenario', label: 'Scenarios' },
+  { path: '/demo', label: 'Trading' },
+  { path: '/ai-tutor', label: 'AI Tutor' },
+];
+
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  
-  // Close menu when route changes
+
   useEffect(() => {
-    setIsMenuOpen(false);
+    setMenuOpen(false);
   }, [location]);
-  
-  // Prevent body scroll when menu is open
+
   useEffect(() => {
-    if (isMenuOpen) {
+    if (menuOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-    
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
-  }, [isMenuOpen]);
-  
-  // Detect scroll position
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [menuOpen]);
+
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  
-  const toggleMenu = () => {
-    setIsMenuOpen(prevState => !prevState);
-  };
-  
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/learn', label: 'Learn' },
-    { path: '/scenario', label: 'Scenarios' },
-    { path: '/demo', label: 'Trading' },
-    { path: '/ai-tutor', label: 'AI Tutor' },
-  ];
-  
+
   const isActive = (path) => location.pathname === path;
-  
+
   return (
-    <HeaderContainer className={scrolled ? 'scrolled' : ''}>
+    <HeaderContainer $scrolled={scrolled}>
       <NavContainer>
-        <LogoLink to="/">
-          <img src="/bloomvestlogo.png" alt="BloomVest" />
-        </LogoLink>
-        
+        <Logo to="/">
+          Bloom<span>Vest</span>
+        </Logo>
+
         <NavWrapper>
           {navItems.map((item) => (
-            <NavLink 
-              key={item.path} 
-              to={item.path} 
-              className={isActive(item.path) ? 'active' : ''}
+            <NavLink
+              key={item.path}
+              to={item.path}
+              $active={isActive(item.path)}
             >
               {item.label}
             </NavLink>
           ))}
         </NavWrapper>
-        
-        <MobileMenuToggle onClick={toggleMenu}>
-          <FaBars />
-        </MobileMenuToggle>
+
+        <RightSection>
+          <CTAButton to="/learn">Start Free</CTAButton>
+          <HamburgerButton onClick={() => setMenuOpen(true)} aria-label="Open menu">
+            <FaBars />
+          </HamburgerButton>
+        </RightSection>
       </NavContainer>
-      
+
       <AnimatePresence>
-        {isMenuOpen && (
+        {menuOpen && (
           <>
-            <MobileNavOverlay
+            <MobileOverlay
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={toggleMenu}
+              transition={{ duration: 0.25 }}
+              onClick={() => setMenuOpen(false)}
             />
-            <MobileNavWrapper
+            <MobilePanel
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.3 }}
+              transition={{ type: 'tween', duration: 0.28, ease: 'easeOut' }}
             >
-              <CloseButton onClick={toggleMenu}>
+              <MobileCloseButton onClick={() => setMenuOpen(false)} aria-label="Close menu">
                 <FaTimes />
-              </CloseButton>
-              
+              </MobileCloseButton>
+
               {navItems.map((item) => (
-                <MobileNavLink 
-                  key={item.path} 
-                  to={item.path} 
-                  className={isActive(item.path) ? 'active' : ''}
-                  onClick={toggleMenu}
+                <MobileNavLink
+                  key={item.path}
+                  to={item.path}
+                  $active={isActive(item.path)}
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
                 </MobileNavLink>
               ))}
-            </MobileNavWrapper>
+
+              <MobileCTA to="/learn" onClick={() => setMenuOpen(false)}>
+                Start Free
+              </MobileCTA>
+            </MobilePanel>
           </>
         )}
       </AnimatePresence>
