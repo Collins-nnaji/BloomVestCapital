@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 * {
   box-sizing: border-box;
@@ -7,12 +7,11 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #1a365d;
+  color: #e2e8f0;
+  background: #060910;
   position: relative;
   width: 100%;
   overflow-x: hidden;
@@ -26,8 +25,7 @@ html {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, monospace;
 }
 
 a {
@@ -42,16 +40,20 @@ img {
 
 button {
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
+  color: white;
+  letter-spacing: -0.02em;
 }
 
 p {
   line-height: 1.7;
+  color: rgba(255,255,255,0.6);
 }
 
 #root {
@@ -63,31 +65,26 @@ p {
   overflow: hidden;
 }
 
-/* Fix for iOS Safari viewport inconsistencies */
-@supports (-webkit-touch-callout: none) {
-  .vh-fix {
-    height: -webkit-fill-available;
-  }
+::selection {
+  background: #22c55e;
+  color: white;
 }
 
-/* Prevent horizontal overflow that can cause page shaking */
-.container {
-  width: 100%;
-  max-width: 100vw;
-  overflow-x: hidden;
-  position: relative;
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* Apply smooth transitions for animations to prevent jarring movements */
-.transition-all {
-  transition: all 0.3s ease;
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.02);
 }
 
-/* Fix for elements that might cause horizontal overflow */
-.row {
-  margin-left: 0;
-  margin-right: 0;
-  width: 100%;
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.15);
 }
 
 @media (max-width: 768px) {
@@ -96,10 +93,4 @@ p {
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
   }
-  
-  /* Prevent fixed elements from bouncing during scrolling on mobile */
-  .fixed-element {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-} 
+}
