@@ -985,10 +985,13 @@ const ScenarioPage = () => {
     if (e.key === 'Enter') handleCustomQuestion();
   }, [handleCustomQuestion]);
 
-  const filteredStocks = stocks.filter(s =>
-    s.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.sector.toLowerCase().includes(searchQuery.toLowerCase())
+  const scenarioAssets = activeScenario?.assets;
+  const filteredStocks = stocks.filter(s => {
+    if (scenarioAssets && !scenarioAssets.includes(s.symbol)) return false;
+    return s.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.sector.toLowerCase().includes(searchQuery.toLowerCase());
+  }
   );
 
   const portfolioValue = holdings.reduce((sum, h) => {
