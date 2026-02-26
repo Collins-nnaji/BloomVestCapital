@@ -132,6 +132,131 @@ export const scenarios = [
     ],
     learningGoals: ['Retirement planning', 'Asset allocation by age', 'Long-term strategy', 'Growth vs. income balance']
   },
+  {
+    id: 'commodities-101',
+    title: 'Commodities: Gold, Oil & Agriculture',
+    difficulty: 'Intermediate',
+    duration: '18 min',
+    icon: '🛢️',
+    description: 'Learn to trade commodities — gold as a safe haven, oil as an economic indicator, and agricultural products. The AI tutor explains how commodities behave differently from stocks.',
+    briefing: 'Your AI tutor will teach you how commodity markets work and why they move differently from stocks. You\'ll learn why gold rises during fear, how oil prices reflect economic health, and the role of agricultural commodities. Every trade, I\'ll explain the unique dynamics of commodity investing.',
+    startingBalance: 20000,
+    objectives: [
+      { id: 'buy-gold', label: 'Buy gold (GLD) — the classic safe haven', check: (h) => h.some(holding => holding.symbol === 'GLD') },
+      { id: 'buy-oil', label: 'Buy oil (USO) — the economic bellwether', check: (h) => h.some(holding => holding.symbol === 'USO') },
+      { id: 'buy-agri', label: 'Buy an agricultural commodity (CORN)', check: (h) => h.some(holding => holding.symbol === 'CORN') },
+      { id: 'add-stock', label: 'Add a stock for comparison (any stock)', check: (h, stocks) => h.some(holding => ['Technology','Healthcare','Financial','Consumer Staples','Consumer Cyclical','Energy'].includes(stocks.find(s => s.symbol === holding.symbol)?.sector)) },
+      { id: 'deploy', label: 'Invest at least 60% of capital', check: (h, stocks, balance) => balance <= 8000 },
+    ],
+    tips: [
+      'Gold (GLD) historically rises during market uncertainty and inflation fears',
+      'Oil (USO) prices reflect global economic demand — they fall in recessions',
+      'Commodities have low correlation with stocks, making them good diversifiers',
+      'Commodity prices are driven by supply/demand, weather, and geopolitics — not earnings'
+    ],
+    learningGoals: ['Commodity markets', 'Safe haven assets', 'Supply & demand dynamics', 'Portfolio diversification with alternatives']
+  },
+  {
+    id: 'crypto-portfolio',
+    title: 'Crypto Investing: Risk & Reward',
+    difficulty: 'Intermediate',
+    duration: '15 min',
+    icon: '🪙',
+    description: 'Explore cryptocurrency through regulated ETFs. The AI tutor teaches you about Bitcoin, Ethereum, extreme volatility, and how to size crypto positions responsibly.',
+    briefing: 'Your AI tutor will guide you through crypto investing using regulated ETFs. You\'ll learn why Bitcoin is called "digital gold," how Ethereum enables smart contracts, why crypto is so volatile, and the golden rule: never invest more than you can afford to lose. I\'ll explain every decision.',
+    startingBalance: 15000,
+    objectives: [
+      { id: 'buy-btc', label: 'Buy Bitcoin exposure (IBIT)', check: (h) => h.some(holding => holding.symbol === 'IBIT') },
+      { id: 'buy-eth', label: 'Buy Ethereum exposure (ETHE)', check: (h) => h.some(holding => holding.symbol === 'ETHE') },
+      { id: 'limit-crypto', label: 'Keep total crypto under 30% of portfolio', check: (h, stocks, balance) => {
+        const total = h.reduce((s, holding) => s + (stocks.find(st => st.symbol === holding.symbol)?.price || 0) * holding.shares, 0) + balance;
+        const cryptoVal = h.filter(holding => stocks.find(st => st.symbol === holding.symbol)?.sector === 'Crypto')
+          .reduce((s, holding) => s + (stocks.find(st => st.symbol === holding.symbol)?.price || 0) * holding.shares, 0);
+        return total > 0 && (cryptoVal / total) < 0.3;
+      }},
+      { id: 'add-stable', label: 'Balance with a stable asset (bonds or index fund)', check: (h, stocks) => h.some(holding => ['Bonds','Index Fund'].includes(stocks.find(s => s.symbol === holding.symbol)?.sector)) },
+    ],
+    tips: [
+      'Bitcoin (IBIT) has dropped 50-80% multiple times — size positions carefully',
+      'Most advisors recommend keeping crypto under 5% of total portfolio',
+      'Balance high-volatility crypto with stable assets like bonds (BND)',
+      'IBIT and ETHE are SEC-regulated ETFs — safer than holding crypto directly'
+    ],
+    learningGoals: ['Cryptocurrency basics', 'Volatility management', 'Position sizing for high-risk assets', 'Balancing risk with stability']
+  },
+  {
+    id: 'bond-basics',
+    title: 'Bonds & Fixed Income Strategy',
+    difficulty: 'Beginner',
+    duration: '15 min',
+    icon: '📜',
+    description: 'Learn why bonds are the backbone of conservative portfolios. The AI tutor explains interest rates, yield, and how bonds protect you during stock market crashes.',
+    briefing: 'Your AI tutor will teach you how bonds work and why every portfolio needs them. You\'ll learn the relationship between interest rates and bond prices, why government bonds are considered risk-free, and how high-yield bonds offer more income with more risk. I\'ll explain the role of each bond type as you invest.',
+    startingBalance: 20000,
+    objectives: [
+      { id: 'buy-total-bond', label: 'Buy total bond market (BND)', check: (h) => h.some(holding => holding.symbol === 'BND') },
+      { id: 'buy-treasury', label: 'Buy long-term treasuries (TLT)', check: (h) => h.some(holding => holding.symbol === 'TLT') },
+      { id: 'buy-highyield', label: 'Try high-yield bonds (HYG)', check: (h) => h.some(holding => holding.symbol === 'HYG') },
+      { id: 'add-equity', label: 'Add a stock/ETF for growth balance', check: (h, stocks) => h.some(holding => !['Bonds'].includes(stocks.find(s => s.symbol === holding.symbol)?.sector)) },
+      { id: 'deploy', label: 'Invest at least 70% of capital', check: (h, stocks, balance) => balance <= 6000 },
+    ],
+    tips: [
+      'BND provides broad bond market exposure — the safest starting point',
+      'TLT (long-term treasury) is very sensitive to interest rate changes',
+      'HYG offers 5.6% yield but carries more credit risk than government bonds',
+      'Bonds typically rise when stocks fall — they are natural portfolio insurance'
+    ],
+    learningGoals: ['Bond fundamentals', 'Interest rate sensitivity', 'Yield vs. risk tradeoff', 'Bonds as portfolio insurance']
+  },
+  {
+    id: 'forex-intro',
+    title: 'Forex: Currency Markets Explained',
+    difficulty: 'Advanced',
+    duration: '18 min',
+    icon: '💱',
+    description: 'Explore global currency markets through forex ETFs. The AI tutor teaches how currencies move, what drives the US Dollar, Euro, and Yen, and how forex hedging works.',
+    briefing: 'Your AI tutor will introduce you to the world\'s largest market — the $7.5 trillion/day forex market. You\'ll learn what makes currencies strengthen or weaken, how interest rate differentials drive forex, and how international investors use currency positions to hedge risk.',
+    startingBalance: 15000,
+    objectives: [
+      { id: 'buy-dollar', label: 'Buy US Dollar exposure (UUP)', check: (h) => h.some(holding => holding.symbol === 'UUP') },
+      { id: 'buy-euro', label: 'Buy Euro exposure (FXE)', check: (h) => h.some(holding => holding.symbol === 'FXE') },
+      { id: 'buy-yen', label: 'Buy Japanese Yen exposure (FXY)', check: (h) => h.some(holding => holding.symbol === 'FXY') },
+      { id: 'add-intl', label: 'Add international stocks (VXUS) to see currency impact', check: (h) => h.some(holding => holding.symbol === 'VXUS') },
+    ],
+    tips: [
+      'The US Dollar (UUP) typically strengthens when interest rates rise',
+      'The Euro (FXE) reflects the Eurozone economy — watch ECB decisions',
+      'The Yen (FXY) is considered a safe-haven currency during market turmoil',
+      'Forex is the largest market in the world — $7.5 trillion traded daily'
+    ],
+    learningGoals: ['Currency markets', 'Interest rate and forex relationship', 'Safe haven currencies', 'Global diversification hedging']
+  },
+  {
+    id: 'multi-asset',
+    title: 'Multi-Asset Portfolio: The Complete Investor',
+    difficulty: 'Advanced',
+    duration: '25 min',
+    icon: '🌍',
+    description: 'Build a portfolio spanning every asset class — stocks, bonds, commodities, real estate, and international markets. The AI tutor teaches institutional-level asset allocation.',
+    briefing: 'Your AI tutor will teach you how professional fund managers build multi-asset portfolios. You\'ll invest across stocks, bonds, commodities, real estate, and international markets — learning why each asset class has a role and how they work together to reduce risk while maximizing returns.',
+    startingBalance: 50000,
+    objectives: [
+      { id: 'buy-stock', label: 'Buy at least 2 individual stocks', check: (h, stocks) => h.filter(holding => ['Technology','Healthcare','Financial','Consumer Staples','Consumer Cyclical','Energy'].includes(stocks.find(s => s.symbol === holding.symbol)?.sector)).length >= 2 },
+      { id: 'buy-bond', label: 'Add bond exposure (BND, TLT, or HYG)', check: (h, stocks) => h.some(holding => stocks.find(s => s.symbol === holding.symbol)?.sector === 'Bonds') },
+      { id: 'buy-commodity', label: 'Add a commodity (GLD, SLV, USO, or CORN)', check: (h, stocks) => h.some(holding => stocks.find(s => s.symbol === holding.symbol)?.sector === 'Commodities') },
+      { id: 'buy-reit', label: 'Add real estate (VNQ)', check: (h) => h.some(holding => holding.symbol === 'VNQ') },
+      { id: 'buy-intl', label: 'Add international exposure (VXUS)', check: (h) => h.some(holding => holding.symbol === 'VXUS') },
+      { id: 'six-assets', label: 'Own at least 6 different assets', check: (h) => h.length >= 6 },
+      { id: 'deploy', label: 'Invest at least 80% of capital', check: (h, stocks, balance) => balance <= 10000 },
+    ],
+    tips: [
+      'Institutional portfolios typically hold: 50-60% stocks, 20-30% bonds, 5-10% commodities, 5-10% real estate',
+      'Gold (GLD) often rises when stocks fall — negative correlation is powerful',
+      'International stocks (VXUS) give you exposure to 7,000+ companies outside the US',
+      'Real estate (VNQ) provides income (3.95% yield) and inflation protection'
+    ],
+    learningGoals: ['Multi-asset allocation', 'Institutional portfolio design', 'Correlation and diversification', 'Global investing strategy']
+  },
 ];
 
 export const difficultyColors = {

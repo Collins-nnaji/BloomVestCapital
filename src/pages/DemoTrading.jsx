@@ -7,7 +7,7 @@ import {
   FaHistory, FaSearch, FaCheckCircle, FaSync, FaExclamationTriangle,
   FaTimesCircle, FaShieldAlt, FaInfoCircle, FaTimes, FaHeartbeat
 } from 'react-icons/fa';
-import { stocks, marketIndices } from '../data/stockData';
+import { stocks, marketIndices, assetClasses } from '../data/stockData';
 import { api } from '../api';
 
 /* ───────── styled-components ───────── */
@@ -689,6 +689,7 @@ const DemoTrading = () => {
   const [selectedStock, setSelectedStock] = useState(stocks[0]);
   const [tradeQuantity, setTradeQuantity] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [assetFilter, setAssetFilter] = useState('all');
   const [notification, setNotification] = useState(null);
   const [useLocal, setUseLocal] = useState(false);
   const [feedback, setFeedback] = useState(null);
@@ -833,10 +834,13 @@ const DemoTrading = () => {
   const totalPnl = totalValue - INITIAL_BALANCE;
   const totalPnlPercent = ((totalPnl / INITIAL_BALANCE) * 100).toFixed(2);
 
-  const filteredStocks = stocks.filter(s =>
-    s.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredStocks = stocks.filter(s => {
+    const matchesSearch = s.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.name.toLowerCase().includes(searchQuery.toLowerCase());
+    if (assetFilter === 'all') return matchesSearch;
+    const ac = assetClasses.find(a => a.id === assetFilter);
+    return matchesSearch && ac?.sectors?.includes(s.sector);
+  });
 
   const currentHolding = holdings.find(h => h.symbol === selectedStock.symbol);
   const tradeCost = parseInt(tradeQuantity) > 0 ? parseInt(tradeQuantity) * selectedStock.price : 0;
@@ -1041,9 +1045,20 @@ const DemoTrading = () => {
           <Card>
             <CardHeader><CardTitle><FaSearch /> Market</CardTitle></CardHeader>
             <CardBody>
+              <div style={{display:'flex',flexWrap:'wrap',gap:'0.3rem',marginBottom:'0.6rem'}}>
+                {assetClasses.map(ac => (
+                  <button key={ac.id} onClick={() => setAssetFilter(ac.id)}
+                    style={{padding:'0.25rem 0.55rem',borderRadius:6,border: assetFilter === ac.id ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.06)',
+                      background: assetFilter === ac.id ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.02)',
+                      color: assetFilter === ac.id ? '#4ade80' : 'rgba(255,255,255,0.4)',
+                      fontSize:'0.68rem',fontWeight:600,cursor:'pointer',transition:'all 0.2s'}}>
+                    {ac.icon} {ac.label}
+                  </button>
+                ))}
+              </div>
               <SearchBar>
                 <FaSearch style={{ color: 'rgba(255,255,255,0.2)' }} />
-                <SearchInput placeholder="Search stocks..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+                <SearchInput placeholder="Search assets..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               </SearchBar>
               <StockList>
                 {filteredStocks.map(stock => (
