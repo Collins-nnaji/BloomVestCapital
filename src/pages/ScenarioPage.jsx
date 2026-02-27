@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { scenarios, difficultyColors } from '../data/scenarios';
 import { stocks } from '../data/stockData';
 import { api } from '../api';
+import { useAuth } from '../AuthContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -714,7 +716,47 @@ function timeNow() {
   return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
 
+const ProGate = styled.div`
+  text-align: center;
+  padding: 3rem 2rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  max-width: 500px;
+  margin: 2rem auto;
+`;
+
+const ProGateTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+`;
+
+const ProGateText = styled.p`
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+`;
+
+const ProGateBtn = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #22c55e;
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.3s;
+  &:hover { background: #16a34a; transform: translateY(-2px); }
+`;
+
 const ScenarioPage = () => {
+  const { user, isPro } = useAuth();
   const [view, setView] = useState('select');
   const [activeScenario, setActiveScenario] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -803,6 +845,7 @@ const ScenarioPage = () => {
   }, [activeScenario, getPortfolioSummary, getObjectivesSummary, addAiMessage]);
 
   const startScenario = useCallback(async (scenario) => {
+    if (!isPro) return;
     setActiveScenario(scenario);
     setBalance(scenario.startingBalance);
     setHoldings([]);
@@ -1023,11 +1066,23 @@ const ScenarioPage = () => {
             <PageSubtitle style={{maxWidth:600,margin:'0.5rem auto 0'}}>Step-by-step investing simulations with a personal <strong style={{color:'#a78bfa'}}>AI tutor</strong> that teaches, explains every decision, and coaches you in real time.</PageSubtitle>
           </PageHeader>
 
+          {!isPro && (
+            <ProGate>
+              <FaLock style={{fontSize:'2rem',color:'rgba(255,255,255,0.15)',marginBottom:'1rem'}} />
+              <ProGateTitle>Scenarios require <span style={{color:'#22c55e'}}>Pro</span></ProGateTitle>
+              <ProGateText>
+                AI-guided scenario simulations are a Pro feature. Upgrade to get real-time GPT-4 coaching, 11 interactive simulations across stocks, crypto, commodities, bonds, and forex.
+              </ProGateText>
+              <ProGateBtn to="/pricing"><FaCrown /> View Pricing</ProGateBtn>
+            </ProGate>
+          )}
+
           <ScenariosGrid>
             {scenarios.map((scenario, idx) => (
               <ScenarioCard
                 key={scenario.id}
-                onClick={() => startScenario(scenario)}
+                onClick={() => isPro ? startScenario(scenario) : null}
+                style={{ opacity: isPro ? 1 : 0.5, cursor: isPro ? 'pointer' : 'default' }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.08 }}

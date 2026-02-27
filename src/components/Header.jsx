@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaCrown } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../AuthContext';
 
 const HeaderContainer = styled.header`
   position: fixed;
@@ -228,6 +229,57 @@ const MobileCTA = styled(Link)`
   }
 `;
 
+const UserAvatar = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  flex-shrink: 0;
+  cursor: pointer;
+`;
+
+const AuthButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  @media (max-width: 1024px) { display: none; }
+`;
+
+const SignInBtn = styled.button`
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { border-color: rgba(255,255,255,0.25); color: white; }
+`;
+
+const ProBadge = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.2);
+  color: #4ade80;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-decoration: none;
+`;
+
 const navItems = [
   { path: '/', label: 'Home' },
   { path: '/learn', label: 'Learn' },
@@ -240,6 +292,7 @@ const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { user, isPro, signInWithGoogle, signOut, loading: authLoading } = useAuth();
 
   useEffect(() => {
     setMenuOpen(false);
@@ -282,7 +335,27 @@ const Header = () => {
         </NavWrapper>
 
         <RightSection>
-          <CTAButton to="/learn">Start Free</CTAButton>
+          {!authLoading && (
+            <AuthButtons>
+              {user ? (
+                <>
+                  {isPro ? (
+                    <ProBadge to="/pricing"><FaCrown /> Pro</ProBadge>
+                  ) : (
+                    <CTAButton to="/pricing">Upgrade</CTAButton>
+                  )}
+                  <UserAvatar onClick={signOut} title={`${user.email}\nClick to sign out`}>
+                    {(user.name || user.email || '?')[0].toUpperCase()}
+                  </UserAvatar>
+                </>
+              ) : (
+                <>
+                  <SignInBtn onClick={signInWithGoogle}>Sign In</SignInBtn>
+                  <CTAButton to="/pricing">Start Free</CTAButton>
+                </>
+              )}
+            </AuthButtons>
+          )}
           <HamburgerButton onClick={() => setMenuOpen(true)} aria-label="Open menu">
             <FaBars />
           </HamburgerButton>

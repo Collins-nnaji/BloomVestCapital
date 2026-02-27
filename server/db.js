@@ -81,8 +81,17 @@ CREATE INDEX IF NOT EXISTS idx_holdings_user ON holdings(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_lesson_progress_user ON lesson_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_user ON chat_messages(user_id);
+CREATE TABLE IF NOT EXISTS user_subscriptions (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  stripe_customer_id VARCHAR(255),
+  tier VARCHAR(20) DEFAULT 'free' CHECK (tier IN ('free', 'pro')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 CREATE INDEX IF NOT EXISTS idx_modules_course ON modules(course_id);
 CREATE INDEX IF NOT EXISTS idx_lessons_module ON lessons(module_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON user_subscriptions(email);
 `;
 
 async function initializeDatabase() {
