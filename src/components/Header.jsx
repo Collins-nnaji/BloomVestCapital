@@ -350,7 +350,7 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <SignInBtn onClick={signInWithGoogle}>Sign In</SignInBtn>
+                  <SignInBtn as={Link} to="/auth">Sign In</SignInBtn>
                   <CTAButton to="/pricing">Start Free</CTAButton>
                 </>
               )}

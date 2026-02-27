@@ -36,8 +36,20 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = () => auth.signInWithGoogle();
   const signOut = () => auth.signOut();
 
+  const signUpWithEmail = async (email, password, name) => {
+    const data = await auth.signUpWithEmail(email, password, name);
+    await checkSession();
+    return data;
+  };
+
+  const signInWithEmail = async (email, password) => {
+    const data = await auth.signInWithEmail(email, password);
+    await checkSession();
+    return data;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, isPro, signInWithGoogle, signOut, refreshAuth: checkSession }}>
+    <AuthContext.Provider value={{ user, loading, isPro, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, refreshAuth: checkSession }}>
       {children}
     </AuthContext.Provider>
   );

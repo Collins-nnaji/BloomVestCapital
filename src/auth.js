@@ -21,6 +21,26 @@ export const auth = {
     }
   },
 
+  async signUpWithEmail(email, password, name) {
+    const res = await authFetch('/api/auth/sign-up/email', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, name }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Sign up failed');
+    return data;
+  },
+
+  async signInWithEmail(email, password) {
+    const res = await authFetch('/api/auth/sign-in/email', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Sign in failed');
+    return data;
+  },
+
   async signInWithGoogle() {
     window.location.href = `${NEON_AUTH_URL}/api/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(window.location.origin + '/auth/callback')}`;
   },
@@ -31,8 +51,4 @@ export const auth = {
     } catch {}
     window.location.href = '/';
   },
-
-  getAuthUrl() {
-    return NEON_AUTH_URL;
-  }
 };

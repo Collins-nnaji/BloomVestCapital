@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS courses (
   level VARCHAR(20) NOT NULL DEFAULT 'beginner',
   icon VARCHAR(10),
   color VARCHAR(20),
+  is_pro BOOLEAN DEFAULT FALSE,
   sort_order INTEGER DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS modules (

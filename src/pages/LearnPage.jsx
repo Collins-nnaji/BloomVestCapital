@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import {
   FaArrowLeft,
   FaCheck,
@@ -916,6 +918,7 @@ const NavBtn = styled.button`
 /* ─── MAIN COMPONENT ──────────────────────────────────────── */
 
 const LearnPage = () => {
+  const { isPro } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -1075,6 +1078,7 @@ const LearnPage = () => {
   /* ─── Course Selection ──── */
 
   const selectCourse = (course) => {
+    if (course.is_pro && !isPro) return;
     setSelectedCourse(course);
     const initial = {};
     if (course.modules && course.modules.length > 0) {
@@ -1273,6 +1277,7 @@ const LearnPage = () => {
               key={course.id}
               $accentColor={course.color}
               onClick={() => selectCourse(course)}
+              style={{ opacity: course.is_pro && !isPro ? 0.55 : 1, cursor: course.is_pro && !isPro ? 'default' : 'pointer' }}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -1282,9 +1287,16 @@ const LearnPage = () => {
               <CourseCardBody>
                 <CourseIconRow>
                   <CourseIconCircle $color={course.color}>{course.icon}</CourseIconCircle>
-                  <LevelBadge $level={course.level}>{course.level}</LevelBadge>
+                  <div style={{display:'flex',gap:'0.4rem',alignItems:'center'}}>
+                    <LevelBadge $level={course.level}>{course.level}</LevelBadge>
+                    {course.is_pro && (
+                      <span style={{padding:'0.15rem 0.5rem',borderRadius:50,fontSize:'0.65rem',fontWeight:700,background:'rgba(234,179,8,0.15)',color:'#fbbf24',border:'1px solid rgba(234,179,8,0.2)'}}>
+                        PRO
+                      </span>
+                    )}
+                  </div>
                 </CourseIconRow>
-                <CourseTitle>{course.title}</CourseTitle>
+                <CourseTitle>{course.title}{course.is_pro && !isPro && ' 🔒'}</CourseTitle>
                 <CourseDesc>{course.description}</CourseDesc>
                 <CourseFooter>
                   <CourseProgressOuter>

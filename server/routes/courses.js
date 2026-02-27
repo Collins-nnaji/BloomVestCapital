@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const { sessionId } = req.query;
 
     const coursesResult = await pool.query(
-      'SELECT id, title, description, level, icon, color FROM courses ORDER BY sort_order'
+      'SELECT id, title, description, level, icon, color, is_pro FROM courses ORDER BY sort_order'
     );
     const courses = coursesResult.rows;
 
@@ -260,7 +260,7 @@ router.get('/:courseId', async (req, res) => {
     const { courseId } = req.params;
 
     const courseResult = await pool.query(
-      'SELECT id, title, description, level, icon, color FROM courses WHERE id = $1',
+      'SELECT id, title, description, level, icon, color, is_pro FROM courses WHERE id = $1',
       [courseId]
     );
 

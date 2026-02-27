@@ -13,6 +13,7 @@ const AITutor = lazy(() => import('./pages/AITutor'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
 const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
+const AuthPage = lazy(() => import('./pages/AuthPage'));
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/about" element={<AboutUsPage />} />
                 <Route path="/scenario" element={<ScenarioPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<Dashboard />} />
                 <Route path="/billing/success" element={<PricingPage />} />
                 <Route path="*" element={<Dashboard />} />
