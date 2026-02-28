@@ -1,54 +1,54 @@
+import { createAuthClient } from '@neondatabase/neon-js/auth';
+
 const NEON_AUTH_URL = process.env.REACT_APP_NEON_AUTH_URL || '';
 
-async function authFetch(path, options = {}) {
-  const res = await fetch(`${NEON_AUTH_URL}${path}`, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-    ...options,
-  });
-  return res;
-}
+// Neon Auth service exposes Better Auth at /api/auth under the base URL
+const authBaseUrl = NEON_AUTH_URL.endsWith('/api/auth')
+  ? NEON_AUTH_URL
+  : `${NEON_AUTH_URL.replace(/\/$/, '')}/api/auth`;
+
+const authClient = NEON_AUTH_URL ? createAuthClient(authBaseUrl) : null;
 
 export const auth = {
   async getSession() {
+    if (!authClient) return null;
     try {
-      const res = await authFetch('/get-session');
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.session ? data : null;
+      const { data } = await authClient.getSession();
+      if (!data?.session) return null;
+      return { session: { ...data.session, user: data.user }, user: data.user };
     } catch {
       return null;
     }
   },
 
   async signUpWithEmail(email, password, name) {
-    const res = await authFetch('/sign-up/email', {
-      method: 'POST',
-      body: JSON.stringify({ email, password, name }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Sign up failed');
+    if (!authClient) throw new Error('Auth not configured');
+    const { data, error } = await authClient.signUp.email({ email, password, name });
+    if (error) throw new Error(error.message || 'Sign up failed');
     return data;
   },
 
   async signInWithEmail(email, password) {
-    const res = await authFetch('/sign-in/email', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Sign in failed');
+    if (!authClient) throw new Error('Auth not configured');
+    const { data, error } = await authClient.signIn.email({ email, password });
+    if (error) throw new Error(error.message || 'Sign in failed');
     return data;
   },
 
   async signInWithGoogle() {
-    window.location.href = `${NEON_AUTH_URL}/sign-in/social?provider=google&callbackURL=${encodeURIComponent(window.location.origin + '/auth/callback')}`;
+    if (!authClient) throw new Error('Auth not configured');
+    await authClient.signIn.social({
+      provider: 'google',
+      callbackURL: `${window.location.origin}/auth/callback`,
+    });
   },
 
   async signOut() {
-    try {
-      await authFetch('/sign-out', { method: 'POST' });
-    } catch {}
+    if (authClient) {
+      try {
+        await authClient.signOut();
+      } catch {}
+    }
     window.location.href = '/';
   },
 };
