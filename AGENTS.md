@@ -29,3 +29,6 @@ BloomVest Finance is a React SPA (Create React App) with an Express/Node.js back
 
 ### Styled-components convention
 - All boolean props passed to styled-components use transient `$` prefix (e.g. `$active`, `$completed`, `$isUser`) to avoid React DOM warnings. Follow this pattern in any new styled-components.
+
+### Git
+- Develop on `main`; always commit and push to `main`.
