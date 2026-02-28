@@ -48,8 +48,12 @@ Ensure your production backend serves:
 
 These are proxied to Neon Auth. If the frontend is at `https://bloomvestfinance.com`, the backend must be reachable at `https://bloomvestfinance.com/api/*` (same origin) or you must configure the proxy in the frontend.
 
-## Neon Trusted Domains
+## Neon Trusted Domains (Required for OAuth 403 fix)
 
-In Neon Console → Auth → Configuration → Trusted Domains, add:
-- `https://bloomvestfinance.com` (production)
-- `http://localhost:3000` (local dev)
+The callback URL `https://bloomvestfinance.com/auth/callback` must be from a trusted domain.
+
+In **Neon Console → Project → Auth → Configuration → Trusted Domains** (or Settings → Auth), add:
+- `https://bloomvestfinance.com`
+- `http://localhost:3000` (for local dev)
+
+Without this, Google sign-in returns 403 "Invalid URL" because Neon rejects the callback.

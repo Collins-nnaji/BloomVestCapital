@@ -30,6 +30,8 @@ async function proxyAuth(req, res) {
   const headers = { 'accept': req.headers['accept'] || 'application/json' };
   if (req.headers['content-type']) headers['content-type'] = req.headers['content-type'];
   if (req.headers['cookie']) headers['cookie'] = req.headers['cookie'];
+  const origin = req.headers['origin'] || (req.headers['referer'] && req.headers['referer'].replace(/#.*$/, '').replace(/\/[^/]*$/, ''));
+  if (origin) try { headers['x-forwarded-host'] = new URL(origin).hostname; } catch (_) {}
 
   const fetchOpts = { method: req.method, headers, redirect: 'manual' };
   const body = req.body;

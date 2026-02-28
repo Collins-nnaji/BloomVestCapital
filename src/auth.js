@@ -36,7 +36,8 @@ export const auth = {
   },
 
   async signInWithGoogle() {
-    const callbackURL = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const callbackURL = origin ? `${origin}/auth/callback` : '/auth/callback';
     const url = `${getAuthBaseUrl()}/sign-in/social`;
     if (!url.startsWith('http')) throw new Error('Auth not configured');
     const res = await fetch(url, {
@@ -50,7 +51,8 @@ export const auth = {
       window.location.href = res.headers.get('location');
     } else if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || err.error || `Sign-in failed (${res.status}). Check Neon Auth and trusted domains.`);
+      const msg = err.message || err.error || err.details || err.reason || (typeof err === 'string' ? err : null);
+      throw new Error(msg || `Sign-in failed (${res.status}). Add ${origin || 'your domain'} to Neon Auth → Trusted Domains.`);
     }
   },
 
