@@ -393,8 +393,13 @@ const Header = () => {
                 </MobileNavLink>
               ))}
 
-              <MobileCTA to="/learn" onClick={() => setMenuOpen(false)}>
-                Start Free
+              {!user && (
+                <MobileNavLink to="/auth" $active={isActive('/auth')} onClick={() => setMenuOpen(false)}>
+                  Sign In
+                </MobileNavLink>
+              )}
+              <MobileCTA to={user ? '/pricing' : '/learn'} onClick={() => setMenuOpen(false)}>
+                {user && isPro ? 'Manage' : user ? 'Upgrade' : 'Start Free'}
               </MobileCTA>
             </MobilePanel>
           </>

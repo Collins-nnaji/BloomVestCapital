@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-// Backend must have NEON_AUTH_URL (or REACT_APP_NEON_AUTH_URL) in production
 const NEON_AUTH_URL = process.env.NEON_AUTH_URL || process.env.REACT_APP_NEON_AUTH_URL || '';
 
 if (!NEON_AUTH_URL) {
@@ -15,9 +14,17 @@ async function proxyAuth(req, res) {
   const path = req.path === '/' ? '' : req.path || '';
   const base = NEON_AUTH_URL.replace(/\/$/, '');
   const targetPath = path.startsWith('/') ? path : `/${path}`;
-  const url = new URL(`${base}${targetPath}`);
-  if (req.query && Object.keys(req.query).length) {
-    Object.entries(req.query).forEach(([k, v]) => url.searchParams.set(k, v));
+  let targetUrl = `${base}${targetPath}`;
+
+  try {
+    const url = new URL(targetUrl);
+    if (req.query && Object.keys(req.query).length) {
+      Object.entries(req.query).forEach(([k, v]) => url.searchParams.set(k, v));
+    }
+    targetUrl = url.toString();
+  } catch (urlErr) {
+    console.error('Auth proxy: invalid URL', targetUrl, urlErr.message);
+    return res.status(502).json({ error: 'Invalid auth URL', message: urlErr.message });
   }
 
   const headers = { 'accept': req.headers['accept'] || 'application/json' };
@@ -25,12 +32,17 @@ async function proxyAuth(req, res) {
   if (req.headers['cookie']) headers['cookie'] = req.headers['cookie'];
 
   const fetchOpts = { method: req.method, headers, redirect: 'manual' };
-  if (req.method !== 'GET' && req.method !== 'HEAD' && req.body && Object.keys(req.body).length > 0) {
-    fetchOpts.body = JSON.stringify(req.body);
+  const body = req.body;
+  const hasBody = body != null && (
+    (typeof body === 'object' && Object.keys(body).length > 0) ||
+    (typeof body === 'string' && body.length > 0)
+  );
+  if (hasBody && req.method !== 'GET' && req.method !== 'HEAD') {
+    fetchOpts.body = typeof body === 'string' ? body : JSON.stringify(body);
   }
 
   try {
-    let response = await fetch(url.toString(), fetchOpts);
+    let response = await fetch(targetUrl, fetchOpts);
 
     if (response.status === 404 && !targetPath.includes('/api/auth')) {
       const altUrl = `${base}/api/auth${targetPath}`;
@@ -45,13 +57,17 @@ async function proxyAuth(req, res) {
     const setCookie = response.headers.get('set-cookie');
     if (setCookie) res.setHeader('set-cookie', setCookie);
     const contentType = response.headers.get('content-type') || 'application/json';
-    res.status(response.status).contentType(contentType).send(text);
+    return res.status(response.status).contentType(contentType).send(text);
   } catch (err) {
-    console.error('Auth proxy error:', err.message, url.toString());
-    res.status(502).json({ error: 'Auth service unavailable', message: err.message });
+    console.error('Auth proxy error:', err.message, targetUrl);
+    return res.status(502).json({ error: 'Auth service unavailable', message: err.message });
   }
 }
 
-router.all('*', express.json(), proxyAuth);
+router.get('/health', (req, res) => {
+  res.json({ ok: !!NEON_AUTH_URL, configured: !!NEON_AUTH_URL });
+});
+
+router.all('*', proxyAuth);
 
 module.exports = router;
