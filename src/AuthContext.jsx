@@ -33,7 +33,9 @@ export function AuthProvider({ children }) {
     checkSession();
   }, [checkSession]);
 
-  const signInWithGoogle = () => auth.signInWithGoogle();
+  const signInWithGoogle = async () => {
+    await auth.signInWithGoogle();
+  };
   const signOut = () => auth.signOut();
 
   const signUpWithEmail = async (email, password, name) => {

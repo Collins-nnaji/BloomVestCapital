@@ -270,7 +270,19 @@ const AuthPage = () => {
           </Tab>
         </TabRow>
 
-        <GoogleButton type="button" onClick={signInWithGoogle}>
+        <GoogleButton
+          type="button"
+          onClick={async () => {
+            setError('');
+            setLoading(true);
+            try {
+              await signInWithGoogle();
+            } catch (err) {
+              setError(err.message || 'Google sign-in failed. Please try again.');
+            }
+            setLoading(false);
+          }}
+        >
           <FaGoogle /> Continue with Google
         </GoogleButton>
 
