@@ -68,6 +68,6 @@ router.get('/health', (req, res) => {
   res.json({ ok: !!NEON_AUTH_URL, configured: !!NEON_AUTH_URL });
 });
 
-router.all('*', proxyAuth);
+router.all('/*splat', proxyAuth);
 
 module.exports = router;
