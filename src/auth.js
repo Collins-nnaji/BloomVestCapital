@@ -12,7 +12,7 @@ async function authFetch(path, options = {}) {
 export const auth = {
   async getSession() {
     try {
-      const res = await authFetch('/api/auth/get-session');
+      const res = await authFetch('/get-session');
       if (!res.ok) return null;
       const data = await res.json();
       return data.session ? data : null;
@@ -22,7 +22,7 @@ export const auth = {
   },
 
   async signUpWithEmail(email, password, name) {
-    const res = await authFetch('/api/auth/sign-up/email', {
+    const res = await authFetch('/sign-up/email', {
       method: 'POST',
       body: JSON.stringify({ email, password, name }),
     });
@@ -32,7 +32,7 @@ export const auth = {
   },
 
   async signInWithEmail(email, password) {
-    const res = await authFetch('/api/auth/sign-in/email', {
+    const res = await authFetch('/sign-in/email', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -42,12 +42,12 @@ export const auth = {
   },
 
   async signInWithGoogle() {
-    window.location.href = `${NEON_AUTH_URL}/api/auth/sign-in/social?provider=google&callbackURL=${encodeURIComponent(window.location.origin + '/auth/callback')}`;
+    window.location.href = `${NEON_AUTH_URL}/sign-in/social?provider=google&callbackURL=${encodeURIComponent(window.location.origin + '/auth/callback')}`;
   },
 
   async signOut() {
     try {
-      await authFetch('/api/auth/sign-out', { method: 'POST' });
+      await authFetch('/sign-out', { method: 'POST' });
     } catch {}
     window.location.href = '/';
   },
