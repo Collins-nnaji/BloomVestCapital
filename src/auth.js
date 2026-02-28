@@ -2,12 +2,8 @@ import { createAuthClient } from '@neondatabase/neon-js/auth';
 
 const NEON_AUTH_URL = process.env.REACT_APP_NEON_AUTH_URL || '';
 
-// Neon Auth service exposes Better Auth at /api/auth under the base URL
-const authBaseUrl = NEON_AUTH_URL.endsWith('/api/auth')
-  ? NEON_AUTH_URL
-  : `${NEON_AUTH_URL.replace(/\/$/, '')}/api/auth`;
-
-const authClient = NEON_AUTH_URL ? createAuthClient(authBaseUrl) : null;
+// Pass the Neon Auth URL from Console directly (e.g. https://...neondb/auth)
+const authClient = NEON_AUTH_URL ? createAuthClient(NEON_AUTH_URL.replace(/\/$/, '')) : null;
 
 export const auth = {
   async getSession() {
