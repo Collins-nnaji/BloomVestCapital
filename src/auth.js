@@ -1,11 +1,13 @@
 import { createAuthClient } from '@neondatabase/neon-js/auth';
 
-const NEON_AUTH_URL = process.env.REACT_APP_NEON_AUTH_URL || '';
-const getAuthBaseUrl = () => (typeof window !== 'undefined' ? `${window.location.origin}/api/auth` : '');
-
-// Session/cookies use Neon direct (cookie domain). Google OAuth uses our proxy (avoids CORS, handles redirect).
-const neonBase = NEON_AUTH_URL ? NEON_AUTH_URL.replace(/\/$/, '') : '';
-const authClient = neonBase ? createAuthClient(neonBase) : null;
+// Use backend proxy for ALL auth - avoids 403 from Neon (origin/trusted domains)
+const getAuthBaseUrl = () => {
+  if (typeof window === 'undefined') return '';
+  const api = process.env.REACT_APP_API_URL || '';
+  return api ? `${api.replace(/\/$/, '')}/api/auth` : `${window.location.origin}/api/auth`;
+};
+const authBaseUrl = getAuthBaseUrl();
+const authClient = typeof window !== 'undefined' && authBaseUrl ? createAuthClient(authBaseUrl) : null;
 
 export const auth = {
   async getSession() {
@@ -35,8 +37,7 @@ export const auth = {
 
   async signInWithGoogle() {
     const callbackURL = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback';
-    const proxyUrl = getAuthBaseUrl();
-    const url = proxyUrl ? `${proxyUrl}/sign-in/social` : `${neonBase}/sign-in/social`;
+    const url = `${getAuthBaseUrl()}/sign-in/social`;
     if (!url.startsWith('http')) throw new Error('Auth not configured');
     const res = await fetch(url, {
       method: 'POST',
