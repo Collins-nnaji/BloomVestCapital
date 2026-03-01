@@ -12,8 +12,8 @@ const PageContainer = styled.div`
 `;
 
 const Header = styled.section`
-  background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(139,92,246,0.05) 100%);
-  border-bottom: 1px solid rgba(139,92,246,0.15);
+  background: linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0.04) 100%);
+  border-bottom: 1px solid rgba(34,197,94,0.15);
   padding: 2rem 1.5rem 1.5rem;
 `;
 
@@ -35,8 +35,8 @@ const HeaderTitle = styled.h1`
   align-items: center;
   gap: 0.6rem;
   margin-bottom: 0.25rem;
-  span { color: #a78bfa; }
-  svg { color: #a78bfa; font-size: 1.3rem; }
+  span { color: #22c55e; }
+  svg { color: #22c55e; font-size: 1.3rem; }
 `;
 
 const HeaderSubtitle = styled.p`
@@ -94,9 +94,9 @@ const Avatar = styled.div`
   justify-content: center;
   flex-shrink: 0;
   font-size: 0.9rem;
-  background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #334155)' : 'linear-gradient(135deg, #7c3aed, #a78bfa)'};
+  background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #334155)' : 'linear-gradient(135deg, #15803d, #22c55e)'};
   color: white;
-  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.1)' : 'rgba(167,139,250,0.3)'};
+  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.1)' : 'rgba(34,197,94,0.3)'};
 `;
 
 const MessageBubble = styled.div`
@@ -109,7 +109,7 @@ const MessageBubble = styled.div`
   font-size: 0.9rem;
   line-height: 1.7;
   white-space: pre-wrap;
-  strong { font-weight: 700; color: #a78bfa; }
+  strong { font-weight: 700; color: #22c55e; }
   @media (max-width: 768px) { max-width: 88%; }
 `;
 
@@ -122,7 +122,7 @@ const InputArea = styled.div`
   align-items: center;
   gap: 0.5rem;
   transition: border-color 0.3s;
-  &:focus-within { border-color: rgba(139,92,246,0.4); }
+  &:focus-within { border-color: rgba(34,197,94,0.4); }
 `;
 
 const ChatInput = styled.input`
@@ -140,7 +140,7 @@ const SendButton = styled.button`
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
   border: none;
   cursor: pointer;
@@ -149,7 +149,7 @@ const SendButton = styled.button`
   justify-content: center;
   transition: all 0.3s;
   flex-shrink: 0;
-  &:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
+  &:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 15px rgba(34,197,94,0.4); }
   &:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 `;
 
@@ -168,13 +168,13 @@ const SuggestionCard = styled(motion.button)`
   text-align: left;
   cursor: pointer;
   transition: all 0.3s;
-  &:hover { border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.05); transform: translateY(-1px); }
+  &:hover { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); transform: translateY(-1px); }
 `;
 
 const SuggestionIcon = styled.div`
   font-size: 1.1rem;
   margin-bottom: 0.4rem;
-  color: #a78bfa;
+  color: #22c55e;
 `;
 
 const SuggestionText = styled.div`
@@ -194,7 +194,7 @@ const TypingDot = styled(motion.div)`
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #a78bfa;
+  background: #22c55e;
 `;
 
 const PoweredBy = styled.div`
@@ -215,9 +215,17 @@ const suggestedQuestions = [
 ];
 
 const formatMessage = (text) => {
-  return text
+  if (!text || typeof text !== 'string') return '';
+  let out = text
+    // Strip markdown headers (# ## ###) - convert to bold instead of raw hash
+    .replace(/^#{1,6}\s+(.+)$/gm, '**$1**')
+    // Bold: **text**
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Bullet points: - or * at line start
+    .replace(/^[\-\*]\s+/gm, '• ')
+    // Numbered lists: keep as is
     .replace(/\n/g, '<br/>');
+  return out;
 };
 
 const AITutor = () => {
