@@ -57,10 +57,6 @@ const Logo = styled(Link)`
     }
   }
 
-  span {
-    color: #22c55e;
-  }
-
   @media (max-width: 480px) {
     font-size: 1.2rem;
   }
@@ -440,7 +436,6 @@ const Header = () => {
       <NavContainer>
         <Logo to="/">
           <img src="/bloomvestlogo.png" alt="BloomVest" />
-          Bloom<span>Vest</span>
         </Logo>
 
         <NavWrapper>
