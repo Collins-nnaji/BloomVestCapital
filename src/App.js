@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import Layout from './components/Layout';
 import Loader from './components/Loader';
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './AuthContext';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -25,15 +26,15 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/learn" element={<LearnPage />} />
-                <Route path="/demo" element={<DemoTrading />} />
-                <Route path="/ai-tutor" element={<AITutor />} />
-                <Route path="/about" element={<AboutUsPage />} />
-                <Route path="/scenario" element={<ScenarioPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<Dashboard />} />
-                <Route path="/billing/success" element={<PricingPage />} />
+                <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
+                <Route path="/demo" element={<ProtectedRoute><DemoTrading /></ProtectedRoute>} />
+                <Route path="/ai-tutor" element={<ProtectedRoute><AITutor /></ProtectedRoute>} />
+                <Route path="/about" element={<ProtectedRoute><AboutUsPage /></ProtectedRoute>} />
+                <Route path="/scenario" element={<ProtectedRoute><ScenarioPage /></ProtectedRoute>} />
+                <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+                <Route path="/billing/success" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
                 <Route path="*" element={<Dashboard />} />
               </Routes>
             </Layout>
