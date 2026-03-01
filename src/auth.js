@@ -36,24 +36,14 @@ export const auth = {
   },
 
   async signInWithGoogle() {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const callbackURL = origin ? `${origin}/auth/callback` : '/auth/callback';
-    const url = `${getAuthBaseUrl()}/sign-in/social`;
-    if (!url.startsWith('http')) throw new Error('Auth not configured');
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: 'google', callbackURL }),
-      credentials: 'include',
-      redirect: 'manual',
+    if (!authClient) throw new Error('Auth not configured');
+    const callbackURL = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback';
+    const { data, error } = await authClient.signIn.social({
+      provider: 'google',
+      callbackURL,
     });
-    if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
-      window.location.href = res.headers.get('location');
-    } else if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      const msg = err.message || err.error || err.details || err.reason || (typeof err === 'string' ? err : null);
-      throw new Error(msg || `Sign-in failed (${res.status}). Add ${origin || 'your domain'} to Neon Auth → Trusted Domains.`);
-    }
+    if (error) throw new Error(error.message || 'Google sign-in failed');
+    if (data?.url) window.location.href = data.url;
   },
 
   async signOut() {
