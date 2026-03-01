@@ -51,13 +51,8 @@ const LogoText = styled(Link)`
     height: 32px;
   }
 
-  span {
-    color: rgba(34,197,94,0.6);
-  }
-
   &:hover {
-    color: rgba(255,255,255,0.7);
-    span { color: #22c55e; }
+    opacity: 0.9;
   }
 `;
 
@@ -139,7 +134,6 @@ const Footer = () => {
         <TopRow>
           <LogoText to="/">
             <img src="/bloomvestlogo.png" alt="BloomVest" />
-            Bloom<span>Vest</span>
           </LogoText>
 
           <NavLinks>
