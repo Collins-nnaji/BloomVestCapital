@@ -20,6 +20,10 @@ const PageContainer = styled.div`
 const HeaderSection = styled.section`
   padding: 2.5rem 1.5rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
+
+  @media (max-width: 480px) {
+    padding: 1.75rem 1rem 1.25rem;
+  }
 `;
 
 const HeaderInner = styled.div`
@@ -39,19 +43,21 @@ const HeaderTop = styled.div`
 const HeaderLeft = styled.div``;
 
 const HeaderTitle = styled.h1`
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #111;
-  margin: 0 0 0.35rem 0;
+  margin: 0 0 0.4rem 0;
+  letter-spacing: -0.02em;
   span { color: #22c55e; }
 `;
 
 const HeaderSubtitle = styled.p`
   color: #333;
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   margin: 0;
-  max-width: 520px;
-  line-height: 1.5;
+  max-width: 540px;
+  line-height: 1.65;
+  font-weight: 450;
 `;
 
 const ModeBadge = styled.span`
@@ -109,6 +115,11 @@ const PortfolioCard = styled(motion.div)`
   &:hover {
     box-shadow: 0 8px 24px rgba(34,197,94,0.08);
   }
+
+  @media (max-width: 480px) {
+    padding: 1rem 1.25rem;
+    gap: 1.25rem;
+  }
 `;
 
 const PortfolioStat = styled.div`min-width: 110px;`;
@@ -148,7 +159,16 @@ const MainContent = styled.div`
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 1.25rem;
-  @media (max-width: 1024px) { grid-template-columns: 1fr; }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 1rem 1.5rem;
+    gap: 0.85rem;
+  }
 `;
 
 const LeftCol = styled.div`display: flex; flex-direction: column; gap: 1.25rem;`;
@@ -247,6 +267,7 @@ const TradeInput = styled.input`
 
 const TradeButton = styled.button`
   padding: 0.6rem 1.25rem;
+  min-height: 44px;
   border-radius: 8px;
   font-weight: 700;
   font-size: 0.85rem;
@@ -255,10 +276,17 @@ const TradeButton = styled.button`
   transition: all 0.3s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   &.buy { background: #22c55e; color: white; &:hover { background: #16a34a; } }
   &.sell { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.2); &:hover { background: rgba(239,68,68,0.25); } }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  @media (max-width: 480px) {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    min-height: 48px;
+  }
 `;
 
 const TradeCost = styled.div`
@@ -296,9 +324,10 @@ const FeedbackTitle = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: ${p => ratingColors[p.$rating]?.accent || 'white'};
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: ${p => ratingColors[p.$rating]?.accent || '#111'};
+  letter-spacing: -0.01em;
 `;
 
 const DismissBtn = styled.button`
@@ -317,11 +346,12 @@ const FeedbackBody = styled.div`padding: 0.75rem 1rem;`;
 const SignalItem = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.82rem;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 0.45rem;
-  line-height: 1.45;
+  gap: 0.6rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #222;
+  margin-bottom: 0.6rem;
+  line-height: 1.55;
   &:last-child { margin-bottom: 0; }
 `;
 
@@ -451,8 +481,8 @@ const HealthScoreCircle = styled.div`
     p.$score >= 25 ? 'rgba(249,115,22,0.06)' : 'rgba(239,68,68,0.06)'};
 `;
 
-const ScoreNum = styled.div`font-size: 1.4rem; font-weight: 800; color: white; line-height: 1;`;
-const ScoreLabel = styled.div`font-size: 0.55rem; color: rgba(255,255,255,0.35); text-transform: uppercase; font-weight: 600;`;
+const ScoreNum = styled.div`font-size: 1.6rem; font-weight: 800; color: #111; line-height: 1; letter-spacing: -0.02em;`;
+const ScoreLabel = styled.div`font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 700;`;
 
 const BreakdownRow = styled.div`
   display: flex;
@@ -487,28 +517,31 @@ const HealthBarFill = styled.div`
 
 const HealthRating = styled.div`
   text-align: center;
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-top: 0.75rem;
+  font-size: 1rem;
+  font-weight: 800;
+  margin-top: 0.85rem;
+  letter-spacing: -0.01em;
   color: ${p =>
     p.$level === 'Excellent' ? '#22c55e' :
-    p.$level === 'Good' ? '#4ade80' :
+    p.$level === 'Good' ? '#15803d' :
     p.$level === 'Fair' ? '#f59e0b' : '#ef4444'};
 `;
 
 const HealthTip = styled.div`
-  margin-top: 0.75rem;
-  padding: 0.6rem 0.8rem;
-  background: rgba(34,197,94,0.05);
-  border: 1px solid rgba(34,197,94,0.1);
-  border-radius: 8px;
-  font-size: 0.78rem;
-  color: rgba(255,255,255,0.5);
+  margin-top: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111;
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
-  line-height: 1.4;
-  svg { flex-shrink: 0; color: #22c55e; margin-top: 2px; }
+  gap: 0.6rem;
+  line-height: 1.5;
+  border-left: 3px solid #22c55e;
+  svg { flex-shrink: 0; color: #22c55e; margin-top: 3px; }
 `;
 
 /* ── Misc ── */

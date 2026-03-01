@@ -29,7 +29,11 @@ const HeroSection = styled.section`
   background-size: 60px 60px;
 
   @media (max-width: 768px) {
-    padding: 5rem 1rem 3rem;
+    padding: 4rem 1.25rem 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 3.5rem 1rem 2.5rem;
   }
 `;
 
@@ -75,33 +79,47 @@ const Badge = styled(motion.div)`
 
 const HeroTitle = styled(motion.h1)`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 3.5rem;
-  font-weight: 700;
+  font-size: 3.75rem;
+  font-weight: 800;
   color: #111;
-  line-height: 1.12;
+  line-height: 1.1;
   margin-bottom: 1.25rem;
-  letter-spacing: -0.03em;
-  max-width: 700px;
+  letter-spacing: -0.04em;
+  max-width: 720px;
 
   span {
     color: #22c55e;
   }
 
   @media (max-width: 768px) {
-    font-size: 2.2rem;
+    font-size: 2.4rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
+    line-height: 1.15;
   }
 `;
 
 const HeroSubtitle = styled(motion.p)`
   font-family: 'DM Sans', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.25rem;
   color: #333;
-  max-width: 580px;
-  line-height: 1.7;
+  max-width: 600px;
+  line-height: 1.75;
   margin-bottom: 2rem;
+  font-weight: 450;
 
   @media (max-width: 768px) {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
     font-size: 1rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.65;
   }
 `;
 
@@ -115,8 +133,10 @@ const HeroActions = styled(motion.div)`
 const PrimaryBtn = styled(Link)`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
+  min-height: 48px;
   background: #22c55e;
   color: white;
   border-radius: 10px;
@@ -132,13 +152,21 @@ const PrimaryBtn = styled(Link)`
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(34,197,94,0.4);
   }
+
+  @media (max-width: 480px) {
+    padding: 0.9rem 1.25rem;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
 `;
 
 const OutlineBtn = styled(Link)`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
+  min-height: 48px;
   background: transparent;
   color: #111;
   border: 2px solid #111;
@@ -154,6 +182,12 @@ const OutlineBtn = styled(Link)`
     color: #22c55e;
     transform: translateY(-2px);
   }
+
+  @media (max-width: 480px) {
+    padding: 0.9rem 1.25rem;
+    font-size: 0.9rem;
+    min-height: 48px;
+  }
 `;
 
 const StatsLine = styled(motion.div)`
@@ -165,6 +199,12 @@ const StatsLine = styled(motion.div)`
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+    gap: 0.35rem;
+  }
 
   span {
     display: inline-flex;
@@ -184,6 +224,16 @@ const TickerRow = styled(motion.div)`
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
 `;
 
 const TickerCard = styled.div`
@@ -229,20 +279,24 @@ const Section = styled.section`
   padding: 4rem 1.5rem;
 
   @media (max-width: 768px) {
-    padding: 3rem 1rem;
+    padding: 3rem 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2rem 1rem;
   }
 `;
 
 const SectionTitle = styled(motion.h2)`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: #111;
   margin-bottom: 2rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 
   @media (max-width: 768px) {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
 `;
 
@@ -266,11 +320,17 @@ const FeatureCard = styled(motion(Link))`
   flex-direction: column;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  min-height: 140px;
 
   &:hover {
     transform: translateY(-4px);
     border-color: rgba(34,197,94,0.3);
     box-shadow: 0 12px 32px rgba(34,197,94,0.12);
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+    min-height: auto;
   }
 `;
 
@@ -288,19 +348,21 @@ const FeatureIcon = styled.div`
 
 const FeatureTitle = styled.h3`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #111;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 `;
 
 const FeatureDesc = styled.p`
   font-family: 'DM Sans', sans-serif;
-  color: #555;
-  font-size: 0.88rem;
-  line-height: 1.6;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.65;
   margin-bottom: 1rem;
   flex: 1;
+  font-weight: 450;
 `;
 
 const FeatureArrow = styled.span`
@@ -380,14 +442,14 @@ const CTASection = styled.section`
 
 const CTAHeadline = styled(motion.h2)`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 2rem;
+  font-weight: 800;
   color: #111;
   margin-bottom: 1.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 
   @media (max-width: 768px) {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
   }
 `;
 

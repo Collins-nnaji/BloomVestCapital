@@ -41,6 +41,10 @@ const spin = keyframes`
 const PageContainer = styled.div`
   min-height: 100vh;
   background: #ffffff;
+
+  @media (max-width: 480px) {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 `;
 
 const MaxWidth = styled.div`
@@ -55,6 +59,14 @@ const Header = styled.section`
   background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(34,197,94,0.02) 100%);
   border-bottom: 1px solid #e5e7eb;
   padding: 3rem 1.5rem 4rem;
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.25rem 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem 2.5rem;
+  }
 `;
 
 const HeaderInner = styled.div`
@@ -74,26 +86,33 @@ const HeaderTop = styled.div`
 const HeaderLeft = styled.div``;
 
 const HeaderTitle = styled.h1`
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   font-weight: 800;
   color: #111;
   margin: 0 0 0.5rem;
+  letter-spacing: -0.03em;
   span { color: #22c55e; }
-  @media (max-width: 768px) { font-size: 2rem; }
+  @media (max-width: 768px) { font-size: 2.15rem; }
 `;
 
 const HeaderSubtitle = styled.p`
   color: #333;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   margin: 0;
-  max-width: 520px;
-  line-height: 1.6;
+  max-width: 540px;
+  line-height: 1.7;
+  font-weight: 450;
 `;
 
 const StatsRow = styled.div`
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    gap: 0.75rem;
+    justify-content: flex-start;
+  }
 `;
 
 const StatBox = styled(motion.div)`
@@ -260,16 +279,25 @@ const RetryButton = styled.button`
 
 const SectionTitle = styled.h2`
   color: #111;
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.6rem;
+  font-weight: 800;
   margin: 0 0 1.5rem;
+  letter-spacing: -0.02em;
 `;
 
 const CoursesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.5rem;
-  @media (max-width: 768px) { grid-template-columns: 1fr; }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.85rem;
+  }
 `;
 
 const CourseCard = styled(motion.div)`
@@ -345,10 +373,11 @@ const LevelBadge = styled.span`
 `;
 
 const CourseTitle = styled.h3`
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #111;
   margin: 0 0 0.5rem;
+  letter-spacing: -0.01em;
 `;
 
 const CourseDesc = styled.p`
@@ -646,6 +675,12 @@ const ModalPanel = styled(motion.div)`
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 3px; }
   &::-webkit-scrollbar-track { background: #f5f5f5; }
+
+  @media (max-width: 480px) {
+    max-height: 95vh;
+    margin: 0.5rem;
+    border-radius: 16px;
+  }
 `;
 
 const ModalTop = styled.div`
@@ -660,6 +695,11 @@ const ModalTop = styled.div`
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+
+  @media (max-width: 480px) {
+    padding: 1.25rem 1rem 1rem;
+    gap: 0.75rem;
+  }
 `;
 
 const ModalTopLeft = styled.div`
@@ -680,14 +720,15 @@ const Breadcrumb = styled.div`
 `;
 
 const ModalLessonTitle = styled.h2`
-  font-size: 1.4rem;
+  font-size: 1.55rem;
   font-weight: 800;
   color: #111;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  @media (max-width: 768px) { font-size: 1.15rem; }
+  letter-spacing: -0.02em;
+  @media (max-width: 768px) { font-size: 1.25rem; }
 `;
 
 const CloseBtn = styled.button`
@@ -716,50 +757,67 @@ const ContentBlock = styled.div`
 `;
 
 const ContentHeading = styled.h3`
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.35rem;
+  font-weight: 800;
   color: #111;
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.75rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  letter-spacing: -0.02em;
 `;
 
 const ContentText = styled.p`
-  color: #333;
-  font-size: 0.92rem;
-  line-height: 1.85;
+  color: #222;
+  font-size: 1.05rem;
+  line-height: 1.9;
   margin: 0;
+  font-weight: 450;
 `;
 
 const TakeawaysBox = styled.div`
-  background: rgba(34,197,94,0.08);
-  border: 1px solid rgba(34,197,94,0.2);
+  background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(34,197,94,0.05) 100%);
+  border: 2px solid rgba(34,197,94,0.25);
   border-radius: 14px;
-  padding: 1.5rem;
-  margin: 2rem 0;
+  padding: 1.75rem;
+  margin: 2.25rem 0;
 `;
 
 const TakeawaysHeader = styled.h4`
-  font-size: 1rem;
-  font-weight: 700;
-  color: #111;
-  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0d3d1a;
+  margin: 0 0 1.25rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  svg { color: #22c55e; }
+  letter-spacing: -0.01em;
+  svg { color: #22c55e; font-size: 1.1rem; }
 `;
 
 const TakeawayItem = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  margin-bottom: 0.6rem;
-  color: #333;
-  font-size: 0.88rem;
-  line-height: 1.55;
-  svg { color: #22c55e; flex-shrink: 0; margin-top: 0.25rem; font-size: 0.75rem; }
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  color: #111;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.65;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255,255,255,0.6);
+  border-radius: 8px;
+  border-left: 3px solid #22c55e;
+  svg { color: #22c55e; flex-shrink: 0; margin-top: 0.3rem; font-size: 0.85rem; }
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.65rem;
+  }
 `;
 
 /* ─── Quiz ────────────────────────────────────────────────── */
@@ -771,35 +829,36 @@ const QuizSection = styled.div`
 `;
 
 const QuizHeader = styled.h3`
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 800;
   color: #111;
-  margin: 0 0 1.25rem;
+  margin: 0 0 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  svg { color: #f59e0b; }
+  letter-spacing: -0.01em;
+  svg { color: #f59e0b; font-size: 1.2rem; }
 `;
 
 const QuestionCard = styled(motion.div)`
   background: #fafafa;
-  border: 1px solid #e5e7eb;
+  border: 2px solid #e5e7eb;
   border-radius: 14px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
   transition: all 0.3s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(34,197,94,0.06);
+    box-shadow: 0 4px 16px rgba(34,197,94,0.08);
   }
 `;
 
 const QuestionText = styled.p`
-  font-weight: 600;
+  font-weight: 700;
   color: #111;
-  margin: 0 0 0.75rem;
-  font-size: 0.92rem;
-  line-height: 1.5;
+  margin: 0 0 0.9rem;
+  font-size: 1.05rem;
+  line-height: 1.55;
 `;
 
 const OptionsGrid = styled.div`
@@ -809,9 +868,10 @@ const OptionsGrid = styled.div`
 
 const OptionBtn = styled.button`
   text-align: left;
-  padding: 0.7rem 1rem;
+  padding: 0.85rem 1.15rem;
   border-radius: 10px;
-  font-size: 0.88rem;
+  font-size: 1rem;
+  font-weight: 500;
   cursor: ${(p) => (p.disabled ? 'default' : 'pointer')};
   transition: all 0.2s ease;
   display: flex;
@@ -873,15 +933,18 @@ const ScoreCard = styled(motion.div)`
 `;
 
 const ScoreValue = styled.div`
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   color: ${(p) => (p.$passed ? '#22c55e' : '#ef4444')};
+  letter-spacing: -0.03em;
 `;
 
 const ScoreLabel = styled.p`
-  color: #555;
-  font-size: 0.88rem;
-  margin: 0.5rem 0 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0.6rem 0 0;
+  line-height: 1.5;
 `;
 
 const CompleteBtn = styled(motion.button)`

@@ -190,7 +190,11 @@ const GlobalStyles = createGlobalStyle`
     padding: 0 2rem;
     
     @media (max-width: 768px) {
-      padding: 0 1.5rem;
+      padding: 0 1.25rem;
+    }
+
+    @media (max-width: 480px) {
+      padding: 0 1rem;
     }
   }
   
@@ -209,6 +213,32 @@ const GlobalStyles = createGlobalStyle`
   
   .text-center {
     text-align: center;
+  }
+  
+  /* Learning & Emphasis Typography */
+  .text-highlight {
+    background: linear-gradient(180deg, transparent 60%, rgba(34, 197, 94, 0.2) 60%);
+    padding: 0 0.15em;
+    font-weight: 700;
+    color: #0d3d1a;
+  }
+  
+  .text-emphasis {
+    font-size: 1.125em;
+    font-weight: 600;
+    color: #111;
+    letter-spacing: -0.01em;
+  }
+  
+  .text-stylish {
+    letter-spacing: 0.02em;
+    font-weight: 600;
+    color: #15803d;
+  }
+  
+  .text-muted {
+    color: #666;
+    font-size: 0.95em;
   }
   
   /* Typography */

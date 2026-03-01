@@ -7,13 +7,22 @@ const FooterContainer = styled.footer`
   background: #ffffff;
   border-top: 1px solid #e5e7eb;
   padding: 2rem 0 1.5rem;
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
   width: 100%;
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0 1.25rem;
+  }
 `;
 
 const Inner = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
+
+  @media (max-width: 480px) {
+    padding: 0 1rem;
+  }
 `;
 
 const TopRow = styled.div`

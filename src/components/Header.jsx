@@ -32,6 +32,10 @@ const NavContainer = styled.div`
   width: 100%;
   margin: 0 auto;
   padding: 0 1.5rem;
+
+  @media (max-width: 480px) {
+    padding: 0 1rem;
+  }
 `;
 
 const Logo = styled(Link)`
@@ -48,10 +52,18 @@ const Logo = styled(Link)`
   img {
     height: 38px;
     width: auto;
+
+    @media (max-width: 480px) {
+      height: 32px;
+    }
   }
 
   span {
     color: #22c55e;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.2rem;
   }
 `;
 
@@ -132,20 +144,27 @@ const HamburgerButton = styled.button`
   background: transparent;
   border: none;
   color: #111;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   cursor: pointer;
   z-index: 1021;
-  padding: 0.25rem;
-  transition: color 0.2s ease;
+  padding: 0.5rem;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 
   &:hover {
     color: #22c55e;
+    background: rgba(34,197,94,0.08);
+  }
+  &:active {
+    transform: scale(0.97);
   }
 
   @media (max-width: 768px) {
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 `;
 
@@ -161,18 +180,22 @@ const MobilePanel = styled(motion.div)`
   position: fixed;
   top: 0;
   right: 0;
-  width: 280px;
+  width: min(320px, 90vw);
   height: 100vh;
   height: 100dvh;
   background: #fff;
   z-index: 1020;
   padding: 5rem 1.5rem 2rem;
+  padding-top: max(5rem, calc(60px + env(safe-area-inset-top)));
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   border-left: 1px solid rgba(0,0,0,0.08);
+  overflow-y: auto;
 
-  @media (max-width: 320px) {
+  @media (max-width: 360px) {
     width: 100%;
+    padding: 5rem 1rem 2rem;
   }
 `;
 
@@ -203,12 +226,14 @@ const MobileNavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
   color: ${props => props.$active ? '#22c55e' : '#111'};
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 500;
-  padding: 0.9rem 0;
+  padding: 1rem 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   border-bottom: 1px solid rgba(0,0,0,0.06);
   transition: all 0.2s ease;
-  display: block;
 
   &:hover {
     color: #22c55e;

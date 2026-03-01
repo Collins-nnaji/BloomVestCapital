@@ -18,6 +18,10 @@ const ContentWrapper = styled.div`
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem;
+  }
 `;
 
 const PageHeader = styled(motion.div)`
@@ -26,23 +30,33 @@ const PageHeader = styled(motion.div)`
 `;
 
 const PageTitle = styled.h1`
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   font-weight: 800;
   color: #111;
   margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 `;
 
 const PageSubtitle = styled.p`
   color: #333;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  line-height: 1.6;
+  font-weight: 450;
 `;
 
 const ScenariosGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 1.5rem;
-  @media (max-width: 768px) { grid-template-columns: 1fr; }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.85rem;
+  }
 `;
 
 const ScenarioCard = styled(motion.div)`
@@ -81,17 +95,19 @@ const DifficultyBadge = styled.span`
 `;
 
 const ScenarioCardTitle = styled.h3`
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #111;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
 `;
 
 const ScenarioCardDesc = styled.p`
-  color: #555;
-  font-size: 0.9rem;
-  line-height: 1.5;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.6;
   margin-bottom: 1rem;
+  font-weight: 450;
 `;
 
 const ScenarioCardMeta = styled.div`
@@ -145,8 +161,15 @@ const SimContainer = styled.div`
   grid-template-columns: 65% 35%;
   gap: 1.25rem;
   min-height: calc(100vh - 60px);
+
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    gap: 0.85rem;
   }
 `;
 
@@ -209,6 +232,11 @@ const BalanceBar = styled(motion.div)`
   gap: 2rem;
   flex-wrap: wrap;
   box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+  }
 `;
 
 const BalanceStat = styled.div`min-width: 100px;`;
@@ -439,12 +467,14 @@ const ObjectivesCounter = styled.div`
 const ObjectiveItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0;
-  font-size: 0.8rem;
-  color: ${p => p.$done ? '#22c55e' : '#555'};
-  font-weight: ${p => p.$done ? '600' : '400'};
-  transition: color 0.3s;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.95rem;
+  color: ${p => p.$done ? '#15803d' : '#333'};
+  font-weight: ${p => p.$done ? '700' : '500'};
+  transition: all 0.3s;
+  border-radius: 8px;
+  ${p => p.$done && 'background: rgba(34,197,94,0.08);'}
 `;
 
 const CheckIcon = styled.span`
@@ -471,16 +501,18 @@ const MessageBubble = styled(motion.div)`
   background: ${p => p.$isAi ? 'rgba(34,197,94,0.06)' : 'rgba(34,197,94,0.08)'};
   border: 1px solid ${p => p.$isAi ? 'rgba(34,197,94,0.15)' : 'rgba(34,197,94,0.2)'};
   border-radius: 12px;
-  padding: 0.85rem 1rem;
-  font-size: 0.85rem;
+  padding: 1rem 1.15rem;
+  font-size: 1rem;
   color: #111;
-  line-height: 1.6;
+  line-height: 1.7;
+  font-weight: 450;
 `;
 
 const MessageTime = styled.div`
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   color: #888;
-  margin-top: 0.4rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
 `;
 
 const pulse = keyframes`
@@ -656,24 +688,30 @@ const LearningsSection = styled.div`
 `;
 
 const LearningTitle = styled.h4`
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 800;
   color: #111;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.85rem;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  svg { color: #f59e0b; }
+  letter-spacing: -0.01em;
+  svg { color: #f59e0b; font-size: 1rem; }
 `;
 
 const LearningItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0;
-  font-size: 0.85rem;
-  color: #333;
-  svg { color: #22c55e; font-size: 0.7rem; }
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  border-left: 3px solid #22c55e;
+  background: rgba(34,197,94,0.05);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 0.4rem;
+  svg { color: #22c55e; font-size: 0.8rem; }
 `;
 
 const TryAgainBtn = styled.button`
