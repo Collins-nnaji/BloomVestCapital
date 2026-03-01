@@ -60,6 +60,39 @@ router.post('/create-checkout', async (req, res) => {
   }
 });
 
+router.get('/verify-session', async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+
+  try {
+    const { session_id } = req.query;
+    if (!session_id) return res.status(400).json({ error: 'session_id required' });
+
+    const session = await stripe.checkout.sessions.retrieve(session_id, {
+      expand: ['customer'],
+    });
+
+    if (session.mode !== 'subscription' || session.status !== 'complete') {
+      return res.json({ isPro: false, tier: 'free' });
+    }
+
+    const email = session.customer_email || session.customer?.email;
+    if (!email) return res.json({ isPro: false, tier: 'free' });
+
+    const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+    await pool.query(
+      `INSERT INTO user_subscriptions (email, stripe_customer_id, tier)
+       VALUES ($1, $2, 'pro')
+       ON CONFLICT (email) DO UPDATE SET tier = 'pro', stripe_customer_id = EXCLUDED.stripe_customer_id`,
+      [email, customerId]
+    );
+
+    res.json({ isPro: true, tier: 'pro', email });
+  } catch (err) {
+    console.error('Verify session error:', err);
+    res.status(500).json({ error: 'Failed to verify session', isPro: false });
+  }
+});
+
 router.get('/status', async (req, res) => {
   try {
     const { email } = req.query;
@@ -139,14 +172,23 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object;
-      if (session.mode === 'subscription' && session.customer_email) {
-        await pool.query(
-          `INSERT INTO user_subscriptions (email, stripe_customer_id, tier)
-           VALUES ($1, $2, 'pro')
-           ON CONFLICT (email) DO UPDATE SET tier = 'pro', stripe_customer_id = $2`,
-          [session.customer_email, session.customer]
-        );
+      if (session.mode !== 'subscription') break;
+
+      let email = session.customer_email;
+      if (!email && session.customer) {
+        const customer = await stripe.customers.retrieve(session.customer);
+        email = customer.email;
       }
+      if (!email) break;
+
+      const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+      await pool.query(
+        `INSERT INTO user_subscriptions (email, stripe_customer_id, tier, updated_at)
+         VALUES ($1, $2, 'pro', NOW())
+         ON CONFLICT (email) DO UPDATE SET tier = 'pro', stripe_customer_id = COALESCE($2, user_subscriptions.stripe_customer_id), updated_at = NOW()`,
+        [email, customerId]
+      );
+      console.log('[webhook] Subscription recorded for', email);
       break;
     }
     case 'customer.subscription.deleted': {

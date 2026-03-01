@@ -234,7 +234,8 @@ const AuthPage = () => {
   const { user, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+  const fromLocation = location.state?.from;
+  const from = fromLocation ? (fromLocation.pathname + (fromLocation.search || '')) : '/';
 
   useEffect(() => {
     if (user) navigate(from, { replace: true });
@@ -289,9 +290,13 @@ const AuthPage = () => {
             setError('');
             setLoading(true);
             try {
+              if (from && from !== '/') {
+                sessionStorage.setItem('auth_return_path', from);
+              }
               await signInWithGoogle();
             } catch (err) {
               setError(err.message || 'Google sign-in failed. Please try again.');
+              sessionStorage.removeItem('auth_return_path');
             }
             setLoading(false);
           }}

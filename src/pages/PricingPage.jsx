@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import { FaCheck, FaLock, FaRobot, FaChartLine, FaBookOpen, FaCrown, FaArrowRight } from 'react-icons/fa';
 import { useAuth } from '../AuthContext';
 
@@ -197,9 +198,35 @@ const SignInPrompt = styled.div`
 `;
 
 const PricingPage = () => {
-  const { user, isPro, signInWithGoogle } = useAuth();
+  const { user, isPro, signInWithGoogle, refreshAuth } = useAuth();
   const [currency, setCurrency] = useState('USD');
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  // On billing success return: verify subscription with Stripe and refresh isPro
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    if (!sessionId || !user?.email || location.pathname !== '/billing/success') return;
+
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch(`/api/billing/verify-session?session_id=${encodeURIComponent(sessionId)}`);
+        if (!res.ok || !mounted) return;
+        const data = await res.json();
+        if (data.isPro) {
+          await refreshAuth();
+          // Remove session_id from URL so refresh doesn't re-run
+          const next = new URLSearchParams(searchParams);
+          next.delete('session_id');
+          const qs = next.toString();
+          window.history.replaceState({}, '', qs ? `${location.pathname}?${qs}` : location.pathname);
+        }
+      } catch {}
+    })();
+    return () => { mounted = false; };
+  }, [searchParams, user?.email, location.pathname, refreshAuth]);
 
   const prices = {
     USD: { symbol: '$', amount: '9.99', period: '/month' },

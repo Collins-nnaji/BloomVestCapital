@@ -15,6 +15,7 @@ const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
 const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
+const AuthCallback = lazy(() => import('./components/AuthCallback'));
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/auth" element={<AuthPage />} />
-                <Route path="/auth/callback" element={<Dashboard />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
                 <Route path="/demo" element={<ProtectedRoute><DemoTrading /></ProtectedRoute>} />
                 <Route path="/ai-tutor" element={<ProtectedRoute><AITutor /></ProtectedRoute>} />
