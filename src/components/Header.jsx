@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { FaBars, FaTimes, FaCrown } from 'react-icons/fa';
+import { FaBars, FaTimes, FaCrown, FaSignOutAlt } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../AuthContext';
 
@@ -229,20 +229,91 @@ const MobileCTA = styled(Link)`
   }
 `;
 
-const UserAvatar = styled.div`
-  width: 32px;
-  height: 32px;
+const UserMenuWrapper = styled.div`
+  position: relative;
+`;
+
+const UserAvatar = styled.button`
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
+  border: none;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   font-family: 'Space Grotesk', sans-serif;
   flex-shrink: 0;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  &:hover { transform: scale(1.05); box-shadow: 0 0 12px rgba(34,197,94,0.4); }
+`;
+
+const UserDropdown = styled(motion.div)`
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 200px;
+  background: rgba(10,15,28,0.98);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 0.75rem 0;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 1100;
+`;
+
+const UserDropdownName = styled.div`
+  padding: 0.5rem 1rem;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  word-break: break-all;
+`;
+
+const SignOutBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  &:hover { background: rgba(239,68,68,0.15); color: #f87171; }
+`;
+
+const MobileUserSection = styled.div`
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 0.5rem;
+`;
+
+const MobileUserEmail = styled.div`
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  padding-bottom: 0.5rem;
+  word-break: break-all;
+`;
+
+const MobileSignOut = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0;
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  &:hover { color: #fca5a5; }
 `;
 
 const AuthButtons = styled.div`
@@ -290,12 +361,15 @@ const navItems = [
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const userMenuRef = useRef(null);
   const location = useLocation();
-  const { user, isPro, signInWithGoogle, signOut, loading: authLoading } = useAuth();
+  const { user, isPro, signOut, loading: authLoading } = useAuth();
 
   useEffect(() => {
     setMenuOpen(false);
+    setUserDropdownOpen(false);
   }, [location]);
 
   useEffect(() => {
@@ -313,7 +387,22 @@ const Header = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const isActive = (path) => location.pathname === path;
+  const handleSignOut = () => {
+    setUserDropdownOpen(false);
+    setMenuOpen(false);
+    signOut();
+  };
 
   return (
     <HeaderContainer $scrolled={scrolled}>
@@ -344,9 +433,30 @@ const Header = () => {
                   ) : (
                     <CTAButton to="/pricing">Upgrade</CTAButton>
                   )}
-                  <UserAvatar onClick={signOut} title={`${user.email}\nClick to sign out`}>
-                    {(user.name || user.email || '?')[0].toUpperCase()}
-                  </UserAvatar>
+                  <UserMenuWrapper ref={userMenuRef}>
+                    <UserAvatar
+                      onClick={() => setUserDropdownOpen((v) => !v)}
+                      aria-label="Account menu"
+                      aria-expanded={userDropdownOpen}
+                    >
+                      {(user.name || user.email || '?')[0].toUpperCase()}
+                    </UserAvatar>
+                    <AnimatePresence>
+                      {userDropdownOpen && (
+                        <UserDropdown
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -8 }}
+                          transition={{ duration: 0.15 }}
+                        >
+                          <UserDropdownName>{user.name || user.email}</UserDropdownName>
+                          <SignOutBtn onClick={handleSignOut}>
+                            <FaSignOutAlt /> Sign out
+                          </SignOutBtn>
+                        </UserDropdown>
+                      )}
+                    </AnimatePresence>
+                  </UserMenuWrapper>
                 </>
               ) : (
                 <>
@@ -393,10 +503,17 @@ const Header = () => {
                 </MobileNavLink>
               ))}
 
-              {!user && (
+              {!user ? (
                 <MobileNavLink to="/auth" $active={isActive('/auth')} onClick={() => setMenuOpen(false)}>
                   Sign In
                 </MobileNavLink>
+              ) : (
+                <MobileUserSection>
+                  <MobileUserEmail>{user.name || user.email}</MobileUserEmail>
+                  <MobileSignOut onClick={() => { handleSignOut(); setMenuOpen(false); }}>
+                    <FaSignOutAlt /> Sign out
+                  </MobileSignOut>
+                </MobileUserSection>
               )}
               <MobileCTA to={user ? '/pricing' : '/learn'} onClick={() => setMenuOpen(false)}>
                 {user && isPro ? 'Manage' : user ? 'Upgrade' : 'Start Free'}

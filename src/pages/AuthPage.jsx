@@ -11,9 +11,10 @@ const PageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.5rem;
+  padding: 1rem 1rem 2rem;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   &::before {
     content: '';
@@ -32,11 +33,15 @@ const AuthCard = styled(motion.div)`
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px;
-  padding: 2.5rem;
+  padding: 1.5rem 1.25rem 2rem;
   width: 100%;
   max-width: 420px;
   position: relative;
   z-index: 1;
+
+  @media (min-width: 400px) {
+    padding: 2.5rem;
+  }
 `;
 
 const LogoText = styled.div`
