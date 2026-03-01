@@ -14,12 +14,12 @@ import { api } from '../api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: #ffffff;
+  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
 `;
 
 const HeaderSection = styled.section`
   padding: 2.5rem 1.5rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 
   @media (max-width: 480px) {
     padding: 1.75rem 1rem 1.25rem;
@@ -45,14 +45,14 @@ const HeaderLeft = styled.div``;
 const HeaderTitle = styled.h1`
   font-size: 2rem;
   font-weight: 800;
-  color: #111;
+  color: white;
   margin: 0 0 0.4rem 0;
   letter-spacing: -0.02em;
   span { color: #22c55e; }
 `;
 
 const HeaderSubtitle = styled.p`
-  color: #333;
+  color: rgba(255,255,255,0.4);
   font-size: 1.05rem;
   margin: 0;
   max-width: 540px;
@@ -101,15 +101,14 @@ const PortfolioBar = styled.div`
 `;
 
 const PortfolioCard = styled(motion.div)`
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 14px;
   padding: 1.25rem 1.75rem;
   display: flex;
   align-items: center;
   gap: 2.5rem;
   flex-wrap: wrap;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   transition: all 0.3s ease;
 
   &:hover {
@@ -124,13 +123,13 @@ const PortfolioCard = styled(motion.div)`
 
 const PortfolioStat = styled.div`min-width: 110px;`;
 const StatLabel = styled.div`
-  font-size: 0.65rem; color: #555;
+  font-size: 0.65rem; color: rgba(255,255,255,0.35);
   text-transform: uppercase; font-weight: 700;
   letter-spacing: 0.8px; margin-bottom: 0.15rem;
 `;
 const StatValue = styled.div`
   font-size: 1.25rem; font-weight: 800;
-  color: ${p => p.$color || '#111'};
+  color: ${p => p.$color || 'white'};
 `;
 
 const ResetBtn = styled.button`
@@ -177,11 +176,10 @@ const RightCol = styled.div`display: flex; flex-direction: column; gap: 1.25rem;
 /* ── Generic card ── */
 
 const Card = styled(motion.div)`
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   transition: all 0.3s ease;
 
   &:hover {
@@ -191,7 +189,7 @@ const Card = styled(motion.div)`
 
 const CardHeader = styled.div`
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -200,7 +198,7 @@ const CardHeader = styled.div`
 const CardTitle = styled.h3`
   font-size: 0.85rem;
   font-weight: 700;
-  color: #555;
+  color: rgba(255,255,255,0.7);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -215,8 +213,8 @@ const CardBody = styled.div`padding: 1.25rem;`;
 /* ── Stock chart ── */
 
 const ChartContainer = styled.div`height: 220px; margin: 0 -0.5rem;`;
-const BigPrice = styled.div`font-size: 1.6rem; font-weight: 800; color: #111;`;
-const BigChange = styled.div`font-size: 0.85rem; font-weight: 600; color: ${p => p.$pos ? '#22c55e' : '#dc2626'};`;
+const BigPrice = styled.div`font-size: 1.6rem; font-weight: 800; color: white;`;
+const BigChange = styled.div`font-size: 0.85rem; font-weight: 600; color: ${p => p.$pos ? '#4ade80' : '#f87171'};`;
 
 const MetricsRow = styled.div`
   display: grid;
@@ -326,7 +324,7 @@ const FeedbackTitle = styled.div`
   gap: 0.5rem;
   font-weight: 800;
   font-size: 1.05rem;
-  color: ${p => ratingColors[p.$rating]?.accent || '#111'};
+  color: ${p => ratingColors[p.$rating]?.accent || 'white'};
   letter-spacing: -0.01em;
 `;
 
@@ -349,7 +347,7 @@ const SignalItem = styled.div`
   gap: 0.6rem;
   font-size: 1rem;
   font-weight: 500;
-  color: #222;
+  color: rgba(255,255,255,0.65);
   margin-bottom: 0.6rem;
   line-height: 1.55;
   &:last-child { margin-bottom: 0; }
@@ -397,20 +395,20 @@ const StockRow = styled(motion.div)`
   align-items: center;
   justify-content: space-between;
   padding: 0.6rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 6px;
-  &:hover { background: rgba(34,197,94,0.06); padding: 0.6rem 0.5rem; }
-  ${p => p.$active && `background: rgba(34,197,94,0.08); padding: 0.6rem 0.5rem; border-left: 3px solid #22c55e;`}
+  &:hover { background: rgba(34,197,94,0.05); padding: 0.6rem 0.5rem; }
+  ${p => p.$active && `background: rgba(34,197,94,0.08); padding: 0.6rem 0.5rem; border-left: 2px solid #22c55e;`}
 `;
 
-const StockSymbol = styled.div`font-weight: 700; color: #111; font-size: 0.9rem;`;
-const StockName = styled.div`color: #666; font-size: 0.75rem;`;
-const PriceValue = styled.div`font-weight: 700; color: #111; font-size: 0.9rem;`;
+const StockSymbol = styled.div`font-weight: 700; color: white; font-size: 0.9rem;`;
+const StockName = styled.div`color: rgba(255,255,255,0.35); font-size: 0.75rem;`;
+const PriceValue = styled.div`font-weight: 700; color: white; font-size: 0.9rem;`;
 const PriceChange = styled.div`
   font-size: 0.75rem; font-weight: 600;
-  color: ${p => p.$pos ? '#22c55e' : '#dc2626'};
+  color: ${p => p.$pos ? '#4ade80' : '#f87171'};
   display: flex; align-items: center; gap: 0.15rem; justify-content: flex-end;
 `;
 
@@ -481,8 +479,8 @@ const HealthScoreCircle = styled.div`
     p.$score >= 25 ? 'rgba(249,115,22,0.06)' : 'rgba(239,68,68,0.06)'};
 `;
 
-const ScoreNum = styled.div`font-size: 1.6rem; font-weight: 800; color: #111; line-height: 1; letter-spacing: -0.02em;`;
-const ScoreLabel = styled.div`font-size: 0.6rem; color: #555; text-transform: uppercase; font-weight: 700;`;
+const ScoreNum = styled.div`font-size: 1.6rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -0.02em;`;
+const ScoreLabel = styled.div`font-size: 0.6rem; color: rgba(255,255,255,0.35); text-transform: uppercase; font-weight: 700;`;
 
 const BreakdownRow = styled.div`
   display: flex;
@@ -523,25 +521,23 @@ const HealthRating = styled.div`
   letter-spacing: -0.01em;
   color: ${p =>
     p.$level === 'Excellent' ? '#22c55e' :
-    p.$level === 'Good' ? '#15803d' :
+    p.$level === 'Good' ? '#4ade80' :
     p.$level === 'Fair' ? '#f59e0b' : '#ef4444'};
 `;
 
 const HealthTip = styled.div`
   margin-top: 0.85rem;
-  padding: 0.85rem 1rem;
-  background: rgba(34,197,94,0.08);
-  border: 1px solid rgba(34,197,94,0.2);
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #111;
+  padding: 0.6rem 0.8rem;
+  background: rgba(34,197,94,0.05);
+  border: 1px solid rgba(34,197,94,0.1);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  line-height: 1.5;
-  border-left: 3px solid #22c55e;
-  svg { flex-shrink: 0; color: #22c55e; margin-top: 3px; }
+  gap: 0.5rem;
+  line-height: 1.4;
+  svg { flex-shrink: 0; color: #22c55e; margin-top: 2px; }
 `;
 
 /* ── Misc ── */
@@ -556,14 +552,14 @@ const Notification = styled(motion.div)`
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #fff;
-  border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'};
-  color: #111;
+  background: #0f172a;
+  border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'};
+  color: white;
   padding: 0.7rem 1.25rem;
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
   z-index: 1000;
   display: flex;
   align-items: center;

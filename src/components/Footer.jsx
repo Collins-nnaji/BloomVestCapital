@@ -4,8 +4,8 @@ import { FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
-  background: #ffffff;
-  border-top: 1px solid #e5e7eb;
+  background: #060910;
+  border-top: 1px solid rgba(255,255,255,0.06);
   padding: 2rem 0 1.5rem;
   padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
   width: 100%;
@@ -32,14 +32,14 @@ const TopRow = styled.div`
   gap: 1.5rem;
   flex-wrap: wrap;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 `;
 
 const LogoText = styled(Link)`
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   font-size: 1.2rem;
-  color: #555;
+  color: rgba(255,255,255,0.45);
   text-decoration: none;
   transition: color 0.2s ease;
   flex-shrink: 0;
@@ -52,12 +52,12 @@ const LogoText = styled(Link)`
   }
 
   span {
-    color: #22c55e;
+    color: rgba(34,197,94,0.6);
   }
 
   &:hover {
-    color: #111;
-    span { color: #15803d; }
+    color: rgba(255,255,255,0.7);
+    span { color: #22c55e; }
   }
 `;
 
@@ -74,7 +74,7 @@ const NavLinks = styled.div`
 
 const FooterNavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
-  color: #555;
+  color: rgba(255,255,255,0.3);
   font-size: 0.82rem;
   font-weight: 500;
   text-decoration: none;
@@ -98,8 +98,8 @@ const SocialLink = styled.a`
   width: 30px;
   height: 30px;
   border-radius: 6px;
-  background: #f5f5f5;
-  color: #555;
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.3);
   font-size: 0.85rem;
   transition: all 0.2s ease;
 
@@ -120,7 +120,7 @@ const BottomRow = styled.div`
 
 const Copyright = styled.p`
   font-family: 'DM Sans', sans-serif;
-  color: #666;
+  color: rgba(255,255,255,0.2);
   font-size: 0.75rem;
   margin: 0;
   line-height: 1.5;
@@ -128,7 +128,7 @@ const Copyright = styled.p`
 
 const PoweredBy = styled.span`
   font-family: 'DM Sans', sans-serif;
-  color: #888;
+  color: rgba(255,255,255,0.15);
   font-size: 0.72rem;
 `;
 
