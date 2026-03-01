@@ -11,7 +11,7 @@ import { useAuth } from '../AuthContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: #ffffff;
 `;
 
 const ContentWrapper = styled.div`
@@ -28,13 +28,13 @@ const PageHeader = styled(motion.div)`
 const PageTitle = styled.h1`
   font-size: 2.5rem;
   font-weight: 800;
-  color: white;
+  color: #111;
   margin-bottom: 0.5rem;
   letter-spacing: -0.02em;
 `;
 
 const PageSubtitle = styled.p`
-  color: rgba(255,255,255,0.4);
+  color: #333;
   font-size: 1.1rem;
 `;
 
@@ -46,16 +46,17 @@ const ScenariosGrid = styled.div`
 `;
 
 const ScenarioCard = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 1.75rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    border-color: rgba(255,255,255,0.12);
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(34,197,94,0.12);
+    border-color: rgba(34,197,94,0.3);
   }
 `;
 
@@ -82,12 +83,12 @@ const DifficultyBadge = styled.span`
 const ScenarioCardTitle = styled.h3`
   font-size: 1.1rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin-bottom: 0.5rem;
 `;
 
 const ScenarioCardDesc = styled.p`
-  color: rgba(255,255,255,0.4);
+  color: #555;
   font-size: 0.9rem;
   line-height: 1.5;
   margin-bottom: 1rem;
@@ -161,15 +162,16 @@ const RightColumn = styled.div`
   gap: 1.25rem;
 `;
 
-const ScenarioBar = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+const ScenarioBar = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 `;
 
 const BarIcon = styled.span`font-size: 1.5rem;`;
@@ -177,7 +179,7 @@ const BarIcon = styled.span`font-size: 1.5rem;`;
 const BarTitle = styled.h2`
   font-size: 1.15rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   flex: 1;
 `;
 
@@ -186,42 +188,44 @@ const ExitButton = styled.button`
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
-  background: rgba(239,68,68,0.1);
+  background: rgba(239,68,68,0.08);
   border: 1px solid rgba(239,68,68,0.2);
   border-radius: 8px;
-  color: #f87171;
+  color: #dc2626;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
-  &:hover { background: rgba(239,68,68,0.2); }
+  &:hover { background: rgba(239,68,68,0.15); }
 `;
 
-const BalanceBar = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+const BalanceBar = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 2rem;
   flex-wrap: wrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 `;
 
 const BalanceStat = styled.div`min-width: 100px;`;
-const BalanceLabel = styled.div`font-size:0.65rem;color:rgba(255,255,255,0.35);text-transform:uppercase;font-weight:700;letter-spacing:0.8px;margin-bottom:0.15rem;`;
-const BalanceValue = styled.div`font-size:1.2rem;font-weight:800;color:${p => p.$color || 'white'};`;
+const BalanceLabel = styled.div`font-size:0.65rem;color:#555;text-transform:uppercase;font-weight:700;letter-spacing:0.8px;margin-bottom:0.15rem;`;
+const BalanceValue = styled.div`font-size:1.2rem;font-weight:800;color:${p => p.$color || '#111'};`;
 
-const Card = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+const Card = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 `;
 
 const CardHead = styled.div`
   padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -230,7 +234,7 @@ const CardHead = styled.div`
 const CardLabel = styled.h3`
   font-size: 0.8rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.7);
+  color: #555;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -245,8 +249,8 @@ const SearchBar = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
@@ -257,45 +261,45 @@ const SearchInput = styled.input`
   background: none;
   outline: none;
   font-size: 0.85rem;
-  color: white;
+  color: #111;
   width: 100%;
-  &::placeholder { color: rgba(255,255,255,0.25); }
+  &::placeholder { color: #999; }
 `;
 
 const StockGrid = styled.div`
   max-height: 200px;
   overflow-y: auto;
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  &::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 4px; }
 `;
 
-const StockRow = styled.div`
+const StockRow = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0.4rem;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
   border-radius: 6px;
-  &:hover { background: rgba(34,197,94,0.05); }
-  ${p => p.$active && `background: rgba(34,197,94,0.08); border-left: 2px solid #22c55e;`}
+  &:hover { background: rgba(34,197,94,0.06); }
+  ${p => p.$active && `background: rgba(34,197,94,0.08); border-left: 3px solid #22c55e;`}
 `;
 
-const StockSymbol = styled.div`font-weight:700;color:white;font-size:0.85rem;`;
-const StockName = styled.div`color:rgba(255,255,255,0.35);font-size:0.7rem;`;
-const PriceVal = styled.div`font-weight:700;color:white;font-size:0.85rem;text-align:right;`;
+const StockSymbol = styled.div`font-weight:700;color:#111;font-size:0.85rem;`;
+const StockName = styled.div`color:#666;font-size:0.7rem;`;
+const PriceVal = styled.div`font-weight:700;color:#111;font-size:0.85rem;text-align:right;`;
 const PriceChg = styled.div`
   font-size:0.7rem;font-weight:600;text-align:right;
-  color:${p => p.$pos ? '#4ade80' : '#f87171'};
+  color:${p => p.$pos ? '#22c55e' : '#dc2626'};
 `;
 
 const DetailSection = styled(motion.div)`
   margin-top: 0.75rem;
 `;
 
-const BigPrice = styled.div`font-size:1.5rem;font-weight:800;color:white;`;
-const BigChange = styled.div`font-size:0.85rem;font-weight:600;color:${p => p.$pos ? '#4ade80' : '#f87171'};display:flex;align-items:center;gap:0.3rem;`;
+const BigPrice = styled.div`font-size:1.5rem;font-weight:800;color:#111;`;
+const BigChange = styled.div`font-size:0.85rem;font-weight:600;color:${p => p.$pos ? '#22c55e' : '#dc2626'};display:flex;align-items:center;gap:0.3rem;`;
 
 const ChartWrap = styled.div`height:160px;margin: 0.75rem -0.5rem 0;`;
 
@@ -307,19 +311,19 @@ const MetricsRow = styled.div`
 `;
 
 const MetricBox = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 0.5rem;
   text-align: center;
 `;
 
-const MetricLabel = styled.div`font-size:0.6rem;color:rgba(255,255,255,0.3);text-transform:uppercase;font-weight:600;`;
-const MetricValue = styled.div`font-size:0.85rem;font-weight:700;color:white;`;
+const MetricLabel = styled.div`font-size:0.6rem;color:#555;text-transform:uppercase;font-weight:600;`;
+const MetricValue = styled.div`font-size:0.85rem;font-weight:700;color:#111;`;
 
 const TradeForm = styled.div`
-  background: rgba(34,197,94,0.04);
-  border: 1px solid rgba(34,197,94,0.1);
+  background: rgba(34,197,94,0.06);
+  border: 1px solid rgba(34,197,94,0.2);
   border-radius: 10px;
   padding: 1rem;
   margin-top: 0.75rem;
@@ -330,12 +334,12 @@ const TradeRow = styled.div`display:flex;gap:0.5rem;margin-bottom:0.5rem;`;
 const TradeInput = styled.input`
   flex: 1;
   padding: 0.6rem 0.8rem;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  background: rgba(255,255,255,0.04);
-  color: white;
+  background: #fff;
+  color: #111;
   outline: none;
   &:focus { border-color: #22c55e; }
 `;
@@ -370,34 +374,36 @@ const SellBtn = styled(TradeBtn)`
 const TradeCost = styled.div`
   text-align: right;
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
-  span { font-weight: 700; color: white; }
+  color: #555;
+  span { font-weight: 700; color: #111; }
 `;
 
 const HoldingsTable = styled.div`
   max-height: 180px;
   overflow-y: auto;
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  &::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 4px; }
 `;
 
-const HoldingRow = styled.div`
+const HoldingRow = styled(motion.div)`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
   &:last-child { border-bottom: none; }
+  &:hover { background: rgba(34,197,94,0.04); }
 `;
 
-const HoldingSym = styled.div`font-weight:700;color:white;font-size:0.85rem;`;
-const HoldingShares = styled.div`color:rgba(255,255,255,0.3);font-size:0.7rem;`;
-const HoldingValue = styled.div`font-weight:700;color:white;font-size:0.85rem;text-align:right;`;
+const HoldingSym = styled.div`font-weight:700;color:#111;font-size:0.85rem;`;
+const HoldingShares = styled.div`color:#666;font-size:0.7rem;`;
+const HoldingValue = styled.div`font-weight:700;color:#111;font-size:0.85rem;text-align:right;`;
 
 const EmptyState = styled.div`
   text-align: center;
   padding: 1.5rem;
-  color: rgba(255,255,255,0.25);
+  color: #777;
   font-size: 0.85rem;
 `;
 
@@ -408,19 +414,19 @@ const AdvisorHeader = styled.div`
   align-items: center;
   gap: 0.6rem;
   padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  svg { color: #a855f7; font-size: 1.1rem; }
+  border-bottom: 1px solid #e5e7eb;
+  svg { color: #22c55e; font-size: 1.1rem; }
 `;
 
 const AdvisorTitle = styled.h3`
   font-size: 0.9rem;
   font-weight: 700;
-  color: white;
+  color: #111;
 `;
 
 const ObjectivesList = styled.div`
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid #e5e7eb;
 `;
 
 const ObjectivesCounter = styled.div`
@@ -436,14 +442,14 @@ const ObjectiveItem = styled.div`
   gap: 0.5rem;
   padding: 0.35rem 0;
   font-size: 0.8rem;
-  color: ${p => p.$done ? '#4ade80' : 'rgba(255,255,255,0.5)'};
+  color: ${p => p.$done ? '#22c55e' : '#555'};
   font-weight: ${p => p.$done ? '600' : '400'};
   transition: color 0.3s;
 `;
 
 const CheckIcon = styled.span`
   font-size: 0.85rem;
-  color: ${p => p.$done ? '#22c55e' : 'rgba(255,255,255,0.15)'};
+  color: ${p => p.$done ? '#22c55e' : '#bbb'};
   display: flex;
   align-items: center;
 `;
@@ -458,22 +464,22 @@ const MessagesArea = styled.div`
   flex-direction: column;
   gap: 0.75rem;
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  &::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 4px; }
 `;
 
 const MessageBubble = styled(motion.div)`
-  background: ${p => p.$isAi ? 'rgba(168,85,247,0.08)' : 'rgba(34,197,94,0.08)'};
-  border: 1px solid ${p => p.$isAi ? 'rgba(168,85,247,0.15)' : 'rgba(34,197,94,0.15)'};
+  background: ${p => p.$isAi ? 'rgba(34,197,94,0.06)' : 'rgba(34,197,94,0.08)'};
+  border: 1px solid ${p => p.$isAi ? 'rgba(34,197,94,0.15)' : 'rgba(34,197,94,0.2)'};
   border-radius: 12px;
   padding: 0.85rem 1rem;
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.85);
+  color: #111;
   line-height: 1.6;
 `;
 
 const MessageTime = styled.div`
   font-size: 0.65rem;
-  color: rgba(255,255,255,0.2);
+  color: #888;
   margin-top: 0.4rem;
 `;
 
@@ -487,8 +493,8 @@ const TypingIndicator = styled.div`
   align-items: center;
   gap: 0.3rem;
   padding: 0.85rem 1rem;
-  background: rgba(168,85,247,0.08);
-  border: 1px solid rgba(168,85,247,0.15);
+  background: rgba(34,197,94,0.06);
+  border: 1px solid rgba(34,197,94,0.15);
   border-radius: 12px;
   width: fit-content;
 `;
@@ -497,7 +503,7 @@ const Dot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #a855f7;
+  background: #22c55e;
   animation: ${pulse} 1.2s ease-in-out infinite;
   animation-delay: ${p => p.$d || '0s'};
 `;
@@ -507,7 +513,7 @@ const QuickActions = styled.div`
   flex-wrap: wrap;
   gap: 0.4rem;
   padding: 0.75rem 1.25rem;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid #e5e7eb;
 `;
 
 const QuickBtn = styled.button`
@@ -515,12 +521,12 @@ const QuickBtn = styled.button`
   border-radius: 8px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: rgba(168,85,247,0.1);
-  color: #a855f7;
-  border: 1px solid rgba(168,85,247,0.15);
+  background: rgba(34,197,94,0.08);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.2);
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { background: rgba(168,85,247,0.2); }
+  &:hover { background: rgba(34,197,94,0.15); }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 `;
 
@@ -528,33 +534,33 @@ const InputRow = styled.div`
   display: flex;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  border-top: 1px solid #e5e7eb;
 `;
 
 const ChatInput = styled.input`
   flex: 1;
   padding: 0.6rem 0.8rem;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
-  background: rgba(255,255,255,0.04);
-  color: white;
+  background: #fff;
+  color: #111;
   font-size: 0.85rem;
   outline: none;
-  &:focus { border-color: #a855f7; }
-  &::placeholder { color: rgba(255,255,255,0.2); }
+  &:focus { border-color: #22c55e; }
+  &::placeholder { color: #999; }
 `;
 
 const SendBtn = styled.button`
   padding: 0.6rem 0.85rem;
   border-radius: 8px;
-  background: #a855f7;
+  background: #22c55e;
   color: white;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   transition: all 0.2s;
-  &:hover { background: #9333ea; }
+  &:hover { background: #16a34a; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 `;
 
@@ -575,8 +581,8 @@ const ModalOverlay = styled(motion.div)`
 `;
 
 const ModalContent = styled(motion.div)`
-  background: #111827;
-  border: 1px solid rgba(255,255,255,0.1);
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 20px;
   padding: 2.5rem;
   max-width: 600px;
@@ -584,8 +590,9 @@ const ModalContent = styled(motion.div)`
   max-height: 85vh;
   overflow-y: auto;
   text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15);
   &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+  &::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 4px; }
 `;
 
 const confettiFloat = keyframes`
@@ -604,25 +611,25 @@ const CelebrationEmoji = styled.div`
 const ModalTitle = styled.h2`
   font-size: 1.75rem;
   font-weight: 800;
-  color: white;
+  color: #111;
   margin-bottom: 0.5rem;
 `;
 
 const ModalSubtitle = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: #555;
   font-size: 1rem;
   margin-bottom: 1.5rem;
 `;
 
 const ReviewText = styled.div`
   text-align: left;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 1.25rem;
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
-  color: rgba(255,255,255,0.8);
+  color: #333;
   line-height: 1.7;
 `;
 
@@ -634,14 +641,14 @@ const StatsGrid = styled.div`
 `;
 
 const StatBox = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
   padding: 1rem;
 `;
 
-const StatNum = styled.div`font-size:1.3rem;font-weight:800;color:${p => p.$color || 'white'};`;
-const StatDesc = styled.div`font-size:0.7rem;color:rgba(255,255,255,0.35);text-transform:uppercase;font-weight:600;margin-top:0.2rem;`;
+const StatNum = styled.div`font-size:1.3rem;font-weight:800;color:${p => p.$color || '#111'};`;
+const StatDesc = styled.div`font-size:0.7rem;color:#555;text-transform:uppercase;font-weight:600;margin-top:0.2rem;`;
 
 const LearningsSection = styled.div`
   text-align: left;
@@ -651,7 +658,7 @@ const LearningsSection = styled.div`
 const LearningTitle = styled.h4`
   font-size: 0.9rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin-bottom: 0.6rem;
   display: flex;
   align-items: center;
@@ -665,7 +672,7 @@ const LearningItem = styled.div`
   gap: 0.5rem;
   padding: 0.3rem 0;
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.6);
+  color: #333;
   svg { color: #22c55e; font-size: 0.7rem; }
 `;
 
@@ -691,14 +698,14 @@ const Notification = styled(motion.div)`
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #0f172a;
-  border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'};
-  color: white;
+  background: #fff;
+  border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'};
+  color: #111;
   padding: 0.7rem 1.25rem;
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
   z-index: 1001;
   display: flex;
   align-items: center;
@@ -719,8 +726,8 @@ function timeNow() {
 const ProGate = styled.div`
   text-align: center;
   padding: 3rem 2rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   max-width: 500px;
   margin: 2rem auto;
@@ -728,13 +735,13 @@ const ProGate = styled.div`
 
 const ProGateTitle = styled.h2`
   font-family: 'Space Grotesk', sans-serif;
-  color: white;
+  color: #111;
   font-size: 1.5rem;
   margin-bottom: 0.75rem;
 `;
 
 const ProGateText = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: #555;
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
   line-height: 1.6;
@@ -1068,7 +1075,7 @@ const ScenarioPage = () => {
 
           {!isPro && (
             <ProGate>
-              <FaLock style={{fontSize:'2rem',color:'rgba(255,255,255,0.15)',marginBottom:'1rem'}} />
+              <FaLock style={{fontSize:'2rem',color:'#999',marginBottom:'1rem'}} />
               <ProGateTitle>Scenarios require <span style={{color:'#22c55e'}}>Pro</span></ProGateTitle>
               <ProGateText>
                 AI-guided scenario simulations are a Pro feature. Upgrade to get real-time GPT-4 coaching, 11 interactive simulations across stocks, crypto, commodities, bonds, and forex.
@@ -1083,10 +1090,11 @@ const ScenarioPage = () => {
                 key={scenario.id}
                 onClick={() => isPro ? startScenario(scenario) : null}
                 style={{ opacity: isPro ? 1 : 0.5, cursor: isPro ? 'pointer' : 'default' }}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.08 }}
-                whileHover={{ scale: 1.01 }}
+                transition={{ delay: idx * 0.06, type: 'spring', stiffness: 120 }}
+                whileHover={{ scale: 1.02, y: -4 }}
+                whileTap={{ scale: 0.98 }}
               >
                 <ScenarioCardHeader>
                   <ScenarioIcon>{scenario.icon}</ScenarioIcon>
@@ -1175,6 +1183,8 @@ const ScenarioPage = () => {
                     key={stock.symbol}
                     $active={selectedStock?.symbol === stock.symbol}
                     onClick={() => { setSelectedStock(stock); setQuantity(''); }}
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.99 }}
                   >
                     <div>
                       <StockSymbol>{stock.symbol}</StockSymbol>

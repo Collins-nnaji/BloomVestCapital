@@ -12,9 +12,11 @@ const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   session_id VARCHAR(255) UNIQUE NOT NULL,
+  email VARCHAR(255),
   balance DECIMAL(15,2) DEFAULT 100000.00,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255);
 CREATE TABLE IF NOT EXISTS holdings (
   id SERIAL PRIMARY KEY,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -106,12 +108,18 @@ async function initializeDatabase() {
 }
 
 async function getOrCreateUser(sessionId) {
+  const email = sessionId.startsWith('auth:') ? sessionId.slice(5) : null;
   const existing = await pool.query('SELECT * FROM users WHERE session_id = $1', [sessionId]);
-  if (existing.rows.length > 0) return existing.rows[0];
+  if (existing.rows.length > 0) {
+    if (email && !existing.rows[0].email) {
+      await pool.query('UPDATE users SET email = $1 WHERE id = $2', [email, existing.rows[0].id]);
+    }
+    return existing.rows[0];
+  }
 
   const result = await pool.query(
-    'INSERT INTO users (session_id) VALUES ($1) RETURNING *',
-    [sessionId]
+    'INSERT INTO users (session_id, email) VALUES ($1, $2) RETURNING *',
+    [sessionId, email]
   );
   return result.rows[0];
 }

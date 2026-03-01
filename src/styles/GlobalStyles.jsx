@@ -2,30 +2,30 @@ import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
   :root {
-    /* Primary Colors */
+    /* Primary Colors - White/Black/Green theme */
     --color-primary: #22c55e;
     --color-primary-dark: #15803d;
     --color-primary-light: #4ade80;
     --color-primary-lighter: rgba(34, 197, 94, 0.1);
     
     /* Secondary Colors */
-    --color-secondary: #1a365d;
-    --color-secondary-dark: #0f172a;
-    --color-secondary-light: #3b82f6;
+    --color-secondary: #111111;
+    --color-secondary-dark: #000000;
+    --color-secondary-light: #22c55e;
     
     /* Accent Colors */
     --color-accent-1: #0891b2; /* Teal */
-    --color-accent-2: #8b5cf6; /* Purple */
+    --color-accent-2: #22c55e; /* Green */
     --color-accent-3: #f59e0b; /* Amber */
     --color-accent-4: #ec4899; /* Pink */
     
-    /* Neutral Colors */
-    --color-text: #1e293b;
-    --color-text-light: #475569;
-    --color-text-lighter: #64748b;
-    --color-border: #e2e8f0;
+    /* Neutral Colors - Black text on white */
+    --color-text: #111111;
+    --color-text-light: #333333;
+    --color-text-lighter: #555555;
+    --color-border: #e5e7eb;
     --color-background: #ffffff;
-    --color-background-alt: #f8fafc;
+    --color-background-alt: #fafafa;
     
     /* Gradients */
     --gradient-primary: linear-gradient(to right, #22c55e, #15803d);
@@ -277,12 +277,39 @@ const GlobalStyles = createGlobalStyle`
     to { transform: translateY(0); opacity: 1; }
   }
   
+  @keyframes slideInRight {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.02); }
+  }
+  
   .fade-in {
     animation: fadeIn 0.6s ease forwards;
   }
   
   .slide-up {
     animation: slideUp 0.6s ease forwards;
+  }
+  
+  .slide-in-right {
+    animation: slideInRight 0.4s ease forwards;
+  }
+  
+  .scale-in {
+    animation: scaleIn 0.35s ease forwards;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
   }
 `;
 

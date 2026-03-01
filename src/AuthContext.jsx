@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { auth } from './auth';
+import { setAuthSession } from './api';
 
 const AuthContext = createContext(null);
 
@@ -13,6 +14,7 @@ export function AuthProvider({ children }) {
       const session = await auth.getSession();
       if (session && session.user) {
         setUser(session.user);
+        setAuthSession(session.user); // Tie API session to logged-in user so data saves to their DB
         const subRes = await fetch(`/api/billing/status?email=${encodeURIComponent(session.user.email)}`);
         if (subRes.ok) {
           const subData = await subRes.json();
@@ -20,10 +22,12 @@ export function AuthProvider({ children }) {
         }
       } else {
         setUser(null);
+        setAuthSession(null);
         setIsPro(false);
       }
     } catch {
       setUser(null);
+      setAuthSession(null);
       setIsPro(false);
     }
     setLoading(false);
@@ -36,7 +40,10 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = async () => {
     await auth.signInWithGoogle();
   };
-  const signOut = () => auth.signOut();
+  const signOut = () => {
+    setAuthSession(null);
+    auth.signOut();
+  };
 
   const signUpWithEmail = async (email, password, name) => {
     const data = await auth.signUpWithEmail(email, password, name);

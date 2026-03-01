@@ -14,12 +14,12 @@ import { api } from '../api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: #ffffff;
 `;
 
 const HeaderSection = styled.section`
   padding: 2.5rem 1.5rem 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid #e5e7eb;
 `;
 
 const HeaderInner = styled.div`
@@ -41,13 +41,13 @@ const HeaderLeft = styled.div``;
 const HeaderTitle = styled.h1`
   font-size: 1.75rem;
   font-weight: 800;
-  color: white;
+  color: #111;
   margin: 0 0 0.35rem 0;
   span { color: #22c55e; }
 `;
 
 const HeaderSubtitle = styled.p`
-  color: rgba(255,255,255,0.4);
+  color: #333;
   font-size: 0.9rem;
   margin: 0;
   max-width: 520px;
@@ -94,26 +94,32 @@ const PortfolioBar = styled.div`
   padding: 1.25rem 1.5rem;
 `;
 
-const PortfolioCard = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+const PortfolioCard = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 1.25rem 1.75rem;
   display: flex;
   align-items: center;
   gap: 2.5rem;
   flex-wrap: wrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(34,197,94,0.08);
+  }
 `;
 
 const PortfolioStat = styled.div`min-width: 110px;`;
 const StatLabel = styled.div`
-  font-size: 0.65rem; color: rgba(255,255,255,0.35);
+  font-size: 0.65rem; color: #555;
   text-transform: uppercase; font-weight: 700;
   letter-spacing: 0.8px; margin-bottom: 0.15rem;
 `;
 const StatValue = styled.div`
   font-size: 1.25rem; font-weight: 800;
-  color: ${p => p.$color || 'white'};
+  color: ${p => p.$color || '#111'};
 `;
 
 const ResetBtn = styled.button`
@@ -150,16 +156,22 @@ const RightCol = styled.div`display: flex; flex-direction: column; gap: 1.25rem;
 
 /* ── Generic card ── */
 
-const Card = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+const Card = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba(34,197,94,0.06);
+  }
 `;
 
 const CardHeader = styled.div`
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -168,7 +180,7 @@ const CardHeader = styled.div`
 const CardTitle = styled.h3`
   font-size: 0.85rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.7);
+  color: #555;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -183,8 +195,8 @@ const CardBody = styled.div`padding: 1.25rem;`;
 /* ── Stock chart ── */
 
 const ChartContainer = styled.div`height: 220px; margin: 0 -0.5rem;`;
-const BigPrice = styled.div`font-size: 1.6rem; font-weight: 800; color: white;`;
-const BigChange = styled.div`font-size: 0.85rem; font-weight: 600; color: ${p => p.$pos ? '#4ade80' : '#f87171'};`;
+const BigPrice = styled.div`font-size: 1.6rem; font-weight: 800; color: #111;`;
+const BigChange = styled.div`font-size: 0.85rem; font-weight: 600; color: ${p => p.$pos ? '#22c55e' : '#dc2626'};`;
 
 const MetricsRow = styled.div`
   display: grid;
@@ -350,25 +362,25 @@ const SearchInput = styled.input`
 
 const StockList = styled.div`max-height: 400px; overflow-y: auto;`;
 
-const StockRow = styled.div`
+const StockRow = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
   border-radius: 6px;
-  &:hover { background: rgba(34,197,94,0.05); padding: 0.6rem 0.5rem; }
-  ${p => p.$active && `background: rgba(34,197,94,0.08); padding: 0.6rem 0.5rem; border-left: 2px solid #22c55e;`}
+  &:hover { background: rgba(34,197,94,0.06); padding: 0.6rem 0.5rem; }
+  ${p => p.$active && `background: rgba(34,197,94,0.08); padding: 0.6rem 0.5rem; border-left: 3px solid #22c55e;`}
 `;
 
-const StockSymbol = styled.div`font-weight: 700; color: white; font-size: 0.9rem;`;
-const StockName = styled.div`color: rgba(255,255,255,0.35); font-size: 0.75rem;`;
-const PriceValue = styled.div`font-weight: 700; color: white; font-size: 0.9rem;`;
+const StockSymbol = styled.div`font-weight: 700; color: #111; font-size: 0.9rem;`;
+const StockName = styled.div`color: #666; font-size: 0.75rem;`;
+const PriceValue = styled.div`font-weight: 700; color: #111; font-size: 0.9rem;`;
 const PriceChange = styled.div`
   font-size: 0.75rem; font-weight: 600;
-  color: ${p => p.$pos ? '#4ade80' : '#f87171'};
+  color: ${p => p.$pos ? '#22c55e' : '#dc2626'};
   display: flex; align-items: center; gap: 0.15rem; justify-content: flex-end;
 `;
 
@@ -511,14 +523,14 @@ const Notification = styled(motion.div)`
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #0f172a;
-  border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'};
-  color: white;
+  background: #fff;
+  border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.4)' : 'rgba(239,68,68,0.4)'};
+  color: #111;
   padding: 0.7rem 1.25rem;
   border-radius: 10px;
   font-size: 0.85rem;
   font-weight: 600;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.15);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -1062,7 +1074,13 @@ const DemoTrading = () => {
               </SearchBar>
               <StockList>
                 {filteredStocks.map(stock => (
-                  <StockRow key={stock.symbol} onClick={() => setSelectedStock(stock)} $active={selectedStock.symbol === stock.symbol}>
+                  <StockRow
+                    key={stock.symbol}
+                    onClick={() => setSelectedStock(stock)}
+                    $active={selectedStock.symbol === stock.symbol}
+                    whileHover={{ x: 4 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
                     <div>
                       <StockSymbol>{stock.symbol}</StockSymbol>
                       <StockName>{stock.name}</StockName>

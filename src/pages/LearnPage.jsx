@@ -40,7 +40,7 @@ const spin = keyframes`
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: #ffffff;
 `;
 
 const MaxWidth = styled.div`
@@ -52,8 +52,8 @@ const MaxWidth = styled.div`
 /* ─── Header ──────────────────────────────────────────────── */
 
 const Header = styled.section`
-  background: linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(59,130,246,0.06) 100%);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(34,197,94,0.02) 100%);
+  border-bottom: 1px solid #e5e7eb;
   padding: 3rem 1.5rem 4rem;
 `;
 
@@ -76,14 +76,14 @@ const HeaderLeft = styled.div``;
 const HeaderTitle = styled.h1`
   font-size: 2.5rem;
   font-weight: 800;
-  color: white;
+  color: #111;
   margin: 0 0 0.5rem;
   span { color: #22c55e; }
   @media (max-width: 768px) { font-size: 2rem; }
 `;
 
 const HeaderSubtitle = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: #333;
   font-size: 1.05rem;
   margin: 0;
   max-width: 520px;
@@ -96,13 +96,20 @@ const StatsRow = styled.div`
   flex-wrap: wrap;
 `;
 
-const StatBox = styled.div`
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+const StatBox = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 1rem 1.25rem;
   text-align: center;
   min-width: 100px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(34,197,94,0.1);
+  }
 `;
 
 const StatNumber = styled.div`
@@ -113,7 +120,7 @@ const StatNumber = styled.div`
 
 const StatLabel = styled.div`
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.4);
+  color: #555;
   font-weight: 500;
   margin-top: 0.25rem;
   text-transform: uppercase;
@@ -130,16 +137,21 @@ const ProgressWrapper = styled.div`
   z-index: 2;
 `;
 
-const ProgressCard = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+const ProgressCard = styled(motion.div)`
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 1.25rem 1.75rem;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   display: flex;
   align-items: center;
   gap: 1.25rem;
   flex-wrap: wrap;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 8px 32px rgba(34,197,94,0.08);
+  }
 `;
 
 const ProgressInfo = styled.div`
@@ -149,14 +161,14 @@ const ProgressInfo = styled.div`
 
 const ProgressLabel = styled.div`
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
+  color: #555;
   font-weight: 500;
   margin-bottom: 0.4rem;
 `;
 
 const ProgressTrack = styled.div`
   height: 10px;
-  background: rgba(255,255,255,0.06);
+  background: #e5e7eb;
   border-radius: 10px;
   overflow: hidden;
 `;
@@ -170,7 +182,7 @@ const ProgressFill = styled(motion.div)`
 const ProgressText = styled.span`
   font-size: 0.95rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   white-space: nowrap;
 `;
 
@@ -247,7 +259,7 @@ const RetryButton = styled.button`
 /* ─── Course Grid ─────────────────────────────────────────── */
 
 const SectionTitle = styled.h2`
-  color: white;
+  color: #111;
   font-size: 1.4rem;
   font-weight: 700;
   margin: 0 0 1.5rem;
@@ -261,13 +273,14 @@ const CoursesGrid = styled.div`
 `;
 
 const CourseCard = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
+  background: #fff;
   border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid #e5e7eb;
   overflow: hidden;
   cursor: pointer;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
   position: relative;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 
   &::before {
     content: '';
@@ -275,12 +288,13 @@ const CourseCard = styled(motion.div)`
     top: 0; left: 0; right: 0;
     height: 3px;
     background: ${(p) => p.$accentColor || '#22c55e'};
-    opacity: 0.7;
+    opacity: 0.8;
   }
 
   &:hover {
-    border-color: ${(p) => p.$accentColor ? p.$accentColor + '55' : 'rgba(34,197,94,0.3)'};
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    border-color: ${(p) => p.$accentColor ? p.$accentColor + '66' : 'rgba(34,197,94,0.4)'};
+    box-shadow: 0 12px 32px rgba(34,197,94,0.12);
+    transform: translateY(-3px);
   }
 `;
 
@@ -333,12 +347,12 @@ const LevelBadge = styled.span`
 const CourseTitle = styled.h3`
   font-size: 1.15rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin: 0 0 0.5rem;
 `;
 
 const CourseDesc = styled.p`
-  color: rgba(255,255,255,0.45);
+  color: #555;
   font-size: 0.88rem;
   line-height: 1.6;
   margin: 0 0 1.25rem;
@@ -365,7 +379,7 @@ const CourseProgressOuter = styled.div`
 const MiniProgressTrack = styled.div`
   flex: 1;
   height: 6px;
-  background: rgba(255,255,255,0.06);
+  background: #e5e7eb;
   border-radius: 6px;
   overflow: hidden;
 `;
@@ -380,14 +394,14 @@ const MiniProgressFill = styled.div`
 
 const CourseProgressLabel = styled.span`
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.5);
+  color: #555;
   white-space: nowrap;
   font-weight: 600;
 `;
 
 const CourseModuleCount = styled.span`
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.3);
+  color: #777;
   white-space: nowrap;
 `;
 
@@ -397,10 +411,10 @@ const BackBtn = styled(motion.button)`
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
-  color: rgba(255,255,255,0.6);
+  color: #555;
   font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
@@ -422,7 +436,7 @@ const CourseDetailIcon = styled.div`
   width: 72px;
   height: 72px;
   border-radius: 18px;
-  background: ${(p) => p.$color ? p.$color + '18' : 'rgba(34,197,94,0.1)'};
+  background: ${(p) => p.$color ? p.$color + '20' : 'rgba(34,197,94,0.1)'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -438,13 +452,13 @@ const CourseDetailInfo = styled.div`
 const CourseDetailTitle = styled.h2`
   font-size: 1.6rem;
   font-weight: 800;
-  color: white;
+  color: #111;
   margin: 0 0 0.4rem;
   @media (max-width: 768px) { font-size: 1.3rem; }
 `;
 
 const CourseDetailDesc = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: #555;
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0 0 0.75rem;
@@ -462,21 +476,23 @@ const MetaItem = styled.span`
   align-items: center;
   gap: 0.35rem;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.4);
+  color: #555;
   font-weight: 500;
   svg { font-size: 0.75rem; }
 `;
 
 /* ─── Module Accordion ────────────────────────────────────── */
 
-const ModuleAccordion = styled.div`
+const ModuleAccordion = styled(motion.div)`
   margin-bottom: 1rem;
   border-radius: 14px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fff;
+  border: 1px solid #e5e7eb;
   overflow: hidden;
-  transition: border-color 0.3s;
-  &:hover { border-color: rgba(255,255,255,0.1); }
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+  &:hover { border-color: rgba(34,197,94,0.2); box-shadow: 0 4px 16px rgba(34,197,94,0.06); }
 `;
 
 const ModuleHeader = styled.button`
@@ -490,11 +506,11 @@ const ModuleHeader = styled.button`
   cursor: pointer;
   text-align: left;
   transition: background 0.2s;
-  &:hover { background: rgba(255,255,255,0.02); }
+  &:hover { background: #fafafa; }
 `;
 
 const ModuleChevron = styled(motion.span)`
-  color: rgba(255,255,255,0.3);
+  color: #666;
   font-size: 0.8rem;
   display: flex;
   align-items: center;
@@ -505,21 +521,21 @@ const ModuleInfo = styled.div`
 `;
 
 const ModuleTitle = styled.h4`
-  color: white;
+  color: #111;
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 0.2rem;
 `;
 
 const ModuleDesc = styled.p`
-  color: rgba(255,255,255,0.35);
+  color: #666;
   font-size: 0.82rem;
   margin: 0;
 `;
 
 const ModuleLessonCount = styled.span`
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.3);
+  color: #777;
   font-weight: 500;
   white-space: nowrap;
 `;
@@ -534,8 +550,8 @@ const LessonRow = styled(motion.div)`
   gap: 1rem;
   padding: 0.85rem 1.5rem 0.85rem 2.5rem;
   cursor: pointer;
-  transition: background 0.2s;
-  border-top: 1px solid rgba(255,255,255,0.04);
+  transition: all 0.2s ease;
+  border-top: 1px solid #f0f0f0;
   position: relative;
 
   &::before {
@@ -545,10 +561,10 @@ const LessonRow = styled(motion.div)`
     top: 0;
     bottom: 0;
     width: 2px;
-    background: ${(p) => p.$completed ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.06)'};
+    background: ${(p) => p.$completed ? 'rgba(34,197,94,0.4)' : '#e5e7eb'};
   }
 
-  &:hover { background: rgba(255,255,255,0.03); }
+  &:hover { background: rgba(34,197,94,0.04); }
 `;
 
 const LessonRowIcon = styled.span`
@@ -561,7 +577,7 @@ const LessonRowIcon = styled.span`
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  background: ${(p) => p.$completed ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.05)'};
+  background: ${(p) => p.$completed ? 'rgba(34,197,94,0.15)' : 'rgba(0,0,0,0.04)'};
   flex-shrink: 0;
 `;
 
@@ -573,7 +589,7 @@ const LessonRowInfo = styled.div`
 const LessonRowTitle = styled.span`
   font-size: 0.9rem;
   font-weight: 600;
-  color: ${(p) => p.$completed ? 'rgba(255,255,255,0.6)' : 'white'};
+  color: ${(p) => p.$completed ? '#666' : '#111'};
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -585,7 +601,7 @@ const LessonRowDuration = styled.span`
   align-items: center;
   gap: 0.3rem;
   font-size: 0.75rem;
-  color: rgba(255,255,255,0.3);
+  color: #777;
   margin-top: 0.15rem;
   svg { font-size: 0.65rem; }
 `;
@@ -597,7 +613,7 @@ const LessonStatus = styled.span`
   width: 26px;
   height: 26px;
   flex-shrink: 0;
-  color: ${(p) => p.$completed ? '#22c55e' : 'rgba(255,255,255,0.15)'};
+  color: ${(p) => p.$completed ? '#22c55e' : '#bbb'};
   font-size: ${(p) => p.$completed ? '1rem' : '0.75rem'};
 `;
 
@@ -606,37 +622,38 @@ const LessonStatus = styled.span`
 const ModalOverlay = styled(motion.div)`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.5);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
   overflow-y: auto;
+  backdrop-filter: blur(4px);
 `;
 
 const ModalPanel = styled(motion.div)`
-  background: linear-gradient(180deg, #111827 0%, #0f1521 100%);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 20px;
   width: 100%;
   max-width: 780px;
   max-height: 92vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15);
 
   &::-webkit-scrollbar { width: 6px; }
-  &::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 3px; }
+  &::-webkit-scrollbar-track { background: #f5f5f5; }
 `;
 
 const ModalTop = styled.div`
   padding: 1.5rem 2rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
-  background: #111827;
+  background: #ffffff;
   border-radius: 20px 20px 0 0;
   z-index: 2;
   display: flex;
@@ -652,7 +669,7 @@ const ModalTopLeft = styled.div`
 
 const Breadcrumb = styled.div`
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.35);
+  color: #666;
   margin-bottom: 0.4rem;
   display: flex;
   align-items: center;
@@ -665,7 +682,7 @@ const Breadcrumb = styled.div`
 const ModalLessonTitle = styled.h2`
   font-size: 1.4rem;
   font-weight: 800;
-  color: white;
+  color: #111;
   margin: 0;
   display: flex;
   align-items: center;
@@ -677,9 +694,9 @@ const CloseBtn = styled.button`
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.5);
+  background: #f5f5f5;
+  border: 1px solid #e5e7eb;
+  color: #555;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -687,7 +704,7 @@ const CloseBtn = styled.button`
   flex-shrink: 0;
   font-size: 0.85rem;
   transition: all 0.2s;
-  &:hover { color: white; background: rgba(255,255,255,0.1); }
+  &:hover { color: #22c55e; background: rgba(34,197,94,0.1); }
 `;
 
 const ModalBody = styled.div`
@@ -701,7 +718,7 @@ const ContentBlock = styled.div`
 const ContentHeading = styled.h3`
   font-size: 1.1rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin: 0 0 0.6rem;
   display: flex;
   align-items: center;
@@ -709,15 +726,15 @@ const ContentHeading = styled.h3`
 `;
 
 const ContentText = styled.p`
-  color: rgba(255,255,255,0.6);
+  color: #333;
   font-size: 0.92rem;
   line-height: 1.85;
   margin: 0;
 `;
 
 const TakeawaysBox = styled.div`
-  background: rgba(34,197,94,0.06);
-  border: 1px solid rgba(34,197,94,0.15);
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.2);
   border-radius: 14px;
   padding: 1.5rem;
   margin: 2rem 0;
@@ -726,7 +743,7 @@ const TakeawaysBox = styled.div`
 const TakeawaysHeader = styled.h4`
   font-size: 1rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin: 0 0 1rem;
   display: flex;
   align-items: center;
@@ -739,7 +756,7 @@ const TakeawayItem = styled.div`
   align-items: flex-start;
   gap: 0.6rem;
   margin-bottom: 0.6rem;
-  color: rgba(255,255,255,0.6);
+  color: #333;
   font-size: 0.88rem;
   line-height: 1.55;
   svg { color: #22c55e; flex-shrink: 0; margin-top: 0.25rem; font-size: 0.75rem; }
@@ -750,13 +767,13 @@ const TakeawayItem = styled.div`
 const QuizSection = styled.div`
   margin-top: 2.5rem;
   padding-top: 2rem;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid #e5e7eb;
 `;
 
 const QuizHeader = styled.h3`
   font-size: 1.15rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin: 0 0 1.25rem;
   display: flex;
   align-items: center;
@@ -764,17 +781,22 @@ const QuizHeader = styled.h3`
   svg { color: #f59e0b; }
 `;
 
-const QuestionCard = styled.div`
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
+const QuestionCard = styled(motion.div)`
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 14px;
   padding: 1.25rem;
   margin-bottom: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(34,197,94,0.06);
+  }
 `;
 
 const QuestionText = styled.p`
   font-weight: 600;
-  color: white;
+  color: #111;
   margin: 0 0 0.75rem;
   font-size: 0.92rem;
   line-height: 1.5;
@@ -795,25 +817,25 @@ const OptionBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: rgba(255,255,255,0.8);
+  color: #333;
 
   border: 2px solid ${(p) => {
     if (p.$submitted && p.$isCorrect) return '#22c55e';
     if (p.$submitted && p.$selected && !p.$isCorrect) return '#ef4444';
-    if (!p.$submitted && p.$selected) return '#3b82f6';
-    return 'rgba(255,255,255,0.08)';
+    if (!p.$submitted && p.$selected) return '#22c55e';
+    return '#e5e7eb';
   }};
 
   background: ${(p) => {
     if (p.$submitted && p.$isCorrect) return 'rgba(34,197,94,0.1)';
     if (p.$submitted && p.$selected && !p.$isCorrect) return 'rgba(239,68,68,0.1)';
-    if (!p.$submitted && p.$selected) return 'rgba(59,130,246,0.08)';
-    return 'rgba(255,255,255,0.02)';
+    if (!p.$submitted && p.$selected) return 'rgba(34,197,94,0.06)';
+    return '#fff';
   }};
 
   &:hover:not(:disabled) {
-    border-color: ${(p) => (!p.$selected && !p.$submitted ? '#3b82f6' : undefined)};
-    background: ${(p) => (!p.$selected && !p.$submitted ? 'rgba(59,130,246,0.05)' : undefined)};
+    border-color: ${(p) => (!p.$selected && !p.$submitted ? '#22c55e' : undefined)};
+    background: ${(p) => (!p.$selected && !p.$submitted ? 'rgba(34,197,94,0.04)' : undefined)};
   }
 `;
 
@@ -824,7 +846,7 @@ const SubmitQuizBtn = styled.button`
   gap: 0.5rem;
   width: 100%;
   padding: 0.9rem;
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
   border: none;
   border-radius: 12px;
@@ -833,10 +855,10 @@ const SubmitQuizBtn = styled.button`
   cursor: pointer;
   margin-top: 1rem;
   transition: all 0.3s ease;
-  &:hover { opacity: 0.9; }
+  &:hover { opacity: 0.9; transform: translateY(-1px); }
   &:disabled {
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.25);
+    background: #e5e7eb;
+    color: #999;
     cursor: not-allowed;
   }
 `;
@@ -857,7 +879,7 @@ const ScoreValue = styled.div`
 `;
 
 const ScoreLabel = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: #555;
   font-size: 0.88rem;
   margin: 0.5rem 0 0;
 `;
@@ -895,7 +917,7 @@ const LessonNav = styled.div`
   gap: 1rem;
   margin-top: 2rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid #e5e7eb;
 `;
 
 const NavBtn = styled.button`
@@ -904,14 +926,14 @@ const NavBtn = styled.button`
   gap: 0.4rem;
   padding: 0.6rem 1.2rem;
   border-radius: 10px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.6);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  color: #555;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { color: white; border-color: rgba(255,255,255,0.15); }
+  &:hover { color: #22c55e; border-color: rgba(34,197,94,0.3); }
   &:disabled { opacity: 0.3; cursor: not-allowed; }
 `;
 

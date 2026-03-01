@@ -1,6 +1,14 @@
 const API_BASE = '/api';
 
+let _authSessionId = null; // When user is logged in, this is their email (persists to DB per user)
+
+export function setAuthSession(user) {
+  _authSessionId = user ? (user.email || user.id || null) : null;
+}
+
 function getSessionId() {
+  // Use logged-in user email so session data saves to their account
+  if (_authSessionId) return `auth:${_authSessionId}`;
   let sid = localStorage.getItem('bloomvest_session');
   if (!sid) {
     sid = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2);

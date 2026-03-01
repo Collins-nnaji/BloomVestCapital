@@ -4,8 +4,8 @@ import { FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
-  background: #060910;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
   padding: 2rem 0 1.5rem;
   width: 100%;
 `;
@@ -23,25 +23,32 @@ const TopRow = styled.div`
   gap: 1.5rem;
   flex-wrap: wrap;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid #e5e7eb;
 `;
 
 const LogoText = styled(Link)`
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   font-size: 1.2rem;
-  color: rgba(255,255,255,0.45);
+  color: #555;
   text-decoration: none;
   transition: color 0.2s ease;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  img {
+    height: 32px;
+  }
 
   span {
-    color: rgba(34,197,94,0.6);
+    color: #22c55e;
   }
 
   &:hover {
-    color: rgba(255,255,255,0.7);
-    span { color: #22c55e; }
+    color: #111;
+    span { color: #15803d; }
   }
 `;
 
@@ -58,7 +65,7 @@ const NavLinks = styled.div`
 
 const FooterNavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.3);
+  color: #555;
   font-size: 0.82rem;
   font-weight: 500;
   text-decoration: none;
@@ -82,8 +89,8 @@ const SocialLink = styled.a`
   width: 30px;
   height: 30px;
   border-radius: 6px;
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.3);
+  background: #f5f5f5;
+  color: #555;
   font-size: 0.85rem;
   transition: all 0.2s ease;
 
@@ -104,7 +111,7 @@ const BottomRow = styled.div`
 
 const Copyright = styled.p`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.2);
+  color: #666;
   font-size: 0.75rem;
   margin: 0;
   line-height: 1.5;
@@ -112,7 +119,7 @@ const Copyright = styled.p`
 
 const PoweredBy = styled.span`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.15);
+  color: #888;
   font-size: 0.72rem;
 `;
 
@@ -122,6 +129,7 @@ const Footer = () => {
       <Inner>
         <TopRow>
           <LogoText to="/">
+            <img src="/bloomvestlogo.png" alt="BloomVest" />
             Bloom<span>Vest</span>
           </LogoText>
 

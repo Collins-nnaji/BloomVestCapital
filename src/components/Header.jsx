@@ -15,12 +15,13 @@ const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   background: ${props => props.$scrolled
-    ? 'rgba(4,6,12,0.95)'
-    : 'rgba(6,9,16,0.85)'};
+    ? 'rgba(255,255,255,0.98)'
+    : 'rgba(255,255,255,0.95)'};
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  transition: background 0.3s ease;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  box-shadow: ${props => props.$scrolled ? '0 2px 12px rgba(0,0,0,0.06)' : 'none'};
+  transition: all 0.3s ease;
 `;
 
 const NavContainer = styled.div`
@@ -38,10 +39,16 @@ const Logo = styled(Link)`
   font-weight: 700;
   font-size: 1.4rem;
   text-decoration: none;
-  color: #fff;
+  color: #111;
   display: flex;
   align-items: center;
   z-index: 1021;
+  gap: 0.5rem;
+
+  img {
+    height: 38px;
+    width: auto;
+  }
 
   span {
     color: #22c55e;
@@ -60,7 +67,7 @@ const NavWrapper = styled.nav`
 
 const NavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
-  color: ${props => props.$active ? '#22c55e' : 'rgba(255,255,255,0.75)'};
+  color: ${props => props.$active ? '#22c55e' : '#111'};
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -124,7 +131,7 @@ const HamburgerButton = styled.button`
   display: none;
   background: transparent;
   border: none;
-  color: rgba(255,255,255,0.8);
+  color: #111;
   font-size: 1.25rem;
   cursor: pointer;
   z-index: 1021;
@@ -145,7 +152,7 @@ const HamburgerButton = styled.button`
 const MobileOverlay = styled(motion.div)`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.4);
   z-index: 1010;
   backdrop-filter: blur(4px);
 `;
@@ -157,12 +164,12 @@ const MobilePanel = styled(motion.div)`
   width: 280px;
   height: 100vh;
   height: 100dvh;
-  background: #0a0f1c;
+  background: #fff;
   z-index: 1020;
   padding: 5rem 1.5rem 2rem;
   display: flex;
   flex-direction: column;
-  border-left: 1px solid rgba(255,255,255,0.06);
+  border-left: 1px solid rgba(0,0,0,0.08);
 
   @media (max-width: 320px) {
     width: 100%;
@@ -173,15 +180,15 @@ const MobileCloseButton = styled.button`
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.08);
   width: 36px;
   height: 36px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255,255,255,0.5);
+  color: #111;
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s ease;
@@ -194,12 +201,12 @@ const MobileCloseButton = styled.button`
 
 const MobileNavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
-  color: ${props => props.$active ? '#22c55e' : 'rgba(255,255,255,0.6)'};
+  color: ${props => props.$active ? '#22c55e' : '#111'};
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
   padding: 0.9rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
   transition: all 0.2s ease;
   display: block;
 
@@ -257,20 +264,20 @@ const UserDropdown = styled(motion.div)`
   top: calc(100% + 8px);
   right: 0;
   min-width: 200px;
-  background: rgba(10,15,28,0.98);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: 12px;
   padding: 0.75rem 0;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   z-index: 1100;
 `;
 
 const UserDropdownName = styled.div`
   padding: 0.5rem 1rem;
-  color: rgba(255,255,255,0.9);
+  color: #111;
   font-size: 0.85rem;
   font-weight: 600;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
   word-break: break-all;
 `;
 
@@ -282,21 +289,21 @@ const SignOutBtn = styled.button`
   padding: 0.6rem 1rem;
   border: none;
   background: transparent;
-  color: rgba(255,255,255,0.7);
+  color: #111;
   font-size: 0.85rem;
   cursor: pointer;
   transition: color 0.2s, background 0.2s;
-  &:hover { background: rgba(239,68,68,0.15); color: #f87171; }
+  &:hover { background: rgba(239,68,68,0.08); color: #dc2626; }
 `;
 
 const MobileUserSection = styled.div`
   padding: 1rem 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid rgba(0,0,0,0.06);
   margin-top: 0.5rem;
 `;
 
 const MobileUserEmail = styled.div`
-  color: rgba(255,255,255,0.6);
+  color: #333;
   font-size: 0.85rem;
   padding-bottom: 0.5rem;
   word-break: break-all;
@@ -327,14 +334,14 @@ const SignInBtn = styled.button`
   padding: 0.45rem 1rem;
   border-radius: 8px;
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.7);
+  border: 2px solid #111;
+  color: #111;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { border-color: rgba(255,255,255,0.25); color: white; }
+  &:hover { border-color: #22c55e; color: #22c55e; }
 `;
 
 const ProBadge = styled(Link)`
@@ -408,6 +415,7 @@ const Header = () => {
     <HeaderContainer $scrolled={scrolled}>
       <NavContainer>
         <Logo to="/">
+          <img src="/bloomvestlogo.png" alt="BloomVest" />
           Bloom<span>Vest</span>
         </Logo>
 

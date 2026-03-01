@@ -16,7 +16,7 @@ const orbFloat = keyframes`
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: #060910;
+  background: #ffffff;
 `;
 
 const HeroSection = styled.section`
@@ -24,8 +24,8 @@ const HeroSection = styled.section`
   padding: 7rem 1.5rem 4rem;
   overflow: hidden;
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    linear-gradient(rgba(34,197,94,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,197,94,0.03) 1px, transparent 1px);
   background-size: 60px 60px;
 
   @media (max-width: 768px) {
@@ -40,7 +40,7 @@ const Orb = styled.div`
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(34,197,94,0.1) 0%, rgba(59,130,246,0.06) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, rgba(34,197,94,0.02) 40%, transparent 70%);
   animation: ${orbFloat} 15s ease-in-out infinite;
   pointer-events: none;
 
@@ -61,23 +61,23 @@ const Badge = styled(motion.div)`
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(34,197,94,0.08);
-  border: 1px solid rgba(34,197,94,0.2);
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.25);
   padding: 0.35rem 0.9rem;
   border-radius: 50px;
-  color: #4ade80;
+  color: #22c55e;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   margin-bottom: 1.75rem;
-  box-shadow: 0 0 20px rgba(34,197,94,0.08);
+  box-shadow: 0 0 20px rgba(34,197,94,0.1);
 `;
 
 const HeroTitle = styled(motion.h1)`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 3.5rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   line-height: 1.12;
   margin-bottom: 1.25rem;
   letter-spacing: -0.03em;
@@ -95,7 +95,7 @@ const HeroTitle = styled(motion.h1)`
 const HeroSubtitle = styled(motion.p)`
   font-family: 'DM Sans', sans-serif;
   font-size: 1.15rem;
-  color: rgba(255,255,255,0.45);
+  color: #333;
   max-width: 580px;
   line-height: 1.7;
   margin-bottom: 2rem;
@@ -140,8 +140,8 @@ const OutlineBtn = styled(Link)`
   gap: 0.4rem;
   padding: 0.75rem 1.5rem;
   background: transparent;
-  color: white;
-  border: 1px solid rgba(255,255,255,0.2);
+  color: #111;
+  border: 2px solid #111;
   border-radius: 10px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
@@ -150,15 +150,15 @@ const OutlineBtn = styled(Link)`
   transition: all 0.25s ease;
 
   &:hover {
-    border-color: rgba(255,255,255,0.4);
-    background: rgba(255,255,255,0.04);
+    border-color: #22c55e;
+    color: #22c55e;
     transform: translateY(-2px);
   }
 `;
 
 const StatsLine = styled(motion.div)`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.25);
+  color: #555;
   font-size: 0.82rem;
   margin-bottom: 2.5rem;
   display: flex;
@@ -175,7 +175,7 @@ const StatsLine = styled(motion.div)`
     width: 3px;
     height: 3px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.15);
+    background: #bbb;
     display: inline-block;
   }
 `;
@@ -191,21 +191,27 @@ const TickerCard = styled.div`
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 10px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
 `;
 
 const TickerName = styled.span`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.35);
+  color: #555;
   font-size: 0.78rem;
   font-weight: 500;
 `;
 
 const TickerValue = styled.span`
   font-family: 'JetBrains Mono', monospace;
-  color: white;
+  color: #111;
   font-weight: 500;
   font-size: 0.85rem;
 `;
@@ -214,7 +220,7 @@ const TickerChange = styled.span`
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   font-weight: 500;
-  color: ${props => props.$positive ? '#4ade80' : '#f87171'};
+  color: ${props => props.$positive ? '#22c55e' : '#dc2626'};
 `;
 
 const Section = styled.section`
@@ -231,7 +237,7 @@ const SectionTitle = styled(motion.h2)`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.6rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin-bottom: 2rem;
   letter-spacing: -0.02em;
 
@@ -251,19 +257,20 @@ const FeaturesGrid = styled.div`
 `;
 
 const FeatureCard = styled(motion(Link))`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fff;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 1.75rem;
   text-decoration: none;
   display: flex;
   flex-direction: column;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 
   &:hover {
     transform: translateY(-4px);
-    border-color: rgba(34,197,94,0.25);
-    box-shadow: 0 8px 30px rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.3);
+    box-shadow: 0 12px 32px rgba(34,197,94,0.12);
   }
 `;
 
@@ -283,13 +290,13 @@ const FeatureTitle = styled.h3`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.1rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin-bottom: 0.4rem;
 `;
 
 const FeatureDesc = styled.p`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.35);
+  color: #555;
   font-size: 0.88rem;
   line-height: 1.6;
   margin-bottom: 1rem;
@@ -297,12 +304,13 @@ const FeatureDesc = styled.p`
 `;
 
 const FeatureArrow = styled.span`
-  color: rgba(255,255,255,0.2);
+  color: #999;
   font-size: 0.85rem;
-  transition: color 0.2s;
+  transition: all 0.3s ease;
 
   ${FeatureCard}:hover & {
     color: #22c55e;
+    transform: translateX(4px);
   }
 `;
 
@@ -322,26 +330,27 @@ const AssetChip = styled.div`
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 1rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
   border-radius: 50px;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.5);
+  color: #333;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: border-color 0.2s;
+  transition: all 0.3s ease;
 
   &:hover {
-    border-color: rgba(34,197,94,0.3);
+    border-color: rgba(34,197,94,0.4);
+    transform: translateY(-2px);
   }
 `;
 
 const ChipCount = styled.span`
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.72rem;
-  color: rgba(255,255,255,0.25);
-  background: rgba(255,255,255,0.04);
+  color: #666;
+  background: rgba(0,0,0,0.04);
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
 `;
@@ -350,10 +359,10 @@ const TrustRow = styled(motion.div)`
   text-align: center;
   padding: 3rem 1.5rem;
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.2);
+  color: #666;
   font-size: 0.85rem;
-  border-top: 1px solid rgba(255,255,255,0.03);
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
   max-width: 1200px;
   margin: 0 auto;
 `;
@@ -373,7 +382,7 @@ const CTAHeadline = styled(motion.h2)`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.8rem;
   font-weight: 700;
-  color: white;
+  color: #111;
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
 
@@ -384,7 +393,7 @@ const CTAHeadline = styled(motion.h2)`
 
 const CTASubtext = styled.p`
   font-family: 'DM Sans', sans-serif;
-  color: rgba(255,255,255,0.2);
+  color: #666;
   font-size: 0.82rem;
   margin-top: 1rem;
 `;
