@@ -156,7 +156,11 @@ router.post('/portal', async (req, res) => {
   }
 });
 
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+/**
+ * Stripe webhook handler. Must receive raw body (Buffer) for signature verification.
+ * Mount this route BEFORE express.json() in the main app.
+ */
+async function handleStripeWebhook(req, res) {
   if (!stripe) return res.status(503).send();
 
   const sig = req.headers['stripe-signature'];
@@ -205,6 +209,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   }
 
   res.json({ received: true });
-});
+}
 
 module.exports = router;
+module.exports.handleStripeWebhook = handleStripeWebhook;

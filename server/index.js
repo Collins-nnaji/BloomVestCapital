@@ -13,6 +13,10 @@ const authRoutes = require('./routes/auth');
 const app = express();
 
 app.use(cors());
+
+// Stripe webhooks need raw body for signature verification - must be BEFORE express.json()
+app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), billingRoutes.handleStripeWebhook);
+
 app.use(express.json());
 
 app.use('/api/ai', aiRoutes);
