@@ -115,4 +115,28 @@ export const api = {
       }),
     });
   },
+
+  async getCustomScenarios() {
+    return request(`/scenario/custom?sessionId=${getSessionId()}`);
+  },
+
+  async saveCustomScenario(scenario) {
+    return request('/scenario/custom/save', {
+      method: 'POST',
+      body: JSON.stringify({
+        sessionId: getSessionId(),
+        scenario,
+      }),
+    });
+  },
+
+  async generateCustomScenario(builder) {
+    return request('/scenario/custom/generate', {
+      method: 'POST',
+      body: JSON.stringify({
+        sessionId: getSessionId(),
+        builder,
+      }),
+    });
+  },
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown, FaMagic, FaChevronRight, FaSave, FaBullseye, FaSpinner } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { scenarios, difficultyColors } from '../data/scenarios';
 import { stocks } from '../data/stockData';
@@ -148,6 +148,287 @@ const GoalTag = styled.span`
   background: rgba(168,85,247,0.1);
   color: #a855f7;
   border: 1px solid rgba(168,85,247,0.15);
+`;
+
+const BuilderHero = styled(motion.div)`
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(56,189,248,0.3);
+  background: linear-gradient(130deg, rgba(56,189,248,0.14), rgba(168,85,247,0.14));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const BuilderCtaBtn = styled.button`
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(120deg, #22c55e, #16a34a);
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.7rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+  }
+`;
+
+const FilterBar = styled.div`
+  margin-bottom: 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.8rem;
+  align-items: center;
+
+  @media (max-width: 880px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FilterSearch = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  padding: 0.6rem 0.8rem;
+`;
+
+const FilterInput = styled.input`
+  border: none;
+  background: transparent;
+  color: white;
+  width: 100%;
+  font-size: 0.85rem;
+  outline: none;
+  &::placeholder { color: rgba(255,255,255,0.25); }
+`;
+
+const FilterChips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+`;
+
+const FilterChip = styled.button`
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.45)' : 'rgba(255,255,255,0.12)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.16)' : 'rgba(255,255,255,0.02)'};
+  color: ${p => p.$active ? '#4ade80' : 'rgba(255,255,255,0.6)'};
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+`;
+
+const SectionHeader = styled.div`
+  margin: 1rem 0 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+`;
+
+const SectionTitle = styled.h3`
+  color: white;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+`;
+
+const SectionHint = styled.p`
+  color: rgba(255,255,255,0.35);
+  font-size: 0.78rem;
+`;
+
+const BuilderShell = styled(motion.div)`
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 1rem;
+`;
+
+const BuilderHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+`;
+
+const BuilderTitle = styled.h2`
+  color: white;
+  font-size: 1.35rem;
+  font-weight: 800;
+`;
+
+const Stepper = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+`;
+
+const StepPill = styled.div`
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: ${p => p.$active ? '#4ade80' : 'rgba(255,255,255,0.45)'};
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.45)' : 'rgba(255,255,255,0.12)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : 'rgba(255,255,255,0.02)'};
+`;
+
+const BuilderGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 0.9rem;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const BuilderPanel = styled.div`
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  padding: 0.9rem;
+`;
+
+const OptionGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.6rem;
+`;
+
+const OptionCard = styled.button`
+  border: 1px solid ${p => p.$active ? 'rgba(56,189,248,0.5)' : 'rgba(255,255,255,0.09)'};
+  background: ${p => p.$active ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.03)'};
+  color: white;
+  border-radius: 10px;
+  padding: 0.7rem;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+  &:hover { border-color: rgba(56,189,248,0.35); }
+`;
+
+const BuilderTextInput = styled.input`
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  color: white;
+  padding: 0.62rem 0.72rem;
+  font-size: 0.85rem;
+  outline: none;
+`;
+
+const BuilderTextArea = styled.textarea`
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  color: white;
+  padding: 0.62rem 0.72rem;
+  font-size: 0.85rem;
+  outline: none;
+`;
+
+const BuilderRange = styled.input`
+  width: 100%;
+`;
+
+const AssetGrid = styled.div`
+  max-height: 250px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.45rem;
+  padding-right: 0.25rem;
+`;
+
+const AssetChip = styled.button`
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.48)' : 'rgba(255,255,255,0.1)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : 'rgba(255,255,255,0.03)'};
+  color: ${p => p.$active ? '#86efac' : 'rgba(255,255,255,0.75)'};
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+`;
+
+const ObjectiveCard = styled.button`
+  width: 100%;
+  border: 1px solid ${p => p.$active ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.1)'};
+  background: ${p => p.$active ? 'rgba(168,85,247,0.14)' : 'rgba(255,255,255,0.03)'};
+  color: white;
+  border-radius: 10px;
+  padding: 0.6rem;
+  cursor: pointer;
+  text-align: left;
+`;
+
+const BuilderActions = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+`;
+
+const BtnGroup = styled.div`
+  display: inline-flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+`;
+
+const SecondaryBtn = styled.button`
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.85);
+  border-radius: 10px;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+`;
+
+const PrimaryBtn = styled.button`
+  border: none;
+  background: linear-gradient(120deg, #22c55e, #16a34a);
+  color: white;
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+`;
+
+const PreviewCard = styled.div`
+  border: 1px solid rgba(56,189,248,0.35);
+  background: rgba(56,189,248,0.08);
+  border-radius: 12px;
+  padding: 0.85rem;
 `;
 
 /* ======= Active Simulation Styles ======= */
@@ -748,6 +1029,108 @@ function timeNow() {
   return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
 
+const BUILDER_STEPS = ['Theme', 'Setup', 'Assets', 'Objectives', 'Preview'];
+
+const BUILDER_THEMES = [
+  { id: 'future-self', title: 'Future Self Plan', desc: 'Build wealth for a life goal.', emoji: '🧭', goal: 'long-term planning and balanced growth' },
+  { id: 'volatility', title: 'Volatility Storm', desc: 'Stay rational during chaos.', emoji: '🌪️', goal: 'risk control and discipline under pressure' },
+  { id: 'income', title: 'Income Machine', desc: 'Generate recurring cashflow.', emoji: '💸', goal: 'income investing and dividend quality' },
+  { id: 'global', title: 'Global Macro Mix', desc: 'Diversify across asset classes.', emoji: '🌍', goal: 'multi-asset diversification and hedging' },
+];
+
+const NARRATIVE_STYLES = ['Coach-style', 'Story-based', 'Data-driven', 'Challenge mode'];
+
+const OBJECTIVE_LIBRARY = [
+  { id: 'first-trade', label: 'Make first purchase', hint: 'Gets the user into action quickly', rule: { type: 'holdings_count_min', min: 1 } },
+  { id: 'diversify-3', label: 'Own 3 different positions', hint: 'Basic diversification discipline', rule: { type: 'holdings_count_min', min: 3 } },
+  { id: 'sectors-2', label: 'Invest across 2 sectors', hint: 'Reduces concentration risk', rule: { type: 'sectors_min', min: 2 } },
+  { id: 'invest-60', label: 'Invest at least 60% cash', hint: 'Encourages capital deployment', rule: { type: 'invest_percent_min', minPercent: 60 } },
+  { id: 'single-cap', label: 'No single position > 40%', hint: 'Position sizing guardrail', rule: { type: 'single_position_max', maxPercent: 40 } },
+  { id: 'dividend', label: 'Buy a dividend asset (>2%)', hint: 'Income lens', rule: { type: 'dividend_stock_min', minDividend: 2 } },
+];
+
+function createBuilderState() {
+  const starterTheme = BUILDER_THEMES[0];
+  return {
+    themeId: starterTheme.id,
+    topic: starterTheme.title,
+    goal: starterTheme.goal,
+    emoji: starterTheme.emoji,
+    narrativeStyle: NARRATIVE_STYLES[0],
+    challengeLevel: 'Beginner',
+    duration: '15 min',
+    startingBalance: 10000,
+    selectedAssets: ['AAPL', 'MSFT', 'SPY', 'BND'],
+    objectiveFocus: ['first-trade', 'diversify-3', 'invest-60'],
+    customFlavor: '',
+  };
+}
+
+function evaluateObjectiveRule(rule, currentHoldings, currentBalance, scenario) {
+  if (!rule || typeof rule !== 'object') return false;
+  const totalValue = scenario.startingBalance > 0
+    ? scenario.startingBalance
+    : currentHoldings.reduce((sum, holding) => sum + (holding.marketValue || 0), 0) + currentBalance;
+  const bySymbol = new Map(stocks.map((stock) => [stock.symbol, stock]));
+
+  switch (rule.type) {
+    case 'holdings_count_min':
+      return currentHoldings.length >= (Number(rule.min) || 1);
+    case 'sectors_min': {
+      const sectors = new Set(
+        currentHoldings
+          .map((holding) => bySymbol.get(holding.symbol)?.sector)
+          .filter(Boolean)
+      );
+      return sectors.size >= (Number(rule.min) || 1);
+    }
+    case 'invest_percent_min': {
+      const minPercent = Number(rule.minPercent) || 50;
+      const invested = totalValue - currentBalance;
+      return totalValue > 0 && (invested / totalValue) * 100 >= minPercent;
+    }
+    case 'stock_in_portfolio':
+      return currentHoldings.some((holding) => holding.symbol === rule.symbol);
+    case 'sector_holdings_min': {
+      const min = Number(rule.min) || 1;
+      const count = currentHoldings.filter((holding) => bySymbol.get(holding.symbol)?.sector === rule.sector).length;
+      return count >= min;
+    }
+    case 'dividend_stock_min': {
+      const minDividend = Number(rule.minDividend) || 1;
+      return currentHoldings.some((holding) => (bySymbol.get(holding.symbol)?.dividend || 0) >= minDividend);
+    }
+    case 'pe_condition_any': {
+      const target = Number(rule.value) || 20;
+      const compare = {
+        gte: (pe) => pe >= target,
+        lte: (pe) => pe <= target,
+        gt: (pe) => pe > target,
+        lt: (pe) => pe < target,
+      }[rule.operator || 'gte'];
+      return currentHoldings.some((holding) => {
+        const pe = bySymbol.get(holding.symbol)?.pe;
+        return typeof pe === 'number' && compare(pe);
+      });
+    }
+    case 'single_position_max': {
+      const maxPercent = Number(rule.maxPercent) || 40;
+      const total = currentHoldings.reduce((sum, holding) => {
+        const stock = bySymbol.get(holding.symbol);
+        return sum + ((stock?.price || 0) * holding.shares);
+      }, 0) + currentBalance;
+      if (total <= 0 || currentHoldings.length === 0) return false;
+      return currentHoldings.every((holding) => {
+        const stock = bySymbol.get(holding.symbol);
+        const positionValue = (stock?.price || 0) * holding.shares;
+        return (positionValue / total) * 100 <= maxPercent;
+      });
+    }
+    default:
+      return false;
+  }
+}
+
 const ProGate = styled.div`
   text-align: center;
   padding: 3rem 2rem;
@@ -804,6 +1187,15 @@ const ScenarioPage = () => {
   const [completionReview, setCompletionReview] = useState('');
   const [notification, setNotification] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [catalogQuery, setCatalogQuery] = useState('');
+  const [catalogFilter, setCatalogFilter] = useState('All');
+  const [customScenarios, setCustomScenarios] = useState([]);
+  const [customScenariosLoading, setCustomScenariosLoading] = useState(false);
+  const [builderStep, setBuilderStep] = useState(0);
+  const [builder, setBuilder] = useState(createBuilderState);
+  const [builderGenerating, setBuilderGenerating] = useState(false);
+  const [builderSaving, setBuilderSaving] = useState(false);
+  const [builderPreview, setBuilderPreview] = useState(null);
 
   const messagesEndRef = useRef(null);
 
@@ -817,16 +1209,53 @@ const ScenarioPage = () => {
     scrollToBottom();
   }, [messages, aiLoading, scrollToBottom]);
 
+  useEffect(() => {
+    let cancelled = false;
+    if (!isPro || !user) {
+      setCustomScenarios([]);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const loadCustomScenarios = async () => {
+      setCustomScenariosLoading(true);
+      try {
+        const result = await api.getCustomScenarios();
+        if (!cancelled) {
+          setCustomScenarios(result.scenarios || []);
+        }
+      } catch (err) {
+        if (!cancelled) setCustomScenarios([]);
+      } finally {
+        if (!cancelled) setCustomScenariosLoading(false);
+      }
+    };
+
+    loadCustomScenarios();
+    return () => {
+      cancelled = true;
+    };
+  }, [isPro, user]);
+
   const showNotif = useCallback((msg, type = 'success') => {
     setNotification({ msg, type });
     setTimeout(() => setNotification(null), 3000);
   }, []);
 
-  const checkObjectives = useCallback((currentHoldings, currentBalance) => {
-    if (!activeScenario) return [];
-    const done = activeScenario.objectives
-      .filter(obj => obj.check(currentHoldings, stocks, currentBalance))
-      .map(obj => obj.id);
+  const checkObjectives = useCallback((currentHoldings, currentBalance, scenario = activeScenario) => {
+    if (!scenario?.objectives?.length) return [];
+    const done = scenario.objectives
+      .filter((obj) => {
+        if (typeof obj.check === 'function') {
+          return obj.check(currentHoldings, stocks, currentBalance);
+        }
+        if (obj.rule) {
+          return evaluateObjectiveRule(obj.rule, currentHoldings, currentBalance, scenario);
+        }
+        return false;
+      })
+      .map((obj) => obj.id);
     return done;
   }, [activeScenario]);
 
@@ -911,7 +1340,101 @@ const ScenarioPage = () => {
     } finally {
       setAiLoading(false);
     }
+  }, [isPro]);
+
+  const resetBuilder = useCallback(() => {
+    setBuilderStep(0);
+    setBuilder(createBuilderState());
+    setBuilderPreview(null);
   }, []);
+
+  const goToBuilder = useCallback(() => {
+    resetBuilder();
+    setView('builder');
+  }, [resetBuilder]);
+
+  const updateBuilder = useCallback((key, value) => {
+    setBuilder((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const toggleBuilderAsset = useCallback((symbol) => {
+    setBuilder((prev) => {
+      const exists = prev.selectedAssets.includes(symbol);
+      const nextAssets = exists
+        ? prev.selectedAssets.filter((item) => item !== symbol)
+        : [...prev.selectedAssets, symbol];
+      return { ...prev, selectedAssets: nextAssets.slice(0, 16) };
+    });
+  }, []);
+
+  const toggleBuilderObjective = useCallback((objectiveId) => {
+    setBuilder((prev) => {
+      const exists = prev.objectiveFocus.includes(objectiveId);
+      const next = exists
+        ? prev.objectiveFocus.filter((item) => item !== objectiveId)
+        : [...prev.objectiveFocus, objectiveId];
+      return { ...prev, objectiveFocus: next.slice(0, 6) };
+    });
+  }, []);
+
+  const applyTheme = useCallback((theme) => {
+    setBuilder((prev) => ({
+      ...prev,
+      themeId: theme.id,
+      topic: theme.title,
+      goal: theme.goal,
+      emoji: theme.emoji,
+    }));
+  }, []);
+
+  const generateBuilderScenario = useCallback(async () => {
+    if (builder.selectedAssets.length < 2) {
+      showNotif('Select at least 2 assets for your scenario.', 'error');
+      return;
+    }
+    setBuilderGenerating(true);
+    try {
+      const objectiveFocus = OBJECTIVE_LIBRARY
+        .filter((item) => builder.objectiveFocus.includes(item.id))
+        .map((item) => ({
+          id: item.id,
+          label: item.label,
+          rule: item.rule,
+        }));
+      const result = await api.generateCustomScenario({
+        ...builder,
+        objectiveFocus,
+      });
+      setBuilderPreview(result.scenario);
+      setBuilderStep(4);
+      showNotif('Scenario draft generated with AI.');
+    } catch (err) {
+      showNotif(err.message || 'Failed to generate scenario draft.', 'error');
+    } finally {
+      setBuilderGenerating(false);
+    }
+  }, [builder, showNotif]);
+
+  const saveBuilderScenario = useCallback(async () => {
+    if (!builderPreview) return;
+    setBuilderSaving(true);
+    try {
+      const result = await api.saveCustomScenario(builderPreview);
+      const saved = result.scenario;
+      setBuilderPreview(saved);
+      setCustomScenarios((prev) => {
+        const exists = prev.some((item) => item.dbId === saved.dbId);
+        return exists
+          ? prev.map((item) => (item.dbId === saved.dbId ? saved : item))
+          : [saved, ...prev];
+      });
+      showNotif('Scenario saved to your library.');
+    } catch (err) {
+      showNotif(err.message || 'Could not save scenario.', 'error');
+    } finally {
+      setBuilderSaving(false);
+    }
+  }, [builderPreview, showNotif]);
 
   const handleBuy = useCallback(async () => {
     if (!selectedStock || !quantity || parseInt(quantity) <= 0) return;
@@ -1084,6 +1607,21 @@ const ScenarioPage = () => {
     ? holdings.find(h => h.symbol === selectedStock.symbol)
     : null;
 
+  const allScenarios = [...scenarios, ...customScenarios];
+  const catalogFilteredScenarios = allScenarios.filter((scenario) => {
+    const query = catalogQuery.toLowerCase().trim();
+    if (catalogFilter === 'Custom' && !scenario.isCustom) return false;
+    if (catalogFilter !== 'All' && catalogFilter !== 'Custom' && scenario.difficulty !== catalogFilter) return false;
+    if (!query) return true;
+    return (
+      scenario.title.toLowerCase().includes(query) ||
+      scenario.description.toLowerCase().includes(query) ||
+      scenario.learningGoals.some((goal) => goal.toLowerCase().includes(query))
+    );
+  });
+  const selectedTheme = BUILDER_THEMES.find((theme) => theme.id === builder.themeId) || BUILDER_THEMES[0];
+  const selectedObjectiveTemplates = OBJECTIVE_LIBRARY.filter((item) => builder.objectiveFocus.includes(item.id));
+
   /* ======= RENDER: Scenario Selection ======= */
   if (view === 'select') {
     return (
@@ -1095,7 +1633,7 @@ const ScenarioPage = () => {
             transition={{ duration: 0.5 }}
           >
             <PageTitle>Investment <span style={{color:'#22c55e'}}>Scenarios</span></PageTitle>
-            <PageSubtitle style={{maxWidth:600,margin:'0.5rem auto 0'}}>Step-by-step investing simulations with a personal <strong style={{color:'#a78bfa'}}>AI tutor</strong> that teaches, explains every decision, and coaches you in real time.</PageSubtitle>
+            <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#a78bfa'}}>AI tutor</strong>. Build confidence before risking real capital.</PageSubtitle>
           </PageHeader>
 
           {!isPro && (
@@ -1109,44 +1647,386 @@ const ScenarioPage = () => {
             </ProGate>
           )}
 
-          <ScenariosGrid>
-            {scenarios.map((scenario, idx) => (
-              <ScenarioCard
-                key={scenario.id}
-                onClick={() => isPro ? startScenario(scenario) : null}
-                style={{ opacity: isPro ? 1 : 0.5, cursor: isPro ? 'pointer' : 'default' }}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.06, type: 'spring', stiffness: 120 }}
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <ScenarioCardHeader>
-                  <ScenarioIcon>{scenario.icon}</ScenarioIcon>
-                  <DifficultyBadge $color={difficultyColors[scenario.difficulty]}>
-                    {scenario.difficulty}
-                  </DifficultyBadge>
-                </ScenarioCardHeader>
-                <ScenarioCardTitle>{scenario.title}</ScenarioCardTitle>
-                <ScenarioCardDesc>{scenario.description}</ScenarioCardDesc>
-                <div style={{background:'rgba(139,92,246,0.06)',border:'1px solid rgba(139,92,246,0.12)',borderRadius:10,padding:'0.65rem 0.85rem',marginBottom:'1rem',display:'flex',alignItems:'flex-start',gap:'0.6rem'}}>
-                  <FaRobot style={{color:'#a78bfa',flexShrink:0,marginTop:2,fontSize:'0.9rem'}} />
-                  <span style={{color:'rgba(255,255,255,0.55)',fontSize:'0.78rem',lineHeight:1.45}}>
-                    <strong style={{color:'#a78bfa'}}>AI Tutor guides you</strong> — explains every trade, coaches your decisions, and teaches {scenario.learningGoals.slice(0,2).join(' & ').toLowerCase()} step by step.
-                  </span>
+          {isPro && (
+            <BuilderHero
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div>
+                <div style={{fontSize:'0.72rem',fontWeight:800,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7dd3fc',marginBottom:'0.35rem'}}>New creator mode</div>
+                <div style={{color:'white',fontSize:'1.15rem',fontWeight:800,marginBottom:'0.25rem'}}>Design your own scenario with guided AI blocks</div>
+                <div style={{color:'rgba(255,255,255,0.7)',fontSize:'0.86rem'}}>Pick a theme, assets, and learning objectives, then generate a polished scenario you can save and replay.</div>
+              </div>
+              <BuilderCtaBtn onClick={goToBuilder}>
+                <FaMagic /> Create custom scenario
+              </BuilderCtaBtn>
+            </BuilderHero>
+          )}
+
+          <FilterBar>
+            <FilterSearch>
+              <FaSearch style={{color:'rgba(255,255,255,0.3)',fontSize:'0.8rem'}} />
+              <FilterInput
+                placeholder="Search scenarios, outcomes, or learning goals..."
+                value={catalogQuery}
+                onChange={(e) => setCatalogQuery(e.target.value)}
+              />
+            </FilterSearch>
+            <FilterChips>
+              {['All', 'Beginner', 'Intermediate', 'Advanced', 'Custom'].map((filter) => (
+                <FilterChip
+                  key={filter}
+                  $active={catalogFilter === filter}
+                  onClick={() => setCatalogFilter(filter)}
+                >
+                  {filter}
+                </FilterChip>
+              ))}
+            </FilterChips>
+          </FilterBar>
+
+          <SectionHeader>
+            <SectionTitle>
+              Scenario Library ({catalogFilteredScenarios.length})
+            </SectionTitle>
+            <SectionHint>
+              {customScenariosLoading ? 'Loading your saved scenarios...' : `${customScenarios.length} custom saved`}
+            </SectionHint>
+          </SectionHeader>
+
+          {catalogFilteredScenarios.length === 0 ? (
+            <Card style={{padding:'1.2rem',textAlign:'center'}}>
+              <div style={{color:'rgba(255,255,255,0.75)',fontWeight:700,marginBottom:'0.4rem'}}>No scenarios match your filter yet.</div>
+              <div style={{color:'rgba(255,255,255,0.45)',fontSize:'0.85rem'}}>Try a different search term or create your own scenario.</div>
+            </Card>
+          ) : (
+            <ScenariosGrid>
+              {catalogFilteredScenarios.map((scenario, idx) => (
+                <ScenarioCard
+                  key={scenario.id}
+                  onClick={() => isPro ? startScenario(scenario) : null}
+                  style={{ opacity: isPro ? 1 : 0.5, cursor: isPro ? 'pointer' : 'default' }}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05, type: 'spring', stiffness: 120 }}
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <ScenarioCardHeader>
+                    <ScenarioIcon>{scenario.icon}</ScenarioIcon>
+                    <div style={{display:'flex',gap:'0.35rem',alignItems:'center'}}>
+                      {scenario.isCustom && (
+                        <DifficultyBadge $color="#38bdf8">Custom</DifficultyBadge>
+                      )}
+                      <DifficultyBadge $color={difficultyColors[scenario.difficulty]}>
+                        {scenario.difficulty}
+                      </DifficultyBadge>
+                    </div>
+                  </ScenarioCardHeader>
+                  <ScenarioCardTitle>{scenario.title}</ScenarioCardTitle>
+                  <ScenarioCardDesc>{scenario.description}</ScenarioCardDesc>
+                  <div style={{background:'rgba(139,92,246,0.06)',border:'1px solid rgba(139,92,246,0.12)',borderRadius:10,padding:'0.65rem 0.85rem',marginBottom:'1rem',display:'flex',alignItems:'flex-start',gap:'0.6rem'}}>
+                    <FaRobot style={{color:'#a78bfa',flexShrink:0,marginTop:2,fontSize:'0.9rem'}} />
+                    <span style={{color:'rgba(255,255,255,0.55)',fontSize:'0.78rem',lineHeight:1.45}}>
+                      <strong style={{color:'#a78bfa'}}>AI Tutor guides you</strong> with actionable coaching and instant feedback on every decision.
+                    </span>
+                  </div>
+                  <ScenarioCardMeta>
+                    <Duration><FaClock /> {scenario.duration}</Duration>
+                    <StartLabel><FaPlay /> Start Simulation</StartLabel>
+                  </ScenarioCardMeta>
+                  <GoalsWrap>
+                    {scenario.learningGoals.slice(0, 4).map(g => (
+                      <GoalTag key={g}>{g}</GoalTag>
+                    ))}
+                  </GoalsWrap>
+                </ScenarioCard>
+              ))}
+            </ScenariosGrid>
+          )}
+        </ContentWrapper>
+      </PageContainer>
+    );
+  }
+
+  if (view === 'builder') {
+    const canProceedFromObjectives = builder.objectiveFocus.length >= 2;
+    return (
+      <PageContainer>
+        <ContentWrapper>
+          <BuilderShell
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <BuilderHead>
+              <div>
+                <BuilderTitle><FaMagic style={{marginRight:'0.45rem',color:'#38bdf8'}} />Scenario Creator Studio</BuilderTitle>
+                <div style={{color:'rgba(255,255,255,0.5)',fontSize:'0.85rem',marginTop:'0.2rem'}}>Build an interactive scenario with guided cards, then generate a polished draft with OpenAI.</div>
+              </div>
+              <Stepper>
+                {BUILDER_STEPS.map((stepLabel, index) => (
+                  <StepPill key={stepLabel} $active={index === builderStep}>{index + 1}. {stepLabel}</StepPill>
+                ))}
+              </Stepper>
+            </BuilderHead>
+
+            <BuilderGrid>
+              <BuilderPanel>
+                {builderStep === 0 && (
+                  <div>
+                    <div style={{color:'white',fontWeight:800,marginBottom:'0.65rem'}}>Pick a scenario theme</div>
+                    <OptionGrid>
+                      {BUILDER_THEMES.map((theme) => (
+                        <OptionCard
+                          key={theme.id}
+                          $active={builder.themeId === theme.id}
+                          onClick={() => applyTheme(theme)}
+                        >
+                          <div style={{fontSize:'1.25rem',marginBottom:'0.25rem'}}>{theme.emoji}</div>
+                          <div style={{fontWeight:800,fontSize:'0.86rem'}}>{theme.title}</div>
+                          <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.58)',marginTop:'0.2rem'}}>{theme.desc}</div>
+                        </OptionCard>
+                      ))}
+                    </OptionGrid>
+                    <div style={{marginTop:'0.8rem'}}>
+                      <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Optional flavor text</div>
+                      <BuilderTextArea
+                        value={builder.customFlavor}
+                        placeholder="Example: Include a mid-simulation market shock and force risk management decisions."
+                        onChange={(e) => updateBuilder('customFlavor', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {builderStep === 1 && (
+                  <div>
+                    <div style={{display:'grid',gap:'0.7rem'}}>
+                      <div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Scenario title</div>
+                        <BuilderTextInput value={builder.topic} onChange={(e) => updateBuilder('topic', e.target.value)} />
+                      </div>
+                      <div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Learning goal</div>
+                        <BuilderTextArea value={builder.goal} onChange={(e) => updateBuilder('goal', e.target.value)} />
+                      </div>
+                      <OptionGrid>
+                        {['Beginner', 'Intermediate', 'Advanced'].map((level) => (
+                          <OptionCard
+                            key={level}
+                            $active={builder.challengeLevel === level}
+                            onClick={() => updateBuilder('challengeLevel', level)}
+                          >
+                            <div style={{fontWeight:800,fontSize:'0.82rem'}}>{level}</div>
+                            <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginTop:'0.2rem'}}>Difficulty</div>
+                          </OptionCard>
+                        ))}
+                      </OptionGrid>
+                      <div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Duration</div>
+                        <OptionGrid>
+                          {['10 min', '15 min', '20 min', '30 min'].map((dur) => (
+                            <OptionCard key={dur} $active={builder.duration === dur} onClick={() => updateBuilder('duration', dur)}>
+                              <div style={{fontWeight:800,fontSize:'0.82rem'}}>{dur}</div>
+                            </OptionCard>
+                          ))}
+                        </OptionGrid>
+                      </div>
+                      <div>
+                        <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>
+                          <span>Starting balance</span>
+                          <span>${builder.startingBalance.toLocaleString()}</span>
+                        </div>
+                        <BuilderRange
+                          type="range"
+                          min="5000"
+                          max="100000"
+                          step="1000"
+                          value={builder.startingBalance}
+                          onChange={(e) => updateBuilder('startingBalance', Number(e.target.value))}
+                        />
+                      </div>
+                      <div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Narrative style</div>
+                        <OptionGrid>
+                          {NARRATIVE_STYLES.map((style) => (
+                            <OptionCard key={style} $active={builder.narrativeStyle === style} onClick={() => updateBuilder('narrativeStyle', style)}>
+                              <div style={{fontWeight:800,fontSize:'0.82rem'}}>{style}</div>
+                            </OptionCard>
+                          ))}
+                        </OptionGrid>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {builderStep === 2 && (
+                  <div>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.6rem'}}>
+                      <div style={{color:'white',fontWeight:800}}>Asset universe</div>
+                      <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.5)'}}>{builder.selectedAssets.length} selected</div>
+                    </div>
+                    <AssetGrid>
+                      {stocks.map((stock) => (
+                        <AssetChip
+                          key={stock.symbol}
+                          $active={builder.selectedAssets.includes(stock.symbol)}
+                          onClick={() => toggleBuilderAsset(stock.symbol)}
+                        >
+                          <div style={{fontWeight:800}}>{stock.symbol}</div>
+                          <div style={{fontSize:'0.68rem',opacity:0.85}}>{stock.sector}</div>
+                        </AssetChip>
+                      ))}
+                    </AssetGrid>
+                  </div>
+                )}
+
+                {builderStep === 3 && (
+                  <div>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.6rem'}}>
+                      <div style={{color:'white',fontWeight:800}}>Objective templates</div>
+                      <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.5)'}}>{builder.objectiveFocus.length} selected</div>
+                    </div>
+                    <div style={{display:'grid',gap:'0.5rem'}}>
+                      {OBJECTIVE_LIBRARY.map((objective) => (
+                        <ObjectiveCard
+                          key={objective.id}
+                          $active={builder.objectiveFocus.includes(objective.id)}
+                          onClick={() => toggleBuilderObjective(objective.id)}
+                        >
+                          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem'}}>
+                            <div style={{fontWeight:800,fontSize:'0.82rem'}}>{objective.label}</div>
+                            <FaBullseye style={{color:builder.objectiveFocus.includes(objective.id) ? '#c084fc' : 'rgba(255,255,255,0.3)',fontSize:'0.7rem'}} />
+                          </div>
+                          <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginTop:'0.2rem'}}>{objective.hint}</div>
+                        </ObjectiveCard>
+                      ))}
+                    </div>
+                    {!canProceedFromObjectives && (
+                      <div style={{marginTop:'0.6rem',fontSize:'0.74rem',color:'#f87171'}}>Select at least 2 objective templates.</div>
+                    )}
+                  </div>
+                )}
+
+                {builderStep === 4 && (
+                  <div>
+                    <PreviewCard>
+                      {builderPreview ? (
+                        <>
+                          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.6rem'}}>
+                            <div style={{display:'flex',alignItems:'center',gap:'0.55rem'}}>
+                              <div style={{fontSize:'1.35rem'}}>{builderPreview.icon}</div>
+                              <div>
+                                <div style={{fontWeight:800,color:'white'}}>{builderPreview.title}</div>
+                                <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.6)'}}>{builderPreview.difficulty} • {builderPreview.duration} • ${Number(builderPreview.startingBalance).toLocaleString()}</div>
+                              </div>
+                            </div>
+                            <DifficultyBadge $color="#38bdf8">AI Draft</DifficultyBadge>
+                          </div>
+                          <p style={{color:'rgba(255,255,255,0.72)',fontSize:'0.82rem',lineHeight:1.5,marginTop:'0.7rem'}}>{builderPreview.description}</p>
+                          <div style={{marginTop:'0.7rem',display:'flex',flexWrap:'wrap',gap:'0.35rem'}}>
+                            {builderPreview.learningGoals?.slice(0, 5).map((goal) => <GoalTag key={goal}>{goal}</GoalTag>)}
+                          </div>
+                          <div style={{marginTop:'0.75rem'}}>
+                            <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginBottom:'0.35rem'}}>Objectives</div>
+                            {(builderPreview.objectives || []).map((objective) => (
+                              <div key={objective.id} style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.8)',marginBottom:'0.3rem'}}>• {objective.label}</div>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <div style={{color:'rgba(255,255,255,0.72)',fontSize:'0.85rem'}}>Generate a scenario to preview it here.</div>
+                      )}
+                    </PreviewCard>
+                  </div>
+                )}
+              </BuilderPanel>
+
+              <BuilderPanel>
+                <div style={{fontSize:'0.72rem',textTransform:'uppercase',letterSpacing:'0.07em',color:'#7dd3fc',fontWeight:700,marginBottom:'0.35rem'}}>Builder summary</div>
+                <div style={{display:'flex',alignItems:'center',gap:'0.55rem',marginBottom:'0.7rem'}}>
+                  <div style={{fontSize:'1.5rem'}}>{selectedTheme.emoji}</div>
+                  <div>
+                    <div style={{fontWeight:800,color:'white'}}>{builder.topic}</div>
+                    <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.6)'}}>{builder.challengeLevel} • {builder.duration}</div>
+                  </div>
                 </div>
-                <ScenarioCardMeta>
-                  <Duration><FaClock /> {scenario.duration}</Duration>
-                  <StartLabel><FaPlay /> Start Simulation</StartLabel>
-                </ScenarioCardMeta>
-                <GoalsWrap>
-                  {scenario.learningGoals.map(g => (
-                    <GoalTag key={g}>{g}</GoalTag>
-                  ))}
-                </GoalsWrap>
-              </ScenarioCard>
-            ))}
-          </ScenariosGrid>
+                <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.68)',lineHeight:1.5}}>{builder.goal}</div>
+
+                <div style={{marginTop:'0.85rem'}}>
+                  <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginBottom:'0.35rem'}}>Selected assets ({builder.selectedAssets.length})</div>
+                  <GoalsWrap>
+                    {builder.selectedAssets.slice(0, 12).map((symbol) => <GoalTag key={symbol}>{symbol}</GoalTag>)}
+                  </GoalsWrap>
+                </div>
+
+                <div style={{marginTop:'0.85rem'}}>
+                  <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginBottom:'0.35rem'}}>Objective focus</div>
+                  {selectedObjectiveTemplates.length === 0 ? (
+                    <div style={{fontSize:'0.76rem',color:'rgba(255,255,255,0.45)'}}>No objective templates selected.</div>
+                  ) : (
+                    selectedObjectiveTemplates.map((item) => (
+                      <div key={item.id} style={{fontSize:'0.76rem',color:'rgba(255,255,255,0.78)',marginBottom:'0.25rem'}}>• {item.label}</div>
+                    ))
+                  )}
+                </div>
+
+                <div style={{marginTop:'1rem',padding:'0.7rem',borderRadius:10,border:'1px solid rgba(139,92,246,0.22)',background:'rgba(139,92,246,0.08)'}}>
+                  <div style={{fontSize:'0.72rem',fontWeight:700,color:'#c4b5fd',marginBottom:'0.25rem'}}>OpenAI integration</div>
+                  <div style={{fontSize:'0.74rem',color:'rgba(255,255,255,0.65)',lineHeight:1.45}}>Your guided inputs are converted into a complete scenario blueprint with briefing text and objective rules, then can be saved to your database-backed library.</div>
+                </div>
+              </BuilderPanel>
+            </BuilderGrid>
+
+            <BuilderActions>
+              <BtnGroup>
+                <SecondaryBtn onClick={() => { setView('select'); }}>
+                  <FaSignOutAlt style={{marginRight:'0.3rem'}} />
+                  Back to library
+                </SecondaryBtn>
+              </BtnGroup>
+              <BtnGroup>
+                <SecondaryBtn
+                  onClick={() => setBuilderStep((prev) => Math.max(0, prev - 1))}
+                  disabled={builderStep === 0}
+                  style={{opacity: builderStep === 0 ? 0.5 : 1}}
+                >
+                  Previous
+                </SecondaryBtn>
+                {builderStep < 3 && (
+                  <PrimaryBtn onClick={() => setBuilderStep((prev) => Math.min(3, prev + 1))}>
+                    Next <FaChevronRight />
+                  </PrimaryBtn>
+                )}
+                {builderStep === 3 && (
+                  <PrimaryBtn
+                    onClick={generateBuilderScenario}
+                    disabled={builderGenerating || !canProceedFromObjectives}
+                  >
+                    {builderGenerating ? <FaSpinner /> : <FaMagic />}
+                    {builderGenerating ? 'Generating...' : 'Generate with AI'}
+                  </PrimaryBtn>
+                )}
+                {builderStep === 4 && (
+                  <>
+                    <SecondaryBtn onClick={generateBuilderScenario} disabled={builderGenerating}>
+                      {builderGenerating ? 'Regenerating...' : 'Regenerate'}
+                    </SecondaryBtn>
+                    <PrimaryBtn onClick={saveBuilderScenario} disabled={!builderPreview || builderSaving}>
+                      <FaSave />
+                      {builderSaving ? 'Saving...' : 'Save'}
+                    </PrimaryBtn>
+                    <PrimaryBtn onClick={() => builderPreview && startScenario(builderPreview)} disabled={!builderPreview}>
+                      <FaPlay />
+                      Start scenario
+                    </PrimaryBtn>
+                  </>
+                )}
+              </BtnGroup>
+            </BuilderActions>
+          </BuilderShell>
         </ContentWrapper>
       </PageContainer>
     );

@@ -80,10 +80,28 @@ CREATE TABLE IF NOT EXISTS chat_messages (
   content TEXT NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS custom_scenarios (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  briefing TEXT NOT NULL,
+  difficulty VARCHAR(20) NOT NULL DEFAULT 'Beginner',
+  duration VARCHAR(20) NOT NULL DEFAULT '15 min',
+  icon VARCHAR(10) NOT NULL DEFAULT '🧠',
+  starting_balance INTEGER NOT NULL DEFAULT 10000,
+  assets JSONB NOT NULL DEFAULT '[]',
+  objectives JSONB NOT NULL DEFAULT '[]',
+  tips JSONB NOT NULL DEFAULT '[]',
+  learning_goals JSONB NOT NULL DEFAULT '[]',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 CREATE INDEX IF NOT EXISTS idx_holdings_user ON holdings(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_lesson_progress_user ON lesson_progress(user_id);
 CREATE INDEX IF NOT EXISTS idx_chat_messages_user ON chat_messages(user_id);
+CREATE INDEX IF NOT EXISTS idx_custom_scenarios_user ON custom_scenarios(user_id);
 CREATE TABLE IF NOT EXISTS user_subscriptions (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
