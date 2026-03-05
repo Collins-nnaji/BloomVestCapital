@@ -925,6 +925,7 @@ const ScoreCard = styled(motion.div)`
   margin-top: 1.25rem;
   background: ${(p) => (p.$passed ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)')};
   border: 1px solid ${(p) => (p.$passed ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)')};
+  box-shadow: ${(p) => (p.$passed ? '0 0 24px rgba(34, 197, 94, 0.1)' : 'none')};
 `;
 
 const ScoreValue = styled.div`
@@ -932,6 +933,10 @@ const ScoreValue = styled.div`
   font-weight: 800;
   color: ${(p) => (p.$passed ? '#22c55e' : '#ef4444')};
   letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 `;
 
 const ScoreLabel = styled.p`
@@ -958,7 +963,12 @@ const CompleteBtn = styled(motion.button)`
   cursor: pointer;
   margin-top: 1.25rem;
   transition: all 0.3s ease;
-  &:hover { opacity: 0.9; transform: translateY(-1px); }
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.25);
+  &:hover:not(:disabled) {
+    opacity: 0.95;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(34, 197, 94, 0.35);
+  }
   &:disabled {
     background: rgba(255,255,255,0.08);
     color: rgba(255,255,255,0.3);
@@ -1464,7 +1474,7 @@ const LearnPage = () => {
                 {lessonData.keyTakeaways && lessonData.keyTakeaways.length > 0 && (
                   <TakeawaysBox>
                     <TakeawaysHeader>
-                      <FaCheckCircle /> Key Takeaways
+                      <FaCheckCircle /> Key Takeaways — Remember these
                     </TakeawaysHeader>
                     {lessonData.keyTakeaways.map((t, i) => (
                       <TakeawayItem key={i}>
@@ -1477,9 +1487,9 @@ const LearnPage = () => {
                 {/* Quiz */}
                 {lessonData.quiz && lessonData.quiz.length > 0 && (
                   <QuizSection>
-                    <QuizHeader>
-                      <FaTrophy /> Test Your Knowledge
-                    </QuizHeader>
+                  <QuizHeader>
+                    <FaTrophy /> Test Your Knowledge — You've got this!
+                  </QuizHeader>
 
                     {lessonData.quiz.map((q, qIdx) => (
                       <QuestionCard key={qIdx}>
@@ -1517,16 +1527,27 @@ const LearnPage = () => {
                       <>
                         <ScoreCard
                           $passed={getQuizScore() >= Math.ceil(lessonData.quiz.length / 2)}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
+                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 24 }}
                         >
                           <ScoreValue $passed={getQuizScore() >= Math.ceil(lessonData.quiz.length / 2)}>
                             {getQuizScore()}/{lessonData.quiz.length}
+                            {getQuizScore() >= Math.ceil(lessonData.quiz.length / 2) && (
+                              <motion.span
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.2, type: 'spring', stiffness: 400 }}
+                                style={{ fontSize: '1.5rem' }}
+                              >
+                                🎉
+                              </motion.span>
+                            )}
                           </ScoreValue>
                           <ScoreLabel>
                             {getQuizScore() >= Math.ceil(lessonData.quiz.length / 2)
-                              ? 'Great work! You can mark this lesson as complete.'
-                              : 'Review the material and try again for a better score.'}
+                              ? 'Excellent! You\'ve got this. Mark complete and keep building momentum!'
+                              : 'Almost there! Review the key takeaways and try again — you\'ll get it.'}
                           </ScoreLabel>
                         </ScoreCard>
                         <CompleteBtn

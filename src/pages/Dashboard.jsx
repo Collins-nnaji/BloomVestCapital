@@ -318,13 +318,18 @@ const FeatureCard = styled(motion(Link))`
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 140px;
 
   &:hover {
     transform: translateY(-4px);
-    border-color: rgba(34,197,94,0.25);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    border-color: rgba(34,197,94,0.3);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(34,197,94,0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(34,197,94,0.6);
+    outline-offset: 2px;
   }
 
   @media (max-width: 480px) {
@@ -549,7 +554,7 @@ const Dashboard = () => {
             transition={{ duration: 0.5, delay: 0.16 }}
           >
             Master stocks, bonds, crypto, and commodities through hands-on
-            practice with virtual money and a personal AI tutor.
+            practice — virtual money, zero risk, and a personal AI tutor ready when you are.
           </HeroSubtitle>
 
           <HeroActions

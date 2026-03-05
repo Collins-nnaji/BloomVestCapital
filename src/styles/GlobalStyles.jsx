@@ -72,7 +72,7 @@ const GlobalStyles = createGlobalStyle`
   h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     line-height: 1.2;
-    color: var(--color-secondary);
+    color: var(--color-text);
     margin-bottom: 1rem;
   }
   
@@ -215,29 +215,29 @@ const GlobalStyles = createGlobalStyle`
     text-align: center;
   }
   
-  /* Learning & Emphasis Typography */
+  /* Learning & Emphasis Typography (dark-theme friendly) */
   .text-highlight {
-    background: linear-gradient(180deg, transparent 60%, rgba(34, 197, 94, 0.2) 60%);
+    background: linear-gradient(180deg, transparent 60%, rgba(34, 197, 94, 0.25) 60%);
     padding: 0 0.15em;
     font-weight: 700;
-    color: #0d3d1a;
+    color: var(--color-primary-light);
   }
   
   .text-emphasis {
     font-size: 1.125em;
     font-weight: 600;
-    color: #111;
+    color: var(--color-text);
     letter-spacing: -0.01em;
   }
   
   .text-stylish {
     letter-spacing: 0.02em;
     font-weight: 600;
-    color: #15803d;
+    color: var(--color-primary-light);
   }
   
   .text-muted {
-    color: #666;
+    color: var(--color-text-lighter);
     font-size: 0.95em;
   }
   
@@ -340,6 +340,35 @@ const GlobalStyles = createGlobalStyle`
   
   .animate-pulse {
     animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Celebration / success animation for learning milestones */
+  @keyframes successPop {
+    0% { transform: scale(0.9); opacity: 0.5; }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes gentleGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.3); }
+    50% { box-shadow: 0 0 20px 4px rgba(34, 197, 94, 0.2); }
+  }
+
+  .success-pop {
+    animation: successPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  .gentle-glow {
+    animation: gentleGlow 2s ease-in-out infinite;
+  }
+
+  /* Respect user motion preferences for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 `;
 
