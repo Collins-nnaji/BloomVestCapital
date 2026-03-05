@@ -272,5 +272,5 @@ export const scenarios = [
 export const difficultyColors = {
   'Beginner': '#22c55e',
   'Intermediate': '#3b82f6',
-  'Advanced': '#a855f7'
+  'Advanced': '#16a34a'
 };

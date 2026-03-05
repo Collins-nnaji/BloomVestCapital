@@ -87,7 +87,7 @@ const FloatingShape = styled.div`
     bottom: 20%;
     left: 10%;
     border-radius: 30% 70% 50% 50% / 50% 50% 70% 30%;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 197, 94, 0.1));
     animation: float2 18s infinite ease-in-out;
   }
   
@@ -634,11 +634,11 @@ const AIFeatures = () => {
       icon: <FaShieldAlt />,
       title: "Risk Modeling & Mitigation",
       description: "Sophisticated risk assessment algorithms identify potential challenges in business models, technology implementation, or market adoption, enabling preemptive strategy adjustments that improve startup success rates.",
-      color: "#8b5cf6",
-      bgLight: "rgba(139, 92, 246, 0.1)",
-      hoverShadow: "rgba(139, 92, 246, 0.2)",
-      underlineColor: "#8b5cf6",
-      borderGradient: "rgba(139, 92, 246, 0.5), rgba(26, 54, 93, 0.3)"
+      color: "#22c55e",
+      bgLight: "rgba(34, 197, 94, 0.1)",
+      hoverShadow: "rgba(34, 197, 94, 0.2)",
+      underlineColor: "#22c55e",
+      borderGradient: "rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3)"
     }
   ];
 

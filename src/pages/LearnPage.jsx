@@ -359,7 +359,7 @@ const LevelBadge = styled.span`
     const colors = {
       beginner: '#22c55e',
       intermediate: '#3b82f6',
-      advanced: '#a855f7',
+      advanced: '#16a34a',
     };
     const c = colors[p.$level] || '#22c55e';
     return css`
@@ -1046,7 +1046,7 @@ const LearnPage = () => {
           completedLessons: lessons.filter(l => l.level === 'intermediate' && saved.includes(l.id)).length,
           modules: [{ id: 2, title: 'Core Lessons', description: 'Intermediate investment concepts',
             lessons: lessons.filter(l => l.level === 'intermediate').map(l => ({ id: l.id, title: l.title, duration: l.duration, icon: l.icon, completed: saved.includes(l.id) })) }] },
-        { id: 3, title: 'Advanced Strategies', description: 'Master advanced investment strategies.', level: 'advanced', icon: '🎓', color: '#a855f7',
+        { id: 3, title: 'Advanced Strategies', description: 'Master advanced investment strategies.', level: 'advanced', icon: '🎓', color: '#16a34a',
           totalLessons: lessons.filter(l => l.level === 'advanced').length,
           completedLessons: lessons.filter(l => l.level === 'advanced' && saved.includes(l.id)).length,
           modules: [{ id: 3, title: 'Core Lessons', description: 'Advanced investment concepts',
@@ -1591,7 +1591,7 @@ const LearnPage = () => {
                 <StatLabel>Courses</StatLabel>
               </StatBox>
               <StatBox>
-                <StatNumber $color="#a855f7">{totalLessons}</StatNumber>
+                <StatNumber $color="#22c55e">{totalLessons}</StatNumber>
                 <StatLabel>Lessons</StatLabel>
               </StatBox>
               <StatBox>

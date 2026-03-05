@@ -486,7 +486,7 @@ const features = [
     title: 'AI Investment Tutor',
     desc: 'Ask any question — get instant expert explanations powered by GPT-4',
     to: '/ai-tutor',
-    bg: 'rgba(139,92,246,0.1)',
+    bg: 'rgba(34,197,94,0.1)',
   },
 ];
 

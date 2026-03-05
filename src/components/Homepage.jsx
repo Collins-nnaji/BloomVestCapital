@@ -1169,7 +1169,7 @@ const ProcessStepsContainer = styled.div`
     left: calc(12.5% + 20px);
     right: calc(12.5% + 20px);
     height: 4px;
-    background: linear-gradient(to right, #22c55e, #3b82f6, #8b5cf6);
+    background: linear-gradient(to right, #22c55e, #16a34a, #14532d);
     border-radius: 4px;
     z-index: 0;
     
@@ -1456,11 +1456,11 @@ const HomeContent = () => {
         "Post-investment tracking",
         "Portfolio performance analytics"
       ],
-      iconBg: "rgba(139, 92, 246, 0.1)",
-      iconColor: "#8b5cf6",
-      accentColor: "#8b5cf6",
-      linkColor: "#8b5cf6",
-      linkHoverColor: "#7c3aed",
+      iconBg: "rgba(34, 197, 94, 0.1)",
+      iconColor: "#22c55e",
+      accentColor: "#22c55e",
+      linkColor: "#22c55e",
+      linkHoverColor: "#16a34a",
       audience: ["investors", "all"]
     },
     {
@@ -1521,9 +1521,9 @@ const HomeContent = () => {
       value: "$250M+", 
       label: "Facilitated Funding",
       icon: <FaHandHoldingUsd />,
-      iconBg: "rgba(139, 92, 246, 0.1)",
-      iconColor: "#8b5cf6",
-      gradient: "linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)"
+      iconBg: "rgba(34, 197, 94, 0.1)",
+      iconColor: "#22c55e",
+      gradient: "linear-gradient(135deg, #16a34a 0%, #22c55e 100%)"
     },
     { 
       value: "92%", 
@@ -1568,12 +1568,12 @@ const HomeContent = () => {
       icon: <BsShieldCheck />,
       title: "Verified Partners",
       description: "All investors and startups on our platform undergo thorough verification, ensuring legitimacy, credibility, and alignment with our community standards.",
-      bg: "rgba(139, 92, 246, 0.1)",
-      iconColor: "#8b5cf6",
-      borderGradientStart: "rgba(139, 92, 246, 0.6)",
-      borderGradientEnd: "rgba(139, 92, 246, 0.1)",
-      accentGradient: "linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(139, 92, 246, 0.01) 100%)",
-      hoverColor: "#8b5cf6"
+      bg: "rgba(34, 197, 94, 0.1)",
+      iconColor: "#22c55e",
+      borderGradientStart: "rgba(34, 197, 94, 0.6)",
+      borderGradientEnd: "rgba(34, 197, 94, 0.1)",
+      accentGradient: "linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(34, 197, 94, 0.01) 100%)",
+      hoverColor: "#22c55e"
     },
     {
       icon: <IoAnalytics />,
@@ -1632,9 +1632,9 @@ const HomeContent = () => {
       number: 3,
       title: "Connect & Engage",
       description: "Initiate conversations, share materials, and schedule meetings through our secure platform with interested parties.",
-      bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
-      bgRing: "rgba(139, 92, 246, 0.1)",
-      shadowColor: "rgba(139, 92, 246, 0.3)"
+      bg: "linear-gradient(135deg, #22c55e, #15803d)",
+      bgRing: "rgba(34, 197, 94, 0.1)",
+      shadowColor: "rgba(34, 197, 94, 0.3)"
     },
     {
       number: 4,
@@ -1989,8 +1989,8 @@ const HomeContent = () => {
                     </ToolFeature>
                   ))}
                 </ToolFeatures>
-                <ToolAction bg={`rgba(${tool.accentColor === '#22c55e' ? '34, 197, 94' : tool.accentColor === '#3b82f6' ? '59, 130, 246' : tool.accentColor === '#f59e0b' ? '245, 158, 11' : tool.accentColor === '#8b5cf6' ? '139, 92, 246' : tool.accentColor === '#ec4899' ? '236, 72, 153' : '20, 184, 166'}, 0.05)`} 
-                  hoverBg={`rgba(${tool.accentColor === '#22c55e' ? '34, 197, 94' : tool.accentColor === '#3b82f6' ? '59, 130, 246' : tool.accentColor === '#f59e0b' ? '245, 158, 11' : tool.accentColor === '#8b5cf6' ? '139, 92, 246' : tool.accentColor === '#ec4899' ? '236, 72, 153' : '20, 184, 166'}, 0.1)`}>
+                <ToolAction bg={`rgba(${tool.accentColor === '#22c55e' ? '34, 197, 94' : tool.accentColor === '#3b82f6' ? '59, 130, 246' : tool.accentColor === '#f59e0b' ? '245, 158, 11' : tool.accentColor === '#ec4899' ? '236, 72, 153' : '20, 184, 166'}, 0.05)`} 
+                  hoverBg={`rgba(${tool.accentColor === '#22c55e' ? '34, 197, 94' : tool.accentColor === '#3b82f6' ? '59, 130, 246' : tool.accentColor === '#f59e0b' ? '245, 158, 11' : tool.accentColor === '#ec4899' ? '236, 72, 153' : '20, 184, 166'}, 0.1)`}>
                   <ToolLink 
                     to="/tools"
                     color={tool.linkColor}
