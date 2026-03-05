@@ -145,9 +145,9 @@ const GoalTag = styled.span`
   border-radius: 6px;
   font-size: 0.7rem;
   font-weight: 600;
-  background: rgba(168,85,247,0.1);
-  color: #a855f7;
-  border: 1px solid rgba(168,85,247,0.15);
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.2);
 `;
 
 const BuilderHero = styled(motion.div)`
@@ -155,7 +155,7 @@ const BuilderHero = styled(motion.div)`
   padding: 1.25rem;
   border-radius: 16px;
   border: 1px solid rgba(56,189,248,0.3);
-  background: linear-gradient(130deg, rgba(56,189,248,0.14), rgba(168,85,247,0.14));
+  background: linear-gradient(130deg, rgba(16,24,39,0.9), rgba(34,197,94,0.14));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -374,8 +374,8 @@ const AssetChip = styled.button`
 
 const ObjectiveCard = styled.button`
   width: 100%;
-  border: 1px solid ${p => p.$active ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.1)'};
-  background: ${p => p.$active ? 'rgba(168,85,247,0.14)' : 'rgba(255,255,255,0.03)'};
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.5)' : 'rgba(255,255,255,0.1)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : 'rgba(255,255,255,0.03)'};
   color: white;
   border-radius: 10px;
   padding: 0.6rem;
@@ -720,7 +720,7 @@ const AdvisorHeader = styled.div`
   gap: 0.6rem;
   padding: 0.85rem 1.25rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
-  svg { color: #a855f7; font-size: 1.1rem; }
+  svg { color: #22c55e; font-size: 1.1rem; }
 `;
 
 const AdvisorTitle = styled.h3`
@@ -773,8 +773,8 @@ const MessagesArea = styled.div`
 `;
 
 const MessageBubble = styled(motion.div)`
-  background: ${p => p.$isAi ? 'rgba(168,85,247,0.08)' : 'rgba(34,197,94,0.08)'};
-  border: 1px solid ${p => p.$isAi ? 'rgba(168,85,247,0.15)' : 'rgba(34,197,94,0.15)'};
+  background: ${p => p.$isAi ? 'rgba(255,255,255,0.05)' : 'rgba(34,197,94,0.08)'};
+  border: 1px solid ${p => p.$isAi ? 'rgba(255,255,255,0.12)' : 'rgba(34,197,94,0.15)'};
   border-radius: 12px;
   padding: 1rem 1.15rem;
   font-size: 1rem;
@@ -799,8 +799,8 @@ const TypingIndicator = styled.div`
   align-items: center;
   gap: 0.3rem;
   padding: 0.85rem 1rem;
-  background: rgba(168,85,247,0.08);
-  border: 1px solid rgba(168,85,247,0.15);
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.2);
   border-radius: 12px;
   width: fit-content;
 `;
@@ -809,7 +809,7 @@ const Dot = styled.span`
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #a855f7;
+  background: #22c55e;
   animation: ${pulse} 1.2s ease-in-out infinite;
   animation-delay: ${p => p.$d || '0s'};
 `;
@@ -827,12 +827,12 @@ const QuickBtn = styled.button`
   border-radius: 8px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: rgba(168,85,247,0.1);
-  color: #a855f7;
-  border: 1px solid rgba(168,85,247,0.15);
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.2);
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { background: rgba(168,85,247,0.2); }
+  &:hover { background: rgba(34,197,94,0.2); }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 `;
 
@@ -852,21 +852,21 @@ const ChatInput = styled.input`
   color: white;
   font-size: 0.85rem;
   outline: none;
-  &:focus { border-color: #a855f7; }
+  &:focus { border-color: #22c55e; }
   &::placeholder { color: rgba(255,255,255,0.2); }
 `;
 
 const SendBtn = styled.button`
   padding: 0.6rem 0.85rem;
   border-radius: 8px;
-  background: #a855f7;
+  background: #22c55e;
   color: white;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   transition: all 0.2s;
-  &:hover { background: #9333ea; }
+  &:hover { background: #16a34a; }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 `;
 
@@ -1633,7 +1633,7 @@ const ScenarioPage = () => {
             transition={{ duration: 0.5 }}
           >
             <PageTitle>Investment <span style={{color:'#22c55e'}}>Scenarios</span></PageTitle>
-            <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#a78bfa'}}>AI tutor</strong>. Build confidence before risking real capital.</PageSubtitle>
+            <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#22c55e'}}>AI tutor</strong>. Build confidence before risking real capital.</PageSubtitle>
           </PageHeader>
 
           {!isPro && (
@@ -1726,10 +1726,10 @@ const ScenarioPage = () => {
                   </ScenarioCardHeader>
                   <ScenarioCardTitle>{scenario.title}</ScenarioCardTitle>
                   <ScenarioCardDesc>{scenario.description}</ScenarioCardDesc>
-                  <div style={{background:'rgba(139,92,246,0.06)',border:'1px solid rgba(139,92,246,0.12)',borderRadius:10,padding:'0.65rem 0.85rem',marginBottom:'1rem',display:'flex',alignItems:'flex-start',gap:'0.6rem'}}>
-                    <FaRobot style={{color:'#a78bfa',flexShrink:0,marginTop:2,fontSize:'0.9rem'}} />
+                  <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:10,padding:'0.65rem 0.85rem',marginBottom:'1rem',display:'flex',alignItems:'flex-start',gap:'0.6rem'}}>
+                    <FaRobot style={{color:'#22c55e',flexShrink:0,marginTop:2,fontSize:'0.9rem'}} />
                     <span style={{color:'rgba(255,255,255,0.55)',fontSize:'0.78rem',lineHeight:1.45}}>
-                      <strong style={{color:'#a78bfa'}}>AI Tutor guides you</strong> with actionable coaching and instant feedback on every decision.
+                      <strong style={{color:'#22c55e'}}>AI Tutor guides you</strong> with actionable coaching and instant feedback on every decision.
                     </span>
                   </div>
                   <ScenarioCardMeta>
@@ -1898,7 +1898,7 @@ const ScenarioPage = () => {
                         >
                           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem'}}>
                             <div style={{fontWeight:800,fontSize:'0.82rem'}}>{objective.label}</div>
-                            <FaBullseye style={{color:builder.objectiveFocus.includes(objective.id) ? '#c084fc' : 'rgba(255,255,255,0.3)',fontSize:'0.7rem'}} />
+                            <FaBullseye style={{color:builder.objectiveFocus.includes(objective.id) ? '#22c55e' : 'rgba(255,255,255,0.3)',fontSize:'0.7rem'}} />
                           </div>
                           <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginTop:'0.2rem'}}>{objective.hint}</div>
                         </ObjectiveCard>
@@ -1973,8 +1973,8 @@ const ScenarioPage = () => {
                   )}
                 </div>
 
-                <div style={{marginTop:'1rem',padding:'0.7rem',borderRadius:10,border:'1px solid rgba(139,92,246,0.22)',background:'rgba(139,92,246,0.08)'}}>
-                  <div style={{fontSize:'0.72rem',fontWeight:700,color:'#c4b5fd',marginBottom:'0.25rem'}}>OpenAI integration</div>
+                <div style={{marginTop:'1rem',padding:'0.7rem',borderRadius:10,border:'1px solid rgba(34,197,94,0.26)',background:'rgba(34,197,94,0.08)'}}>
+                  <div style={{fontSize:'0.72rem',fontWeight:700,color:'#86efac',marginBottom:'0.25rem'}}>OpenAI integration</div>
                   <div style={{fontSize:'0.74rem',color:'rgba(255,255,255,0.65)',lineHeight:1.45}}>Your guided inputs are converted into a complete scenario blueprint with briefing text and objective rules, then can be saved to your database-backed library.</div>
                 </div>
               </BuilderPanel>

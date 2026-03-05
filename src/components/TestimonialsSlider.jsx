@@ -60,7 +60,7 @@ const FloatingShape = styled.div`
     bottom: 20%;
     left: 10%;
     border-radius: 30% 70% 50% 50% / 50% 50% 70% 30%;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(34, 197, 94, 0.1));
     animation: float2 18s infinite ease-in-out;
   }
   
