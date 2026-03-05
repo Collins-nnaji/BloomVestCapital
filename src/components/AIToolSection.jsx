@@ -517,8 +517,8 @@ const AIToolSection = () => {
                     <FaShieldAlt />
                   </FeatureIcon>
                   <FeatureText>
-                    <h4>Nigerian Market Insights</h4>
-                    <p>Gain contextual knowledge tailored to local market conditions</p>
+                    <h4>Local Market Insights</h4>
+                    <p>Gain contextual knowledge tailored to your region's market conditions</p>
                   </FeatureText>
                 </FeatureItem>
               </FeaturesList>
@@ -552,8 +552,8 @@ const AIToolSection = () => {
               </FormGroup>
               
               <FormGroup>
-                <FormLabel>Your monthly income (₦)</FormLabel>
-                <FormInput type="number" placeholder="e.g. 250000" />
+                <FormLabel>Your monthly income</FormLabel>
+                <FormInput type="number" placeholder="e.g. 2500 (in your local currency)" />
               </FormGroup>
               
               <FormGroup>

@@ -85,18 +85,19 @@ const MessageGroup = styled(motion.div)`
   flex-direction: ${props => props.$isUser ? 'row-reverse' : 'row'};
 `;
 
-const Avatar = styled.div`
-  width: 34px;
-  height: 34px;
+const Avatar = styled(motion.div)`
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #334155)' : 'linear-gradient(135deg, #15803d, #22c55e)'};
   color: white;
-  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.1)' : 'rgba(34,197,94,0.3)'};
+  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.1)' : 'rgba(34,197,94,0.35)'};
+  box-shadow: ${props => props.$isUser ? 'none' : '0 0 12px rgba(34, 197, 94, 0.15)'};
 `;
 
 const MessageBubble = styled.div`
@@ -167,8 +168,17 @@ const SuggestionCard = styled(motion.button)`
   padding: 0.9rem;
   text-align: left;
   cursor: pointer;
-  transition: all 0.3s;
-  &:hover { border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.05); transform: translateY(-1px); }
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
+    border-color: rgba(34,197,94,0.35);
+    background: rgba(34,197,94,0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(34, 197, 94, 0.12);
+  }
+  &:focus-visible {
+    outline: 2px solid rgba(34,197,94,0.5);
+    outline-offset: 2px;
+  }
 `;
 
 const SuggestionIcon = styled.div`
@@ -186,15 +196,29 @@ const SuggestionText = styled.div`
 
 const TypingIndicator = styled(motion.div)`
   display: flex;
-  gap: 0.3rem;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 0;
 `;
 
+const TypingLabel = styled.span`
+  font-size: 0.75rem;
+  color: rgba(34, 197, 94, 0.7);
+  font-weight: 500;
+  margin-right: 0.25rem;
+`;
+
+const TypingDots = styled.div`
+  display: flex;
+  gap: 0.35rem;
+`;
+
 const TypingDot = styled(motion.div)`
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #22c55e;
+  background: linear-gradient(135deg, #22c55e, #4ade80);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
 `;
 
 const PoweredBy = styled.div`
@@ -232,7 +256,7 @@ const AITutor = () => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: "Hello! 👋 I'm **BloomVest AI**, your personal investment tutor powered by GPT-4. Ask me anything about investing — from the basics to advanced strategies. I remember our conversation, so feel free to build on previous questions!"
+      content: "Hi there! 👋 I'm **BloomVest AI**, your personal investment tutor. No question is too simple — ask me anything about investing, from basics to advanced strategies. I remember our conversation, so feel free to build on what we've covered. What would you like to explore?"
     }
   ]);
   const [input, setInput] = useState('');
@@ -287,7 +311,7 @@ const AITutor = () => {
       await api.clearChatHistory();
       setMessages([{
         role: 'assistant',
-        content: "Chat cleared! 🧹 I'm ready for a fresh start. What would you like to learn about investing?"
+        content: "All cleared! ✨ I'm ready for a fresh start. What would you like to learn about investing?"
       }]);
     } catch (e) {
       console.error('Failed to clear history');
@@ -302,7 +326,7 @@ const AITutor = () => {
         <HeaderContent>
           <HeaderLeft>
             <HeaderTitle><FaRobot /> BloomVest <span>AI</span></HeaderTitle>
-            <HeaderSubtitle>Powered by GPT-4 — Ask anything about investing</HeaderSubtitle>
+            <HeaderSubtitle>Your 24/7 investment coach — Ask anything, any level</HeaderSubtitle>
           </HeaderLeft>
           <ClearButton onClick={clearHistory}>
             <FaTrash /> Clear Chat
@@ -316,9 +340,9 @@ const AITutor = () => {
             <MessageGroup
               key={index}
               $isUser={msg.role === 'user'}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25 }}
+              initial={{ opacity: 0, y: 12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <Avatar $isUser={msg.role === 'user'}>
                 {msg.role === 'user' ? <FaUser /> : <FaRobot />}
@@ -332,12 +356,25 @@ const AITutor = () => {
 
           {isTyping && (
             <MessageGroup $isUser={false}>
-              <Avatar $isUser={false}><FaRobot /></Avatar>
+              <Avatar
+                $isUser={false}
+                animate={{ boxShadow: ['0 0 12px rgba(34, 197, 94, 0.15)', '0 0 24px rgba(34, 197, 94, 0.35)', '0 0 12px rgba(34, 197, 94, 0.15)'] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+              >
+                <FaRobot />
+              </Avatar>
               <MessageBubble $isUser={false}>
-                <TypingIndicator>
-                  <TypingDot animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
-                  <TypingDot animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.15 }} />
-                  <TypingDot animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.3 }} />
+                <TypingIndicator
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <TypingLabel>Thinking…</TypingLabel>
+                  <TypingDots>
+                    <TypingDot animate={{ y: [0, -6, 0], opacity: [0.6, 1, 0.6] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0 }} />
+                    <TypingDot animate={{ y: [0, -6, 0], opacity: [0.6, 1, 0.6] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.15 }} />
+                    <TypingDot animate={{ y: [0, -6, 0], opacity: [0.6, 1, 0.6] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.3 }} />
+                  </TypingDots>
                 </TypingIndicator>
               </MessageBubble>
             </MessageGroup>
@@ -373,7 +410,7 @@ const AITutor = () => {
             </SendButton>
           </InputArea>
         </form>
-        <PoweredBy>Powered by OpenAI GPT-4 — For educational purposes only</PoweredBy>
+        <PoweredBy>Powered by OpenAI — For educational purposes only. Not financial advice.</PoweredBy>
       </ChatArea>
     </PageContainer>
   );
