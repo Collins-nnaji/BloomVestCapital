@@ -375,7 +375,7 @@ export const sectors = [
   { name: 'Healthcare', performance: -0.4, color: '#ef4444' },
   { name: 'Financial', performance: 1.3, color: '#22c55e' },
   { name: 'Consumer Staples', performance: 0.2, color: '#f59e0b' },
-  { name: 'Consumer Cyclical', performance: 1.8, color: '#8b5cf6' },
+  { name: 'Consumer Cyclical', performance: 1.8, color: '#22c55e' },
   { name: 'Energy', performance: -1.2, color: '#ec4899' },
   { name: 'Commodities', performance: 0.8, color: '#d97706' },
   { name: 'Crypto', performance: 4.9, color: '#f97316' },

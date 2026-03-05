@@ -799,13 +799,13 @@ const Services = () => {
         "Valuation strategy",
         "Negotiation support"
       ],
-      iconBg: "rgba(139, 92, 246, 0.1)",
-      iconColor: "#8b5cf6",
-      iconShadow: "rgba(139, 92, 246, 0.15)",
-      accentColor: "#8b5cf6",
-      buttonBg: "rgba(139, 92, 246, 0.1)",
-      buttonHoverBg: "rgba(139, 92, 246, 0.2)",
-      headerBg: "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+      iconBg: "rgba(34, 197, 94, 0.1)",
+      iconColor: "#22c55e",
+      iconShadow: "rgba(34, 197, 94, 0.15)",
+      accentColor: "#22c55e",
+      buttonBg: "rgba(34, 197, 94, 0.1)",
+      buttonHoverBg: "rgba(34, 197, 94, 0.2)",
+      headerBg: "linear-gradient(135deg, #22c55e, #15803d)",
       detailContent: {
         description: "Our funding strategy service helps you navigate the complexities of startup financing. We provide guidance on funding approaches, investment structures, and negotiation strategies tailored to your specific growth stage and business needs.",
         features: [

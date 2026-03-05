@@ -765,13 +765,13 @@ const StartupToolsPage = () => {
       title: 'Market Size Analyzer',
       description: 'Calculate your total addressable market (TAM), serviceable available market (SAM), and serviceable obtainable market (SOM).',
       icon: <FaSearch />,
-      color: '#8b5cf6',
-      bg: 'rgba(139, 92, 246, 0.1)',
-      hoverShadow: 'rgba(139, 92, 246, 0.2)',
+      color: '#22c55e',
+      bg: 'rgba(34, 197, 94, 0.1)',
+      hoverShadow: 'rgba(34, 197, 94, 0.2)',
       link: '#',
       download: false,
       category: 'market',
-      gradient: 'rgba(139, 92, 246, 0.5), rgba(26, 54, 93, 0.3)'
+      gradient: 'rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3)'
     },
     {
       id: 5,
@@ -830,13 +830,13 @@ const StartupToolsPage = () => {
       title: 'Investor Database Access',
       description: 'Searchable database of active investors filtered by investment stage, industry focus, and geographic preferences.',
       icon: <FaUsers />,
-      color: '#a855f7',
-      bg: 'rgba(168, 85, 247, 0.1)',
-      hoverShadow: 'rgba(168, 85, 247, 0.2)',
+      color: '#22c55e',
+      bg: 'rgba(34, 197, 94, 0.1)',
+      hoverShadow: 'rgba(34, 197, 94, 0.2)',
       link: '#',
       download: false,
       category: 'pitch',
-      gradient: 'rgba(168, 85, 247, 0.5), rgba(26, 54, 93, 0.3)'
+      gradient: 'rgba(34, 197, 94, 0.5), rgba(26, 54, 93, 0.3)'
     }
   ];
   
