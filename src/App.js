@@ -9,6 +9,8 @@ import { AuthProvider } from './AuthContext';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const LearnPage = lazy(() => import('./pages/LearnPage'));
+const CoursePage = lazy(() => import('./pages/CoursePage'));
+const LessonPage = lazy(() => import('./pages/LessonPage'));
 const DemoTrading = lazy(() => import('./pages/DemoTrading'));
 const AITutor = lazy(() => import('./pages/AITutor'));
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
@@ -30,6 +32,8 @@ function App() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
+                <Route path="/learn/course/:courseId" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
+                <Route path="/learn/course/:courseId/lesson/:lessonId" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
                 <Route path="/demo" element={<ProtectedRoute><DemoTrading /></ProtectedRoute>} />
                 <Route path="/ai-tutor" element={<ProtectedRoute><AITutor /></ProtectedRoute>} />
                 <Route path="/about" element={<ProtectedRoute><AboutUsPage /></ProtectedRoute>} />
