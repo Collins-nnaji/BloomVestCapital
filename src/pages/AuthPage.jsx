@@ -58,7 +58,7 @@ const LogoText = styled.div`
   }
 
   p {
-    color: rgba(15,23,42,0.4);
+    color: rgba(15,23,42,0.66);
     font-size: 0.85rem;
   }
 `;
@@ -83,7 +83,7 @@ const Tab = styled.button`
   cursor: pointer;
   transition: all 0.2s;
   background: ${p => p.$active ? 'rgba(34,197,94,0.15)' : 'transparent'};
-  color: ${p => p.$active ? '#4ade80' : 'rgba(15,23,42,0.35)'};
+  color: ${p => p.$active ? '#166534' : 'rgba(15,23,42,0.68)'};
 `;
 
 const Form = styled.form`
@@ -137,8 +137,8 @@ const TogglePassword = styled.button`
 const SubmitButton = styled.button`
   width: 100%;
   padding: 0.85rem;
-  background: #22c55e;
-  color: #0f172a;
+  background: #0f172a;
+  color: white;
   border: none;
   border-radius: 10px;
   font-family: 'DM Sans', sans-serif;
@@ -152,7 +152,7 @@ const SubmitButton = styled.button`
   transition: all 0.3s;
   margin-top: 0.5rem;
 
-  &:hover { background: #16a34a; }
+  &:hover { background: #111827; }
   &:disabled { opacity: 0.5; cursor: not-allowed; }
 `;
 
@@ -212,7 +212,7 @@ const ErrorMsg = styled.div`
 const BottomText = styled.div`
   text-align: center;
   margin-top: 1.5rem;
-  color: rgba(15,23,42,0.3);
+  color: rgba(15,23,42,0.62);
   font-size: 0.8rem;
 
   a {

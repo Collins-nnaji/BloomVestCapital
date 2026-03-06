@@ -166,7 +166,7 @@ const BuilderHero = styled(motion.div)`
 const BuilderCtaBtn = styled.button`
   border: none;
   border-radius: 10px;
-  background: linear-gradient(120deg, #22c55e, #16a34a);
+  background: #0f172a;
   color: white;
   font-weight: 700;
   font-size: 0.9rem;
@@ -399,9 +399,9 @@ const BtnGroup = styled.div`
 `;
 
 const SecondaryBtn = styled.button`
-  border: 1px solid rgba(15,23,42,0.16);
-  background: rgba(15,23,42,0.05);
-  color: #0f172a;
+  border: 1px solid #1e293b;
+  background: #1e293b;
+  color: white;
   border-radius: 10px;
   padding: 0.55rem 0.85rem;
   font-size: 0.8rem;
@@ -411,7 +411,7 @@ const SecondaryBtn = styled.button`
 
 const PrimaryBtn = styled.button`
   border: none;
-  background: linear-gradient(120deg, #22c55e, #16a34a);
+  background: #0f172a;
   color: white;
   border-radius: 10px;
   padding: 0.55rem 0.9rem;
@@ -1638,7 +1638,7 @@ const ScenarioPage = () => {
 
           {!isPro && (
             <ProGate>
-              <FaLock style={{fontSize:'2rem',color:'rgba(255,255,255,0.15)',marginBottom:'1rem'}} />
+              <FaLock style={{fontSize:'2rem',color:'rgba(15,23,42,0.2)',marginBottom:'1rem'}} />
               <ProGateTitle>Scenarios require <span style={{color:'#22c55e'}}>Pro</span></ProGateTitle>
               <ProGateText>
                 AI-guided scenario simulations are a Pro feature. Upgrade to get real-time GPT-4 coaching, 11 interactive simulations across stocks, crypto, commodities, bonds, and forex.
@@ -1655,8 +1655,8 @@ const ScenarioPage = () => {
             >
               <div>
                 <div style={{fontSize:'0.72rem',fontWeight:800,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7dd3fc',marginBottom:'0.35rem'}}>New creator mode</div>
-                <div style={{color:'white',fontSize:'1.15rem',fontWeight:800,marginBottom:'0.25rem'}}>Design your own scenario with guided AI blocks</div>
-                <div style={{color:'rgba(255,255,255,0.7)',fontSize:'0.86rem'}}>Pick a theme, assets, and learning objectives, then generate a polished scenario you can save and replay.</div>
+                <div style={{color:'#0f172a',fontSize:'1.15rem',fontWeight:800,marginBottom:'0.25rem'}}>Design your own scenario with guided AI blocks</div>
+                <div style={{color:'rgba(15,23,42,0.76)',fontSize:'0.86rem'}}>Pick a theme, assets, and learning objectives, then generate a polished scenario you can save and replay.</div>
               </div>
               <BuilderCtaBtn onClick={goToBuilder}>
                 <FaMagic /> Create custom scenario
@@ -1666,7 +1666,7 @@ const ScenarioPage = () => {
 
           <FilterBar>
             <FilterSearch>
-              <FaSearch style={{color:'rgba(255,255,255,0.3)',fontSize:'0.8rem'}} />
+              <FaSearch style={{color:'rgba(15,23,42,0.4)',fontSize:'0.8rem'}} />
               <FilterInput
                 placeholder="Search scenarios, outcomes, or learning goals..."
                 value={catalogQuery}
@@ -1697,8 +1697,8 @@ const ScenarioPage = () => {
 
           {catalogFilteredScenarios.length === 0 ? (
             <Card style={{padding:'1.2rem',textAlign:'center'}}>
-              <div style={{color:'rgba(255,255,255,0.75)',fontWeight:700,marginBottom:'0.4rem'}}>No scenarios match your filter yet.</div>
-              <div style={{color:'rgba(255,255,255,0.45)',fontSize:'0.85rem'}}>Try a different search term or create your own scenario.</div>
+              <div style={{color:'rgba(15,23,42,0.78)',fontWeight:700,marginBottom:'0.4rem'}}>No scenarios match your filter yet.</div>
+              <div style={{color:'rgba(15,23,42,0.62)',fontSize:'0.85rem'}}>Try a different search term or create your own scenario.</div>
             </Card>
           ) : (
             <ScenariosGrid>
@@ -1728,7 +1728,7 @@ const ScenarioPage = () => {
                   <ScenarioCardDesc>{scenario.description}</ScenarioCardDesc>
                   <div style={{background:'rgba(34,197,94,0.08)',border:'1px solid rgba(34,197,94,0.2)',borderRadius:10,padding:'0.65rem 0.85rem',marginBottom:'1rem',display:'flex',alignItems:'flex-start',gap:'0.6rem'}}>
                     <FaRobot style={{color:'#22c55e',flexShrink:0,marginTop:2,fontSize:'0.9rem'}} />
-                    <span style={{color:'rgba(255,255,255,0.55)',fontSize:'0.78rem',lineHeight:1.45}}>
+                    <span style={{color:'rgba(15,23,42,0.72)',fontSize:'0.78rem',lineHeight:1.45}}>
                       <strong style={{color:'#22c55e'}}>AI Tutor guides you</strong> with actionable coaching and instant feedback on every decision.
                     </span>
                   </div>
@@ -1763,7 +1763,7 @@ const ScenarioPage = () => {
             <BuilderHead>
               <div>
                 <BuilderTitle><FaMagic style={{marginRight:'0.45rem',color:'#38bdf8'}} />Scenario Creator Studio</BuilderTitle>
-                <div style={{color:'rgba(255,255,255,0.5)',fontSize:'0.85rem',marginTop:'0.2rem'}}>Build an interactive scenario with guided cards, then generate a polished draft with OpenAI.</div>
+                <div style={{color:'rgba(15,23,42,0.68)',fontSize:'0.85rem',marginTop:'0.2rem'}}>Build an interactive scenario with guided cards, then generate a polished draft with OpenAI.</div>
               </div>
               <Stepper>
                 {BUILDER_STEPS.map((stepLabel, index) => (
@@ -1776,7 +1776,7 @@ const ScenarioPage = () => {
               <BuilderPanel>
                 {builderStep === 0 && (
                   <div>
-                    <div style={{color:'white',fontWeight:800,marginBottom:'0.65rem'}}>Pick a scenario theme</div>
+                    <div style={{color:'#0f172a',fontWeight:800,marginBottom:'0.65rem'}}>Pick a scenario theme</div>
                     <OptionGrid>
                       {BUILDER_THEMES.map((theme) => (
                         <OptionCard
@@ -1786,12 +1786,12 @@ const ScenarioPage = () => {
                         >
                           <div style={{fontSize:'1.25rem',marginBottom:'0.25rem'}}>{theme.emoji}</div>
                           <div style={{fontWeight:800,fontSize:'0.86rem'}}>{theme.title}</div>
-                          <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.58)',marginTop:'0.2rem'}}>{theme.desc}</div>
+                          <div style={{fontSize:'0.75rem',color:'rgba(15,23,42,0.66)',marginTop:'0.2rem'}}>{theme.desc}</div>
                         </OptionCard>
                       ))}
                     </OptionGrid>
                     <div style={{marginTop:'0.8rem'}}>
-                      <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Optional flavor text</div>
+                      <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(15,23,42,0.72)',marginBottom:'0.35rem'}}>Optional flavor text</div>
                       <BuilderTextArea
                         value={builder.customFlavor}
                         placeholder="Example: Include a mid-simulation market shock and force risk management decisions."
@@ -1805,11 +1805,11 @@ const ScenarioPage = () => {
                   <div>
                     <div style={{display:'grid',gap:'0.7rem'}}>
                       <div>
-                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Scenario title</div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(15,23,42,0.72)',marginBottom:'0.35rem'}}>Scenario title</div>
                         <BuilderTextInput value={builder.topic} onChange={(e) => updateBuilder('topic', e.target.value)} />
                       </div>
                       <div>
-                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Learning goal</div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(15,23,42,0.72)',marginBottom:'0.35rem'}}>Learning goal</div>
                         <BuilderTextArea value={builder.goal} onChange={(e) => updateBuilder('goal', e.target.value)} />
                       </div>
                       <OptionGrid>
@@ -1820,12 +1820,12 @@ const ScenarioPage = () => {
                             onClick={() => updateBuilder('challengeLevel', level)}
                           >
                             <div style={{fontWeight:800,fontSize:'0.82rem'}}>{level}</div>
-                            <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginTop:'0.2rem'}}>Difficulty</div>
+                            <div style={{fontSize:'0.72rem',color:'rgba(15,23,42,0.65)',marginTop:'0.2rem'}}>Difficulty</div>
                           </OptionCard>
                         ))}
                       </OptionGrid>
                       <div>
-                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Duration</div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(15,23,42,0.72)',marginBottom:'0.35rem'}}>Duration</div>
                         <OptionGrid>
                           {['10 min', '15 min', '20 min', '30 min'].map((dur) => (
                             <OptionCard key={dur} $active={builder.duration === dur} onClick={() => updateBuilder('duration', dur)}>
@@ -1835,7 +1835,7 @@ const ScenarioPage = () => {
                         </OptionGrid>
                       </div>
                       <div>
-                        <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>
+                        <div style={{display:'flex',justifyContent:'space-between',fontSize:'0.76rem',fontWeight:700,color:'rgba(15,23,42,0.72)',marginBottom:'0.35rem'}}>
                           <span>Starting balance</span>
                           <span>${builder.startingBalance.toLocaleString()}</span>
                         </div>
@@ -1849,7 +1849,7 @@ const ScenarioPage = () => {
                         />
                       </div>
                       <div>
-                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(255,255,255,0.6)',marginBottom:'0.35rem'}}>Narrative style</div>
+                        <div style={{fontSize:'0.76rem',fontWeight:700,color:'rgba(15,23,42,0.72)',marginBottom:'0.35rem'}}>Narrative style</div>
                         <OptionGrid>
                           {NARRATIVE_STYLES.map((style) => (
                             <OptionCard key={style} $active={builder.narrativeStyle === style} onClick={() => updateBuilder('narrativeStyle', style)}>
@@ -1865,8 +1865,8 @@ const ScenarioPage = () => {
                 {builderStep === 2 && (
                   <div>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.6rem'}}>
-                      <div style={{color:'white',fontWeight:800}}>Asset universe</div>
-                      <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.5)'}}>{builder.selectedAssets.length} selected</div>
+                      <div style={{color:'#0f172a',fontWeight:800}}>Asset universe</div>
+                      <div style={{fontSize:'0.75rem',color:'rgba(15,23,42,0.66)'}}>{builder.selectedAssets.length} selected</div>
                     </div>
                     <AssetGrid>
                       {stocks.map((stock) => (
@@ -1886,8 +1886,8 @@ const ScenarioPage = () => {
                 {builderStep === 3 && (
                   <div>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'0.6rem'}}>
-                      <div style={{color:'white',fontWeight:800}}>Objective templates</div>
-                      <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.5)'}}>{builder.objectiveFocus.length} selected</div>
+                      <div style={{color:'#0f172a',fontWeight:800}}>Objective templates</div>
+                      <div style={{fontSize:'0.75rem',color:'rgba(15,23,42,0.66)'}}>{builder.objectiveFocus.length} selected</div>
                     </div>
                     <div style={{display:'grid',gap:'0.5rem'}}>
                       {OBJECTIVE_LIBRARY.map((objective) => (
@@ -1898,9 +1898,9 @@ const ScenarioPage = () => {
                         >
                           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.4rem'}}>
                             <div style={{fontWeight:800,fontSize:'0.82rem'}}>{objective.label}</div>
-                            <FaBullseye style={{color:builder.objectiveFocus.includes(objective.id) ? '#22c55e' : 'rgba(255,255,255,0.3)',fontSize:'0.7rem'}} />
+                            <FaBullseye style={{color:builder.objectiveFocus.includes(objective.id) ? '#22c55e' : 'rgba(15,23,42,0.35)',fontSize:'0.7rem'}} />
                           </div>
-                          <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginTop:'0.2rem'}}>{objective.hint}</div>
+                          <div style={{fontSize:'0.72rem',color:'rgba(15,23,42,0.66)',marginTop:'0.2rem'}}>{objective.hint}</div>
                         </ObjectiveCard>
                       ))}
                     </div>
@@ -1919,25 +1919,25 @@ const ScenarioPage = () => {
                             <div style={{display:'flex',alignItems:'center',gap:'0.55rem'}}>
                               <div style={{fontSize:'1.35rem'}}>{builderPreview.icon}</div>
                               <div>
-                                <div style={{fontWeight:800,color:'white'}}>{builderPreview.title}</div>
-                                <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.6)'}}>{builderPreview.difficulty} • {builderPreview.duration} • ${Number(builderPreview.startingBalance).toLocaleString()}</div>
+                                <div style={{fontWeight:800,color:'#0f172a'}}>{builderPreview.title}</div>
+                                <div style={{fontSize:'0.75rem',color:'rgba(15,23,42,0.68)'}}>{builderPreview.difficulty} • {builderPreview.duration} • ${Number(builderPreview.startingBalance).toLocaleString()}</div>
                               </div>
                             </div>
                             <DifficultyBadge $color="#38bdf8">AI Draft</DifficultyBadge>
                           </div>
-                          <p style={{color:'rgba(255,255,255,0.72)',fontSize:'0.82rem',lineHeight:1.5,marginTop:'0.7rem'}}>{builderPreview.description}</p>
+                          <p style={{color:'rgba(15,23,42,0.78)',fontSize:'0.82rem',lineHeight:1.5,marginTop:'0.7rem'}}>{builderPreview.description}</p>
                           <div style={{marginTop:'0.7rem',display:'flex',flexWrap:'wrap',gap:'0.35rem'}}>
                             {builderPreview.learningGoals?.slice(0, 5).map((goal) => <GoalTag key={goal}>{goal}</GoalTag>)}
                           </div>
                           <div style={{marginTop:'0.75rem'}}>
-                            <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginBottom:'0.35rem'}}>Objectives</div>
+                            <div style={{fontSize:'0.72rem',color:'rgba(15,23,42,0.66)',marginBottom:'0.35rem'}}>Objectives</div>
                             {(builderPreview.objectives || []).map((objective) => (
-                              <div key={objective.id} style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.8)',marginBottom:'0.3rem'}}>• {objective.label}</div>
+                              <div key={objective.id} style={{fontSize:'0.78rem',color:'rgba(15,23,42,0.8)',marginBottom:'0.3rem'}}>• {objective.label}</div>
                             ))}
                           </div>
                         </>
                       ) : (
-                        <div style={{color:'rgba(255,255,255,0.72)',fontSize:'0.85rem'}}>Generate a scenario to preview it here.</div>
+                        <div style={{color:'rgba(15,23,42,0.72)',fontSize:'0.85rem'}}>Generate a scenario to preview it here.</div>
                       )}
                     </PreviewCard>
                   </div>
@@ -1949,33 +1949,33 @@ const ScenarioPage = () => {
                 <div style={{display:'flex',alignItems:'center',gap:'0.55rem',marginBottom:'0.7rem'}}>
                   <div style={{fontSize:'1.5rem'}}>{selectedTheme.emoji}</div>
                   <div>
-                    <div style={{fontWeight:800,color:'white'}}>{builder.topic}</div>
-                    <div style={{fontSize:'0.75rem',color:'rgba(255,255,255,0.6)'}}>{builder.challengeLevel} • {builder.duration}</div>
+                    <div style={{fontWeight:800,color:'#0f172a'}}>{builder.topic}</div>
+                    <div style={{fontSize:'0.75rem',color:'rgba(15,23,42,0.68)'}}>{builder.challengeLevel} • {builder.duration}</div>
                   </div>
                 </div>
-                <div style={{fontSize:'0.78rem',color:'rgba(255,255,255,0.68)',lineHeight:1.5}}>{builder.goal}</div>
+                <div style={{fontSize:'0.78rem',color:'rgba(15,23,42,0.72)',lineHeight:1.5}}>{builder.goal}</div>
 
                 <div style={{marginTop:'0.85rem'}}>
-                  <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginBottom:'0.35rem'}}>Selected assets ({builder.selectedAssets.length})</div>
+                  <div style={{fontSize:'0.72rem',color:'rgba(15,23,42,0.66)',marginBottom:'0.35rem'}}>Selected assets ({builder.selectedAssets.length})</div>
                   <GoalsWrap>
                     {builder.selectedAssets.slice(0, 12).map((symbol) => <GoalTag key={symbol}>{symbol}</GoalTag>)}
                   </GoalsWrap>
                 </div>
 
                 <div style={{marginTop:'0.85rem'}}>
-                  <div style={{fontSize:'0.72rem',color:'rgba(255,255,255,0.55)',marginBottom:'0.35rem'}}>Objective focus</div>
+                  <div style={{fontSize:'0.72rem',color:'rgba(15,23,42,0.66)',marginBottom:'0.35rem'}}>Objective focus</div>
                   {selectedObjectiveTemplates.length === 0 ? (
-                    <div style={{fontSize:'0.76rem',color:'rgba(255,255,255,0.45)'}}>No objective templates selected.</div>
+                    <div style={{fontSize:'0.76rem',color:'rgba(15,23,42,0.62)'}}>No objective templates selected.</div>
                   ) : (
                     selectedObjectiveTemplates.map((item) => (
-                      <div key={item.id} style={{fontSize:'0.76rem',color:'rgba(255,255,255,0.78)',marginBottom:'0.25rem'}}>• {item.label}</div>
+                      <div key={item.id} style={{fontSize:'0.76rem',color:'rgba(15,23,42,0.78)',marginBottom:'0.25rem'}}>• {item.label}</div>
                     ))
                   )}
                 </div>
 
                 <div style={{marginTop:'1rem',padding:'0.7rem',borderRadius:10,border:'1px solid rgba(34,197,94,0.26)',background:'rgba(34,197,94,0.08)'}}>
                   <div style={{fontSize:'0.72rem',fontWeight:700,color:'#86efac',marginBottom:'0.25rem'}}>OpenAI integration</div>
-                  <div style={{fontSize:'0.74rem',color:'rgba(255,255,255,0.65)',lineHeight:1.45}}>Your guided inputs are converted into a complete scenario blueprint with briefing text and objective rules, then can be saved to your database-backed library.</div>
+                  <div style={{fontSize:'0.74rem',color:'rgba(15,23,42,0.72)',lineHeight:1.45}}>Your guided inputs are converted into a complete scenario blueprint with briefing text and objective rules, then can be saved to your database-backed library.</div>
                 </div>
               </BuilderPanel>
             </BuilderGrid>

@@ -49,7 +49,7 @@ const CurrencyBtn = styled.button`
   border-radius: 8px;
   border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.4)' : 'rgba(15,23,42,0.08)'};
   background: ${p => p.$active ? 'rgba(34,197,94,0.1)' : 'rgba(15,23,42,0.03)'};
-  color: ${p => p.$active ? '#4ade80' : 'rgba(15,23,42,0.4)'};
+  color: ${p => p.$active ? '#166534' : 'rgba(15,23,42,0.62)'};
   font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
@@ -162,16 +162,16 @@ const PlanButton = styled.button`
   gap: 0.5rem;
 
   ${p => p.$primary ? `
-    background: #22c55e;
-    color: #0f172a;
+    background: #0f172a;
+    color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(34,197,94,0.3);
-    &:hover { background: #16a34a; transform: translateY(-2px); }
+    box-shadow: 0 4px 15px rgba(15,23,42,0.22);
+    &:hover { background: #111827; transform: translateY(-2px); }
   ` : `
-    background: rgba(15,23,42,0.05);
-    color: rgba(15,23,42,0.6);
-    border: 1px solid rgba(15,23,42,0.08);
-    &:hover { border-color: rgba(15,23,42,0.15); }
+    background: #1e293b;
+    color: white;
+    border: 1px solid #1e293b;
+    &:hover { background: #111827; border-color: #111827; }
   `}
 
   &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }

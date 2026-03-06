@@ -292,9 +292,9 @@ const CardAction = styled(Link)`
   gap: 0.45rem;
   margin-top: 0.2rem;
   text-decoration: none;
-  border: 1px solid rgba(34, 197, 94, 0.28);
-  color: #86efac;
-  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid #0f172a;
+  color: #ffffff;
+  background: #0f172a;
   border-radius: 10px;
   padding: 0.56rem 0.8rem;
   font-size: 0.8rem;

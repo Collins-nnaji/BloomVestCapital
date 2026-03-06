@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid } from 'recharts';
 import { FaArrowLeft, FaArrowRight, FaCheck, FaCheckCircle, FaClock, FaGraduationCap, FaTrophy, FaGripVertical } from 'react-icons/fa';
 import { api } from '../api';
 import { getStaticCourseById, getStaticLessonById } from '../utils/courseData';
@@ -86,13 +85,7 @@ const MetaChip = styled.div`
 
 const Grid = styled.div`
   margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 1rem;
-
-  @media (max-width: 960px) {
-    grid-template-columns: 1fr;
-  }
+  display: block;
 `;
 
 const Main = styled.div`
@@ -100,12 +93,6 @@ const Main = styled.div`
   border-radius: 14px;
   background: #ffffff;
   padding: 1rem;
-`;
-
-const Side = styled.div`
-  display: grid;
-  gap: 1rem;
-  align-content: start;
 `;
 
 const Card = styled.div`
@@ -197,8 +184,8 @@ const Action = styled.button`
   border-radius: 10px;
   padding: 0.56rem 0.82rem;
   border: none;
-  background: ${(p) => (p.$secondary ? 'rgba(15,23,42,0.08)' : 'linear-gradient(130deg, #22c55e, #16a34a)')};
-  color: ${(p) => (p.$secondary ? '#0f172a' : 'white')};
+  background: ${(p) => (p.$secondary ? '#1e293b' : '#0f172a')};
+  color: white;
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
@@ -346,22 +333,6 @@ const LessonPage = () => {
     if (!lessonOrder.length) return -1;
     return lessonOrder.findIndex((item) => String(item.id) === String(lessonId));
   }, [lessonOrder, lessonId]);
-
-  const completionBars = useMemo(() => {
-    if (!lesson) return [];
-    return lesson.content.map((block, index) => ({
-      section: `S${index + 1}`,
-      depth: Math.min(Math.round((block.text || '').length / 20), 100),
-    }));
-  }, [lesson]);
-
-  const retentionCurve = useMemo(() => {
-    const base = [25, 52, 68, 78, 88];
-    return base.map((value, index) => ({
-      checkpoint: `C${index + 1}`,
-      retention: lesson?.completed ? Math.min(value + 7, 97) : value,
-    }));
-  }, [lesson]);
 
   const allAnswered = lesson && lesson.quiz.length > 0
     ? Object.keys(quizAnswers).length === lesson.quiz.length
@@ -574,38 +545,6 @@ const LessonPage = () => {
             </Row>
           </Main>
 
-          <Side>
-            <Card>
-              <Heading>Concept Depth by Section</Heading>
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={completionBars}>
-                  <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
-                  <XAxis dataKey="section" stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                  <YAxis stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                  <Tooltip
-                    contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
-                  />
-                  <Bar dataKey="depth" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </Card>
-
-            <Card>
-              <Heading>Retention Checkpoints</Heading>
-              <ResponsiveContainer width="100%" height={220}>
-                <LineChart data={retentionCurve}>
-                  <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
-                  <XAxis dataKey="checkpoint" stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                  <YAxis domain={[0, 100]} stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                  <Tooltip
-                    formatter={(value) => [`${value}%`, 'Retention']}
-                    contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
-                  />
-                  <Line type="monotone" dataKey="retention" stroke="#3b82f6" strokeWidth={3} dot={{ r: 3 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </Card>
-          </Side>
         </Grid>
       </Wrap>
     </Page>

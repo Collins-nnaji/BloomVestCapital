@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area, CartesianGrid } from 'recharts';
 import { FaArrowLeft, FaBookOpen, FaCheckCircle, FaClock, FaChevronDown, FaChevronRight, FaLock, FaPlay } from 'react-icons/fa';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
@@ -107,9 +106,9 @@ const Primary = styled(Link)`
   text-decoration: none;
   border-radius: 10px;
   padding: 0.58rem 0.85rem;
-  background: linear-gradient(130deg, #22c55e, #16a34a);
+  background: #0f172a;
   color: white;
-  border: none;
+  border: 1px solid #0f172a;
   font-size: 0.8rem;
   font-weight: 800;
   display: inline-flex;
@@ -120,9 +119,9 @@ const Primary = styled(Link)`
 const Secondary = styled.button`
   border-radius: 10px;
   padding: 0.58rem 0.85rem;
-  border: 1px solid rgba(15, 23, 42, 0.16);
-  background: rgba(15, 23, 42, 0.06);
-  color: #0f172a;
+  border: 1px solid #1e293b;
+  background: #1e293b;
+  color: white;
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
@@ -155,31 +154,52 @@ const ProgressVal = styled.div`
   color: ${(p) => p.$color || '#22c55e'};
 `;
 
-const Dash = styled.div`
+const CourseSummaryPanel = styled.div`
   margin-top: 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-
-  @media (max-width: 980px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const ChartPanel = styled.div`
   border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
   background: #ffffff;
   padding: 1rem;
-  min-height: 280px;
 `;
 
-const ChartTitle = styled.h3`
+const SummaryTitle = styled.h3`
   margin: 0 0 0.75rem;
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: rgba(15, 23, 42, 0.72);
+`;
+
+const SummaryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SummaryCard = styled.div`
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.03);
+  padding: 0.7rem 0.75rem;
+`;
+
+const SummaryLabel = styled.div`
+  font-size: 0.7rem;
+  color: rgba(15, 23, 42, 0.62);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+`;
+
+const SummaryValue = styled.div`
+  margin-top: 0.22rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
 `;
 
 const ModuleSection = styled.section`
@@ -324,31 +344,6 @@ const CoursePage = () => {
     loadData();
   }, [loadData]);
 
-  const moduleBars = useMemo(() => {
-    if (!course) return [];
-    return course.modules.map((module) => {
-      const completed = module.lessons.filter((lesson) => lesson.completed).length;
-      return {
-        module: module.title.length > 14 ? `${module.title.slice(0, 14)}…` : module.title,
-        completed,
-        remaining: Math.max(module.lessons.length - completed, 0),
-      };
-    });
-  }, [course]);
-
-  const learningCurve = useMemo(() => {
-    if (!course) return [];
-    let cumulative = 0;
-    return course.modules.map((module, idx) => {
-      const moduleMinutes = module.lessons.reduce((sum, lesson) => sum + parseDurationToMinutes(lesson.duration), 0);
-      cumulative += moduleMinutes;
-      return {
-        stage: `M${idx + 1}`,
-        cumulativeMinutes: cumulative,
-      };
-    });
-  }, [course]);
-
   const firstIncompleteLesson = useMemo(() => {
     if (!course) return null;
     return course.modules
@@ -442,44 +437,25 @@ const CoursePage = () => {
           </ProgressStack>
         </Hero>
 
-        <Dash>
-          <ChartPanel>
-            <ChartTitle>Module Completion Breakdown</ChartTitle>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={moduleBars}>
-                <XAxis dataKey="module" stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                <YAxis stroke="rgba(15,23,42,0.58)" allowDecimals={false} fontSize={11} />
-                <Tooltip
-                  contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
-                />
-                <Bar dataKey="completed" stackId="a" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="remaining" stackId="a" fill="rgba(15,23,42,0.16)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartPanel>
-
-          <ChartPanel>
-            <ChartTitle>Learning Time Curve</ChartTitle>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={learningCurve}>
-                <defs>
-                  <linearGradient id="course_time" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0.04} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
-                <XAxis dataKey="stage" stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                <YAxis stroke="rgba(15,23,42,0.58)" fontSize={11} />
-                <Tooltip
-                  formatter={(value) => [`${value} min`, 'Cumulative']}
-                  contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
-                />
-                <Area type="monotone" dataKey="cumulativeMinutes" stroke="#22c55e" fillOpacity={1} fill="url(#course_time)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartPanel>
-        </Dash>
+        <CourseSummaryPanel>
+          <SummaryTitle>Course Snapshot</SummaryTitle>
+          <SummaryGrid>
+            <SummaryCard>
+              <SummaryLabel>Modules</SummaryLabel>
+              <SummaryValue>{course.modules.length}</SummaryValue>
+            </SummaryCard>
+            <SummaryCard>
+              <SummaryLabel>Lessons Remaining</SummaryLabel>
+              <SummaryValue>{Math.max(course.totalLessons - course.completedLessons, 0)}</SummaryValue>
+            </SummaryCard>
+            <SummaryCard>
+              <SummaryLabel>Avg Minutes / Lesson</SummaryLabel>
+              <SummaryValue>
+                {course.totalLessons > 0 ? Math.round(course.estimatedMinutes / course.totalLessons) : 0}
+              </SummaryValue>
+            </SummaryCard>
+          </SummaryGrid>
+        </CourseSummaryPanel>
 
         <ModuleSection>
           {course.modules.map((module) => {
