@@ -2,7 +2,20 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  RadialBarChart,
+  RadialBar,
+  PolarAngleAxis,
+} from 'recharts';
 import { FaBookOpen, FaClock, FaCheckCircle, FaArrowRight, FaLock, FaChartLine } from 'react-icons/fa';
 import { useAuth } from '../AuthContext';
 import { api } from '../api';
@@ -10,7 +23,7 @@ import { buildStaticCourses, parseDurationToMinutes } from '../utils/courseData'
 
 const Page = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: linear-gradient(180deg, #334155 0%, #475569 100%);
   color: white;
 `;
 
@@ -121,11 +134,15 @@ const Fill = styled(motion.div)`
 
 const DashboardGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 1.25rem;
 
   @media (max-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 760px) {
     grid-template-columns: 1fr;
   }
 `;
@@ -144,6 +161,19 @@ const PanelTitle = styled.h3`
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.68);
+`;
+
+const RollerChartWrap = styled(motion.div)`
+  height: 210px;
+  position: relative;
+`;
+
+const RollerLabel = styled.div`
+  margin-top: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.62);
 `;
 
 const SectionTitle = styled.h2`
@@ -376,6 +406,14 @@ const LearnPage = () => {
     }));
   }, [courses]);
 
+  const rollerData = useMemo(() => {
+    const activeRate = Math.min(Math.round((courses.filter((course) => course.progressPercent > 0).length / Math.max(courses.length, 1)) * 100), 100);
+    return [
+      { name: 'Completion', value: overallPercent, fill: '#22c55e' },
+      { name: 'Active Courses', value: activeRate, fill: '#3b82f6' },
+    ];
+  }, [courses, overallPercent]);
+
   const totalMinutes = courses.reduce((sum, course) => sum + (course.estimatedMinutes || 0), 0);
 
   return (
@@ -441,7 +479,7 @@ const LearnPage = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: '#0f172a',
+                      background: '#1e293b',
                       border: '1px solid rgba(255,255,255,0.14)',
                       borderRadius: 8,
                       color: 'white',
@@ -459,7 +497,7 @@ const LearnPage = () => {
                   <YAxis stroke="rgba(255,255,255,0.45)" allowDecimals={false} fontSize={11} />
                   <Tooltip
                     contentStyle={{
-                      background: '#0f172a',
+                      background: '#1e293b',
                       border: '1px solid rgba(255,255,255,0.14)',
                       borderRadius: 8,
                       color: 'white',
@@ -469,6 +507,43 @@ const LearnPage = () => {
                   <Bar dataKey="remaining" stackId="a" fill="rgba(255,255,255,0.2)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
+            </Panel>
+
+            <Panel>
+              <PanelTitle><FaChartLine style={{ marginRight: '0.45rem' }} /> Roller Circle Progress</PanelTitle>
+              <RollerChartWrap
+                animate={{ rotate: [0, 2, 0, -2, 0] }}
+                transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="24%"
+                    outerRadius="88%"
+                    barSize={14}
+                    data={rollerData}
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
+                    <RadialBar background dataKey="value" cornerRadius={8} />
+                    <Tooltip
+                      formatter={(value) => [`${value}%`, 'Progress']}
+                      contentStyle={{
+                        background: '#1e293b',
+                        border: '1px solid rgba(255,255,255,0.14)',
+                        borderRadius: 8,
+                        color: 'white',
+                      }}
+                    />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+              </RollerChartWrap>
+              <RollerLabel>
+                <span>Completion: {overallPercent}%</span>
+                <span>Active courses: {rollerData[1]?.value || 0}%</span>
+              </RollerLabel>
             </Panel>
           </DashboardGrid>
         )}

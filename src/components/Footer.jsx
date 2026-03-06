@@ -4,7 +4,7 @@ import { FaLinkedin, FaTwitter } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
-  background: #060910;
+  background: #334155;
   border-top: 1px solid rgba(255,255,255,0.06);
   padding: 2rem 0 1.5rem;
   padding-bottom: max(1.5rem, env(safe-area-inset-bottom));

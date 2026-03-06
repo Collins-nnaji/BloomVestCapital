@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #060910 0%, #0f1420 50%, #060910 100%);
+  background: linear-gradient(135deg, #334155 0%, #475569 50%, #334155 100%);
   display: flex;
   align-items: center;
   justify-content: center;

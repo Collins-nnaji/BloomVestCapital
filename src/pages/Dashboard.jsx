@@ -16,7 +16,7 @@ const orbFloat = keyframes`
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: #060910;
+  background: linear-gradient(180deg, #334155 0%, #475569 100%);
 `;
 
 const HeroSection = styled.section`

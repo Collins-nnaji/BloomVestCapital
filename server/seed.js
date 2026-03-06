@@ -12,6 +12,7 @@ async function seed() {
 
     // Clear existing data
     console.log('Clearing existing data...');
+    await pool.query('DELETE FROM lesson_progress');
     await pool.query('DELETE FROM lessons');
     await pool.query('DELETE FROM modules');
     await pool.query('DELETE FROM courses');

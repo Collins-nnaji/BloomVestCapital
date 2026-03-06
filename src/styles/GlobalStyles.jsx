@@ -19,13 +19,13 @@ const GlobalStyles = createGlobalStyle`
     --color-accent-3: #f59e0b; /* Amber */
     --color-accent-4: #ec4899; /* Pink */
     
-    /* Neutral Colors - Dark theme */
+    /* Neutral Colors - Soft dark theme */
     --color-text: #f8fafc;
     --color-text-light: rgba(255,255,255,0.7);
     --color-text-lighter: rgba(255,255,255,0.5);
     --color-border: rgba(255,255,255,0.08);
-    --color-background: #060910;
-    --color-background-alt: #0a0f1c;
+    --color-background: #334155;
+    --color-background-alt: #475569;
     
     /* Gradients */
     --gradient-primary: linear-gradient(to right, #22c55e, #15803d);

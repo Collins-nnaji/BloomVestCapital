@@ -11,7 +11,7 @@ import { useAuth } from '../AuthContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: linear-gradient(180deg, #334155 0%, #475569 100%);
 `;
 
 const ContentWrapper = styled.div`

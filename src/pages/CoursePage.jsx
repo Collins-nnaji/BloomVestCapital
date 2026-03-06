@@ -10,7 +10,7 @@ import { getStaticCourseById, parseDurationToMinutes } from '../utils/courseData
 
 const Page = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: linear-gradient(180deg, #334155 0%, #475569 100%);
   color: white;
 `;
 
@@ -37,7 +37,7 @@ const Hero = styled.section`
   margin-top: 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
-  background: linear-gradient(130deg, rgba(34, 197, 94, 0.12), rgba(17, 24, 39, 0.92));
+  background: linear-gradient(130deg, rgba(34, 197, 94, 0.12), rgba(30, 41, 59, 0.86));
   padding: 1.25rem;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -186,7 +186,7 @@ const ModuleSection = styled.section`
   margin-top: 1rem;
 `;
 
-const ModuleCard = styled.div`
+const ModuleCard = styled(motion.div)`
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
@@ -450,7 +450,7 @@ const CoursePage = () => {
                 <XAxis dataKey="module" stroke="rgba(255,255,255,0.45)" fontSize={11} />
                 <YAxis stroke="rgba(255,255,255,0.45)" allowDecimals={false} fontSize={11} />
                 <Tooltip
-                  contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                  contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
                 />
                 <Bar dataKey="completed" stackId="a" fill="#22c55e" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="remaining" stackId="a" fill="rgba(255,255,255,0.2)" radius={[4, 4, 0, 0]} />
@@ -473,7 +473,7 @@ const CoursePage = () => {
                 <YAxis stroke="rgba(255,255,255,0.45)" fontSize={11} />
                 <Tooltip
                   formatter={(value) => [`${value} min`, 'Cumulative']}
-                  contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                  contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
                 />
                 <Area type="monotone" dataKey="cumulativeMinutes" stroke="#22c55e" fillOpacity={1} fill="url(#course_time)" />
               </AreaChart>
@@ -486,7 +486,11 @@ const CoursePage = () => {
             const doneCount = module.lessons.filter((lesson) => lesson.completed).length;
             const open = !!expandedModules[module.id];
             return (
-              <ModuleCard key={module.id}>
+              <ModuleCard
+                key={module.id}
+                whileHover={{ y: -2, borderColor: 'rgba(34, 197, 94, 0.35)' }}
+                transition={{ duration: 0.18 }}
+              >
                 <ModuleHead
                   onClick={() => setExpandedModules((prev) => ({ ...prev, [module.id]: !prev[module.id] }))}
                 >

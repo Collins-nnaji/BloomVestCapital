@@ -40,6 +40,7 @@
     "start": "react-scripts start",
     "server": "node server/index.js",
     "dev": "concurrently \"npm run server\" \"npm start\"",
+    "seed:courses": "node server/seed.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

@@ -84,6 +84,7 @@ router.get('/', async (req, res) => {
         level: course.level,
         icon: course.icon,
         color: course.color,
+        is_pro: course.is_pro,
         totalLessons: allLessons.length,
         completedLessons: allLessons.filter(l => l.completed).length,
         modules,

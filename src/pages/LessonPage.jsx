@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LineChart, Line, CartesianGrid } from 'recharts';
-import { FaArrowLeft, FaArrowRight, FaCheck, FaCheckCircle, FaClock, FaGraduationCap, FaTrophy } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCheck, FaCheckCircle, FaClock, FaGraduationCap, FaTrophy, FaGripVertical } from 'react-icons/fa';
 import { api } from '../api';
 import { getStaticCourseById, getStaticLessonById } from '../utils/courseData';
 
 const Page = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #0a0f1c 0%, #111827 100%);
+  background: linear-gradient(180deg, #334155 0%, #475569 100%);
   color: white;
 `;
 
@@ -49,7 +49,7 @@ const Hero = styled.section`
   margin-top: 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  background: linear-gradient(130deg, rgba(34, 197, 94, 0.1), rgba(17, 24, 39, 0.92));
+  background: linear-gradient(130deg, rgba(34, 197, 94, 0.1), rgba(30, 41, 59, 0.86));
   padding: 1.15rem;
 `;
 
@@ -217,6 +217,31 @@ const Score = styled.div`
   color: rgba(255, 255, 255, 0.88);
 `;
 
+const DndHint = styled.p`
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.62);
+`;
+
+const DndList = styled.div`
+  display: grid;
+  gap: 0.45rem;
+`;
+
+const DndItem = styled.div`
+  border-radius: 10px;
+  border: 1px solid ${(p) => (p.$active ? 'rgba(34,197,94,0.65)' : 'rgba(255,255,255,0.12)')};
+  background: ${(p) => (p.$active ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.03)')};
+  padding: 0.58rem 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.86);
+  cursor: ${(p) => (p.$locked ? 'default' : 'grab')};
+  user-select: none;
+`;
+
 const Center = styled.div`
   text-align: center;
   color: rgba(255, 255, 255, 0.65);
@@ -224,12 +249,44 @@ const Center = styled.div`
 `;
 
 function normalizeLesson(lesson) {
+  const normalizedContent = Array.isArray(lesson.content) ? lesson.content : [];
+  const providedTask = lesson.interactiveTask && Array.isArray(lesson.interactiveTask.items)
+    ? lesson.interactiveTask
+    : null;
+  const derivedItems = normalizedContent
+    .map((block, idx) => ({
+      id: `section-${idx + 1}`,
+      label: block.heading || `Section ${idx + 1}`,
+    }))
+    .slice(0, 5);
+
+  const generatedTask = derivedItems.length >= 3
+    ? {
+      type: 'sequence_order',
+      title: 'Drag & Drop Sequence Builder',
+      instructions: 'Arrange the lesson sections into their ideal learning sequence.',
+      items: derivedItems,
+      correctOrder: derivedItems.map((item) => item.id),
+    }
+    : null;
+
+  const normalizedTask = providedTask || generatedTask;
   return {
     ...lesson,
-    content: Array.isArray(lesson.content) ? lesson.content : [],
+    content: normalizedContent,
     keyTakeaways: Array.isArray(lesson.keyTakeaways) ? lesson.keyTakeaways : [],
     quiz: Array.isArray(lesson.quiz) ? lesson.quiz : [],
+    interactiveTask: normalizedTask,
   };
+}
+
+function shuffleItems(items) {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
 
 const LessonPage = () => {
@@ -241,6 +298,9 @@ const LessonPage = () => {
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [completing, setCompleting] = useState(false);
+  const [activityOrder, setActivityOrder] = useState([]);
+  const [draggingId, setDraggingId] = useState(null);
+  const [activitySubmitted, setActivitySubmitted] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -264,6 +324,18 @@ const LessonPage = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (!lesson?.interactiveTask?.items?.length) {
+      setActivityOrder([]);
+      setActivitySubmitted(false);
+      setDraggingId(null);
+      return;
+    }
+    setActivityOrder(shuffleItems(lesson.interactiveTask.items));
+    setActivitySubmitted(false);
+    setDraggingId(null);
+  }, [lesson?.id, lesson?.interactiveTask]);
 
   const lessonOrder = useMemo(() => {
     if (!course) return [];
@@ -303,6 +375,25 @@ const LessonPage = () => {
   const passed = lesson && lesson.quiz.length > 0
     ? score >= Math.ceil(lesson.quiz.length / 2)
     : true;
+
+  const activityCorrect = useMemo(() => {
+    if (!lesson?.interactiveTask?.correctOrder || !activityOrder.length) return false;
+    return activityOrder.every((item, idx) => item.id === lesson.interactiveTask.correctOrder[idx]);
+  }, [lesson, activityOrder]);
+
+  const onDropItem = useCallback((targetId) => {
+    if (!draggingId || draggingId === targetId || activitySubmitted) return;
+    setActivityOrder((prev) => {
+      const fromIndex = prev.findIndex((item) => item.id === draggingId);
+      const toIndex = prev.findIndex((item) => item.id === targetId);
+      if (fromIndex === -1 || toIndex === -1) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+    setDraggingId(null);
+  }, [draggingId, activitySubmitted]);
 
   const completeLesson = useCallback(async () => {
     if (!lesson || completing) return;
@@ -377,6 +468,52 @@ const LessonPage = () => {
               ))}
             </Card>
 
+            {lesson.interactiveTask?.type === 'sequence_order' && activityOrder.length > 0 && (
+              <Card style={{ marginTop: '1rem' }}>
+                <Heading>{lesson.interactiveTask.title || 'Drag & Drop Activity'}</Heading>
+                <DndHint>{lesson.interactiveTask.instructions || 'Arrange the cards to complete this checkpoint.'}</DndHint>
+                <DndList>
+                  {activityOrder.map((item) => (
+                    <DndItem
+                      key={item.id}
+                      $active={draggingId === item.id}
+                      $locked={activitySubmitted}
+                      draggable={!activitySubmitted}
+                      onDragStart={() => setDraggingId(item.id)}
+                      onDragOver={(event) => event.preventDefault()}
+                      onDrop={() => onDropItem(item.id)}
+                      onDragEnd={() => setDraggingId(null)}
+                    >
+                      <FaGripVertical style={{ color: 'rgba(255,255,255,0.45)' }} />
+                      <span>{item.label}</span>
+                    </DndItem>
+                  ))}
+                </DndList>
+                <Row style={{ marginTop: '0.7rem' }}>
+                  {!activitySubmitted ? (
+                    <Action onClick={() => setActivitySubmitted(true)}>
+                      Submit Arrangement
+                    </Action>
+                  ) : (
+                    <Action
+                      $secondary
+                      onClick={() => {
+                        setActivityOrder(shuffleItems(lesson.interactiveTask.items));
+                        setActivitySubmitted(false);
+                      }}
+                    >
+                      Shuffle & Retry
+                    </Action>
+                  )}
+                </Row>
+                {activitySubmitted && (
+                  <Score $pass={activityCorrect} style={{ marginTop: '0.7rem' }}>
+                    {activityCorrect ? 'Excellent sequence. You mapped the concept flow correctly.' : 'Close — reorder and try again for full mastery.'}
+                  </Score>
+                )}
+              </Card>
+            )}
+
             {lesson.quiz.length > 0 && (
               <Card style={{ marginTop: '1rem' }}>
                 <Heading><FaTrophy style={{ marginRight: '0.4rem', color: '#f59e0b' }} /> Knowledge Check</Heading>
@@ -446,7 +583,7 @@ const LessonPage = () => {
                   <XAxis dataKey="section" stroke="rgba(255,255,255,0.45)" fontSize={11} />
                   <YAxis stroke="rgba(255,255,255,0.45)" fontSize={11} />
                   <Tooltip
-                    contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                    contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
                   />
                   <Bar dataKey="depth" fill="#22c55e" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -462,7 +599,7 @@ const LessonPage = () => {
                   <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.45)" fontSize={11} />
                   <Tooltip
                     formatter={(value) => [`${value}%`, 'Retention']}
-                    contentStyle={{ background: '#0f172a', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                    contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
                   />
                   <Line type="monotone" dataKey="retention" stroke="#3b82f6" strokeWidth={3} dot={{ r: 3 }} />
                 </LineChart>

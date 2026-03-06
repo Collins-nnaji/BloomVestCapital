@@ -15,8 +15,8 @@ const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   background: ${props => props.$scrolled
-    ? 'rgba(4,6,12,0.95)'
-    : 'rgba(6,9,16,0.85)'};
+    ? 'rgba(51,65,85,0.95)'
+    : 'rgba(71,85,105,0.85)'};
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -178,7 +178,7 @@ const MobilePanel = styled(motion.div)`
   width: min(320px, 90vw);
   height: 100vh;
   height: 100dvh;
-  background: #0a0f1c;
+  background: #475569;
   z-index: 1020;
   padding: 5rem 1.5rem 2rem;
   padding-top: max(5rem, calc(60px + env(safe-area-inset-top)));
