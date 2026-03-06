@@ -10,8 +10,8 @@ import { getStaticCourseById, parseDurationToMinutes } from '../utils/courseData
 
 const Page = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #334155 0%, #475569 100%);
-  color: white;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
 `;
 
 const Wrap = styled.div`
@@ -24,8 +24,8 @@ const BackLink = styled(Link)`
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  color: rgba(255, 255, 255, 0.68);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 10px;
   padding: 0.5rem 0.8rem;
   text-decoration: none;
@@ -35,9 +35,9 @@ const BackLink = styled(Link)`
 
 const Hero = styled.section`
   margin-top: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 18px;
-  background: linear-gradient(130deg, rgba(34, 197, 94, 0.12), rgba(30, 41, 59, 0.86));
+  background: linear-gradient(130deg, rgba(34, 197, 94, 0.14), #ffffff);
   padding: 1.25rem;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -73,7 +73,7 @@ const CourseTitle = styled.h1`
 
 const CourseDesc = styled.p`
   margin: 0.45rem 0 0;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(15, 23, 42, 0.76);
   line-height: 1.7;
 `;
 
@@ -85,11 +85,11 @@ const MetaRow = styled.div`
 `;
 
 const MetaChip = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 999px;
   padding: 0.32rem 0.7rem;
   font-size: 0.74rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(15, 23, 42, 0.8);
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -120,9 +120,9 @@ const Primary = styled(Link)`
 const Secondary = styled.button`
   border-radius: 10px;
   padding: 0.58rem 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: rgba(15, 23, 42, 0.06);
+  color: #0f172a;
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
@@ -134,9 +134,9 @@ const ProgressStack = styled.div`
 `;
 
 const ProgressCard = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   padding: 0.75rem 0.8rem;
 `;
 
@@ -144,7 +144,7 @@ const ProgressLabel = styled.div`
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(15, 23, 42, 0.62);
   margin-bottom: 0.25rem;
   font-weight: 700;
 `;
@@ -167,9 +167,9 @@ const Dash = styled.div`
 `;
 
 const ChartPanel = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   padding: 1rem;
   min-height: 280px;
 `;
@@ -179,7 +179,7 @@ const ChartTitle = styled.h3`
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(15, 23, 42, 0.72);
 `;
 
 const ModuleSection = styled.section`
@@ -187,9 +187,9 @@ const ModuleSection = styled.section`
 `;
 
 const ModuleCard = styled(motion.div)`
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   overflow: hidden;
   margin-bottom: 0.8rem;
 `;
@@ -198,7 +198,7 @@ const ModuleHead = styled.button`
   width: 100%;
   border: none;
   background: transparent;
-  color: white;
+  color: #0f172a;
   text-align: left;
   padding: 0.85rem 1rem;
   display: flex;
@@ -209,7 +209,7 @@ const ModuleHead = styled.button`
 
 const ModuleMeta = styled.div`
   margin-left: auto;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(15, 23, 42, 0.64);
   font-size: 0.76rem;
   font-weight: 700;
 `;
@@ -220,15 +220,15 @@ const LessonList = styled(motion.div)`
 
 const LessonRow = styled(Link)`
   text-decoration: none;
-  color: white;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #0f172a;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
   padding: 0.72rem 1rem 0.72rem 2rem;
   display: flex;
   align-items: center;
   gap: 0.7rem;
   transition: background 0.2s ease;
   &:hover {
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(15, 23, 42, 0.05);
   }
 `;
 
@@ -238,7 +238,7 @@ const LessonTitle = styled.div`
 `;
 
 const LessonSub = styled.div`
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(15, 23, 42, 0.62);
   font-size: 0.74rem;
 `;
 
@@ -246,7 +246,7 @@ const Dot = styled.div`
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid ${(p) => (p.$done ? '#22c55e' : 'rgba(255,255,255,0.24)')};
+  border: 2px solid ${(p) => (p.$done ? '#22c55e' : 'rgba(15,23,42,0.28)')};
   background: ${(p) => (p.$done ? 'rgba(34,197,94,0.22)' : 'transparent')};
   display: inline-flex;
   align-items: center;
@@ -259,7 +259,7 @@ const Dot = styled.div`
 const Center = styled.div`
   text-align: center;
   padding: 4rem 1rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(15, 23, 42, 0.65);
 `;
 
 function normalizeCourse(course, completedIds) {
@@ -447,13 +447,13 @@ const CoursePage = () => {
             <ChartTitle>Module Completion Breakdown</ChartTitle>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={moduleBars}>
-                <XAxis dataKey="module" stroke="rgba(255,255,255,0.45)" fontSize={11} />
-                <YAxis stroke="rgba(255,255,255,0.45)" allowDecimals={false} fontSize={11} />
+                <XAxis dataKey="module" stroke="rgba(15,23,42,0.58)" fontSize={11} />
+                <YAxis stroke="rgba(15,23,42,0.58)" allowDecimals={false} fontSize={11} />
                 <Tooltip
-                  contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
                 />
                 <Bar dataKey="completed" stackId="a" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="remaining" stackId="a" fill="rgba(255,255,255,0.2)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="remaining" stackId="a" fill="rgba(15,23,42,0.16)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </ChartPanel>
@@ -468,12 +468,12 @@ const CoursePage = () => {
                     <stop offset="95%" stopColor="#22c55e" stopOpacity={0.04} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
-                <XAxis dataKey="stage" stroke="rgba(255,255,255,0.45)" fontSize={11} />
-                <YAxis stroke="rgba(255,255,255,0.45)" fontSize={11} />
+                <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
+                <XAxis dataKey="stage" stroke="rgba(15,23,42,0.58)" fontSize={11} />
+                <YAxis stroke="rgba(15,23,42,0.58)" fontSize={11} />
                 <Tooltip
                   formatter={(value) => [`${value} min`, 'Cumulative']}
-                  contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                  contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
                 />
                 <Area type="monotone" dataKey="cumulativeMinutes" stroke="#22c55e" fillOpacity={1} fill="url(#course_time)" />
               </AreaChart>
@@ -497,7 +497,7 @@ const CoursePage = () => {
                   {open ? <FaChevronDown /> : <FaChevronRight />}
                   <div>
                     <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{module.title}</div>
-                    <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.52)', marginTop: '0.12rem' }}>
+                    <div style={{ fontSize: '0.78rem', color: 'rgba(15,23,42,0.62)', marginTop: '0.12rem' }}>
                       {module.description}
                     </div>
                   </div>
@@ -521,7 +521,7 @@ const CoursePage = () => {
                             <LessonTitle>{lesson.icon} {lesson.title}</LessonTitle>
                             <LessonSub>{lesson.duration}</LessonSub>
                           </div>
-                          <FaChevronRight style={{ color: 'rgba(255,255,255,0.42)', fontSize: '0.75rem' }} />
+                          <FaChevronRight style={{ color: 'rgba(15,23,42,0.45)', fontSize: '0.75rem' }} />
                         </LessonRow>
                       ))}
                     </LessonList>

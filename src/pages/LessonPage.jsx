@@ -8,8 +8,8 @@ import { getStaticCourseById, getStaticLessonById } from '../utils/courseData';
 
 const Page = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #334155 0%, #475569 100%);
-  color: white;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
 `;
 
 const Wrap = styled.div`
@@ -31,8 +31,8 @@ const BackLink = styled(Link)`
   align-items: center;
   gap: 0.45rem;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 10px;
   padding: 0.5rem 0.8rem;
   font-size: 0.8rem;
@@ -40,16 +40,16 @@ const BackLink = styled(Link)`
 `;
 
 const Breadcrumb = styled.div`
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(15, 23, 42, 0.62);
   font-size: 0.76rem;
   font-weight: 700;
 `;
 
 const Hero = styled.section`
   margin-top: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 16px;
-  background: linear-gradient(130deg, rgba(34, 197, 94, 0.1), rgba(30, 41, 59, 0.86));
+  background: linear-gradient(130deg, rgba(34, 197, 94, 0.14), #ffffff);
   padding: 1.15rem;
 `;
 
@@ -61,7 +61,7 @@ const HeroTitle = styled.h1`
 
 const HeroSub = styled.p`
   margin: 0.45rem 0 0;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(15, 23, 42, 0.76);
   line-height: 1.7;
 `;
 
@@ -73,7 +73,7 @@ const MetaRow = styled.div`
 `;
 
 const MetaChip = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(15, 23, 42, 0.14);
   border-radius: 999px;
   padding: 0.26rem 0.72rem;
   display: inline-flex;
@@ -81,7 +81,7 @@ const MetaChip = styled.div`
   gap: 0.35rem;
   font-size: 0.75rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(15, 23, 42, 0.86);
 `;
 
 const Grid = styled.div`
@@ -96,9 +96,9 @@ const Grid = styled.div`
 `;
 
 const Main = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   padding: 1rem;
 `;
 
@@ -109,9 +109,9 @@ const Side = styled.div`
 `;
 
 const Card = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   padding: 0.95rem;
 `;
 
@@ -120,7 +120,7 @@ const Heading = styled.h3`
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(15, 23, 42, 0.72);
 `;
 
 const Section = styled.div`
@@ -135,7 +135,7 @@ const SectionTitle = styled.h2`
 
 const SectionText = styled.p`
   margin: 0;
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(15, 23, 42, 0.78);
   line-height: 1.75;
 `;
 
@@ -143,7 +143,7 @@ const Takeaway = styled.div`
   border-left: 3px solid #22c55e;
   padding: 0.45rem 0.6rem;
   margin-bottom: 0.45rem;
-  color: rgba(255, 255, 255, 0.76);
+  color: rgba(15, 23, 42, 0.82);
   font-size: 0.86rem;
   display: flex;
   align-items: flex-start;
@@ -151,11 +151,11 @@ const Takeaway = styled.div`
 `;
 
 const QuestionCard = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 12px;
   padding: 0.85rem;
   margin-bottom: 0.7rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(15, 23, 42, 0.03);
 `;
 
 const Question = styled.p`
@@ -174,15 +174,15 @@ const Option = styled.button`
     if (p.$submitted && p.$correct) return 'rgba(34,197,94,0.8)';
     if (p.$submitted && p.$selected && !p.$correct) return 'rgba(239,68,68,0.7)';
     if (p.$selected) return 'rgba(59,130,246,0.75)';
-    return 'rgba(255,255,255,0.12)';
+    return 'rgba(15,23,42,0.18)';
   }};
   background: ${(p) => {
     if (p.$submitted && p.$correct) return 'rgba(34,197,94,0.14)';
     if (p.$submitted && p.$selected && !p.$correct) return 'rgba(239,68,68,0.12)';
     if (p.$selected) return 'rgba(59,130,246,0.12)';
-    return 'rgba(255,255,255,0.02)';
+    return 'rgba(15,23,42,0.04)';
   }};
-  color: rgba(255, 255, 255, 0.86);
+  color: rgba(15, 23, 42, 0.9);
   cursor: ${(p) => (p.disabled ? 'default' : 'pointer')};
   font-size: 0.84rem;
 `;
@@ -197,8 +197,8 @@ const Action = styled.button`
   border-radius: 10px;
   padding: 0.56rem 0.82rem;
   border: none;
-  background: ${(p) => (p.$secondary ? 'rgba(255,255,255,0.08)' : 'linear-gradient(130deg, #22c55e, #16a34a)')};
-  color: ${(p) => (p.$secondary ? 'rgba(255,255,255,0.85)' : 'white')};
+  background: ${(p) => (p.$secondary ? 'rgba(15,23,42,0.08)' : 'linear-gradient(130deg, #22c55e, #16a34a)')};
+  color: ${(p) => (p.$secondary ? '#0f172a' : 'white')};
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
@@ -214,13 +214,13 @@ const Score = styled.div`
   font-size: 0.84rem;
   background: ${(p) => (p.$pass ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.12)')};
   border: 1px solid ${(p) => (p.$pass ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)')};
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(15, 23, 42, 0.9);
 `;
 
 const DndHint = styled.p`
   margin: 0 0 0.6rem;
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(15, 23, 42, 0.7);
 `;
 
 const DndList = styled.div`
@@ -230,21 +230,21 @@ const DndList = styled.div`
 
 const DndItem = styled.div`
   border-radius: 10px;
-  border: 1px solid ${(p) => (p.$active ? 'rgba(34,197,94,0.65)' : 'rgba(255,255,255,0.12)')};
-  background: ${(p) => (p.$active ? 'rgba(34,197,94,0.12)' : 'rgba(255,255,255,0.03)')};
+  border: 1px solid ${(p) => (p.$active ? 'rgba(34,197,94,0.65)' : 'rgba(15,23,42,0.16)')};
+  background: ${(p) => (p.$active ? 'rgba(34,197,94,0.12)' : 'rgba(15,23,42,0.03)')};
   padding: 0.58rem 0.65rem;
   display: flex;
   align-items: center;
   gap: 0.55rem;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.86);
+  color: rgba(15, 23, 42, 0.9);
   cursor: ${(p) => (p.$locked ? 'default' : 'grab')};
   user-select: none;
 `;
 
 const Center = styled.div`
   text-align: center;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(15, 23, 42, 0.66);
   padding: 4rem 1rem;
 `;
 
@@ -484,7 +484,7 @@ const LessonPage = () => {
                       onDrop={() => onDropItem(item.id)}
                       onDragEnd={() => setDraggingId(null)}
                     >
-                      <FaGripVertical style={{ color: 'rgba(255,255,255,0.45)' }} />
+                      <FaGripVertical style={{ color: 'rgba(15,23,42,0.45)' }} />
                       <span>{item.label}</span>
                     </DndItem>
                   ))}
@@ -579,11 +579,11 @@ const LessonPage = () => {
               <Heading>Concept Depth by Section</Heading>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={completionBars}>
-                  <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
-                  <XAxis dataKey="section" stroke="rgba(255,255,255,0.45)" fontSize={11} />
-                  <YAxis stroke="rgba(255,255,255,0.45)" fontSize={11} />
+                  <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
+                  <XAxis dataKey="section" stroke="rgba(15,23,42,0.58)" fontSize={11} />
+                  <YAxis stroke="rgba(15,23,42,0.58)" fontSize={11} />
                   <Tooltip
-                    contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
                   />
                   <Bar dataKey="depth" fill="#22c55e" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -594,12 +594,12 @@ const LessonPage = () => {
               <Heading>Retention Checkpoints</Heading>
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={retentionCurve}>
-                  <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
-                  <XAxis dataKey="checkpoint" stroke="rgba(255,255,255,0.45)" fontSize={11} />
-                  <YAxis domain={[0, 100]} stroke="rgba(255,255,255,0.45)" fontSize={11} />
+                  <CartesianGrid stroke="rgba(15,23,42,0.08)" vertical={false} />
+                  <XAxis dataKey="checkpoint" stroke="rgba(15,23,42,0.58)" fontSize={11} />
+                  <YAxis domain={[0, 100]} stroke="rgba(15,23,42,0.58)" fontSize={11} />
                   <Tooltip
                     formatter={(value) => [`${value}%`, 'Retention']}
-                    contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 8 }}
+                    contentStyle={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8 }}
                   />
                   <Line type="monotone" dataKey="retention" stroke="#3b82f6" strokeWidth={3} dot={{ r: 3 }} />
                 </LineChart>

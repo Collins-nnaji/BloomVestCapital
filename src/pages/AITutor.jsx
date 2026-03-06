@@ -6,7 +6,7 @@ import { api } from '../api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #334155 0%, #475569 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
   display: flex;
   flex-direction: column;
 `;
@@ -30,7 +30,7 @@ const HeaderLeft = styled.div``;
 const HeaderTitle = styled.h1`
   font-size: 1.5rem;
   font-weight: 800;
-  color: white;
+  color: #0f172a;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -40,7 +40,7 @@ const HeaderTitle = styled.h1`
 `;
 
 const HeaderSubtitle = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: rgba(15,23,42,0.5);
   font-size: 0.85rem;
 `;
 
@@ -96,16 +96,16 @@ const Avatar = styled.div`
   font-size: 0.9rem;
   background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #334155)' : 'linear-gradient(135deg, #15803d, #22c55e)'};
   color: white;
-  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.1)' : 'rgba(34,197,94,0.3)'};
+  border: 1px solid ${props => props.$isUser ? 'rgba(15,23,42,0.1)' : 'rgba(34,197,94,0.3)'};
 `;
 
 const MessageBubble = styled.div`
   max-width: 78%;
   padding: 1rem 1.15rem;
   border-radius: ${props => props.$isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};
-  background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #1e293b)' : 'rgba(255,255,255,0.05)'};
-  color: ${props => props.$isUser ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.85)'};
-  border: 1px solid ${props => props.$isUser ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.06)'};
+  background: ${props => props.$isUser ? 'linear-gradient(135deg, #1e293b, #1e293b)' : 'rgba(15,23,42,0.05)'};
+  color: ${props => props.$isUser ? 'rgba(255,255,255,0.92)' : 'rgba(15,23,42,0.88)'};
+  border: 1px solid ${props => props.$isUser ? 'rgba(15,23,42,0.08)' : 'rgba(15,23,42,0.06)'};
   font-size: 0.9rem;
   line-height: 1.7;
   white-space: pre-wrap;
@@ -114,9 +114,9 @@ const MessageBubble = styled.div`
 `;
 
 const InputArea = styled.div`
-  background: rgba(255,255,255,0.04);
+  background: rgba(15,23,42,0.04);
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(15,23,42,0.08);
   padding: 0.6rem;
   display: flex;
   align-items: center;
@@ -130,10 +130,10 @@ const ChatInput = styled.input`
   border: none;
   outline: none;
   font-size: 0.95rem;
-  color: white;
+  color: #0f172a;
   padding: 0.5rem 0.75rem;
   background: transparent;
-  &::placeholder { color: rgba(255,255,255,0.3); }
+  &::placeholder { color: rgba(15,23,42,0.3); }
 `;
 
 const SendButton = styled.button`
@@ -161,8 +161,8 @@ const SuggestionsGrid = styled.div`
 `;
 
 const SuggestionCard = styled(motion.button)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(15,23,42,0.03);
+  border: 1px solid rgba(15,23,42,0.07);
   border-radius: 12px;
   padding: 0.9rem;
   text-align: left;
@@ -180,7 +180,7 @@ const SuggestionIcon = styled.div`
 const SuggestionText = styled.div`
   font-weight: 600;
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.7);
+  color: rgba(15,23,42,0.7);
   line-height: 1.3;
 `;
 
@@ -200,7 +200,7 @@ const TypingDot = styled(motion.div)`
 const PoweredBy = styled.div`
   text-align: center;
   padding: 0.75rem;
-  color: rgba(255,255,255,0.25);
+  color: rgba(15,23,42,0.25);
   font-size: 0.7rem;
   font-weight: 500;
 `;

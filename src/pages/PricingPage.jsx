@@ -7,7 +7,7 @@ import { useAuth } from '../AuthContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #334155 0%, #475569 100%);
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
   padding: 2rem 1.5rem 4rem;
 `;
 
@@ -25,13 +25,13 @@ const Title = styled.h1`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
-  color: white;
+  color: #0f172a;
   margin-bottom: 0.75rem;
   span { color: #22c55e; }
 `;
 
 const Subtitle = styled.p`
-  color: rgba(255,255,255,0.5);
+  color: rgba(15,23,42,0.5);
   font-size: 1.05rem;
   max-width: 500px;
   margin: 0 auto;
@@ -47,9 +47,9 @@ const CurrencyToggle = styled.div`
 const CurrencyBtn = styled.button`
   padding: 0.5rem 1.25rem;
   border-radius: 8px;
-  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.08)'};
-  background: ${p => p.$active ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.03)'};
-  color: ${p => p.$active ? '#4ade80' : 'rgba(255,255,255,0.4)'};
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.4)' : 'rgba(15,23,42,0.08)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.1)' : 'rgba(15,23,42,0.03)'};
+  color: ${p => p.$active ? '#4ade80' : 'rgba(15,23,42,0.4)'};
   font-family: 'DM Sans', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
@@ -67,8 +67,8 @@ const PlansGrid = styled.div`
 `;
 
 const PlanCard = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: ${p => p.$featured ? '2px solid rgba(34,197,94,0.3)' : '1px solid rgba(255,255,255,0.06)'};
+  background: rgba(15,23,42,0.03);
+  border: ${p => p.$featured ? '2px solid rgba(34,197,94,0.3)' : '1px solid rgba(15,23,42,0.06)'};
   border-radius: 16px;
   padding: 2rem;
   position: relative;
@@ -104,7 +104,7 @@ const PlanName = styled.h2`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  color: #0f172a;
   margin-bottom: 0.5rem;
 `;
 
@@ -116,11 +116,11 @@ const PriceAmount = styled.span`
   font-family: 'Space Grotesk', sans-serif;
   font-size: 2.5rem;
   font-weight: 700;
-  color: white;
+  color: #0f172a;
 `;
 
 const PricePeriod = styled.span`
-  color: rgba(255,255,255,0.35);
+  color: rgba(15,23,42,0.35);
   font-size: 0.9rem;
 `;
 
@@ -135,16 +135,16 @@ const Feature = styled.li`
   align-items: center;
   gap: 0.6rem;
   padding: 0.5rem 0;
-  color: rgba(255,255,255,0.7);
+  color: rgba(15,23,42,0.7);
   font-size: 0.9rem;
 
   svg {
-    color: ${p => p.$locked ? 'rgba(255,255,255,0.15)' : '#4ade80'};
+    color: ${p => p.$locked ? 'rgba(15,23,42,0.15)' : '#4ade80'};
     flex-shrink: 0;
     font-size: 0.8rem;
   }
 
-  ${p => p.$locked && `color: rgba(255,255,255,0.25); text-decoration: line-through;`}
+  ${p => p.$locked && `color: rgba(15,23,42,0.25); text-decoration: line-through;`}
 `;
 
 const PlanButton = styled.button`
@@ -163,15 +163,15 @@ const PlanButton = styled.button`
 
   ${p => p.$primary ? `
     background: #22c55e;
-    color: white;
+    color: #0f172a;
     border: none;
     box-shadow: 0 4px 15px rgba(34,197,94,0.3);
     &:hover { background: #16a34a; transform: translateY(-2px); }
   ` : `
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.6);
-    border: 1px solid rgba(255,255,255,0.08);
-    &:hover { border-color: rgba(255,255,255,0.15); }
+    background: rgba(15,23,42,0.05);
+    color: rgba(15,23,42,0.6);
+    border: 1px solid rgba(15,23,42,0.08);
+    &:hover { border-color: rgba(15,23,42,0.15); }
   `}
 
   &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
@@ -181,10 +181,10 @@ const SignInPrompt = styled.div`
   text-align: center;
   margin-top: 2rem;
   padding: 1.5rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(15,23,42,0.03);
+  border: 1px solid rgba(15,23,42,0.06);
   border-radius: 12px;
-  color: rgba(255,255,255,0.5);
+  color: rgba(15,23,42,0.5);
   font-size: 0.9rem;
 
   button {

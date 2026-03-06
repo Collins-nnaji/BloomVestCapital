@@ -19,13 +19,13 @@ const GlobalStyles = createGlobalStyle`
     --color-accent-3: #f59e0b; /* Amber */
     --color-accent-4: #ec4899; /* Pink */
     
-    /* Neutral Colors - Soft dark theme */
-    --color-text: #f8fafc;
-    --color-text-light: rgba(255,255,255,0.7);
-    --color-text-lighter: rgba(255,255,255,0.5);
-    --color-border: rgba(255,255,255,0.08);
-    --color-background: #334155;
-    --color-background-alt: #475569;
+    /* Neutral Colors - Light theme */
+    --color-text: #0f172a;
+    --color-text-light: rgba(15,23,42,0.78);
+    --color-text-lighter: rgba(15,23,42,0.58);
+    --color-border: rgba(15,23,42,0.12);
+    --color-background: #f8fafc;
+    --color-background-alt: #eef2f7;
     
     /* Gradients */
     --gradient-primary: linear-gradient(to right, #22c55e, #15803d);

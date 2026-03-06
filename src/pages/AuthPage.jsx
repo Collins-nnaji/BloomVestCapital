@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(135deg, #334155 0%, #475569 50%, #334155 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 50%, #f8fafc 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,8 +30,8 @@ const PageContainer = styled.div`
 `;
 
 const AuthCard = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(15,23,42,0.03);
+  border: 1px solid rgba(15,23,42,0.08);
   border-radius: 20px;
   padding: 1.5rem 1.25rem 2rem;
   width: 100%;
@@ -52,13 +52,13 @@ const LogoText = styled.div`
     font-family: 'Space Grotesk', sans-serif;
     font-size: 1.6rem;
     font-weight: 700;
-    color: white;
+    color: #0f172a;
     margin-bottom: 0.5rem;
     span { color: #22c55e; }
   }
 
   p {
-    color: rgba(255,255,255,0.4);
+    color: rgba(15,23,42,0.4);
     font-size: 0.85rem;
   }
 `;
@@ -68,7 +68,7 @@ const TabRow = styled.div`
   gap: 0;
   margin-bottom: 1.75rem;
   border-radius: 10px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(15,23,42,0.04);
   padding: 4px;
 `;
 
@@ -83,7 +83,7 @@ const Tab = styled.button`
   cursor: pointer;
   transition: all 0.2s;
   background: ${p => p.$active ? 'rgba(34,197,94,0.15)' : 'transparent'};
-  color: ${p => p.$active ? '#4ade80' : 'rgba(255,255,255,0.35)'};
+  color: ${p => p.$active ? '#4ade80' : 'rgba(15,23,42,0.35)'};
 `;
 
 const Form = styled.form`
@@ -101,23 +101,23 @@ const InputIcon = styled.div`
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255,255,255,0.2);
+  color: rgba(15,23,42,0.2);
   font-size: 0.85rem;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 2.75rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(15,23,42,0.04);
+  border: 1px solid rgba(15,23,42,0.08);
   border-radius: 10px;
-  color: white;
+  color: #0f172a;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.9rem;
   outline: none;
   transition: border 0.2s;
 
-  &::placeholder { color: rgba(255,255,255,0.2); }
+  &::placeholder { color: rgba(15,23,42,0.2); }
   &:focus { border-color: rgba(34,197,94,0.4); }
 `;
 
@@ -128,17 +128,17 @@ const TogglePassword = styled.button`
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgba(255,255,255,0.2);
+  color: rgba(15,23,42,0.2);
   cursor: pointer;
   font-size: 0.9rem;
-  &:hover { color: rgba(255,255,255,0.4); }
+  &:hover { color: rgba(15,23,42,0.4); }
 `;
 
 const SubmitButton = styled.button`
   width: 100%;
   padding: 0.85rem;
   background: #22c55e;
-  color: white;
+  color: #0f172a;
   border: none;
   border-radius: 10px;
   font-family: 'DM Sans', sans-serif;
@@ -161,7 +161,7 @@ const Divider = styled.div`
   align-items: center;
   gap: 1rem;
   margin: 1.25rem 0;
-  color: rgba(255,255,255,0.15);
+  color: rgba(15,23,42,0.15);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -170,17 +170,17 @@ const Divider = styled.div`
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(15,23,42,0.06);
   }
 `;
 
 const GoogleButton = styled.button`
   width: 100%;
   padding: 0.8rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(15,23,42,0.05);
+  border: 1px solid rgba(15,23,42,0.08);
   border-radius: 10px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(15,23,42,0.7);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
@@ -192,9 +192,9 @@ const GoogleButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background: rgba(255,255,255,0.08);
-    border-color: rgba(255,255,255,0.15);
-    color: white;
+    background: rgba(15,23,42,0.08);
+    border-color: rgba(15,23,42,0.15);
+    color: #0f172a;
   }
 
   svg { color: #4285f4; }
@@ -212,7 +212,7 @@ const ErrorMsg = styled.div`
 const BottomText = styled.div`
   text-align: center;
   margin-top: 1.5rem;
-  color: rgba(255,255,255,0.3);
+  color: rgba(15,23,42,0.3);
   font-size: 0.8rem;
 
   a {

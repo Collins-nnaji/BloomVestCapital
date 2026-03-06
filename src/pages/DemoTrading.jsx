@@ -14,12 +14,12 @@ import { api } from '../api';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #334155 0%, #475569 100%);
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
 `;
 
 const HeaderSection = styled.section`
   padding: 2.5rem 1.5rem 1.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(15,23,42,0.06);
 
   @media (max-width: 480px) {
     padding: 1.75rem 1rem 1.25rem;
@@ -45,14 +45,14 @@ const HeaderLeft = styled.div``;
 const HeaderTitle = styled.h1`
   font-size: 2rem;
   font-weight: 800;
-  color: white;
+  color: #0f172a;
   margin: 0 0 0.4rem 0;
   letter-spacing: -0.02em;
   span { color: #22c55e; }
 `;
 
 const HeaderSubtitle = styled.p`
-  color: rgba(255,255,255,0.4);
+  color: rgba(15,23,42,0.4);
   font-size: 1.05rem;
   margin: 0;
   max-width: 540px;
@@ -88,8 +88,8 @@ const IndexChip = styled.div`
   font-size: 0.8rem;
 `;
 
-const IndexName = styled.span`color: rgba(255,255,255,0.4); font-weight: 500;`;
-const IndexVal = styled.span`color: white; font-weight: 700;`;
+const IndexName = styled.span`color: rgba(15,23,42,0.4); font-weight: 500;`;
+const IndexVal = styled.span`color: #0f172a; font-weight: 700;`;
 const IndexChg = styled.span`color: ${p => p.$pos ? '#4ade80' : '#f87171'}; font-weight: 600;`;
 
 /* ── Portfolio bar ── */
@@ -101,8 +101,8 @@ const PortfolioBar = styled.div`
 `;
 
 const PortfolioCard = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(15,23,42,0.03);
+  border: 1px solid rgba(15,23,42,0.06);
   border-radius: 14px;
   padding: 1.25rem 1.75rem;
   display: flex;
@@ -123,7 +123,7 @@ const PortfolioCard = styled(motion.div)`
 
 const PortfolioStat = styled.div`min-width: 110px;`;
 const StatLabel = styled.div`
-  font-size: 0.65rem; color: rgba(255,255,255,0.35);
+  font-size: 0.65rem; color: rgba(15,23,42,0.35);
   text-transform: uppercase; font-weight: 700;
   letter-spacing: 0.8px; margin-bottom: 0.15rem;
 `;
@@ -176,8 +176,8 @@ const RightCol = styled.div`display: flex; flex-direction: column; gap: 1.25rem;
 /* ── Generic card ── */
 
 const Card = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(15,23,42,0.03);
+  border: 1px solid rgba(15,23,42,0.06);
   border-radius: 14px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -189,7 +189,7 @@ const Card = styled(motion.div)`
 
 const CardHeader = styled.div`
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(15,23,42,0.04);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -198,7 +198,7 @@ const CardHeader = styled.div`
 const CardTitle = styled.h3`
   font-size: 0.85rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.7);
+  color: rgba(15,23,42,0.7);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -213,7 +213,7 @@ const CardBody = styled.div`padding: 1.25rem;`;
 /* ── Stock chart ── */
 
 const ChartContainer = styled.div`height: 220px; margin: 0 -0.5rem;`;
-const BigPrice = styled.div`font-size: 1.6rem; font-weight: 800; color: white;`;
+const BigPrice = styled.div`font-size: 1.6rem; font-weight: 800; color: #0f172a;`;
 const BigChange = styled.div`font-size: 0.85rem; font-weight: 600; color: ${p => p.$pos ? '#4ade80' : '#f87171'};`;
 
 const MetricsRow = styled.div`
@@ -225,18 +225,18 @@ const MetricsRow = styled.div`
 `;
 
 const MetricBox = styled.div`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(15,23,42,0.03);
+  border: 1px solid rgba(15,23,42,0.05);
   border-radius: 8px;
   padding: 0.6rem;
   text-align: center;
 `;
 
 const MetricLabel = styled.div`
-  font-size: 0.6rem; color: rgba(255,255,255,0.3);
+  font-size: 0.6rem; color: rgba(15,23,42,0.3);
   text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;
 `;
-const MetricValue = styled.div`font-size: 0.95rem; font-weight: 700; color: white;`;
+const MetricValue = styled.div`font-size: 0.95rem; font-weight: 700; color: #0f172a;`;
 
 /* ── Trade form ── */
 
@@ -253,12 +253,12 @@ const TradeRow = styled.div`display: flex; gap: 0.5rem; margin-bottom: 0.5rem;`;
 const TradeInput = styled.input`
   flex: 1;
   padding: 0.6rem 0.8rem;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(15,23,42,0.1);
   border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  background: rgba(255,255,255,0.04);
-  color: white;
+  background: rgba(15,23,42,0.04);
+  color: #0f172a;
   outline: none;
   &:focus { border-color: #22c55e; }
 `;
@@ -276,7 +276,7 @@ const TradeButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  &.buy { background: #22c55e; color: white; &:hover { background: #16a34a; } }
+  &.buy { background: #22c55e; color: #0f172a; &:hover { background: #16a34a; } }
   &.sell { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.2); &:hover { background: rgba(239,68,68,0.25); } }
   &:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -290,8 +290,8 @@ const TradeButton = styled.button`
 const TradeCost = styled.div`
   text-align: right;
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
-  span { font-weight: 700; color: white; }
+  color: rgba(15,23,42,0.4);
+  span { font-weight: 700; color: #0f172a; }
 `;
 
 /* ── Decision feedback ── */
@@ -306,8 +306,8 @@ const FeedbackCard = styled(motion.div)`
   border-radius: 12px;
   overflow: hidden;
   margin-top: 0.75rem;
-  border: 1px solid ${p => ratingColors[p.$rating]?.border || 'rgba(255,255,255,0.06)'};
-  background: ${p => ratingColors[p.$rating]?.bg || 'rgba(255,255,255,0.03)'};
+  border: 1px solid ${p => ratingColors[p.$rating]?.border || 'rgba(15,23,42,0.06)'};
+  background: ${p => ratingColors[p.$rating]?.bg || 'rgba(15,23,42,0.03)'};
 `;
 
 const FeedbackHeader = styled.div`
@@ -331,12 +331,12 @@ const FeedbackTitle = styled.div`
 const DismissBtn = styled.button`
   background: none;
   border: none;
-  color: rgba(255,255,255,0.3);
+  color: rgba(15,23,42,0.3);
   cursor: pointer;
   padding: 0.2rem;
   display: flex;
   align-items: center;
-  &:hover { color: rgba(255,255,255,0.6); }
+  &:hover { color: rgba(15,23,42,0.6); }
 `;
 
 const FeedbackBody = styled.div`padding: 0.75rem 1rem;`;
@@ -347,7 +347,7 @@ const SignalItem = styled.div`
   gap: 0.6rem;
   font-size: 1rem;
   font-weight: 500;
-  color: rgba(255,255,255,0.65);
+  color: rgba(15,23,42,0.65);
   margin-bottom: 0.6rem;
   line-height: 1.55;
   &:last-child { margin-bottom: 0; }
@@ -371,8 +371,8 @@ const SearchBar = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(15,23,42,0.04);
+  border: 1px solid rgba(15,23,42,0.06);
   border-radius: 8px;
   padding: 0.5rem 0.75rem;
   margin-bottom: 0.75rem;
@@ -383,9 +383,9 @@ const SearchInput = styled.input`
   background: none;
   outline: none;
   font-size: 0.85rem;
-  color: white;
+  color: #0f172a;
   width: 100%;
-  &::placeholder { color: rgba(255,255,255,0.25); }
+  &::placeholder { color: rgba(15,23,42,0.25); }
 `;
 
 const StockList = styled.div`max-height: 400px; overflow-y: auto;`;
@@ -395,7 +395,7 @@ const StockRow = styled(motion.div)`
   align-items: center;
   justify-content: space-between;
   padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(15,23,42,0.03);
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 6px;
@@ -403,9 +403,9 @@ const StockRow = styled(motion.div)`
   ${p => p.$active && `background: rgba(34,197,94,0.08); padding: 0.6rem 0.5rem; border-left: 2px solid #22c55e;`}
 `;
 
-const StockSymbol = styled.div`font-weight: 700; color: white; font-size: 0.9rem;`;
-const StockName = styled.div`color: rgba(255,255,255,0.35); font-size: 0.75rem;`;
-const PriceValue = styled.div`font-weight: 700; color: white; font-size: 0.9rem;`;
+const StockSymbol = styled.div`font-weight: 700; color: #0f172a; font-size: 0.9rem;`;
+const StockName = styled.div`color: rgba(15,23,42,0.35); font-size: 0.75rem;`;
+const PriceValue = styled.div`font-weight: 700; color: #0f172a; font-size: 0.9rem;`;
 const PriceChange = styled.div`
   font-size: 0.75rem; font-weight: 600;
   color: ${p => p.$pos ? '#4ade80' : '#f87171'};
@@ -419,14 +419,14 @@ const HoldingRow = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(15,23,42,0.03);
   cursor: pointer;
   &:last-child { border-bottom: none; }
 `;
 
-const HoldingSymbol = styled.div`font-weight: 700; color: white; font-size: 0.85rem;`;
-const HoldingShares = styled.div`color: rgba(255,255,255,0.3); font-size: 0.75rem;`;
-const HoldingTotal = styled.div`font-weight: 700; color: white; font-size: 0.85rem;`;
+const HoldingSymbol = styled.div`font-weight: 700; color: #0f172a; font-size: 0.85rem;`;
+const HoldingShares = styled.div`color: rgba(15,23,42,0.3); font-size: 0.75rem;`;
+const HoldingTotal = styled.div`font-weight: 700; color: #0f172a; font-size: 0.85rem;`;
 const HoldingPnl = styled.div`font-size: 0.75rem; font-weight: 600; color: ${p => p.$pos ? '#4ade80' : '#f87171'};`;
 
 /* ── Transaction history ── */
@@ -436,7 +436,7 @@ const TransactionRow = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(15,23,42,0.03);
   font-size: 0.8rem;
   &:last-child { border-bottom: none; }
 `;
@@ -479,26 +479,26 @@ const HealthScoreCircle = styled.div`
     p.$score >= 25 ? 'rgba(249,115,22,0.06)' : 'rgba(239,68,68,0.06)'};
 `;
 
-const ScoreNum = styled.div`font-size: 1.6rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -0.02em;`;
-const ScoreLabel = styled.div`font-size: 0.6rem; color: rgba(255,255,255,0.35); text-transform: uppercase; font-weight: 700;`;
+const ScoreNum = styled.div`font-size: 1.6rem; font-weight: 800; color: #0f172a; line-height: 1; letter-spacing: -0.02em;`;
+const ScoreLabel = styled.div`font-size: 0.6rem; color: rgba(15,23,42,0.35); text-transform: uppercase; font-weight: 700;`;
 
 const BreakdownRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.4rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(15,23,42,0.03);
   &:last-child { border-bottom: none; }
 `;
 
-const BreakdownLabel = styled.div`font-size: 0.78rem; color: rgba(255,255,255,0.5);`;
-const BreakdownValue = styled.div`font-size: 0.78rem; font-weight: 700; color: white;`;
+const BreakdownLabel = styled.div`font-size: 0.78rem; color: rgba(15,23,42,0.5);`;
+const BreakdownValue = styled.div`font-size: 0.78rem; font-weight: 700; color: #0f172a;`;
 
 const HealthBar = styled.div`
   width: 100%;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(15,23,42,0.06);
   margin-top: 0.2rem;
   overflow: hidden;
 `;
@@ -532,7 +532,7 @@ const HealthTip = styled.div`
   border: 1px solid rgba(34,197,94,0.1);
   border-radius: 8px;
   font-size: 0.78rem;
-  color: rgba(255,255,255,0.5);
+  color: rgba(15,23,42,0.5);
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
@@ -544,7 +544,7 @@ const HealthTip = styled.div`
 
 const EmptyState = styled.div`
   text-align: center; padding: 1.5rem;
-  color: rgba(255,255,255,0.25); font-size: 0.85rem;
+  color: rgba(15,23,42,0.25); font-size: 0.85rem;
 `;
 
 const Notification = styled(motion.div)`
@@ -554,7 +554,7 @@ const Notification = styled(motion.div)`
   transform: translateX(-50%);
   background: #0f172a;
   border: 1px solid ${p => p.$type === 'success' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'};
-  color: white;
+  color: #0f172a;
   padding: 0.7rem 1.25rem;
   border-radius: 10px;
   font-size: 0.85rem;
@@ -962,7 +962,7 @@ const DemoTrading = () => {
             <CardBody>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>{selectedStock.sector}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(15,23,42,0.35)' }}>{selectedStock.sector}</div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <BigPrice>${selectedStock.price.toFixed(2)}</BigPrice>
@@ -981,10 +981,10 @@ const DemoTrading = () => {
                         <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.25)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-                    <YAxis tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.25)' }} axisLine={false} tickLine={false} domain={['auto', 'auto']} />
+                    <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'rgba(15,23,42,0.25)' }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+                    <YAxis tick={{ fontSize: 10, fill: 'rgba(15,23,42,0.25)' }} axisLine={false} tickLine={false} domain={['auto', 'auto']} />
                     <Tooltip
-                      contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', fontSize: '0.8rem', color: 'white' }}
+                      contentStyle={{ background: '#1e293b', border: '1px solid rgba(15,23,42,0.1)', borderRadius: '8px', fontSize: '0.8rem', color: 'white' }}
                       formatter={v => [`$${v.toFixed(2)}`, 'Price']}
                     />
                     <Area type="monotone" dataKey="price" stroke="#22c55e" strokeWidth={2} fill="url(#practiceGrad)" />
@@ -1064,7 +1064,7 @@ const DemoTrading = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                       <TxBadge $type={tx.type}>{tx.type}</TxBadge>
                       <span style={{ fontWeight: 700, color: 'white' }}>{tx.symbol}</span>
-                      <span style={{ color: 'rgba(255,255,255,0.3)' }}>{tx.shares}×${tx.price.toFixed(2)}</span>
+                      <span style={{ color: 'rgba(15,23,42,0.3)' }}>{tx.shares}×${tx.price.toFixed(2)}</span>
                       {tx.decision && (
                         <DecisionBadge $rating={tx.decision}>
                           {tx.decision === 'good' ? '✅ Good' : tx.decision === 'caution' ? '⚠️ Caution' : '❌ Risk'}
@@ -1089,16 +1089,16 @@ const DemoTrading = () => {
               <div style={{display:'flex',flexWrap:'wrap',gap:'0.3rem',marginBottom:'0.6rem'}}>
                 {assetClasses.map(ac => (
                   <button key={ac.id} onClick={() => setAssetFilter(ac.id)}
-                    style={{padding:'0.25rem 0.55rem',borderRadius:6,border: assetFilter === ac.id ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,255,255,0.06)',
-                      background: assetFilter === ac.id ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.02)',
-                      color: assetFilter === ac.id ? '#4ade80' : 'rgba(255,255,255,0.4)',
+                    style={{padding:'0.25rem 0.55rem',borderRadius:6,border: assetFilter === ac.id ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(15,23,42,0.06)',
+                      background: assetFilter === ac.id ? 'rgba(34,197,94,0.1)' : 'rgba(15,23,42,0.02)',
+                      color: assetFilter === ac.id ? '#4ade80' : 'rgba(15,23,42,0.4)',
                       fontSize:'0.68rem',fontWeight:600,cursor:'pointer',transition:'all 0.2s'}}>
                     {ac.icon} {ac.label}
                   </button>
                 ))}
               </div>
               <SearchBar>
-                <FaSearch style={{ color: 'rgba(255,255,255,0.2)' }} />
+                <FaSearch style={{ color: 'rgba(15,23,42,0.2)' }} />
                 <SearchInput placeholder="Search assets..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               </SearchBar>
               <StockList>

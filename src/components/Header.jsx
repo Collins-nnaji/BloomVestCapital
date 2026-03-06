@@ -15,11 +15,11 @@ const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   background: ${props => props.$scrolled
-    ? 'rgba(51,65,85,0.95)'
-    : 'rgba(71,85,105,0.85)'};
+    ? 'rgba(255,255,255,0.96)'
+    : 'rgba(248,250,252,0.9)'};
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(15,23,42,0.12);
   transition: all 0.3s ease;
 `;
 
@@ -74,7 +74,7 @@ const NavWrapper = styled.nav`
 
 const NavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
-  color: ${props => props.$active ? '#22c55e' : 'rgba(255,255,255,0.75)'};
+  color: ${props => props.$active ? '#16a34a' : '#0f172a'};
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -138,7 +138,7 @@ const HamburgerButton = styled.button`
   display: none;
   background: transparent;
   border: none;
-  color: rgba(255,255,255,0.8);
+  color: rgba(15,23,42,0.9);
   font-size: 1.35rem;
   cursor: pointer;
   z-index: 1021;
@@ -178,14 +178,14 @@ const MobilePanel = styled(motion.div)`
   width: min(320px, 90vw);
   height: 100vh;
   height: 100dvh;
-  background: #475569;
+  background: #ffffff;
   z-index: 1020;
   padding: 5rem 1.5rem 2rem;
   padding-top: max(5rem, calc(60px + env(safe-area-inset-top)));
   padding-bottom: max(2rem, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  border-left: 1px solid rgba(255,255,255,0.06);
+  border-left: 1px solid rgba(15,23,42,0.12);
   overflow-y: auto;
 
   @media (max-width: 360px) {
@@ -198,15 +198,15 @@ const MobileCloseButton = styled.button`
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(15,23,42,0.04);
+  border: 1px solid rgba(15,23,42,0.14);
   width: 36px;
   height: 36px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255,255,255,0.5);
+  color: rgba(15,23,42,0.7);
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s ease;
@@ -219,7 +219,7 @@ const MobileCloseButton = styled.button`
 
 const MobileNavLink = styled(Link)`
   font-family: 'DM Sans', sans-serif;
-  color: ${props => props.$active ? '#22c55e' : 'rgba(255,255,255,0.6)'};
+  color: ${props => props.$active ? '#16a34a' : '#1e293b'};
   text-decoration: none;
   font-size: 1.05rem;
   font-weight: 500;
@@ -227,7 +227,7 @@ const MobileNavLink = styled(Link)`
   min-height: 48px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(15,23,42,0.08);
   transition: all 0.2s ease;
 
   &:hover {

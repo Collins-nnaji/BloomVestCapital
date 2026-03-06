@@ -11,7 +11,7 @@ import { useAuth } from '../AuthContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #334155 0%, #475569 100%);
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
 `;
 
 const ContentWrapper = styled.div`
@@ -32,13 +32,13 @@ const PageHeader = styled(motion.div)`
 const PageTitle = styled.h1`
   font-size: 2.75rem;
   font-weight: 800;
-  color: white;
+  color: #0f172a;
   margin-bottom: 0.5rem;
   letter-spacing: -0.03em;
 `;
 
 const PageSubtitle = styled.p`
-  color: rgba(255,255,255,0.4);
+  color: rgba(15,23,42,0.72);
   font-size: 1.2rem;
   line-height: 1.6;
   font-weight: 450;
@@ -60,8 +60,8 @@ const ScenariosGrid = styled.div`
 `;
 
 const ScenarioCard = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: #ffffff;
+  border: 1px solid rgba(15,23,42,0.12);
   border-radius: 16px;
   padding: 1.75rem;
   cursor: pointer;
@@ -69,7 +69,7 @@ const ScenarioCard = styled(motion.div)`
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    border-color: rgba(255,255,255,0.12);
+    border-color: rgba(15,23,42,0.2);
   }
 `;
 
@@ -96,13 +96,13 @@ const DifficultyBadge = styled.span`
 const ScenarioCardTitle = styled.h3`
   font-size: 1.25rem;
   font-weight: 800;
-  color: white;
+  color: #0f172a;
   margin-bottom: 0.6rem;
   letter-spacing: -0.02em;
 `;
 
 const ScenarioCardDesc = styled.p`
-  color: rgba(255,255,255,0.4);
+  color: rgba(15,23,42,0.74);
   font-size: 1rem;
   line-height: 1.6;
   margin-bottom: 1rem;
@@ -117,7 +117,7 @@ const ScenarioCardMeta = styled.div`
 `;
 
 const Duration = styled.span`
-  color: rgba(255,255,255,0.25);
+  color: rgba(15,23,42,0.62);
   font-size: 0.85rem;
   display: flex;
   align-items: center;
@@ -155,7 +155,7 @@ const BuilderHero = styled(motion.div)`
   padding: 1.25rem;
   border-radius: 16px;
   border: 1px solid rgba(56,189,248,0.3);
-  background: linear-gradient(130deg, rgba(16,24,39,0.9), rgba(34,197,94,0.14));
+  background: linear-gradient(130deg, rgba(34,197,94,0.12), #ffffff);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -198,19 +198,19 @@ const FilterSearch = styled.div`
   align-items: center;
   gap: 0.55rem;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(15,23,42,0.14);
+  background: #ffffff;
   padding: 0.6rem 0.8rem;
 `;
 
 const FilterInput = styled.input`
   border: none;
   background: transparent;
-  color: white;
+  color: #0f172a;
   width: 100%;
   font-size: 0.85rem;
   outline: none;
-  &::placeholder { color: rgba(255,255,255,0.25); }
+  &::placeholder { color: rgba(15,23,42,0.4); }
 `;
 
 const FilterChips = styled.div`
@@ -220,9 +220,9 @@ const FilterChips = styled.div`
 `;
 
 const FilterChip = styled.button`
-  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.45)' : 'rgba(255,255,255,0.12)'};
-  background: ${p => p.$active ? 'rgba(34,197,94,0.16)' : 'rgba(255,255,255,0.02)'};
-  color: ${p => p.$active ? '#4ade80' : 'rgba(255,255,255,0.6)'};
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.45)' : 'rgba(15,23,42,0.16)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.16)' : '#ffffff'};
+  color: ${p => p.$active ? '#15803d' : 'rgba(15,23,42,0.72)'};
   border-radius: 999px;
   padding: 0.35rem 0.75rem;
   font-size: 0.75rem;
@@ -240,19 +240,19 @@ const SectionHeader = styled.div`
 `;
 
 const SectionTitle = styled.h3`
-  color: white;
+  color: #0f172a;
   font-size: 1rem;
   letter-spacing: -0.01em;
 `;
 
 const SectionHint = styled.p`
-  color: rgba(255,255,255,0.35);
+  color: rgba(15,23,42,0.6);
   font-size: 0.78rem;
 `;
 
 const BuilderShell = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: #ffffff;
+  border: 1px solid rgba(15,23,42,0.12);
   border-radius: 16px;
   padding: 1rem;
 `;
@@ -267,7 +267,7 @@ const BuilderHead = styled.div`
 `;
 
 const BuilderTitle = styled.h2`
-  color: white;
+  color: #0f172a;
   font-size: 1.35rem;
   font-weight: 800;
 `;
@@ -283,9 +283,9 @@ const StepPill = styled.div`
   padding: 0.3rem 0.65rem;
   font-size: 0.72rem;
   font-weight: 700;
-  color: ${p => p.$active ? '#4ade80' : 'rgba(255,255,255,0.45)'};
-  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.45)' : 'rgba(255,255,255,0.12)'};
-  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : 'rgba(255,255,255,0.02)'};
+  color: ${p => p.$active ? '#15803d' : 'rgba(15,23,42,0.65)'};
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.45)' : 'rgba(15,23,42,0.16)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : '#ffffff'};
 `;
 
 const BuilderGrid = styled.div`
@@ -299,9 +299,9 @@ const BuilderGrid = styled.div`
 `;
 
 const BuilderPanel = styled.div`
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(15,23,42,0.12);
   border-radius: 12px;
-  background: rgba(255,255,255,0.02);
+  background: #ffffff;
   padding: 0.9rem;
 `;
 
@@ -312,9 +312,9 @@ const OptionGrid = styled.div`
 `;
 
 const OptionCard = styled.button`
-  border: 1px solid ${p => p.$active ? 'rgba(56,189,248,0.5)' : 'rgba(255,255,255,0.09)'};
-  background: ${p => p.$active ? 'rgba(56,189,248,0.14)' : 'rgba(255,255,255,0.03)'};
-  color: white;
+  border: 1px solid ${p => p.$active ? 'rgba(56,189,248,0.5)' : 'rgba(15,23,42,0.14)'};
+  background: ${p => p.$active ? 'rgba(56,189,248,0.14)' : '#ffffff'};
+  color: #0f172a;
   border-radius: 10px;
   padding: 0.7rem;
   text-align: left;
@@ -326,9 +326,9 @@ const OptionCard = styled.button`
 const BuilderTextInput = styled.input`
   width: 100%;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.03);
-  color: white;
+  border: 1px solid rgba(15,23,42,0.14);
+  background: #ffffff;
+  color: #0f172a;
   padding: 0.62rem 0.72rem;
   font-size: 0.85rem;
   outline: none;
@@ -339,9 +339,9 @@ const BuilderTextArea = styled.textarea`
   min-height: 84px;
   resize: vertical;
   border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.03);
-  color: white;
+  border: 1px solid rgba(15,23,42,0.14);
+  background: #ffffff;
+  color: #0f172a;
   padding: 0.62rem 0.72rem;
   font-size: 0.85rem;
   outline: none;
@@ -361,9 +361,9 @@ const AssetGrid = styled.div`
 `;
 
 const AssetChip = styled.button`
-  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.48)' : 'rgba(255,255,255,0.1)'};
-  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : 'rgba(255,255,255,0.03)'};
-  color: ${p => p.$active ? '#86efac' : 'rgba(255,255,255,0.75)'};
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.48)' : 'rgba(15,23,42,0.14)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : '#ffffff'};
+  color: ${p => p.$active ? '#166534' : 'rgba(15,23,42,0.82)'};
   border-radius: 8px;
   padding: 0.45rem 0.55rem;
   font-size: 0.75rem;
@@ -374,9 +374,9 @@ const AssetChip = styled.button`
 
 const ObjectiveCard = styled.button`
   width: 100%;
-  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.5)' : 'rgba(255,255,255,0.1)'};
-  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : 'rgba(255,255,255,0.03)'};
-  color: white;
+  border: 1px solid ${p => p.$active ? 'rgba(34,197,94,0.5)' : 'rgba(15,23,42,0.14)'};
+  background: ${p => p.$active ? 'rgba(34,197,94,0.14)' : '#ffffff'};
+  color: #0f172a;
   border-radius: 10px;
   padding: 0.6rem;
   cursor: pointer;
@@ -399,9 +399,9 @@ const BtnGroup = styled.div`
 `;
 
 const SecondaryBtn = styled.button`
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.03);
-  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(15,23,42,0.16);
+  background: rgba(15,23,42,0.05);
+  color: #0f172a;
   border-radius: 10px;
   padding: 0.55rem 0.85rem;
   font-size: 0.8rem;

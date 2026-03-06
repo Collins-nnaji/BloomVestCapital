@@ -23,8 +23,8 @@ import { buildStaticCourses, parseDurationToMinutes } from '../utils/courseData'
 
 const Page = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #334155 0%, #475569 100%);
-  color: white;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
 `;
 
 const Wrap = styled.div`
@@ -34,9 +34,9 @@ const Wrap = styled.div`
 `;
 
 const Hero = styled.section`
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 18px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(17, 24, 39, 0.92));
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.14), #ffffff);
   padding: 1.5rem;
   margin-bottom: 1.25rem;
   display: grid;
@@ -59,7 +59,7 @@ const HeroTitle = styled.h1`
 `;
 
 const HeroSub = styled.p`
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(15, 23, 42, 0.76);
   line-height: 1.7;
   margin: 0;
   max-width: 720px;
@@ -72,8 +72,8 @@ const StatRow = styled.div`
 `;
 
 const Stat = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.86);
   border-radius: 12px;
   padding: 0.75rem 0.85rem;
 `;
@@ -87,7 +87,7 @@ const StatNumber = styled.div`
 const StatLabel = styled.div`
   margin-top: 0.2rem;
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(15, 23, 42, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-weight: 700;
@@ -95,10 +95,10 @@ const StatLabel = styled.div`
 
 const ProgressCard = styled.div`
   margin-bottom: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
   padding: 0.95rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.88);
 `;
 
 const ProgressTop = styled.div`
@@ -111,7 +111,7 @@ const ProgressTop = styled.div`
 
 const ProgressLabel = styled.div`
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(15, 23, 42, 0.65);
   font-weight: 700;
 `;
 
@@ -124,7 +124,7 @@ const Track = styled.div`
   height: 10px;
   border-radius: 999px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.14);
 `;
 
 const Fill = styled(motion.div)`
@@ -148,9 +148,9 @@ const DashboardGrid = styled.div`
 `;
 
 const Panel = styled.div`
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   padding: 1rem;
   min-height: 250px;
 `;
@@ -160,7 +160,7 @@ const PanelTitle = styled.h3`
   font-size: 0.92rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(15, 23, 42, 0.72);
 `;
 
 const RollerChartWrap = styled(motion.div)`
@@ -173,7 +173,7 @@ const RollerLabel = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: 0.76rem;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(15, 23, 42, 0.65);
 `;
 
 const SectionTitle = styled.h2`
@@ -189,9 +189,9 @@ const CoursesGrid = styled.div`
 `;
 
 const CourseCard = styled(motion.div)`
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(15, 23, 42, 0.12);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #ffffff;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -253,7 +253,7 @@ const CourseTitle = styled.h3`
 
 const CourseDesc = styled.p`
   margin: 0;
-  color: rgba(255, 255, 255, 0.58);
+  color: rgba(15, 23, 42, 0.72);
   font-size: 0.86rem;
   line-height: 1.55;
 `;
@@ -263,7 +263,7 @@ const Meta = styled.div`
   flex-wrap: wrap;
   gap: 0.6rem;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(15, 23, 42, 0.66);
 `;
 
 const MetaItem = styled.div`
@@ -274,7 +274,7 @@ const MetaItem = styled.div`
 
 const InlineTrack = styled.div`
   height: 7px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.14);
   border-radius: 999px;
   overflow: hidden;
 `;
@@ -317,13 +317,13 @@ const LockedAction = styled(Link)`
 `;
 
 const Empty = styled.div`
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(15, 23, 42, 0.65);
   text-align: center;
   padding: 4rem 1rem;
 `;
 
 const Loading = styled.div`
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(15, 23, 42, 0.65);
   text-align: center;
   padding: 4rem 1rem;
 `;
@@ -455,7 +455,7 @@ const LearnPage = () => {
               transition={{ duration: 0.7 }}
             />
           </Track>
-          {error && <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: 'rgba(255,255,255,0.45)' }}>{error}</div>}
+          {error && <div style={{ marginTop: '0.6rem', fontSize: '0.78rem', color: 'rgba(15,23,42,0.56)' }}>{error}</div>}
         </ProgressCard>
 
         {!loading && courses.length > 0 && (
@@ -479,10 +479,10 @@ const LearnPage = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: '#1e293b',
-                      border: '1px solid rgba(255,255,255,0.14)',
+                      background: '#ffffff',
+                      border: '1px solid rgba(15,23,42,0.14)',
                       borderRadius: 8,
-                      color: 'white',
+                      color: '#0f172a',
                     }}
                   />
                 </PieChart>
@@ -493,18 +493,18 @@ const LearnPage = () => {
               <PanelTitle><FaCheckCircle style={{ marginRight: '0.45rem' }} /> Lessons Completed by Course</PanelTitle>
               <ResponsiveContainer width="100%" height={210}>
                 <BarChart data={completionBars}>
-                  <XAxis dataKey="name" stroke="rgba(255,255,255,0.45)" fontSize={11} />
-                  <YAxis stroke="rgba(255,255,255,0.45)" allowDecimals={false} fontSize={11} />
+                  <XAxis dataKey="name" stroke="rgba(15,23,42,0.55)" fontSize={11} />
+                  <YAxis stroke="rgba(15,23,42,0.55)" allowDecimals={false} fontSize={11} />
                   <Tooltip
                     contentStyle={{
-                      background: '#1e293b',
-                      border: '1px solid rgba(255,255,255,0.14)',
+                      background: '#ffffff',
+                      border: '1px solid rgba(15,23,42,0.14)',
                       borderRadius: 8,
-                      color: 'white',
+                      color: '#0f172a',
                     }}
                   />
                   <Bar dataKey="completed" stackId="a" fill="#22c55e" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="remaining" stackId="a" fill="rgba(255,255,255,0.2)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="remaining" stackId="a" fill="rgba(15,23,42,0.16)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </Panel>
@@ -531,10 +531,10 @@ const LearnPage = () => {
                     <Tooltip
                       formatter={(value) => [`${value}%`, 'Progress']}
                       contentStyle={{
-                        background: '#1e293b',
-                        border: '1px solid rgba(255,255,255,0.14)',
+                        background: '#ffffff',
+                        border: '1px solid rgba(15,23,42,0.14)',
                         borderRadius: 8,
-                        color: 'white',
+                        color: '#0f172a',
                       }}
                     />
                   </RadialBarChart>
