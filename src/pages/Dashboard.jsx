@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaArrowRight } from 'react-icons/fa';
+import { FaArrowRight, FaChartLine, FaShieldAlt, FaBolt } from 'react-icons/fa';
 import { scenarios } from '../data/scenarios';
 import { lessons } from '../data/lessons';
 import { marketIndices, assetClasses, stocks } from '../data/stockData';
@@ -59,6 +59,224 @@ const HeroContent = styled.div`
   margin: 0 auto;
   position: relative;
   z-index: 1;
+`;
+
+const HeroGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 2rem;
+  align-items: end;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+`;
+
+const HeroVisual = styled(motion.div)`
+  width: 100%;
+  max-width: 480px;
+  justify-self: end;
+
+  @media (max-width: 960px) {
+    max-width: 100%;
+    justify-self: stretch;
+  }
+`;
+
+const VisualCard = styled.div`
+  background: #ffffff;
+  border: 1px solid rgba(15,23,42,0.12);
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 18px 35px rgba(15,23,42,0.12);
+`;
+
+const VisualTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+`;
+
+const VisualLabel = styled.div`
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(15,23,42,0.62);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+`;
+
+const VisualValue = styled.div`
+  margin-top: 0.2rem;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
+`;
+
+const VisualDelta = styled.div`
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #16a34a;
+`;
+
+const VisualBadge = styled.div`
+  border: 1px solid rgba(34,197,94,0.28);
+  background: rgba(34,197,94,0.1);
+  color: #15803d;
+  border-radius: 999px;
+  padding: 0.24rem 0.58rem;
+  font-size: 0.67rem;
+  font-weight: 700;
+  white-space: nowrap;
+`;
+
+const VisualMiddle = styled.div`
+  margin-top: 0.95rem;
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 0.9rem;
+  align-items: center;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 100px 1fr;
+    gap: 0.7rem;
+  }
+`;
+
+const AllocationRing = styled.div`
+  width: 108px;
+  height: 108px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #22c55e 0% 52%,
+    #3b82f6 52% 75%,
+    #f59e0b 75% 90%,
+    #8b5cf6 90% 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RingInner = styled.div`
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(15,23,42,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const RingPercent = styled.div`
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+`;
+
+const RingCaption = styled.div`
+  margin-top: 0.1rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(15,23,42,0.62);
+  text-transform: uppercase;
+`;
+
+const AllocationList = styled.div`
+  display: grid;
+  gap: 0.32rem;
+`;
+
+const AllocationRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  color: #0f172a;
+  font-weight: 600;
+`;
+
+const Dot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${props => props.$color || '#22c55e'};
+  display: inline-block;
+  margin-right: 0.4rem;
+`;
+
+const AllocationName = styled.span`
+  display: inline-flex;
+  align-items: center;
+  color: rgba(15,23,42,0.78);
+`;
+
+const AllocationValue = styled.span`
+  color: #0f172a;
+`;
+
+const TrendPanel = styled.div`
+  margin-top: 0.9rem;
+  border: 1px solid rgba(15,23,42,0.1);
+  border-radius: 12px;
+  background: rgba(15,23,42,0.02);
+  padding: 0.7rem;
+`;
+
+const TrendHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(15,23,42,0.7);
+`;
+
+const TrendBars = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.28rem;
+  align-items: end;
+  height: 54px;
+`;
+
+const TrendBar = styled.div`
+  border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, rgba(34,197,94,0.85), rgba(34,197,94,0.45));
+  height: ${props => props.$h || 20}px;
+`;
+
+const VisualFooter = styled.div`
+  margin-top: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+
+  @media (max-width: 420px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FooterPill = styled.div`
+  border: 1px solid rgba(15,23,42,0.1);
+  border-radius: 10px;
+  padding: 0.45rem 0.5rem;
+  background: #ffffff;
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: rgba(15,23,42,0.68);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-content: center;
 `;
 
 const Badge = styled(motion.div)`
@@ -523,55 +741,121 @@ const Dashboard = () => {
       <HeroSection>
         <Orb />
         <HeroContent>
-          <Badge
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            🟢 Live Platform
-          </Badge>
+          <HeroGrid>
+            <div>
+              <Badge
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                🟢 Live Platform
+              </Badge>
 
-          <HeroTitle
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.08 }}
-          >
-            Learn to <span>Invest</span>
-            <br />
-            With AI-Powered
-            <br />
-            <span>Simulations</span>
-          </HeroTitle>
+              <HeroTitle
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.08 }}
+              >
+                Learn to <span>Invest</span>
+                <br />
+                With AI-Powered
+                <br />
+                <span>Simulations</span>
+              </HeroTitle>
 
-          <HeroSubtitle
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.16 }}
-          >
-            Master stocks, bonds, crypto, and commodities through hands-on
-            practice with virtual money and a personal AI tutor.
-          </HeroSubtitle>
+              <HeroSubtitle
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.16 }}
+              >
+                Master stocks, bonds, crypto, and commodities through hands-on
+                practice with virtual money and a personal AI tutor.
+              </HeroSubtitle>
 
-          <HeroActions
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.24 }}
-          >
-            <PrimaryBtn to="/learn">Start Learning →</PrimaryBtn>
-            <OutlineBtn to="/demo">Try Demo Trading</OutlineBtn>
-          </HeroActions>
+              <HeroActions
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.24 }}
+              >
+                <PrimaryBtn to="/learn">Start Learning →</PrimaryBtn>
+                <OutlineBtn to="/demo">Try Demo Trading</OutlineBtn>
+              </HeroActions>
 
-          <StatsLine
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.32 }}
-          >
-            <span>{lessons.length} Lessons</span>
-            <span className="dot" />
-            <span>{scenarios.length} Scenarios</span>
-            <span className="dot" />
-            <span>GPT-4 AI Tutor</span>
-          </StatsLine>
+              <StatsLine
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.32 }}
+              >
+                <span>{lessons.length} Lessons</span>
+                <span className="dot" />
+                <span>{scenarios.length} Scenarios</span>
+                <span className="dot" />
+                <span>GPT-4 AI Tutor</span>
+              </StatsLine>
+            </div>
+
+            <HeroVisual
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.2 }}
+            >
+              <VisualCard>
+                <VisualTop>
+                  <div>
+                    <VisualLabel>Portfolio Snapshot</VisualLabel>
+                    <VisualValue>$124,820</VisualValue>
+                    <VisualDelta>+3.48% this week</VisualDelta>
+                  </div>
+                  <VisualBadge>AI Optimized</VisualBadge>
+                </VisualTop>
+
+                <VisualMiddle>
+                  <AllocationRing>
+                    <RingInner>
+                      <RingPercent>68%</RingPercent>
+                      <RingCaption>on track</RingCaption>
+                    </RingInner>
+                  </AllocationRing>
+                  <AllocationList>
+                    <AllocationRow>
+                      <AllocationName><Dot $color="#22c55e" /> Equities</AllocationName>
+                      <AllocationValue>52%</AllocationValue>
+                    </AllocationRow>
+                    <AllocationRow>
+                      <AllocationName><Dot $color="#3b82f6" /> Bonds</AllocationName>
+                      <AllocationValue>23%</AllocationValue>
+                    </AllocationRow>
+                    <AllocationRow>
+                      <AllocationName><Dot $color="#f59e0b" /> Crypto</AllocationName>
+                      <AllocationValue>15%</AllocationValue>
+                    </AllocationRow>
+                    <AllocationRow>
+                      <AllocationName><Dot $color="#8b5cf6" /> Commodities</AllocationName>
+                      <AllocationValue>10%</AllocationValue>
+                    </AllocationRow>
+                  </AllocationList>
+                </VisualMiddle>
+
+                <TrendPanel>
+                  <TrendHeader>
+                    <span>7-day momentum</span>
+                    <span>+2.1%</span>
+                  </TrendHeader>
+                  <TrendBars>
+                    {[18, 26, 24, 38, 34, 45, 52].map((height, idx) => (
+                      <TrendBar key={idx} $h={height} />
+                    ))}
+                  </TrendBars>
+                </TrendPanel>
+
+                <VisualFooter>
+                  <FooterPill><FaChartLine /> Trend Stable</FooterPill>
+                  <FooterPill><FaShieldAlt /> Risk Controlled</FooterPill>
+                  <FooterPill><FaBolt /> Signals Live</FooterPill>
+                </VisualFooter>
+              </VisualCard>
+            </HeroVisual>
+          </HeroGrid>
 
           <TickerRow
             initial={{ opacity: 0 }}
