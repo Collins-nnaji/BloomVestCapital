@@ -126,6 +126,14 @@ const SectionText = styled.p`
   line-height: 1.75;
 `;
 
+const KeywordMark = styled.mark`
+  background: rgba(34, 197, 94, 0.2);
+  color: #0f172a;
+  padding: 0 0.16rem;
+  border-radius: 4px;
+  font-weight: 700;
+`;
+
 const Takeaway = styled.div`
   border-left: 3px solid #22c55e;
   padding: 0.45rem 0.6rem;
@@ -235,10 +243,101 @@ const Center = styled.div`
   padding: 4rem 1rem;
 `;
 
+const STOP_WORDS = new Set([
+  'about', 'after', 'again', 'also', 'among', 'around', 'because', 'before', 'being', 'between',
+  'could', 'every', 'first', 'from', 'have', 'into', 'just', 'many', 'more', 'most', 'other',
+  'over', 'same', 'some', 'than', 'that', 'their', 'there', 'these', 'they', 'this', 'those',
+  'through', 'under', 'using', 'when', 'where', 'which', 'while', 'with', 'without', 'your',
+]);
+
+const EXAMPLE_SCENARIOS = [
+  'Real-life scenario: a junior analyst sets a fixed monthly auto-invest amount and reviews outcomes every quarter to stay consistent through market swings.',
+  'Example: a family compares two choices, holding cash versus a diversified portfolio, and measures inflation-adjusted purchasing power after 12 months.',
+  'Practical scenario: a new investor uses a checklist before each decision, defining risk, time horizon, and expected return before placing a trade.',
+  'Real-life breakdown: a worker receives an annual bonus and splits it across emergency savings, debt reduction, and long-term investments using clear percentages.',
+];
+
+function cleanText(value) {
+  return String(value || '')
+    .replace(/[–—]/g, ',')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+function ensureRealLifeExample(text, heading, lessonTitle, index) {
+  const normalized = cleanText(text);
+  const hasExample = /example|scenario|real-life|case study/i.test(normalized);
+  const scenario = EXAMPLE_SCENARIOS[index % EXAMPLE_SCENARIOS.length];
+  if (hasExample && normalized.length >= 320) return normalized;
+  const context = heading ? `Context: ${heading} in "${lessonTitle}".` : `Context: "${lessonTitle}".`;
+  return `${normalized} ${scenario} ${context}`.trim();
+}
+
+function enrichLessonNarrative(lesson) {
+  const content = Array.isArray(lesson.content) ? lesson.content : [];
+  const keyTakeaways = Array.isArray(lesson.keyTakeaways) ? lesson.keyTakeaways : [];
+  const enrichedContent = content.map((block, idx) => ({
+    ...block,
+    heading: cleanText(block.heading),
+    text: ensureRealLifeExample(block.text, block.heading, lesson.title, idx),
+  }));
+  const enrichedTakeaways = keyTakeaways.map(cleanText);
+  if (!enrichedTakeaways.some((item) => /example|scenario|real-life/i.test(item))) {
+    enrichedTakeaways.push('Apply each concept to a real-life scenario before taking action.');
+  }
+  return {
+    ...lesson,
+    content: enrichedContent,
+    keyTakeaways: enrichedTakeaways,
+  };
+}
+
+function extractKeywordCandidates(text) {
+  return cleanText(text)
+    .split(/[^A-Za-z0-9]+/)
+    .map((token) => token.toLowerCase())
+    .filter((token) => token.length >= 5 && !STOP_WORDS.has(token));
+}
+
+function buildKeywordSet(lesson) {
+  const bag = new Map();
+  const sources = [
+    lesson.title,
+    ...(lesson.content || []).map((block) => block.heading),
+    ...(lesson.keyTakeaways || []),
+  ];
+  sources.forEach((text) => {
+    extractKeywordCandidates(text).forEach((token) => {
+      bag.set(token, (bag.get(token) || 0) + 1);
+    });
+  });
+  return new Set(
+    Array.from(bag.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 16)
+      .map(([token]) => token)
+  );
+}
+
+function renderHighlightedText(text, keywords) {
+  const parts = cleanText(text).split(/(\s+|[.,!?;:()])/g).filter(Boolean);
+  const tokenHits = new Map();
+  return parts.map((part, index) => {
+    const token = part.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const tokenCount = tokenHits.get(token) || 0;
+    if (token && keywords.has(token) && tokenCount < 2) {
+      tokenHits.set(token, tokenCount + 1);
+      return <KeywordMark key={`kw-${token}-${index}`}>{part}</KeywordMark>;
+    }
+    return <React.Fragment key={`txt-${index}`}>{part}</React.Fragment>;
+  });
+}
+
 function normalizeLesson(lesson) {
-  const normalizedContent = Array.isArray(lesson.content) ? lesson.content : [];
-  const providedTask = lesson.interactiveTask && Array.isArray(lesson.interactiveTask.items)
-    ? lesson.interactiveTask
+  const enriched = enrichLessonNarrative(lesson);
+  const normalizedContent = Array.isArray(enriched.content) ? enriched.content : [];
+  const providedTask = enriched.interactiveTask && Array.isArray(enriched.interactiveTask.items)
+    ? enriched.interactiveTask
     : null;
   const derivedItems = normalizedContent
     .map((block, idx) => ({
@@ -259,10 +358,10 @@ function normalizeLesson(lesson) {
 
   const normalizedTask = providedTask || generatedTask;
   return {
-    ...lesson,
+    ...enriched,
     content: normalizedContent,
-    keyTakeaways: Array.isArray(lesson.keyTakeaways) ? lesson.keyTakeaways : [],
-    quiz: Array.isArray(lesson.quiz) ? lesson.quiz : [],
+    keyTakeaways: Array.isArray(enriched.keyTakeaways) ? enriched.keyTakeaways : [],
+    quiz: Array.isArray(enriched.quiz) ? enriched.quiz : [],
     interactiveTask: normalizedTask,
   };
 }
@@ -342,6 +441,11 @@ const LessonPage = () => {
     if (!lesson || lesson.quiz.length === 0) return 0;
     return lesson.quiz.reduce((sum, question, idx) => sum + (quizAnswers[idx] === question.answer ? 1 : 0), 0);
   }, [lesson, quizAnswers]);
+
+  const lessonKeywords = useMemo(() => {
+    if (!lesson) return new Set();
+    return buildKeywordSet(lesson);
+  }, [lesson]);
 
   const passed = lesson && lesson.quiz.length > 0
     ? score >= Math.ceil(lesson.quiz.length / 2)
@@ -425,7 +529,7 @@ const LessonPage = () => {
             {lesson.content.map((block, index) => (
               <Section key={`${block.heading}-${index}`}>
                 <SectionTitle>{block.heading}</SectionTitle>
-                <SectionText>{block.text}</SectionText>
+                <SectionText>{renderHighlightedText(block.text, lessonKeywords)}</SectionText>
               </Section>
             ))}
 
