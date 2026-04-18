@@ -14,21 +14,18 @@ export function AuthProvider({ children }) {
       const session = await auth.getSession();
       if (session && session.user) {
         setUser(session.user);
-        setAuthSession(session.user); // Tie API session to logged-in user so data saves to their DB
-        const subRes = await fetch(`/api/billing/status?email=${encodeURIComponent(session.user.email)}`);
-        if (subRes.ok) {
-          const subData = await subRes.json();
-          setIsPro(subData.isPro || false);
-        }
+        setAuthSession(session.user);
+        // Subscriptions removed — all features are free
+        setIsPro(true);
       } else {
         setUser(null);
         setAuthSession(null);
-        setIsPro(false);
+        setIsPro(true); // Always true — no subscription required
       }
     } catch {
       setUser(null);
       setAuthSession(null);
-      setIsPro(false);
+      setIsPro(true);
     }
     setLoading(false);
   }, []);

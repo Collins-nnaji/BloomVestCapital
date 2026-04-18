@@ -50,6 +50,11 @@ export const api = {
     });
   },
 
+  async getDailyBrief(options = {}) {
+    const q = options.refresh ? '?refresh=1' : '';
+    return request(`/ai/daily-brief${q}`);
+  },
+
   async getPortfolio() {
     return request(`/portfolio?sessionId=${getSessionId()}`);
   },

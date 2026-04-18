@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import Header from './Header';
+import Navbar from './Navbar';
 import Footer from './Footer';
 import styled from 'styled-components';
 
@@ -31,7 +31,7 @@ const Layout = ({ children }) => {
 
   return (
     <PageWrapper>
-      <Header />
+      <Navbar />
       <MainContent>
         {children}
       </MainContent>

@@ -14,6 +14,27 @@ const PageContainer = styled.div`
   background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
 `;
 
+/** Trading UI uses light-on-dark typography — keep a dark canvas so text is readable. */
+const SimulationPage = styled.div`
+  min-height: 100vh;
+  position: relative;
+  background: linear-gradient(165deg, #020617 0%, #0f172a 45%, #111827 100%);
+  color: #e2e8f0;
+
+  &::before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(180deg, black 30%, transparent 95%);
+    z-index: 0;
+  }
+`;
+
 const ContentWrapper = styled.div`
   max-width: 1400px;
   margin: 0 auto;
@@ -80,8 +101,20 @@ const ScenarioCardHeader = styled.div`
   margin-bottom: 1rem;
 `;
 
-const ScenarioIcon = styled.span`
-  font-size: 2rem;
+const ScenarioIconWrap = styled.div`
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  line-height: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 4px 18px rgba(15, 23, 42, 0.2);
 `;
 
 const DifficultyBadge = styled.span`
@@ -434,6 +467,8 @@ const PreviewCard = styled.div`
 /* ======= Active Simulation Styles ======= */
 
 const SimContainer = styled.div`
+  position: relative;
+  z-index: 1;
   max-width: 1400px;
   margin: 0 auto;
   padding: 1.5rem;
@@ -476,7 +511,19 @@ const ScenarioBar = styled(motion.div)`
   flex-wrap: wrap;
 `;
 
-const BarIcon = styled.span`font-size: 1.5rem;`;
+const BarIcon = styled.span`
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  line-height: 1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 14px rgba(0, 0, 0, 0.35);
+`;
 
 const BarTitle = styled.h2`
   font-size: 1.15rem;
@@ -583,7 +630,7 @@ const StockRow = styled(motion.div)`
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0.4rem;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 6px;
@@ -695,7 +742,7 @@ const HoldingRow = styled(motion.div)`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   cursor: pointer;
   &:last-child { border-bottom: none; }
   &:hover { background: rgba(34,197,94,0.04); }
@@ -1171,7 +1218,7 @@ const ProGateBtn = styled(Link)`
 `;
 
 const ScenarioPage = () => {
-  const { user, isPro } = useAuth();
+  const { user } = useAuth();
   const [view, setView] = useState('select');
   const [activeScenario, setActiveScenario] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -1211,12 +1258,6 @@ const ScenarioPage = () => {
 
   useEffect(() => {
     let cancelled = false;
-    if (!isPro || !user) {
-      setCustomScenarios([]);
-      return () => {
-        cancelled = true;
-      };
-    }
 
     const loadCustomScenarios = async () => {
       setCustomScenariosLoading(true);
@@ -1236,7 +1277,7 @@ const ScenarioPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [isPro, user]);
+  }, [user]);
 
   const showNotif = useCallback((msg, type = 'success') => {
     setNotification({ msg, type });
@@ -1306,7 +1347,6 @@ const ScenarioPage = () => {
   }, [activeScenario, getPortfolioSummary, getObjectivesSummary, addAiMessage]);
 
   const startScenario = useCallback(async (scenario) => {
-    if (!isPro) return;
     setActiveScenario(scenario);
     setBalance(scenario.startingBalance);
     setHoldings([]);
@@ -1340,7 +1380,7 @@ const ScenarioPage = () => {
     } finally {
       setAiLoading(false);
     }
-  }, [isPro]);
+  }, []);
 
   const resetBuilder = useCallback(() => {
     setBuilderStep(0);
@@ -1636,33 +1676,20 @@ const ScenarioPage = () => {
             <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#22c55e'}}>AI tutor</strong>. Build confidence before risking real capital.</PageSubtitle>
           </PageHeader>
 
-          {!isPro && (
-            <ProGate>
-              <FaLock style={{fontSize:'2rem',color:'rgba(15,23,42,0.2)',marginBottom:'1rem'}} />
-              <ProGateTitle>Scenarios require <span style={{color:'#22c55e'}}>Pro</span></ProGateTitle>
-              <ProGateText>
-                AI-guided scenario simulations are a Pro feature. Upgrade to get real-time GPT-4 coaching, 11 interactive simulations across stocks, crypto, commodities, bonds, and forex.
-              </ProGateText>
-              <ProGateBtn to="/pricing"><FaCrown /> View Pricing</ProGateBtn>
-            </ProGate>
-          )}
-
-          {isPro && (
-            <BuilderHero
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <div>
-                <div style={{fontSize:'0.72rem',fontWeight:800,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7dd3fc',marginBottom:'0.35rem'}}>New creator mode</div>
-                <div style={{color:'#0f172a',fontSize:'1.15rem',fontWeight:800,marginBottom:'0.25rem'}}>Design your own scenario with guided AI blocks</div>
-                <div style={{color:'rgba(15,23,42,0.76)',fontSize:'0.86rem'}}>Pick a theme, assets, and learning objectives, then generate a polished scenario you can save and replay.</div>
-              </div>
-              <BuilderCtaBtn onClick={goToBuilder}>
-                <FaMagic /> Create custom scenario
-              </BuilderCtaBtn>
-            </BuilderHero>
-          )}
+          <BuilderHero
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div>
+              <div style={{fontSize:'0.72rem',fontWeight:800,letterSpacing:'0.06em',textTransform:'uppercase',color:'#7dd3fc',marginBottom:'0.35rem'}}>Creator mode</div>
+              <div style={{color:'#0f172a',fontSize:'1.15rem',fontWeight:800,marginBottom:'0.25rem'}}>Design your own scenario with guided AI blocks</div>
+              <div style={{color:'rgba(15,23,42,0.76)',fontSize:'0.86rem'}}>Pick a theme, assets, and learning objectives, then generate a polished scenario you can save and replay.</div>
+            </div>
+            <BuilderCtaBtn onClick={goToBuilder}>
+              <FaMagic /> Create custom scenario
+            </BuilderCtaBtn>
+          </BuilderHero>
 
           <FilterBar>
             <FilterSearch>
@@ -1705,8 +1732,8 @@ const ScenarioPage = () => {
               {catalogFilteredScenarios.map((scenario, idx) => (
                 <ScenarioCard
                   key={scenario.id}
-                  onClick={() => isPro ? startScenario(scenario) : null}
-                  style={{ opacity: isPro ? 1 : 0.5, cursor: isPro ? 'pointer' : 'default' }}
+                  onClick={() => startScenario(scenario)}
+                  style={{ opacity: 1, cursor: 'pointer' }}
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05, type: 'spring', stiffness: 120 }}
@@ -1714,7 +1741,7 @@ const ScenarioPage = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <ScenarioCardHeader>
-                    <ScenarioIcon>{scenario.icon}</ScenarioIcon>
+                    <ScenarioIconWrap aria-hidden>{scenario.icon || '📊'}</ScenarioIconWrap>
                     <div style={{display:'flex',gap:'0.35rem',alignItems:'center'}}>
                       {scenario.isCustom && (
                         <DifficultyBadge $color="#38bdf8">Custom</DifficultyBadge>
@@ -1917,7 +1944,9 @@ const ScenarioPage = () => {
                         <>
                           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'0.6rem'}}>
                             <div style={{display:'flex',alignItems:'center',gap:'0.55rem'}}>
-                              <div style={{fontSize:'1.35rem'}}>{builderPreview.icon}</div>
+                              <ScenarioIconWrap style={{ width: 48, height: 48, minWidth: 48, fontSize: '1.45rem' }}>
+                                {builderPreview.icon || '📊'}
+                              </ScenarioIconWrap>
                               <div>
                                 <div style={{fontWeight:800,color:'#0f172a'}}>{builderPreview.title}</div>
                                 <div style={{fontSize:'0.75rem',color:'rgba(15,23,42,0.68)'}}>{builderPreview.difficulty} • {builderPreview.duration} • ${Number(builderPreview.startingBalance).toLocaleString()}</div>
@@ -2034,7 +2063,7 @@ const ScenarioPage = () => {
 
   /* ======= RENDER: Active Simulation ======= */
   return (
-    <PageContainer>
+    <SimulationPage>
       <SimContainer>
         {/* LEFT COLUMN — Trading Panel */}
         <LeftColumn>
@@ -2389,7 +2418,7 @@ const ScenarioPage = () => {
           </Notification>
         )}
       </AnimatePresence>
-    </PageContainer>
+    </SimulationPage>
   );
 };
 

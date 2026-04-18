@@ -4,20 +4,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import Layout from './components/Layout';
 import Loader from './components/Loader';
-import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './AuthContext';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
-const LearnPage = lazy(() => import('./pages/LearnPage'));
-const CoursePage = lazy(() => import('./pages/CoursePage'));
-const LessonPage = lazy(() => import('./pages/LessonPage'));
-const DemoTrading = lazy(() => import('./pages/DemoTrading'));
-const AITutor = lazy(() => import('./pages/AITutor'));
-const AboutUsPage = lazy(() => import('./pages/AboutUsPage'));
-const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
-const PricingPage = lazy(() => import('./pages/PricingPage'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const AuthCallback = lazy(() => import('./components/AuthCallback'));
+const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
+const AITutor = lazy(() => import('./pages/AITutor'));
 
 function App() {
   return (
@@ -28,18 +21,18 @@ function App() {
           <Suspense fallback={<Loader />}>
             <Layout>
               <Routes>
+                {/* The Entry */}
                 <Route path="/" element={<Dashboard />} />
+                
+                {/* Legacy / Tools */}
+                <Route path="/scenario" element={<ScenarioPage />} />
+                <Route path="/ai-tutor" element={<AITutor />} />
+                
+                {/* Auth */}
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/learn" element={<ProtectedRoute><LearnPage /></ProtectedRoute>} />
-                <Route path="/learn/course/:courseId" element={<ProtectedRoute><CoursePage /></ProtectedRoute>} />
-                <Route path="/learn/course/:courseId/lesson/:lessonId" element={<ProtectedRoute><LessonPage /></ProtectedRoute>} />
-                <Route path="/demo" element={<ProtectedRoute><DemoTrading /></ProtectedRoute>} />
-                <Route path="/ai-tutor" element={<ProtectedRoute><AITutor /></ProtectedRoute>} />
-                <Route path="/about" element={<ProtectedRoute><AboutUsPage /></ProtectedRoute>} />
-                <Route path="/scenario" element={<ProtectedRoute><ScenarioPage /></ProtectedRoute>} />
-                <Route path="/pricing" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
-                <Route path="/billing/success" element={<ProtectedRoute><PricingPage /></ProtectedRoute>} />
+                
+                {/* Catch-all */}
                 <Route path="*" element={<Dashboard />} />
               </Routes>
             </Layout>

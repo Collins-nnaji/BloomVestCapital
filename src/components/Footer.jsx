@@ -104,6 +104,16 @@ const SocialLink = styled.a`
   }
 `;
 
+const BrandTagline = styled.p`
+  margin: 0;
+  padding: 1rem 0 0;
+  font-size: 0.84rem;
+  color: #64748b;
+  line-height: 1.55;
+  max-width: 640px;
+  font-weight: 500;
+`;
+
 const BottomRow = styled.div`
   display: flex;
   align-items: center;
@@ -137,10 +147,10 @@ const Footer = () => {
           </LogoText>
 
           <NavLinks>
-            <FooterNavLink to="/learn">Learn</FooterNavLink>
+            <FooterNavLink to="/">Insights</FooterNavLink>
             <FooterNavLink to="/scenario">Scenarios</FooterNavLink>
-            <FooterNavLink to="/demo">Trading</FooterNavLink>
             <FooterNavLink to="/ai-tutor">AI Tutor</FooterNavLink>
+            <FooterNavLink to="/auth">Sign in</FooterNavLink>
           </NavLinks>
 
           <SocialIcons>
@@ -162,6 +172,11 @@ const Footer = () => {
             </SocialLink>
           </SocialIcons>
         </TopRow>
+
+        <BrandTagline>
+          BloomVest Finance — a modern investment insights platform for people who don&apos;t have time to chase every headline. Educational content only;
+          not personalized financial advice.
+        </BrandTagline>
 
         <BottomRow>
           <Copyright>&copy; 2026 BloomVest. All rights reserved.</Copyright>
