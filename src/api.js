@@ -1,4 +1,10 @@
-const API_BASE = '/api';
+const getApiBase = () => {
+  const configured = process.env.REACT_APP_API_URL || '';
+  if (configured) return `${configured.replace(/\/$/, '')}/api`;
+  return '/api';
+};
+
+const API_BASE = getApiBase();
 
 let _authSessionId = null; // When user is logged in, this is their email (persists to DB per user)
 
@@ -22,10 +28,30 @@ async function request(path, options = {}) {
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
   });
+  const contentType = res.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Request failed' }));
-    throw new Error(err.error || 'Request failed');
+    const err = isJson
+      ? await res.json().catch(() => ({ error: 'Request failed' }))
+      : await res.text().catch(() => '');
+
+    const fallbackMessage =
+      typeof err === 'string' && err.trim().startsWith('<')
+        ? 'API route returned HTML instead of JSON. Set REACT_APP_API_URL or run the API implementation.'
+        : 'Request failed';
+
+    throw new Error((typeof err === 'object' && err?.error) || fallbackMessage);
   }
+
+  if (!isJson) {
+    const text = await res.text().catch(() => '');
+    if (text.trim().startsWith('<')) {
+      throw new Error('API route returned HTML instead of JSON. Set REACT_APP_API_URL or run the API implementation.');
+    }
+    throw new Error('API route returned a non-JSON response.');
+  }
+
   return res.json();
 }
 
@@ -142,6 +168,13 @@ export const api = {
         sessionId: getSessionId(),
         builder,
       }),
+    });
+  },
+
+  async runDeepAnalysis(preferences = {}) {
+    return request('/ai/deep-analysis', {
+      method: 'POST',
+      body: JSON.stringify(preferences),
     });
   },
 };
