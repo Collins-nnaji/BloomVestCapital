@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown, FaMagic, FaChevronRight, FaSave, FaBullseye, FaSpinner } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown, FaMagic, FaChevronRight, FaSave, FaBullseye, FaSpinner, FaBookOpen, FaArrowLeft, FaChevronDown, FaChevronUp, FaGraduationCap } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { scenarios, difficultyColors } from '../data/scenarios';
 import { stocks } from '../data/stockData';
@@ -841,6 +841,15 @@ const pulse = keyframes`
   50% { opacity: 1; }
 `;
 
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
+const SpinIcon = styled(FaSpinner)`
+  animation: ${spin} 1s linear infinite;
+`;
+
 const TypingIndicator = styled.div`
   display: flex;
   align-items: center;
@@ -1217,8 +1226,649 @@ const ProGateBtn = styled(Link)`
   &:hover { background: #16a34a; transform: translateY(-2px); }
 `;
 
+/* ── Learn tab styled components ─────────────────────────────────────────── */
+const TabBar = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  background: rgba(15,23,42,0.06);
+  border-radius: 12px;
+  padding: 0.3rem;
+  width: fit-content;
+`;
+
+const TabBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 9px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: ${p => p.$active ? '#22c55e' : 'transparent'};
+  color: ${p => p.$active ? '#fff' : 'rgba(15,23,42,0.6)'};
+  &:hover { background: ${p => p.$active ? '#16a34a' : 'rgba(15,23,42,0.08)'}; color: ${p => p.$active ? '#fff' : '#0f172a'}; }
+`;
+
+const LearnWrap = styled.div`
+  max-width: 900px;
+`;
+
+const LearnProgressBar = styled.div`
+  background: rgba(15,23,42,0.08);
+  border-radius: 999px;
+  height: 8px;
+  overflow: hidden;
+  flex: 1;
+`;
+const LearnProgressFill = styled(motion.div)`
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+  border-radius: 999px;
+`;
+
+const CourseCard = styled(motion.div)`
+  border: 1px solid rgba(15,23,42,0.12);
+  border-radius: 14px;
+  background: #fff;
+  margin-bottom: 1rem;
+  overflow: hidden;
+`;
+
+const CourseCardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  &:hover { background: rgba(15,23,42,0.02); }
+`;
+
+const CourseIcon = styled.div`
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: ${p => p.$color || '#22c55e'}22;
+  color: ${p => p.$color || '#22c55e'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+`;
+
+const CourseMeta = styled.div`
+  flex: 1;
+`;
+
+const CourseName = styled.div`
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+`;
+
+const CourseStats = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: rgba(15,23,42,0.55);
+  font-weight: 600;
+`;
+
+const CoursePct = styled.span`
+  color: #22c55e;
+  font-weight: 800;
+`;
+
+const InlineProgressRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.35rem;
+`;
+
+const ModuleSection = styled.div`
+  border-top: 1px solid rgba(15,23,42,0.08);
+  padding: 0.5rem 1.25rem 1rem;
+`;
+
+const ModuleTitle = styled.div`
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(15,23,42,0.45);
+  margin: 0.75rem 0 0.4rem;
+`;
+
+const LessonRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: rgba(34,197,94,0.07); }
+`;
+
+const LessonDot = styled.div`
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid ${p => p.$done ? '#22c55e' : 'rgba(15,23,42,0.2)'};
+  background: ${p => p.$done ? '#22c55e' : 'transparent'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+`;
+
+const LessonName = styled.div`
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+`;
+
+const LessonDur = styled.div`
+  font-size: 0.75rem;
+  color: rgba(15,23,42,0.45);
+  white-space: nowrap;
+`;
+
+/* Lesson reader panel */
+const LessonPanel = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 200;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+`;
+
+const LessonPanelHeader = styled.div`
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid rgba(15,23,42,0.1);
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+`;
+
+const LessonBackBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #22c55e;
+  padding: 0.35rem 0.6rem;
+  border-radius: 7px;
+  &:hover { background: rgba(34,197,94,0.1); }
+`;
+
+const LessonPanelTitle = styled.div`
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  flex: 1;
+`;
+
+const LessonBody = styled.div`
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  width: 100%;
+`;
+
+const LessonHeading = styled.h1`
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+`;
+
+const LessonMeta = styled.div`
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: rgba(15,23,42,0.5);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+`;
+
+const LessonContent = styled.div`
+  font-size: 0.97rem;
+  line-height: 1.8;
+  color: #1e293b;
+  white-space: pre-wrap;
+  margin-bottom: 2rem;
+
+  strong { font-weight: 800; color: #0f172a; }
+  em { color: #22c55e; font-style: normal; font-weight: 700; }
+`;
+
+const TakeawayBox = styled.div`
+  background: rgba(34,197,94,0.07);
+  border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.75rem;
+`;
+
+const TakeawayTitle = styled.div`
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #16a34a;
+  margin-bottom: 0.6rem;
+`;
+
+const TakeawayItem = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: #1e293b;
+  line-height: 1.6;
+  margin-bottom: 0.35rem;
+  &:last-child { margin-bottom: 0; }
+`;
+
+const QuizBox = styled.div`
+  border: 1px solid rgba(15,23,42,0.12);
+  border-radius: 14px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+`;
+
+const QuizQ = styled.div`
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.85rem;
+`;
+
+const QuizOption = styled.button`
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  border-radius: 8px;
+  border: 1.5px solid ${p =>
+    p.$state === 'correct' ? '#22c55e' :
+    p.$state === 'wrong' ? '#ef4444' :
+    p.$selected ? 'rgba(34,197,94,0.5)' :
+    'rgba(15,23,42,0.14)'};
+  background: ${p =>
+    p.$state === 'correct' ? 'rgba(34,197,94,0.08)' :
+    p.$state === 'wrong' ? 'rgba(239,68,68,0.06)' :
+    p.$selected ? 'rgba(34,197,94,0.04)' : '#fff'};
+  cursor: ${p => p.$state ? 'default' : 'pointer'};
+  font-size: 0.9rem;
+  color: #0f172a;
+  margin-bottom: 0.4rem;
+  transition: all 0.15s;
+  &:hover { background: ${p => p.$state ? undefined : 'rgba(34,197,94,0.05)'}; }
+`;
+
+const QuizFeedback = styled(motion.div)`
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.6rem;
+  color: ${p => p.$correct ? '#16a34a' : '#dc2626'};
+`;
+
+const CompleteBtn = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.8rem;
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { background: #16a34a; transform: translateY(-1px); }
+  &:disabled { opacity: 0.6; cursor: default; transform: none; }
+`;
+
+const LearnSummary = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: rgba(34,197,94,0.07);
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+`;
+
+/* ── Learn tab component ─────────────────────────────────────────────────── */
+function LearnTab() {
+  const { user } = useAuth();
+  const [courses, setCourses] = useState([]);
+  const [progress, setProgress] = useState({ totalLessons: 0, completedLessons: 0, completedIds: [] });
+  const [loading, setLoading] = useState(true);
+  const [expandedCourse, setExpandedCourse] = useState(null);
+  const [activeLesson, setActiveLesson] = useState(null);
+  const [lessonData, setLessonData] = useState(null);
+  const [lessonLoading, setLessonLoading] = useState(false);
+  const [quizAnswers, setQuizAnswers] = useState({});
+  const [completing, setCompleting] = useState(false);
+
+  const loadCourses = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [coursesRes, progressRes] = await Promise.all([
+        api.getCourses(),
+        api.getCourseProgress(),
+      ]);
+      const completedIds = new Set(progressRes.completedIds || []);
+      const normalized = (coursesRes.courses || []).map(c => {
+        const allLessons = (c.modules || []).flatMap(m => m.lessons || []);
+        const done = allLessons.filter(l => completedIds.has(l.id)).length;
+        return { ...c, completedLessons: done, totalLessons: allLessons.length };
+      });
+      setCourses(normalized);
+      setProgress({
+        totalLessons: progressRes.totalLessons || normalized.reduce((s, c) => s + c.totalLessons, 0),
+        completedLessons: progressRes.completedLessons || completedIds.size,
+        completedIds: [...completedIds],
+      });
+    } catch (e) {
+      console.warn('LearnTab load error:', e.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { loadCourses(); }, [loadCourses]);
+
+  const openLesson = useCallback(async (lessonId) => {
+    setActiveLesson(lessonId);
+    setLessonData(null);
+    setQuizAnswers({});
+    setLessonLoading(true);
+    try {
+      const res = await api.getLesson(lessonId);
+      setLessonData(res.lesson);
+    } catch (e) {
+      console.warn('Lesson load error:', e.message);
+    } finally {
+      setLessonLoading(false);
+    }
+  }, []);
+
+  const closeLesson = useCallback(() => {
+    setActiveLesson(null);
+    setLessonData(null);
+    setQuizAnswers({});
+  }, []);
+
+  const handleQuizAnswer = (qIndex, optIndex) => {
+    if (quizAnswers[qIndex] !== undefined) return;
+    setQuizAnswers(prev => ({ ...prev, [qIndex]: optIndex }));
+  };
+
+  const handleComplete = async () => {
+    if (!lessonData || completing) return;
+    setCompleting(true);
+    try {
+      const quiz = Array.isArray(lessonData.quiz) ? lessonData.quiz : [];
+      const score = quiz.length > 0
+        ? Math.round((quiz.filter((q, i) => quizAnswers[i] === q.correctIndex).length / quiz.length) * 100)
+        : 100;
+      await api.completeLessonV2(lessonData.id, score);
+      setProgress(prev => {
+        const ids = new Set(prev.completedIds);
+        if (!ids.has(lessonData.id)) {
+          ids.add(lessonData.id);
+          return { ...prev, completedIds: [...ids], completedLessons: ids.size };
+        }
+        return prev;
+      });
+      setCourses(prev => prev.map(c => {
+        const allIds = (c.modules || []).flatMap(m => (m.lessons || []).map(l => l.id));
+        if (!allIds.includes(lessonData.id)) return c;
+        return { ...c, completedLessons: c.completedLessons + (progress.completedIds.includes(lessonData.id) ? 0 : 1) };
+      }));
+      closeLesson();
+    } catch (e) {
+      console.warn('Complete lesson error:', e.message);
+    } finally {
+      setCompleting(false);
+    }
+  };
+
+  const overallPct = progress.totalLessons > 0
+    ? Math.round((progress.completedLessons / progress.totalLessons) * 100)
+    : 0;
+
+  const completedSet = new Set(progress.completedIds);
+
+  return (
+    <>
+      {/* Summary bar */}
+      <LearnSummary>
+        <FaGraduationCap style={{ fontSize: '1.6rem', color: '#22c55e', flexShrink: 0 }} />
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0f172a', marginBottom: '0.3rem' }}>
+            {progress.completedLessons} / {progress.totalLessons} lessons completed ({overallPct}%)
+          </div>
+          <InlineProgressRow>
+            <LearnProgressBar>
+              <LearnProgressFill
+                initial={{ width: 0 }}
+                animate={{ width: `${overallPct}%` }}
+                transition={{ duration: 0.6 }}
+              />
+            </LearnProgressBar>
+          </InlineProgressRow>
+        </div>
+        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#22c55e' }}>{courses.length}</div>
+          <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'rgba(15,23,42,0.5)' }}>Courses</div>
+        </div>
+      </LearnSummary>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '3rem', color: 'rgba(15,23,42,0.5)', fontSize: '0.9rem' }}>
+          <SpinIcon style={{ marginRight: '0.5rem' }} />
+          Loading courses…
+        </div>
+      ) : (
+        <LearnWrap>
+          {courses.map((course, i) => {
+            const pct = course.totalLessons > 0
+              ? Math.round((course.completedLessons / course.totalLessons) * 100)
+              : 0;
+            const isOpen = expandedCourse === course.id;
+            return (
+              <CourseCard key={course.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
+                <CourseCardHeader onClick={() => setExpandedCourse(isOpen ? null : course.id)}>
+                  <CourseIcon $color={course.color}>{course.icon}</CourseIcon>
+                  <CourseMeta>
+                    <CourseName>{course.title}</CourseName>
+                    <CourseStats>
+                      <span>{course.totalLessons} lessons</span>
+                      <span>·</span>
+                      <CoursePct>{pct}% done</CoursePct>
+                    </CourseStats>
+                    <InlineProgressRow>
+                      <LearnProgressBar>
+                        <LearnProgressFill
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.5 }}
+                        />
+                      </LearnProgressBar>
+                    </InlineProgressRow>
+                  </CourseMeta>
+                  {isOpen ? <FaChevronUp style={{ color: 'rgba(15,23,42,0.4)', flexShrink: 0 }} /> : <FaChevronDown style={{ color: 'rgba(15,23,42,0.4)', flexShrink: 0 }} />}
+                </CourseCardHeader>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <ModuleSection>
+                        {(course.modules || []).map(mod => (
+                          <div key={mod.id}>
+                            <ModuleTitle>{mod.title}</ModuleTitle>
+                            {(mod.lessons || []).map(lesson => (
+                              <LessonRow key={lesson.id} onClick={() => openLesson(lesson.id)}>
+                                <LessonDot $done={completedSet.has(lesson.id)}>
+                                  {completedSet.has(lesson.id) && <FaCheckCircle />}
+                                </LessonDot>
+                                <LessonName>{lesson.title}</LessonName>
+                                <LessonDur><FaClock style={{ marginRight: '0.25rem' }} />{lesson.duration}</LessonDur>
+                                <FaChevronRight style={{ color: 'rgba(15,23,42,0.25)', fontSize: '0.75rem' }} />
+                              </LessonRow>
+                            ))}
+                          </div>
+                        ))}
+                      </ModuleSection>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </CourseCard>
+            );
+          })}
+        </LearnWrap>
+      )}
+
+      {/* Lesson reader — full-screen overlay */}
+      <AnimatePresence>
+        {activeLesson && (
+          <LessonPanel
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.28 }}
+          >
+            <LessonPanelHeader>
+              <LessonBackBtn onClick={closeLesson}><FaArrowLeft /> Back to courses</LessonBackBtn>
+              <LessonPanelTitle>
+                {lessonData ? `${lessonData.courseTitle} · ${lessonData.moduleTitle}` : ''}
+              </LessonPanelTitle>
+              {lessonData && completedSet.has(lessonData.id) && (
+                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#22c55e', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <FaCheckCircle /> Completed
+                </span>
+              )}
+            </LessonPanelHeader>
+
+            {lessonLoading ? (
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(15,23,42,0.5)' }}>
+                <SpinIcon style={{ marginRight: '0.5rem' }} /> Loading lesson…
+              </div>
+            ) : lessonData ? (
+              <LessonBody>
+                <LessonHeading>{lessonData.title}</LessonHeading>
+                <LessonMeta>
+                  <span><FaBookOpen style={{ marginRight: '0.3rem' }} />{lessonData.courseTitle}</span>
+                  <span><FaClock style={{ marginRight: '0.3rem' }} />{lessonData.duration}</span>
+                </LessonMeta>
+
+                {lessonData.content && (
+                  <LessonContent dangerouslySetInnerHTML={{ __html: lessonData.content }} />
+                )}
+
+                {Array.isArray(lessonData.keyTakeaways) && lessonData.keyTakeaways.length > 0 && (
+                  <TakeawayBox>
+                    <TakeawayTitle>Key Takeaways</TakeawayTitle>
+                    {lessonData.keyTakeaways.map((t, i) => (
+                      <TakeawayItem key={i}><FaCheckCircle style={{ color: '#22c55e', flexShrink: 0, marginTop: '0.2rem' }} /> {t}</TakeawayItem>
+                    ))}
+                  </TakeawayBox>
+                )}
+
+                {Array.isArray(lessonData.quiz) && lessonData.quiz.length > 0 && (
+                  <>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.85rem' }}>Quick Quiz</div>
+                    {lessonData.quiz.map((q, qi) => (
+                      <QuizBox key={qi}>
+                        <QuizQ>{qi + 1}. {q.question}</QuizQ>
+                        {(q.options || []).map((opt, oi) => {
+                          const answered = quizAnswers[qi] !== undefined;
+                          const selected = quizAnswers[qi] === oi;
+                          const state = answered
+                            ? (oi === q.correctIndex ? 'correct' : selected ? 'wrong' : null)
+                            : null;
+                          return (
+                            <QuizOption
+                              key={oi}
+                              $selected={selected}
+                              $state={state}
+                              onClick={() => handleQuizAnswer(qi, oi)}
+                            >
+                              {opt}
+                            </QuizOption>
+                          );
+                        })}
+                        <AnimatePresence>
+                          {quizAnswers[qi] !== undefined && (
+                            <QuizFeedback
+                              $correct={quizAnswers[qi] === q.correctIndex}
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0 }}
+                            >
+                              {quizAnswers[qi] === q.correctIndex ? '✓ Correct!' : `✗ The answer is: ${q.options[q.correctIndex]}`}
+                            </QuizFeedback>
+                          )}
+                        </AnimatePresence>
+                      </QuizBox>
+                    ))}
+                  </>
+                )}
+
+                <CompleteBtn onClick={handleComplete} disabled={completing || completedSet.has(lessonData.id)}>
+                  {completing ? <><SpinIcon /> Saving…</> :
+                   completedSet.has(lessonData.id) ? <><FaCheckCircle /> Already completed</> :
+                   <><FaCheckCircle /> Mark as complete</>}
+                </CompleteBtn>
+              </LessonBody>
+            ) : (
+              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444' }}>
+                Failed to load lesson.
+              </div>
+            )}
+          </LessonPanel>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
 const ScenarioPage = () => {
   const { user } = useAuth();
+  const [tab, setTab] = useState('scenarios');
   const [view, setView] = useState('select');
   const [activeScenario, setActiveScenario] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -1672,10 +2322,31 @@ const ScenarioPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <PageTitle>Investment <span style={{color:'#22c55e'}}>Scenarios</span></PageTitle>
-            <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#22c55e'}}>AI tutor</strong>. Build confidence before risking real capital.</PageSubtitle>
+            <PageTitle>
+              {tab === 'scenarios'
+                ? <>Investment <span style={{color:'#22c55e'}}>Scenarios</span></>
+                : <>Investment <span style={{color:'#22c55e'}}>Academy</span></>}
+            </PageTitle>
+            <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>
+              {tab === 'scenarios'
+                ? <>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#22c55e'}}>AI tutor</strong>. Build confidence before risking real capital.</>
+                : <>Structured courses on investing fundamentals, analysis, and strategy — with quizzes and progress tracking.</>}
+            </PageSubtitle>
           </PageHeader>
 
+          <TabBar>
+            <TabBtn $active={tab === 'scenarios'} onClick={() => setTab('scenarios')}>
+              <FaPlay style={{fontSize:'0.75rem'}} /> Scenarios
+            </TabBtn>
+            <TabBtn $active={tab === 'learn'} onClick={() => setTab('learn')}>
+              <FaBookOpen style={{fontSize:'0.8rem'}} /> Learn
+            </TabBtn>
+          </TabBar>
+
+          {tab === 'learn' ? (
+            <LearnTab />
+          ) : (
+          <>
           <BuilderHero
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1771,6 +2442,8 @@ const ScenarioPage = () => {
                 </ScenarioCard>
               ))}
             </ScenariosGrid>
+          )}
+          </>
           )}
         </ContentWrapper>
       </PageContainer>
