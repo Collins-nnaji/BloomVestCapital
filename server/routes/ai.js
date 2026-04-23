@@ -779,7 +779,7 @@ router.post('/deep-analysis', async (req, res) => {
       `BATCH INFO: This is request ${batchIndex} of ${totalBatches} for a large-scale analysis.`,
       totalBatches > 1 ? `Focus on a unique segment of the market or specific tickers from the headlines that wouldn't normally be the "top 10" most obvious picks, to ensure a diverse final aggregated list.` : '',
       '',
-      `INSTRUCTIONS: Using ALL the above data return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 15 items), disclaimer (string).`,
+      `INSTRUCTIONS: Using ALL the above data return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 10 items), disclaimer (string).`,
       'The picks MUST be grounded in real data above.',
       'For Crypto picks, use the crypto sentiment data. For ETFs and Commodities, tie to macro headline themes.',
       'Every pick must have all required fields including trend, trendStrength, assetType, entrySignal, priceContext, and exactly 3 catalysts.',

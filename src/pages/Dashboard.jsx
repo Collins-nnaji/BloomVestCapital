@@ -510,6 +510,7 @@ export default function Dashboard() {
 
 
   const [deepRunning, setDeepRunning] = useState(false);
+  const [deepProgress, setDeepProgress] = useState(0);
   const [deepResult,  setDeepResult]  = useState(null);
   const [deepError,   setDeepError]   = useState(null);
   const [showPrefs,   setShowPrefs]   = useState(false);
@@ -547,18 +548,33 @@ export default function Dashboard() {
       }
       return;
     }
-    setDeepRunning(true); setDeepError(null); setDeepResult(null);
+    setDeepRunning(true); setDeepProgress(0); setDeepError(null); setDeepResult(null);
     
     try {
-      const TOTAL_BATCHES = 4;
-      const batchPromises = [];
+      const TOTAL_BATCHES = 6;
+      let completed = 0;
       
+      const runBatch = async (index) => {
+        try {
+          const res = await api.runDeepAnalysis({ ...prefs, assetTypes: activeTypes, batchIndex: index, totalBatches: TOTAL_BATCHES });
+          completed++;
+          setDeepProgress(Math.round((completed / TOTAL_BATCHES) * 100));
+          return res;
+        } catch (err) {
+          console.error(`Batch ${index} failed:`, err);
+          return null; // Handle partial failure gracefully
+        }
+      };
+
+      const batchPromises = [];
       for (let i = 1; i <= TOTAL_BATCHES; i++) {
-        batchPromises.push(api.runDeepAnalysis({ ...prefs, assetTypes: activeTypes, batchIndex: i, totalBatches: TOTAL_BATCHES }));
+        batchPromises.push(runBatch(i));
       }
       
-      const results = await Promise.all(batchPromises);
+      const results = (await Promise.all(batchPromises)).filter(r => r !== null);
       
+      if (results.length === 0) throw new Error('All analysis batches failed');
+
       // Merge results
       const combinedPicks = [];
       const combinedSectorBreakdown = {};
@@ -804,8 +820,11 @@ export default function Dashboard() {
             <LoadingBox>
               <Spinner />
               <LoadingDots><span/><span/><span/></LoadingDots>
-              <div>Running Large-Scale AI Analysis (60 Picks)</div>
-              <div style={{fontSize:'0.78rem',color:'#1e293b'}}>Processing 4 parallel batches · usually 15–25 seconds</div>
+              <div style={{fontWeight:800,color:'#f8fafc'}}>Running Robust Large-Scale Analysis</div>
+              <div style={{fontSize:'0.85rem',color:'#a78bfa',marginTop:'0.2rem'}}>Progress: {deepProgress}%</div>
+              <div style={{fontSize:'0.75rem',color:'#475569',marginTop:'0.4rem'}}>
+                Executing 6 specialized micro-batches for 60 picks total
+              </div>
             </LoadingBox>
           )}
 
