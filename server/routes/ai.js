@@ -1,6 +1,6 @@
 const express = require('express');
 const { pool, getOrCreateUser } = require('../db');
-const { getOpenAiClient, hasAiCredentials, resolveModel } = require('../openai-client');
+const { getOpenAiClient, hasAiCredentials, resolveModel, getClientMode, OpenAI } = require('../openai-client');
 
 const router = express.Router();
 
@@ -225,7 +225,10 @@ async function fetchOneRssFeed({ url, source, id }) {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), RSS_FETCH_MS);
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'BloomVestCapital/1.0 (educational app)' },
+      headers: { 
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/rss+xml, application/xml, text/xml, */*'
+      },
       signal: ctl.signal,
     });
     clearTimeout(t);
@@ -567,7 +570,6 @@ router.get('/daily-brief', async (req, res) => {
           model: resolveModel('default', 'gpt-4o-mini'),
           temperature: 0.55,
           max_tokens: 1200,
-          response_format: { type: 'json_object' },
           messages: [
             { role: 'system', content: DAILY_BRIEF_SYSTEM },
             { role: 'user', content: userPrompt },
@@ -606,7 +608,6 @@ router.get('/daily-brief', async (req, res) => {
           model: resolveModel('default', 'gpt-4o-mini'),
           temperature: 0.5,
           max_tokens: 2200,
-          response_format: { type: 'json_object' },
           messages: [
             { role: 'system', content: INVESTMENT_MODES_SYSTEM },
             { role: 'user', content: ideaPrompt },
@@ -662,38 +663,44 @@ router.get('/daily-brief', async (req, res) => {
   }
 });
 
-const DEEP_ANALYSIS_SYSTEM = `You are BloomVest's deep investment analysis engine. You receive real public RSS headline titles from multiple finance sources plus user preferences. Produce a detailed, structured analysis with 18–20 specific picks.
+const DEEP_ANALYSIS_SYSTEM = `You are a high-end quantitative market analyst for BloomVest Strategic Capital.
+Your goal is to provide a deep, data-driven analysis of the current market landscape based on live headlines.
 
-Rules:
-- Output valid JSON only, no markdown fences.
-- Name real, publicly-traded instruments — be specific with tickers.
-- Anchor every thesis to headline evidence. No generic filler.
-- Calibrate to the user's risk level, horizon, preferred sectors, and asset types.
-- "assetTypes" in preferences lists which categories to include: Stocks, ETFs, Commodities, Crypto, Options Plays. Honour this — if only Stocks is requested, include only stocks.
+CORE REQUIREMENTS:
+1. VARIETY & SPECIFICITY: Do not just recommend the same 5 mega-cap tech stocks (AAPL, MSFT, NVDA, etc.) every time. If they are in the news, you can include them, but seek out mid-cap, sectoral, or commodity opportunities mentioned in the headlines.
+2. DATA-DRIVEN: Base your picks STRICTLY on the context provided in the headlines. If a specific ticker is mentioned with sentiment data, prioritize analyzing that ticker.
+3. STRUCTURE: Return a valid JSON object with the following schema:
+{
+  "topTheme": "...",
+  "marketContext": "...",
+  "sectorBreakdown": { "Sector Name": "Detailed note about why this sector is relevant now..." },
+  "picks": [
+    {
+      "company": "...",
+      "ticker": "...",
+      "assetType": "Stock|ETF|Commodity|Crypto|Options Play",
+      "sector": "...",
+      "action": "Strong Buy|Buy|Watch|Reduce|Avoid",
+      "confidence": "High|Medium|Low",
+      "trend": "Uptrend|Downtrend|Sideways|Reversal",
+      "trendStrength": "Strong|Moderate|Weak",
+      "thesis": "...",
+      "entrySignal": "...",
+      "priceContext": "...",
+      "catalysts": ["...", "..."],
+      "risk": "...",
+      "horizon": "...",
+      "fit": "Balanced|Growth|Value|Income|Speculative|Defensive|Momentum|Compounder|Core|Hedge|Catalyst|Cyclical"
+    }
+  ],
+  "disclaimer": "..."
+}
+
+RULES:
 - Include exactly 18–20 items in "picks".
-- Each pick must have:
-  - company: full name of company, ETF, or commodity
-  - ticker: exchange ticker or commodity symbol
-  - assetType: one of Stock, ETF, Commodity, Crypto, Options Play
-  - sector: GICS sector or category (e.g. Information Technology, Energy, Macro)
-  - action: one of Strong Buy, Buy, Watch, Reduce, Avoid
-  - confidence: one of High, Medium, Low
-  - trend: one of Uptrend, Downtrend, Sideways, Reversal — based on what headlines imply about recent price direction
-  - trendStrength: one of Strong, Moderate, Weak
-  - thesis: 2 sentences max — why this instrument, grounded in headlines
-  - entrySignal: 1 sentence — what to look for before entering (technical level, catalyst event, or price condition)
-  - priceContext: 1 sentence — approximate valuation or price context (note this is from general knowledge, not live data)
-  - catalysts: array of exactly 3 short strings (upcoming events or themes from headlines)
-  - risk: 1 sentence — the single biggest downside
-  - horizon: time frame matching user preference
-  - fit: one short label e.g. Compounder, Momentum, Defensive, Cyclical, Income, Catalyst, Hedge, Speculative
-- Top-level fields:
-  - topTheme: 5–8 word phrase, the dominant narrative today
-  - marketContext: 3 sentences connecting macro headline themes — rates, earnings, geopolitics, sentiment
-  - sectorBreakdown: object mapping each sector appearing in picks to a 1-sentence outlook (e.g. {"Information Technology": "AI capex cycle remains the dominant driver..."})
-  - disclaimer: educational commentary only, not financial advice, based on public RSS headlines
-- Use language like "may", "could", "positioned to" — never "will".
-- Sort picks so Strong Buy and Buy appear first, then Watch, then Reduce/Avoid.`;
+- Calibrate to the user's risk level, horizon, and preferred asset types.
+- Output valid JSON only, no markdown fences.
+- Keep your analysis professional, technical, and objective.`;
 
 router.post('/deep-analysis', async (req, res) => {
   try {
@@ -829,12 +836,30 @@ router.post('/deep-analysis', async (req, res) => {
       return res.json({ ...fallback, generatedAt: new Date().toISOString(), fromFallback: true, headlines: headlines.slice(0, 60) });
     }
 
+    const normalisePick = (p) => ({
+      company: String(p.company || 'Unknown').slice(0, 100),
+      ticker: String(p.ticker || '—').slice(0, 12),
+      assetType: ['Stock', 'ETF', 'Commodity', 'Crypto', 'Options Play'].includes(p.assetType) ? p.assetType : 'Stock',
+      sector: String(p.sector || 'Unknown').slice(0, 60),
+      action: ['Strong Buy', 'Buy', 'Watch', 'Reduce', 'Avoid'].includes(p.action) ? p.action : 'Watch',
+      confidence: ['High', 'Medium', 'Low'].includes(p.confidence) ? p.confidence : 'Medium',
+      trend: ['Uptrend', 'Downtrend', 'Sideways', 'Reversal'].includes(p.trend) ? p.trend : 'Sideways',
+      trendStrength: ['Strong', 'Moderate', 'Weak'].includes(p.trendStrength) ? p.trendStrength : 'Moderate',
+      thesis: String(p.thesis || '').slice(0, 500),
+      entrySignal: String(p.entrySignal || '').slice(0, 250),
+      priceContext: String(p.priceContext || '').slice(0, 250),
+      catalysts: Array.isArray(p.catalysts) ? p.catalysts.slice(0, 3).map((c) => String(c).slice(0, 80)) : [],
+      risk: String(p.risk || '').slice(0, 250),
+      horizon: String(p.horizon || '6-18 months').slice(0, 40),
+      fit: String(p.fit || 'Balanced').slice(0, 30),
+    });
+
     try {
+      console.log(`[AI] Running deep analysis via ${getClientMode()} (${resolveModel('analysis', 'gpt-4o')})`);
       const completion = await getOpenAiClient().chat.completions.create({
         model: resolveModel('analysis', 'gpt-4o'),
         temperature: 0.45,
         max_tokens: 6000,
-        response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
           { role: 'user', content: userPrompt },
@@ -844,25 +869,7 @@ router.post('/deep-analysis', async (req, res) => {
       const raw = completion.choices[0]?.message?.content;
       if (!raw) throw new Error('Empty response from model');
 
-      const parsed = JSON.parse(raw);
-
-      const normalisePick = (p) => ({
-        company: String(p.company || 'Unknown').slice(0, 100),
-        ticker: String(p.ticker || '—').slice(0, 12),
-        assetType: ['Stock', 'ETF', 'Commodity', 'Crypto', 'Options Play'].includes(p.assetType) ? p.assetType : 'Stock',
-        sector: String(p.sector || 'Unknown').slice(0, 60),
-        action: ['Strong Buy', 'Buy', 'Watch', 'Reduce', 'Avoid'].includes(p.action) ? p.action : 'Watch',
-        confidence: ['High', 'Medium', 'Low'].includes(p.confidence) ? p.confidence : 'Medium',
-        trend: ['Uptrend', 'Downtrend', 'Sideways', 'Reversal'].includes(p.trend) ? p.trend : 'Sideways',
-        trendStrength: ['Strong', 'Moderate', 'Weak'].includes(p.trendStrength) ? p.trendStrength : 'Moderate',
-        thesis: String(p.thesis || '').slice(0, 500),
-        entrySignal: String(p.entrySignal || '').slice(0, 250),
-        priceContext: String(p.priceContext || '').slice(0, 250),
-        catalysts: Array.isArray(p.catalysts) ? p.catalysts.slice(0, 3).map((c) => String(c).slice(0, 80)) : [],
-        risk: String(p.risk || '').slice(0, 250),
-        horizon: String(p.horizon || '6-18 months').slice(0, 40),
-        fit: String(p.fit || 'Balanced').slice(0, 30),
-      });
+      const parsed = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
 
       const picks = Array.isArray(parsed.picks) ? parsed.picks.slice(0, 20).map(normalisePick) : fallback.picks;
       const sectorBreakdown = (parsed.sectorBreakdown && typeof parsed.sectorBreakdown === 'object') ? parsed.sectorBreakdown : {};
@@ -880,8 +887,49 @@ router.post('/deep-analysis', async (req, res) => {
         preferences: { riskLevel, horizon, sectors, style, assetTypes },
       });
     } catch (aiErr) {
-      console.warn('Deep analysis AI step failed:', aiErr.message);
-      return res.json({ ...fallback, generatedAt: new Date().toISOString(), fromFallback: true, headlines: headlines.slice(0, 60) });
+      console.error('[AI] Primary deep analysis AI step failed:', aiErr.message);
+      
+      // Attempt fallback to standard OpenAI if primary failed and we have a standard key
+      if (process.env.OPENAI_API_KEY && getClientMode() === 'azure') {
+        try {
+          console.log('[AI] Attempting fallback to standard OpenAI...');
+          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const completion = await openai.chat.completions.create({
+            model: process.env.OPENAI_ANALYSIS_MODEL || 'gpt-4o',
+            temperature: 0.45,
+            max_tokens: 4000,
+            messages: [
+              { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
+              { role: 'user', content: userPrompt },
+            ],
+          });
+
+          const raw = completion.choices[0]?.message?.content;
+          if (raw) {
+            const parsed = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
+            const picks = Array.isArray(parsed.picks) ? parsed.picks.slice(0, 20).map(normalisePick) : fallback.picks;
+            const sectorBreakdown = (parsed.sectorBreakdown && typeof parsed.sectorBreakdown === 'object') ? parsed.sectorBreakdown : {};
+
+            return res.json({
+              topTheme: String(parsed.topTheme || fallback.topTheme).slice(0, 120),
+              marketContext: String(parsed.marketContext || fallback.marketContext).slice(0, 800),
+              sectorBreakdown,
+              picks,
+              disclaimer: String(parsed.disclaimer || fallback.disclaimer).slice(0, 600),
+              generatedAt: new Date().toISOString(),
+              fromFallback: false,
+              headlines: headlines.slice(0, 60),
+              sentimentSummary: sentimentTable ? `${tickerSentiments.size} tickers tracked` : 'No sentiment data',
+              preferences: { riskLevel, horizon, sectors, style, assetTypes },
+              note: 'Generated via standard OpenAI fallback'
+            });
+          }
+        } catch (fallbackErr) {
+          console.error('[AI] Fallback deep analysis failed:', fallbackErr.message);
+        }
+      }
+      
+      return res.json({ ...fallback, generatedAt: new Date().toISOString(), fromFallback: true, headlines: headlines.slice(0, 60), aiError: aiErr.message });
     }
   } catch (err) {
     console.error('Deep analysis error:', err);

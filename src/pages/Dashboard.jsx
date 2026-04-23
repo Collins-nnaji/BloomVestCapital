@@ -7,7 +7,6 @@ import {
   FaArrowUp, FaArrowDown, FaMinus, FaExchangeAlt,
   FaFilter,
 } from 'react-icons/fa';
-import { marketIndices } from '../data/stockData';
 import { api } from '../api';
 
 /* ── animations ─────────────────────────────────────── */
@@ -587,19 +586,6 @@ export default function Dashboard() {
             {updatedLabel && <MetaPill>Updated {updatedLabel}</MetaPill>}
           </HeaderRight>
         </TopInner>
-        <TickerBar>
-          <TickerTrack>
-            {[...marketIndices,...marketIndices].map((idx,i)=>(
-              <TItem key={`${idx.name}-${i}`}>
-                <TSym>{idx.name}</TSym>
-                <TVal>{idx.value.toLocaleString()}</TVal>
-                <TChg $pos={idx.changePercent>=0}>
-                  {idx.changePercent>=0?'+':''}{idx.changePercent}%
-                </TChg>
-              </TItem>
-            ))}
-          </TickerTrack>
-        </TickerBar>
       </TopBar>
 
       <Shell>
