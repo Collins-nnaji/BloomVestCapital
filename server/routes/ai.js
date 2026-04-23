@@ -39,6 +39,30 @@ const RSS_FEEDS = [
 
 let dailyBriefCache = { at: 0, payload: null };
 const DAILY_BRIEF_CACHE_MS = 25 * 60 * 1000;
+
+// Deep Analysis Cache: results mapped by JSON.stringify(prefs + assetTypes)
+let deepAnalysisCache = new Map();
+const DEEP_ANALYSIS_CACHE_MS = 15 * 60 * 1000;
+
+// Cleanup old cache entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, val] of deepAnalysisCache.entries()) {
+    if (now - val.at > DEEP_ANALYSIS_CACHE_MS) deepAnalysisCache.delete(key);
+  }
+}, 5 * 60 * 1000);
+
+/**
+ * Strips markdown code blocks and other noise from AI JSON responses.
+ */
+function sanitizeAiJson(raw) {
+  if (!raw) return '';
+  let clean = raw.trim();
+  // Remove markdown code block markers
+  clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '');
+  return clean.trim();
+}
+
 const RSS_PER_FEED = 8;
 const RSS_MAX_TOTAL = 120;
 const RSS_FETCH_MS = 12000;
@@ -578,7 +602,7 @@ router.get('/daily-brief', async (req, res) => {
 
         const raw = completion.choices[0]?.message?.content;
         if (raw) {
-          const parsed = JSON.parse(raw);
+          const parsed = JSON.parse(sanitizeAiJson(raw));
           if (parsed.dayTheme && Array.isArray(parsed.signals) && parsed.narrative) {
             analysis = {
               dayTheme: String(parsed.dayTheme),
@@ -616,7 +640,7 @@ router.get('/daily-brief', async (req, res) => {
 
         const raw = completion.choices[0]?.message?.content;
         if (raw) {
-          const parsed = JSON.parse(raw);
+          const parsed = JSON.parse(sanitizeAiJson(raw));
           const normalizeIdeas = (ideas, fallbackHorizon) =>
             Array.isArray(ideas)
               ? ideas.slice(0, 6).map((idea) => ({
@@ -705,6 +729,14 @@ RULES:
 router.post('/deep-analysis', async (req, res) => {
   try {
     const { riskLevel = 'moderate', horizon = 'medium', sectors = [], style = 'balanced', assetTypes = ['Stocks', 'ETFs', 'Commodities'] } = req.body || {};
+
+    // 1. Production Caching: Check if we have a recent result for these parameters
+    const cacheKey = JSON.stringify({ riskLevel, horizon, style, sectors, assetTypes });
+    const cached = deepAnalysisCache.get(cacheKey);
+    if (cached && (Date.now() - cached.at < DEEP_ANALYSIS_CACHE_MS)) {
+      console.log('[AI Cache] Returning cached deep analysis for:', cacheKey);
+      return res.json({ ...cached.payload, fromCache: true });
+    }
 
     const { headlines, tickerSentiments } = await fetchAggregatedHeadlines();
     const headlineLines = headlines.length
@@ -869,12 +901,12 @@ router.post('/deep-analysis', async (req, res) => {
       const raw = completion.choices[0]?.message?.content;
       if (!raw) throw new Error('Empty response from model');
 
-      const parsed = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
+      const parsed = JSON.parse(sanitizeAiJson(raw));
 
       const picks = Array.isArray(parsed.picks) ? parsed.picks.slice(0, 20).map(normalisePick) : fallback.picks;
       const sectorBreakdown = (parsed.sectorBreakdown && typeof parsed.sectorBreakdown === 'object') ? parsed.sectorBreakdown : {};
 
-      return res.json({
+      const payload = {
         topTheme: String(parsed.topTheme || fallback.topTheme).slice(0, 120),
         marketContext: String(parsed.marketContext || fallback.marketContext).slice(0, 800),
         sectorBreakdown,
@@ -885,7 +917,11 @@ router.post('/deep-analysis', async (req, res) => {
         headlines: headlines.slice(0, 60),
         sentimentSummary: sentimentTable ? `${tickerSentiments.size} tickers tracked` : 'No sentiment data',
         preferences: { riskLevel, horizon, sectors, style, assetTypes },
-      });
+      };
+
+      // 2. Cache successful result
+      deepAnalysisCache.set(cacheKey, { at: Date.now(), payload });
+      return res.json(payload);
     } catch (aiErr) {
       console.error('[AI] Primary deep analysis AI step failed:', aiErr.message);
       
@@ -906,7 +942,7 @@ router.post('/deep-analysis', async (req, res) => {
 
           const raw = completion.choices[0]?.message?.content;
           if (raw) {
-            const parsed = JSON.parse(raw.replace(/```json\n?|\n?```/g, ''));
+            const parsed = JSON.parse(sanitizeAiJson(raw));
             const picks = Array.isArray(parsed.picks) ? parsed.picks.slice(0, 20).map(normalisePick) : fallback.picks;
             const sectorBreakdown = (parsed.sectorBreakdown && typeof parsed.sectorBreakdown === 'object') ? parsed.sectorBreakdown : {};
 
@@ -929,7 +965,18 @@ router.post('/deep-analysis', async (req, res) => {
         }
       }
       
-      return res.json({ ...fallback, generatedAt: new Date().toISOString(), fromFallback: true, headlines: headlines.slice(0, 60), aiError: aiErr.message });
+      // In production, mask internal AI errors from end-users
+      const userFriendlyError = (aiErr.message.includes('401') || aiErr.message.includes('429'))
+        ? 'Market analysis service is temporarily busy. Showing reference data.'
+        : 'Live AI analysis is currently unavailable. Showing reference data.';
+
+      return res.json({ 
+        ...fallback, 
+        generatedAt: new Date().toISOString(), 
+        fromFallback: true, 
+        headlines: headlines.slice(0, 60), 
+        aiError: userFriendlyError 
+      });
     }
   } catch (err) {
     console.error('Deep analysis error:', err);
