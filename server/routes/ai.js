@@ -721,17 +721,29 @@ CORE REQUIREMENTS:
 }
 
 RULES:
-- Include exactly 18–20 items in "picks".
 - Calibrate to the user's risk level, horizon, and preferred asset types.
 - Output valid JSON only, no markdown fences.
 - Keep your analysis professional, technical, and objective.`;
 
 router.post('/deep-analysis', async (req, res) => {
   try {
-    const { riskLevel = 'moderate', horizon = 'medium', sectors = [], style = 'balanced', assetTypes = ['Stocks', 'ETFs', 'Commodities'] } = req.body || {};
+    const { 
+      sessionId, 
+      riskLevel = 'moderate', 
+      horizon = 'medium', 
+      sectors = [], 
+      style = 'balanced', 
+      assetTypes = ['Stocks', 'ETFs', 'Commodities'],
+      batchIndex = 1,
+      totalBatches = 1
+    } = req.body || {};
+
+    if (sessionId) {
+      await getOrCreateUser(sessionId);
+    }
 
     // 1. Production Caching: Check if we have a recent result for these parameters
-    const cacheKey = JSON.stringify({ riskLevel, horizon, style, sectors, assetTypes });
+    const cacheKey = JSON.stringify({ riskLevel, horizon, style, sectors, assetTypes, batchIndex, totalBatches });
     const cached = deepAnalysisCache.get(cacheKey);
     if (cached && (Date.now() - cached.at < DEEP_ANALYSIS_CACHE_MS)) {
       console.log('[AI Cache] Returning cached deep analysis for:', cacheKey);
@@ -764,8 +776,11 @@ router.post('/deep-analysis', async (req, res) => {
       'Live market headlines, summaries, and sentiment signals (from RSS + Alpha Vantage + Finnhub):',
       headlineLines,
       '',
-      'INSTRUCTIONS: Using ALL the above data — especially the TICKER SENTIMENT SIGNALS table and any article summaries — return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 18-20 items), disclaimer (string).',
-      'The picks MUST be grounded in real data above. Prioritise tickers that appear in the TICKER SENTIMENT SIGNALS table with Bullish or Somewhat-Bullish sentiment and multiple article mentions.',
+      `BATCH INFO: This is request ${batchIndex} of ${totalBatches} for a large-scale analysis.`,
+      totalBatches > 1 ? `Focus on a unique segment of the market or specific tickers from the headlines that wouldn't normally be the "top 10" most obvious picks, to ensure a diverse final aggregated list.` : '',
+      '',
+      `INSTRUCTIONS: Using ALL the above data return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 15 items), disclaimer (string).`,
+      'The picks MUST be grounded in real data above.',
       'For Crypto picks, use the crypto sentiment data. For ETFs and Commodities, tie to macro headline themes.',
       'Every pick must have all required fields including trend, trendStrength, assetType, entrySignal, priceContext, and exactly 3 catalysts.',
     ].filter(l => l !== null && l !== undefined).join('\n');
@@ -891,7 +906,7 @@ router.post('/deep-analysis', async (req, res) => {
       const completion = await getOpenAiClient().chat.completions.create({
         model: resolveModel('analysis', 'gpt-4o'),
         temperature: 0.45,
-        max_tokens: 6000,
+        max_tokens: 3000,
         messages: [
           { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
           { role: 'user', content: userPrompt },

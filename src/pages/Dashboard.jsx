@@ -8,6 +8,8 @@ import {
   FaFilter,
 } from 'react-icons/fa';
 import { api } from '../api';
+import { useAuth } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 /* ── animations ─────────────────────────────────────── */
 const slide = keyframes`from{transform:translateX(0)}to{transform:translateX(-50%)}`;
@@ -503,6 +505,9 @@ export default function Dashboard() {
   const [error,      setError]      = useState(null);
   const [brief,      setBrief]      = useState(null);
   const [mode,       setMode]       = useState('longTerm');
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
 
   const [deepRunning, setDeepRunning] = useState(false);
   const [deepResult,  setDeepResult]  = useState(null);
@@ -536,17 +541,56 @@ export default function Dashboard() {
   useEffect(() => { load(false); }, [load]);
 
   const runDeepAnalysis = useCallback(async () => {
+    if (!user) {
+      if (window.confirm('Please log in to use the Deep Analysis engine.')) {
+        navigate('/auth');
+      }
+      return;
+    }
     setDeepRunning(true); setDeepError(null); setDeepResult(null);
+    
     try {
-      const result = await api.runDeepAnalysis({ ...prefs, assetTypes: activeTypes });
-      setDeepResult(result);
+      const TOTAL_BATCHES = 4;
+      const batchPromises = [];
+      
+      for (let i = 1; i <= TOTAL_BATCHES; i++) {
+        batchPromises.push(api.runDeepAnalysis({ ...prefs, assetTypes: activeTypes, batchIndex: i, totalBatches: TOTAL_BATCHES }));
+      }
+      
+      const results = await Promise.all(batchPromises);
+      
+      // Merge results
+      const combinedPicks = [];
+      const combinedSectorBreakdown = {};
+      const seenTickers = new Set();
+      
+      results.forEach(res => {
+        if (res.picks) {
+          res.picks.forEach(p => {
+            if (!seenTickers.has(p.ticker)) {
+              combinedPicks.push(p);
+              seenTickers.add(p.ticker);
+            }
+          });
+        }
+        if (res.sectorBreakdown) {
+          Object.assign(combinedSectorBreakdown, res.sectorBreakdown);
+        }
+      });
+      
+      setDeepResult({
+        ...results[0],
+        picks: combinedPicks,
+        sectorBreakdown: combinedSectorBreakdown,
+        generatedAt: new Date().toISOString(),
+      });
       setFilterType('All');
     } catch (e) {
       setDeepError(e.message || 'Analysis failed');
     } finally {
       setDeepRunning(false);
     }
-  }, [prefs, activeTypes]);
+  }, [prefs, activeTypes, user, navigate]);
 
   const investmentModes = brief?.investmentModes || defaultModes;
   const activeIdeas = mode === 'shortTerm' ? investmentModes.shortTerm : investmentModes.longTerm;
@@ -760,8 +804,8 @@ export default function Dashboard() {
             <LoadingBox>
               <Spinner />
               <LoadingDots><span/><span/><span/></LoadingDots>
-              <div>Fetching live headlines · running GPT-4o analysis</div>
-              <div style={{fontSize:'0.78rem',color:'#1e293b'}}>20 picks · usually 15–25 seconds</div>
+              <div>Running Large-Scale AI Analysis (60 Picks)</div>
+              <div style={{fontSize:'0.78rem',color:'#1e293b'}}>Processing 4 parallel batches · usually 15–25 seconds</div>
             </LoadingBox>
           )}
 

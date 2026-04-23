@@ -172,9 +172,15 @@ export const api = {
   },
 
   async runDeepAnalysis(preferences = {}) {
+    const { batchIndex = 1, totalBatches = 1, ...prefs } = preferences;
     return request('/ai/deep-analysis', {
       method: 'POST',
-      body: JSON.stringify(preferences),
+      body: JSON.stringify({
+        sessionId: getSessionId(),
+        batchIndex,
+        totalBatches,
+        ...prefs,
+      }),
     });
   },
 };
