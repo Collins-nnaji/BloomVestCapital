@@ -8,7 +8,13 @@ Set these on your **backend/server** (where Express runs: Netlify Functions, Rai
 |----------|----------|---------|-------|
 | `NEON_AUTH_URL` | Yes | `https://ep-xxx.neonauth.c-4.us-east-1.aws.neon.tech/neondb/auth` | Neon Auth URL from Console → Auth → Configuration |
 | `DATABASE_URL` | Yes | `postgresql://user:pass@host/db?sslmode=require` | Neon PostgreSQL connection string |
-| `OPENAI_API_KEY` | Yes | `sk-proj-...` | For AI chat |
+| `OPENAI_API_KEY` | Conditionally | `sk-proj-...` | Optional fallback if Azure OpenAI is not configured |
+| `AZURE_OPENAI_ENDPOINT` | Conditionally | `https://your-resource.openai.azure.com/` | Required if using Azure OpenAI |
+| `AZURE_OPENAI_KEY` | Conditionally | `...` | Azure OpenAI API key |
+| `AZURE_OPENAI_DEPLOYMENT` | Conditionally | `gpt-4o-mini` | Default Azure deployment used by chat/scenario routes |
+| `AZURE_OPENAI_CHAT_DEPLOYMENT` | Optional | `gpt-4o-mini` | Overrides chat-style routes only |
+| `AZURE_OPENAI_ANALYSIS_DEPLOYMENT` | Optional | `gpt-4o` | Overrides deep-analysis routes only |
+| `AZURE_OPENAI_API_VERSION` | Optional | `2025-01-01-preview` | Azure OpenAI API version |
 | `PORT` | No | `5000` | Server port (default 5000) |
 
 For Stripe (billing):

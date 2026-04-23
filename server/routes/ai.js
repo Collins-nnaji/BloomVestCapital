@@ -1,6 +1,6 @@
 const express = require('express');
-const OpenAI = require('openai');
 const { pool, getOrCreateUser } = require('../db');
+const { getOpenAiClient, hasAiCredentials, resolveModel } = require('../openai-client');
 
 const router = express.Router();
 
@@ -321,14 +321,6 @@ Rules:
 - Add "methodology" as 2-3 sentences explaining that ideas were synthesized from headline themes across multiple public sources, then grouped by long-term vs short-term suitability.
 - Add "disclaimer" that clearly says this is educational, not financial advice, and based on public RSS headline titles only.`;
 
-let openai;
-const getOpenAi = () => {
-  if (!openai) {
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  }
-  return openai;
-};
-
 const SYSTEM_PROMPT = `You are BloomVest AI, an expert investment tutor built into an interactive investment education platform. Your role is to teach people how to invest in a clear, engaging, and educational way.
 
 Guidelines:
@@ -369,8 +361,8 @@ router.post('/chat', async (req, res) => {
       ...history.map(m => ({ role: m.role, content: m.content }))
     ];
 
-    const completion = await getOpenAi().chat.completions.create({
-      model: 'gpt-4o-mini',
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('chat', 'gpt-4o-mini'),
       messages,
       max_tokens: 800,
       temperature: 0.7,
@@ -567,12 +559,12 @@ router.get('/daily-brief', async (req, res) => {
       ],
     };
 
-    if (process.env.OPENAI_API_KEY && headlines.length > 0) {
+    if (hasAiCredentials('default') && headlines.length > 0) {
       try {
         const userPrompt = `Today's date (server): ${new Date().toISOString().slice(0, 10)}\n\nHeadline titles from public RSS:\n${headlineLines}\n\nReturn JSON with keys: dayTheme (string), signals (array of {stance, title, detail}), narrative (string), disclaimer (string).`;
 
-        const completion = await getOpenAi().chat.completions.create({
-          model: 'gpt-4o-mini',
+        const completion = await getOpenAiClient().chat.completions.create({
+          model: resolveModel('default', 'gpt-4o-mini'),
           temperature: 0.55,
           max_tokens: 1200,
           response_format: { type: 'json_object' },
@@ -610,8 +602,8 @@ router.get('/daily-brief', async (req, res) => {
       try {
         const ideaPrompt = `Today's date (server): ${new Date().toISOString().slice(0, 10)}\n\nHeadline titles from public RSS:\n${headlineLines}\n\nReturn JSON with keys: methodology (string), disclaimer (string), longTerm (array), shortTerm (array).`;
 
-        const completion = await getOpenAi().chat.completions.create({
-          model: 'gpt-4o-mini',
+        const completion = await getOpenAiClient().chat.completions.create({
+          model: resolveModel('default', 'gpt-4o-mini'),
           temperature: 0.5,
           max_tokens: 2200,
           response_format: { type: 'json_object' },
@@ -833,13 +825,13 @@ router.post('/deep-analysis', async (req, res) => {
         'Educational market commentary only, not personalised financial advice. All analysis is derived from publicly available RSS headline titles and general market knowledge — not from proprietary data, full articles, or knowledge of your personal financial situation. Past performance is not indicative of future results. Please conduct your own research and consult a qualified financial adviser before making investment decisions.',
     };
 
-    if (!process.env.OPENAI_API_KEY || headlines.length === 0) {
+    if (!hasAiCredentials('analysis') || headlines.length === 0) {
       return res.json({ ...fallback, generatedAt: new Date().toISOString(), fromFallback: true, headlines: headlines.slice(0, 60) });
     }
 
     try {
-      const completion = await getOpenAi().chat.completions.create({
-        model: 'gpt-4o',
+      const completion = await getOpenAiClient().chat.completions.create({
+        model: resolveModel('analysis', 'gpt-4o'),
         temperature: 0.45,
         max_tokens: 6000,
         response_format: { type: 'json_object' },

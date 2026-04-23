@@ -1,9 +1,8 @@
 const express = require('express');
-const OpenAI = require('openai');
 const { getOrCreateUser, pool } = require('../db');
+const { getOpenAiClient, resolveModel } = require('../openai-client');
 
 const router = express.Router();
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const ADVISOR_PROMPT = `You are BloomVest's AI Investment Advisor guiding a student through a hands-on investing simulation. You are an encouraging, expert teacher.
 
@@ -261,8 +260,8 @@ Give them a thorough performance review: what they did well, what they learned, 
         userMessage = details?.question || 'The student needs help with their scenario.';
     }
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('chat', 'gpt-4o-mini'),
       messages: [
         { role: 'system', content: ADVISOR_PROMPT },
         { role: 'user', content: userMessage },
@@ -411,8 +410,8 @@ router.post('/custom/generate', async (req, res) => {
       emoji: sanitizeText(builder.emoji, '🧠'),
     };
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('chat', 'gpt-4o-mini'),
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: BUILDER_PROMPT },
