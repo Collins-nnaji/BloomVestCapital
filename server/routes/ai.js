@@ -7,7 +7,7 @@ const router = express.Router();
 // ─── RSS feeds: broad coverage across equities, macro, sectors, crypto, commodities ───
 const RSS_FEEDS = [
   // Major indices & broad market
-  { url: 'https://feeds.finance.yahoo.com/rss/2.0/headline?s=%5EGSPC,%5EDJI,%5EIXIC', source: 'Yahoo Finance', id: 'yahoo' },
+  { url: 'https://news.google.com/rss/search?q=S%26P+500+Dow+Jones+Nasdaq&hl=en-US&gl=US&ceid=US:en', source: 'Google Markets', id: 'g_markets' },
   { url: 'https://www.cnbc.com/id/100003114/device/rss/rss.html', source: 'CNBC Markets', id: 'cnbc' },
   { url: 'https://feeds.content.dowjones.io/public/rss/mw_topstories', source: 'MarketWatch', id: 'marketwatch' },
   { url: 'https://feeds.content.dowjones.io/public/rss/mw_marketpulse', source: 'MarketWatch Pulse', id: 'mw_pulse' },
@@ -256,6 +256,10 @@ async function fetchOneRssFeed({ url, source, id }) {
       signal: ctl.signal,
     });
     clearTimeout(t);
+    if (res.status === 429) {
+      console.warn(`[RSS] Rate limited (429) for ${source}`);
+      return [];
+    }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const xml = await res.text();
     const rows = parseRssHeadlines(xml, RSS_PER_FEED);
@@ -266,7 +270,11 @@ async function fetchOneRssFeed({ url, source, id }) {
       sourceId: id,
     }));
   } catch (e) {
-    console.warn(`RSS ${source} failed:`, e.message);
+    if (e.name === 'AbortError') {
+      console.warn(`[RSS] Timeout fetching ${source}`);
+    } else {
+      console.warn(`[RSS] ${source} failed:`, e.message);
+    }
     return [];
   }
 }
@@ -952,17 +960,20 @@ router.post('/deep-analysis', async (req, res) => {
       deepAnalysisCache.set(cacheKey, { at: Date.now(), payload });
       return res.json(payload);
     } catch (aiErr) {
-      console.error('[AI] Primary deep analysis AI step failed:', aiErr.message);
+      const isRateLimit = aiErr.message.includes('429');
+      const isAuthError = aiErr.message.includes('401') || aiErr.message.includes('403');
+      
+      console.error(`[AI] Primary deep analysis AI step failed (${getClientMode()}):`, aiErr.message);
       
       // Attempt fallback to standard OpenAI if primary failed and we have a standard key
       if (process.env.OPENAI_API_KEY && getClientMode() === 'azure') {
         try {
-          console.log('[AI] Attempting fallback to standard OpenAI...');
+          console.log('[AI] Attempting fallback to standard OpenAI (gpt-4o)...');
           const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
           const completion = await openai.chat.completions.create({
             model: process.env.OPENAI_ANALYSIS_MODEL || 'gpt-4o',
             temperature: 0.45,
-            max_tokens: 4000,
+            max_tokens: 3000,
             messages: [
               { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
               { role: 'user', content: userPrompt },
@@ -971,6 +982,7 @@ router.post('/deep-analysis', async (req, res) => {
 
           const raw = completion.choices[0]?.message?.content;
           if (raw) {
+            console.log('[AI] Fallback to standard OpenAI successful.');
             const parsed = JSON.parse(sanitizeAiJson(raw));
             const picks = Array.isArray(parsed.picks) ? parsed.picks.slice(0, 20).map(normalisePick) : fallback.picks;
             const sectorBreakdown = (parsed.sectorBreakdown && typeof parsed.sectorBreakdown === 'object') ? parsed.sectorBreakdown : {};
@@ -995,7 +1007,7 @@ router.post('/deep-analysis', async (req, res) => {
       }
       
       // In production, mask internal AI errors from end-users
-      const userFriendlyError = (aiErr.message.includes('401') || aiErr.message.includes('429'))
+      const userFriendlyError = (isRateLimit || isAuthError)
         ? 'Market analysis service is temporarily busy. Showing reference data.'
         : 'Live AI analysis is currently unavailable. Showing reference data.';
 
