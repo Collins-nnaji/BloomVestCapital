@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaBolt, FaGem, FaSyncAlt, FaSearch,
   FaChevronDown, FaChevronUp, FaCheckCircle,
   FaArrowUp, FaArrowDown, FaMinus, FaExchangeAlt,
-  FaFilter,
+  FaFilter, FaBookOpen, FaPlus, FaTrash, FaMagic, FaSpinner, FaChartLine
 } from 'react-icons/fa';
+import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -19,61 +20,195 @@ const pulse = keyframes`0%,100%{opacity:1}50%{opacity:.45}`;
 /* ── page ───────────────────────────────────────────── */
 const Page = styled.div`
   min-height:calc(100vh - 80px);
-  background:#0b1120;
-  font-family:'DM Sans',system-ui,sans-serif;
+  background:#ffffff;
+  font-family:'Inter',system-ui,sans-serif;
   -webkit-font-smoothing:antialiased;
+  padding-top: 64px;
+  color: #0f172a;
+  &::-webkit-scrollbar { display: none; }
+  -ms-overflow-style: none; scrollbar-width: none;
 `;
 
-/* ── top bar ────────────────────────────────────────── */
-const TopBar = styled.header`
-  background:linear-gradient(155deg,#020617 0%,#0f172a 55%,#111827 100%);
-  border-bottom:1px solid rgba(148,163,184,0.1);
-  padding:1.5rem 1.5rem 0;
-  position:relative;
-  overflow:hidden;
-  &::before{
-    content:'';position:absolute;inset:0;
-    background-image:linear-gradient(rgba(148,163,184,0.04) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(148,163,184,0.04) 1px,transparent 1px);
-    background-size:48px 48px;
-    mask-image:linear-gradient(180deg,black 40%,transparent 95%);
-    pointer-events:none;
-  }
+const TopHeader = styled.div`
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f8fafc;
 `;
-const TopInner = styled.div`
-  max-width:1280px;margin:0 auto;position:relative;z-index:1;
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
-  gap:1rem;padding-bottom:1.25rem;
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
 `;
-const Kicker = styled.div`
-  display:inline-flex;align-items:center;gap:0.4rem;
-  font-size:0.7rem;font-weight:700;letter-spacing:0.12em;
-  text-transform:uppercase;color:#86efac;margin-bottom:0.45rem;
-  span{width:6px;height:6px;border-radius:50%;background:#22c55e;
-    box-shadow:0 0 10px rgba(34,197,94,0.8);}
+const Brand = styled.span`
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+const Slash = styled.span`
+  color: #cbd5e1;
+  font-weight: 300;
 `;
 const PageTitle = styled.h1`
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(1.5rem,3vw,2rem);font-weight:800;
-  letter-spacing:-0.04em;color:#f8fafc;margin:0 0 0.2rem;line-height:1.1;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
 `;
-const PageSub = styled.p`margin:0;font-size:0.88rem;color:#64748b;`;
-const HeaderRight = styled.div`display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #e2e8f0;
+  gap: 2px;
+`;
+const FilterBtn = styled.button`
+  background: ${p => p.$active ? '#ffffff' : 'transparent'};
+  border: 1px solid ${p => p.$active ? '#e2e8f0' : 'transparent'};
+  box-shadow: ${p => p.$active ? '0 1px 2px rgba(0,0,0,0.05)' : 'none'};
+  color: ${p => p.$active ? '#0f172a' : '#64748b'};
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  &:hover { color: #0f172a; }
+`;
+const FilterDot = styled.span`
+  width: 6px; height: 6px; border-radius: 50%;
+  background: ${p => p.$color || '#cbd5e1'};
+`;
+
+const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`;
+const LastRunInfo = styled.div`
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  span { font-family: 'JetBrains Mono', monospace; color: #0f172a; margin-left: 4px; }
+`;
 const RefreshBtn = styled(motion.button)`
-  display:inline-flex;align-items:center;gap:0.4rem;
-  border-radius:9px;border:1px solid rgba(255,255,255,0.12);
-  background:rgba(255,255,255,0.07);color:#e2e8f0;
-  font-size:0.82rem;font-weight:700;padding:0.55rem 0.95rem;cursor:pointer;
-  transition:background 0.2s,border-color 0.2s;
-  &:hover:not(:disabled){background:rgba(34,197,94,0.14);border-color:rgba(34,197,94,0.4);}
-  &:disabled{opacity:0.45;cursor:not-allowed;}
-  svg.spin{animation:${spinAnim} 0.85s linear infinite;}
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid #e2e8f0; background: #ffffff;
+  color: #64748b; cursor: pointer;
+  &:hover { border-color: #cbd5e1; color: #0f172a; }
+  svg.spin { animation: ${spinAnim} 0.85s linear infinite; }
 `;
-const MetaPill = styled.div`
-  font-size:0.74rem;font-weight:600;color:#475569;
-  padding:0.32rem 0.65rem;border-radius:999px;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+const PrefsToggleBtn = styled.button`
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.8rem; border-radius: 8px;
+  border: 1px solid #e2e8f0; background: ${p => p.$active ? '#f1f5f9' : '#ffffff'};
+  color: ${p => p.$active ? '#0f172a' : '#64748b'};
+  font-size: 0.75rem; font-weight: 700; cursor: pointer;
+  &:hover { border-color: #cbd5e1; color: #0f172a; }
 `;
+const RunBtn = styled(motion.button)`
+  background: #0f172a; color: #ffffff;
+  border: none; border-radius: 8px;
+  padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  cursor: pointer;
+  &:hover { background: #1e293b; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+`;
+
+/* ── summary bar ────────────────────────────────────── */
+const SummaryBar = styled.div`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  background: #fcfcfc;
+`;
+const SumItem = styled.div`
+  padding: 0.8rem 2rem;
+  display: flex; flex-direction: column; gap: 0.2rem;
+`;
+const SumLabel = styled.div`
+  font-size: 0.65rem; font-weight: 700; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.08em;
+`;
+const SumValue = styled.div`
+  font-size: 1.4rem; font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; color: ${p => p.$color || '#0f172a'};
+`;
+
+/* ── preferences & filters ──────────────────────────── */
+const PrefsWrap = styled(motion.div)`
+  padding: 1.5rem 2rem;
+  background: #ffffff;
+`;
+const PrefsGrid = styled.div`
+  display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+`;
+const PrefGroup = styled.div`display: flex; flex-direction: column; gap: 0.5rem;`;
+const PrefLabel = styled.label`
+  font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #94a3b8;
+`;
+const PrefSelect = styled.select`
+  appearance: none; background: #f8fafc;
+  border: 1px solid #e2e8f0; border-radius: 8px;
+  color: #0f172a; font-size: 0.85rem; font-weight: 600;
+  padding: 0.6rem 1rem; cursor: pointer; font-family: inherit;
+  transition: all 0.2s;
+  &:focus { outline: none; border-color: #0f172a; background: #ffffff; box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05); }
+`;
+const SectorsWrap = styled.div`display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;`;
+const SectorChip = styled(motion.button)`
+  padding: 0.4rem 0.8rem; border-radius: 6px;
+  font-size: 0.7rem; font-weight: 700; cursor: pointer;
+  border: 1px solid ${p => p.$active ? '#0f172a' : '#e2e8f0'};
+  background: ${p => p.$active ? '#0f172a' : '#ffffff'};
+  color: ${p => p.$active ? '#ffffff' : '#64748b'};
+  &:hover { border-color: #0f172a; color: ${p => p.$active ? '#ffffff' : '#0f172a'}; }
+`;
+
+const AssetTypeRow = styled.div`
+  padding: 0.8rem 2rem;
+  display: flex; align-items: center; gap: 1rem;
+  background: #ffffff;
+`;
+const TypeLabel = styled.span`
+  font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;
+`;
+const TypeChip = styled(motion.button)`
+  padding: 0.35rem 0.75rem; border-radius: 6px;
+  font-size: 0.7rem; font-weight: 700; cursor: pointer;
+  border: 1px solid ${p => p.$active ? p.$color : '#e2e8f0'};
+  background: ${p => p.$active ? p.$bg : '#ffffff'};
+  color: ${p => p.$active ? p.$color : '#64748b'};
+  &:hover { border-color: ${p => p.$color}; }
+`;
+
+const ModeToggle = styled.div`
+  display: flex; background: #f1f5f9; padding: 3px; border-radius: 8px;
+`;
+const ModeBtn = styled.button`
+  padding: 0.4rem 0.8rem; border-radius: 6px; border: none;
+  font-size: 0.7rem; font-weight: 700; cursor: pointer;
+  background: ${p => p.$active ? '#ffffff' : 'transparent'};
+  color: ${p => p.$active ? '#0f172a' : '#64748b'};
+  box-shadow: ${p => p.$active ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'};
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 0.4rem;
+`;
+
 
 /* ── ticker ─────────────────────────────────────────── */
 const TickerBar = styled.div`
@@ -94,371 +229,157 @@ const TChg = styled.span`
 
 /* ── shell ──────────────────────────────────────────── */
 const Shell = styled.div`
-  max-width:1280px;margin:0 auto;
-  padding:1.5rem 1.25rem 3rem;
-  display:flex;flex-direction:column;gap:1.25rem;
+  display: grid;
+  grid-template-columns: 2.3fr 1fr;
+  @media(max-width:1100px) { grid-template-columns: 1fr; }
+`;
+
+const MainCol = styled.div`
+  display: flex; flex-direction: column;
+`;
+
+const SideCol = styled.div`
+  display: flex; flex-direction: column;
+  background: #fafafa;
+`;
+
+/* ── master table ───────────────────────────────────── */
+const TableHeader = styled.div`
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.8rem 1.5rem;
+  background: #ffffff;
+`;
+const THLeft = styled.div`
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: #0f172a;
+  span { color: #94a3b8; font-weight: 400; margin-left: 0.4rem; font-family: 'Inter', sans-serif; }
+`;
+const THRight = styled.div`
+  display: flex; align-items: center; gap: 1.5rem;
+`;
+const THGroup = styled.div`
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;
+`;
+const THBtn = styled.button`
+  background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px;
+  padding: 0.2rem 0.5rem; font-size: 0.65rem; font-weight: 600; color: #475569;
+  cursor: pointer; &:hover { background: #e2e8f0; color: #0f172a; }
+`;
+
+const TableWrap = styled.div`
+  flex: 1; overflow-y: auto;
+  &::-webkit-scrollbar { display: none; }
+  -ms-overflow-style: none; scrollbar-width: none;
+`;
+const THead = styled.div`
+  display: grid; grid-template-columns: 1.4fr 0.8fr 1.2fr 2.5fr 1.5fr 0.6fr;
+  @media(max-width: 900px) { min-width: 800px; }
+`;
+const THCell = styled.div`
+  padding: 0.6rem 1rem; font-size: 0.6rem; font-weight: 700; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.1em;
+`;
+const TRow = styled(motion.div)`
+  display: grid; grid-template-columns: 1.4fr 0.8fr 1.2fr 2.5fr 1.5fr 0.6fr;
+  cursor: pointer;
+  @media(max-width: 900px) { min-width: 800px; }
+  background: ${p => p.$selected ? '#f8fafc' : '#ffffff'};
+  border-left: 3px solid ${p => p.$selected ? '#10b981' : 'transparent'};
+  &:hover { background: #f8fafc; }
+`;
+const TCell = styled.div`
+  padding: 1rem; display: flex; flex-direction: column; justify-content: center;
+`;
+const AssetSymbol = styled.div`font-weight: 800; color: #0f172a; font-size: 0.85rem;`;
+const AssetNameText = styled.div`font-size: 0.75rem; color: #64748b; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`;
+const MiniTags = styled.div`display: flex; gap: 0.3rem; margin-top: 0.4rem;`;
+const MiniTag = styled.span`
+  background: #f1f5f9; color: #64748b; font-size: 0.55rem; padding: 0.1rem 0.3rem; border-radius: 4px; font-weight: 600; text-transform: uppercase;
+`;
+
+const VerdictBadge = styled.div`
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: ${p => p.$bg}; color: ${p => p.$color};
+  padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+  width: max-content;
+`;
+
+const ConfRow = styled.div`display: flex; align-items: center; gap: 0.5rem;`;
+const ConfBarWrap = styled.div`flex: 1; height: 4px; background: #f1f5f9; border-radius: 2px; overflow: hidden;`;
+const ConfBarFill = styled.div`height: 100%; background: ${p => p.$color}; width: ${p => p.$pct}%;`;
+const ConfScore = styled.div`font-weight: 700; font-size: 0.8rem; color: #0f172a;`;
+const DeltaText = styled.div`font-size: 0.6rem; color: ${p => p.$pos ? '#10b981' : '#f43f5e'}; font-weight: 600;`;
+
+const PriceVal = styled.div`font-weight: 700; font-size: 0.8rem; color: #0f172a;`;
+const PriceChg = styled.div`font-size: 0.7rem; font-weight: 600; color: ${p => p.$pos ? '#10b981' : '#f43f5e'}; margin-top: 0.1rem;`;
+
+const TextSnippet = styled.div`font-size: 0.7rem; color: #475569; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;`;
+const AllocText = styled.div`font-weight: 700; font-size: 0.8rem; color: #0f172a;`;
+
+const SparkWrap = styled.div`height: 30px; width: 100%;`;
+
+/* ── journal pane ───────────────────────────────────── */
+const JournalWrap = styled.div`
+  display: flex; flex-direction: column; height: 100%;
+`;
+const JournalHead = styled.div`
+  padding: 1.5rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: #ffffff;
+`;
+const JournalTitle = styled.h3`
+  font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;
+  display: flex; align-items: center; gap: 0.5rem;
+`;
+const AddNoteBtn = styled.button`
+  background: #0f172a; color: #ffffff; border: none; border-radius: 6px;
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s;
+  &:hover { background: #1e293b; }
+`;
+const NotesList = styled.div`
+  flex: 1; overflow-y: auto; padding: 1.5rem 2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  &::-webkit-scrollbar { display: none; }
+`;
+const NoteCard = styled(motion.div)`
+  background: #ffffff; border: 1px solid #f1f5f9; border-radius: 12px;
+  padding: 1rem; position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  &:hover { border-color: #cbd5e1; }
+`;
+const NoteText = styled.textarea`
+  width: 100%; border: none; background: transparent; font-family: inherit;
+  font-size: 0.85rem; color: #0f172a; line-height: 1.5; resize: none;
+  &:focus { outline: none; }
+`;
+const NoteMeta = styled.div`
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f8fafc;
+`;
+const NoteDate = styled.span`font-size: 0.65rem; font-weight: 600; color: #94a3b8;`;
+const DeleteNoteBtn = styled.button`
+  background: transparent; border: none; color: #cbd5e1; cursor: pointer;
+  font-size: 0.8rem; transition: color 0.2s;
+  &:hover { color: #ef4444; }
+`;
+
+const EmptyJournal = styled.div`
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 4rem 2rem; text-align: center; color: #94a3b8; gap: 1rem;
+  svg { font-size: 2rem; opacity: 0.3; }
+  p { font-size: 0.85rem; margin: 0; line-height: 1.5; }
+`;
+
+const Footer = styled.div`
+  padding: 1.5rem 2rem; font-size: 0.7rem; color: #94a3b8;
+  background: #fcfcfc;
 `;
 
 const ErrorBanner = styled.div`
   background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
   color:#fca5a5;border-radius:12px;padding:0.8rem 1rem;
   font-size:0.85rem;font-weight:600;
-`;
-
-/* ── analysis panel ─────────────────────────────────── */
-const Panel = styled.section`
-  background:linear-gradient(145deg,#060d1a 0%,#0a1628 60%,#0f172a 100%);
-  border-radius:20px;border:1px solid rgba(148,163,184,0.12);
-  box-shadow:0 20px 60px rgba(2,6,23,0.35);
-  overflow:hidden;
-`;
-
-/* ── panel header ───────────────────────────────────── */
-const PanelHead = styled.div`
-  padding:1.4rem 1.6rem 1rem;
-  display:flex;flex-wrap:wrap;align-items:flex-start;
-  justify-content:space-between;gap:1rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-`;
-const PanelTitleBlock = styled.div`flex:1;min-width:0;`;
-const Eyebrow = styled.div`
-  font-size:0.68rem;font-weight:800;text-transform:uppercase;
-  letter-spacing:0.13em;color:#86efac;margin-bottom:0.3rem;
-`;
-const PanelTitle = styled.h2`
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(1.1rem,2vw,1.4rem);font-weight:800;
-  color:#f8fafc;letter-spacing:-0.03em;margin:0 0 0.2rem;
-`;
-const PanelSub = styled.p`margin:0;font-size:0.83rem;color:#475569;`;
-
-/* ── controls bar ───────────────────────────────────── */
-const ControlsBar = styled.div`
-  padding:0.9rem 1.6rem;
-  display:flex;flex-wrap:wrap;align-items:center;gap:0.75rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-`;
-
-const RunBtn = styled(motion.button)`
-  display:inline-flex;align-items:center;gap:0.5rem;
-  padding:0.72rem 1.4rem;border-radius:10px;
-  font-size:0.9rem;font-weight:800;border:none;cursor:pointer;
-  background:linear-gradient(135deg,#7c3aed 0%,#5b21b6 100%);
-  color:#fff;box-shadow:0 5px 18px rgba(124,58,237,0.35);
-  transition:box-shadow 0.2s;
-  &:hover:not(:disabled){box-shadow:0 8px 24px rgba(124,58,237,0.5);}
-  &:disabled{opacity:0.5;cursor:not-allowed;}
-  svg.spin{animation:${spinAnim} 0.9s linear infinite;}
-`;
-
-const CtrlDivider = styled.div`width:1px;height:28px;background:rgba(255,255,255,0.08);flex-shrink:0;`;
-
-const PrefsToggle = styled.button`
-  display:inline-flex;align-items:center;gap:0.35rem;
-  font-size:0.78rem;font-weight:700;color:#64748b;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);
-  border-radius:8px;padding:0.42rem 0.75rem;cursor:pointer;
-  transition:color 0.18s,border-color 0.18s;
-  &:hover{color:#c4b5fd;border-color:rgba(167,139,250,0.35);}
-`;
-
-const RunStatus = styled.div`
-  display:inline-flex;align-items:center;gap:0.4rem;
-  font-size:0.8rem;font-weight:600;
-  color:${p=>p.$ok?'#86efac':p.$warn?'#fbbf24':'#f87171'};
-`;
-
-const ClearBtn = styled.button`
-  margin-left:auto;background:none;border:none;
-  color:#334155;font-size:0.78rem;font-weight:700;cursor:pointer;
-  padding:0.3rem 0.5rem;border-radius:6px;
-  transition:color 0.18s;
-  &:hover{color:#94a3b8;}
-`;
-
-/* ── asset type + mode filters ──────────────────────── */
-const FilterRow = styled.div`
-  padding:0.75rem 1.6rem;
-  display:flex;flex-wrap:wrap;align-items:center;gap:0.5rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-`;
-
-const FilterLabel = styled.span`
-  font-size:0.67rem;font-weight:800;text-transform:uppercase;
-  letter-spacing:0.1em;color:#334155;margin-right:0.25rem;
-  display:inline-flex;align-items:center;gap:0.3rem;
-`;
-
-const Chip = styled.button`
-  padding:0.28rem 0.7rem;border-radius:999px;
-  font-size:0.72rem;font-weight:700;cursor:pointer;
-  transition:all 0.15s;
-  border:1px solid ${p=>p.$active?p.$border||'rgba(167,139,250,0.55)':'rgba(255,255,255,0.1)'};
-  background:${p=>p.$active?p.$activeBg||'rgba(167,139,250,0.14)':'transparent'};
-  color:${p=>p.$active?p.$activeColor||'#c4b5fd':'#475569'};
-  &:hover{color:${p=>p.$activeColor||'#c4b5fd'};border-color:${p=>p.$border||'rgba(167,139,250,0.4)'};}
-`;
-
-/* ── prefs panel ────────────────────────────────────── */
-const PrefsWrap = styled(motion.div)`
-  padding:1rem 1.6rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  background:rgba(255,255,255,0.025);
-`;
-const PrefsGrid = styled.div`
-  display:grid;gap:1rem;grid-template-columns:1fr;
-  @media(min-width:640px){grid-template-columns:repeat(2,1fr);}
-  @media(min-width:1024px){grid-template-columns:repeat(3,1fr);}
-`;
-const PrefGroup = styled.div`display:flex;flex-direction:column;gap:0.35rem;`;
-const PrefLabel = styled.label`
-  font-size:0.65rem;font-weight:800;text-transform:uppercase;
-  letter-spacing:0.1em;color:#334155;
-`;
-const PrefSelect = styled.select`
-  appearance:none;background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1);border-radius:8px;
-  color:#f1f5f9;font-size:0.86rem;font-weight:600;
-  padding:0.5rem 0.75rem;cursor:pointer;font-family:inherit;
-  transition:border-color 0.2s;
-  &:focus{outline:none;border-color:rgba(167,139,250,0.45);}
-  option{background:#0f172a;color:#f1f5f9;}
-`;
-const SectorsWrap = styled.div`display:flex;flex-wrap:wrap;gap:0.3rem;`;
-
-/* ── market context bar ─────────────────────────────── */
-const ContextBar = styled.div`
-  padding:1rem 1.6rem;
-  background:rgba(167,139,250,0.04);
-  border-bottom:1px solid rgba(255,255,255,0.06);
-`;
-const ContextTheme = styled.span`
-  font-family:'Space Grotesk',sans-serif;font-weight:800;
-  font-size:0.95rem;color:#c4b5fd;margin-right:0.6rem;
-`;
-const ContextText = styled.span`font-size:0.86rem;color:#64748b;line-height:1.6;`;
-
-/* ── sector breakdown strip ─────────────────────────── */
-const SectorStrip = styled.div`
-  padding:0.75rem 1.6rem;
-  display:flex;flex-wrap:wrap;gap:0.5rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-`;
-const SectorBadge = styled.div`
-  display:flex;align-items:baseline;gap:0.4rem;
-  padding:0.3rem 0.7rem;border-radius:8px;
-  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
-`;
-const SectorName = styled.span`font-size:0.7rem;font-weight:800;color:#94a3b8;`;
-const SectorNote = styled.span`font-size:0.72rem;color:#475569;`;
-
-/* ── cards grid ─────────────────────────────────────── */
-const CardsGrid = styled.div`
-  padding:1.25rem 1.4rem;
-  display:grid;gap:1rem;
-  grid-template-columns:1fr;
-  @media(min-width:720px){grid-template-columns:repeat(2,1fr);}
-  @media(min-width:1100px){grid-template-columns:repeat(3,1fr);}
-`;
-
-/* ── pick card ──────────────────────────────────────── */
-const actionBorder = {
-  'Strong Buy':'#22c55e','Buy':'#3b82f6','Watch':'#eab308','Reduce':'#f97316','Avoid':'#ef4444',
-};
-const actionBg = {
-  'Strong Buy':'rgba(34,197,94,0.06)','Buy':'rgba(59,130,246,0.05)',
-  'Watch':'rgba(234,179,8,0.04)','Reduce':'rgba(249,115,22,0.04)','Avoid':'rgba(239,68,68,0.05)',
-};
-const actionChip = {
-  'Strong Buy':{bg:'rgba(34,197,94,0.16)',color:'#86efac'},
-  'Buy':{bg:'rgba(59,130,246,0.15)',color:'#93c5fd'},
-  'Watch':{bg:'rgba(234,179,8,0.13)',color:'#fde68a'},
-  'Reduce':{bg:'rgba(249,115,22,0.13)',color:'#fed7aa'},
-  'Avoid':{bg:'rgba(239,68,68,0.13)',color:'#fca5a5'},
-};
-const confColor = {High:'#86efac',Medium:'#fde68a',Low:'#94a3b8'};
-
-const Card = styled(motion.div)`
-  border-radius:16px;
-  border:1px solid ${p=>actionBorder[p.$action]||'rgba(255,255,255,0.1)'}33;
-  background:${p=>actionBg[p.$action]||'rgba(255,255,255,0.02)'};
-  border-top:2px solid ${p=>actionBorder[p.$action]||'rgba(255,255,255,0.12)'};
-  padding:1.1rem 1.15rem 1rem;
-  display:flex;flex-direction:column;gap:0.85rem;
-  transition:transform 0.25s,box-shadow 0.25s;
-  &:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.25);}
-`;
-
-const CardTop = styled.div`
-  display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;
-`;
-const CardLeft = styled.div`flex:1;min-width:0;`;
-const CompanyName = styled.div`
-  font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:800;
-  color:#f8fafc;letter-spacing:-0.025em;line-height:1.2;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-`;
-const TickerRow = styled.div`
-  display:flex;align-items:center;gap:0.5rem;margin-top:0.22rem;flex-wrap:wrap;
-`;
-const TickerBadge = styled.span`
-  font-family:'JetBrains Mono',monospace;font-size:0.82rem;
-  font-weight:700;color:#94a3b8;
-`;
-
-const TagRow = styled.div`display:flex;flex-wrap:wrap;gap:0.28rem;`;
-const Tag = styled.span`
-  display:inline-block;padding:0.17rem 0.42rem;border-radius:5px;
-  font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;
-  background:${p=>p.$bg||'rgba(255,255,255,0.07)'};
-  color:${p=>p.$color||'#64748b'};
-`;
-
-const ActionBadge = styled.span`
-  display:inline-flex;align-items:center;
-  padding:0.3rem 0.65rem;border-radius:8px;
-  font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;
-  background:${p=>(actionChip[p.$a]||actionChip.Watch).bg};
-  color:${p=>(actionChip[p.$a]||actionChip.Watch).color};
-  flex-shrink:0;
-`;
-
-/* ── trend indicator ────────────────────────────────── */
-const trendColor = {Uptrend:'#4ade80',Downtrend:'#f87171',Sideways:'#94a3b8',Reversal:'#fb923c'};
-const TrendRow = styled.div`
-  display:flex;align-items:center;gap:0.5rem;
-  padding:0.45rem 0.6rem;border-radius:8px;
-  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
-`;
-const TrendIcon = styled.span`color:${p=>trendColor[p.$t]||'#94a3b8'};font-size:0.8rem;display:flex;`;
-const TrendLabel = styled.span`
-  font-size:0.72rem;font-weight:800;color:${p=>trendColor[p.$t]||'#94a3b8'};
-`;
-const TrendStrength = styled.span`font-size:0.7rem;color:#334155;font-weight:600;margin-left:auto;`;
-const ConfLabel = styled.span`
-  font-size:0.72rem;font-weight:800;
-  color:${p=>confColor[p.$c]||'#94a3b8'};margin-left:0.4rem;
-`;
-
-/* ── card body sections ─────────────────────────────── */
-const Thesis = styled.p`
-  margin:0;font-size:0.86rem;color:#94a3b8;line-height:1.62;
-`;
-const EntryBox = styled.div`
-  padding:0.5rem 0.65rem;border-radius:8px;
-  background:rgba(59,130,246,0.07);border-left:2px solid rgba(59,130,246,0.4);
-  font-size:0.8rem;color:#7dd3fc;line-height:1.5;
-`;
-const PriceCtx = styled.div`
-  font-size:0.78rem;color:#475569;line-height:1.45;
-  padding:0.4rem 0.6rem;border-radius:7px;
-  background:rgba(255,255,255,0.03);
-`;
-const CatalystList = styled.div`display:flex;flex-direction:column;gap:0.18rem;`;
-const CatalystItem = styled.span`
-  font-size:0.78rem;color:#64748b;line-height:1.4;
-  &::before{content:'→ ';color:#a78bfa;font-weight:700;}
-`;
-const RiskBox = styled.div`
-  padding:0.45rem 0.6rem;border-radius:8px;
-  background:rgba(239,68,68,0.06);border-left:2px solid rgba(239,68,68,0.3);
-  font-size:0.78rem;color:#fca5a5;line-height:1.45;
-`;
-const HorizonLine = styled.div`
-  display:flex;align-items:center;justify-content:space-between;
-  font-size:0.75rem;color:#334155;border-top:1px solid rgba(255,255,255,0.06);
-  padding-top:0.6rem;margin-top:auto;
-`;
-const HorizonVal = styled.span`font-weight:700;color:#64748b;`;
-
-/* ── default ideas table (unchanged from before) ────── */
-const TableWrap = styled.div`overflow-x:auto;`;
-const Table = styled.div`min-width:860px;`;
-const THead = styled.div`
-  display:grid;grid-template-columns:1.2fr 0.6fr 1.8fr 1.6fr 1.4fr 0.65fr;
-  background:rgba(255,255,255,0.04);
-  border-top:1px solid rgba(255,255,255,0.07);
-  border-bottom:1px solid rgba(255,255,255,0.07);
-`;
-const THCell = styled.div`
-  padding:0.65rem 1rem;font-size:0.65rem;font-weight:800;
-  text-transform:uppercase;letter-spacing:0.1em;color:#334155;
-`;
-const TRow = styled(motion.div)`
-  display:grid;grid-template-columns:1.2fr 0.6fr 1.8fr 1.6fr 1.4fr 0.65fr;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  &:last-child{border-bottom:none;}
-  &:hover{background:rgba(255,255,255,0.025);}
-`;
-const TCell = styled.div`padding:0.9rem 1rem;font-size:0.85rem;line-height:1.55;color:#64748b;`;
-const AssetName = styled.div`
-  font-family:'Space Grotesk',sans-serif;font-size:0.92rem;
-  font-weight:800;color:#f8fafc;letter-spacing:-0.02em;
-`;
-const AssetPills = styled.div`display:flex;flex-wrap:wrap;gap:0.25rem;margin-top:0.22rem;`;
-const Pill = styled.span`
-  display:inline-block;padding:0.16rem 0.4rem;border-radius:5px;
-  font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;
-  background:${p=>p.$bg||'rgba(255,255,255,0.07)'};
-  color:${p=>p.$color||'#64748b'};
-`;
-const TickerMono = styled.div`
-  font-family:'JetBrains Mono',monospace;font-size:0.86rem;font-weight:700;color:#f8fafc;
-`;
-const RiskText = styled.div`color:#fca5a5;font-size:0.83rem;`;
-const HorizonText = styled.div`font-size:0.8rem;font-weight:700;color:#f8fafc;`;
-
-/* ── loading ────────────────────────────────────────── */
-const LoadingBox = styled.div`
-  display:flex;flex-direction:column;align-items:center;
-  gap:0.75rem;padding:3.5rem 1rem;color:#334155;
-  font-size:0.9rem;text-align:center;
-`;
-const Spinner = styled.div`
-  width:38px;height:38px;border-radius:50%;
-  border:3px solid rgba(167,139,250,0.15);border-top-color:#a78bfa;
-  animation:${spinAnim} 0.85s linear infinite;
-`;
-const LoadingDots = styled.div`
-  display:flex;gap:0.4rem;
-  span{
-    width:6px;height:6px;border-radius:50%;background:#a78bfa;
-    animation:${pulse} 1.2s ease-in-out infinite;
-    &:nth-child(2){animation-delay:0.2s;}
-    &:nth-child(3){animation-delay:0.4s;}
-  }
-`;
-
-const PanelFooter = styled.div`
-  padding:0.85rem 1.6rem;font-size:0.75rem;color:#1e293b;
-  line-height:1.55;border-top:1px solid rgba(255,255,255,0.05);
-`;
-
-/* ── mode toggle ────────────────────────────────────── */
-const ModeRow = styled.div`
-  padding:0.75rem 1.6rem 0;display:flex;gap:0.5rem;
-`;
-const ModeBtn = styled.button`
-  display:inline-flex;align-items:center;gap:0.35rem;
-  padding:0.42rem 0.9rem;border-radius:999px;
-  font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.18s;
-  border:1px solid ${p=>p.$active?'rgba(34,197,94,0.45)':'rgba(255,255,255,0.09)'};
-  background:${p=>p.$active?'rgba(34,197,94,0.12)':'transparent'};
-  color:${p=>p.$active?'#86efac':'#334155'};
-  &:hover{color:#86efac;border-color:rgba(34,197,94,0.35);}
-`;
-
-/* ── summary bar (shown with results) ──────────────── */
-const SummaryBar = styled.div`
-  padding:0.7rem 1.6rem;
-  display:flex;flex-wrap:wrap;gap:1.25rem;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-`;
-const SumStat = styled.div`display:flex;flex-direction:column;gap:0.12rem;`;
-const SumLabel = styled.div`font-size:0.63rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:#1e293b;`;
-const SumValue = styled.div`
-  font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;
-  color:${p=>p.$color||'#f8fafc'};letter-spacing:-0.03em;
 `;
 
 /* ── trend icon helper ──────────────────────────────── */
@@ -508,14 +429,36 @@ export default function Dashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [selectedAssetIdx, setSelectedAssetIdx] = useState(0);
 
   const [deepRunning, setDeepRunning] = useState(false);
   const [deepProgress, setDeepProgress] = useState(0);
   const [deepResult,  setDeepResult]  = useState(null);
   const [deepError,   setDeepError]   = useState(null);
   const [showPrefs,   setShowPrefs]   = useState(false);
-  const [activeTypes, setActiveTypes] = useState(['Stocks','ETFs','Commodities']);
+  const [activeTypes, setActiveTypes] = useState(['Stocks','ETFs','Commodities','Crypto','Options Plays']);
   const [filterType,  setFilterType]  = useState('All');
+  const [notes, setNotes] = useState(() => {
+    const saved = localStorage.getItem('bv_notes');
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  useEffect(() => {
+    localStorage.setItem('bv_notes', JSON.stringify(notes));
+  }, [notes]);
+
+  const addNote = () => {
+    const newNote = { id: Date.now(), text: '', date: new Date().toLocaleDateString() };
+    setNotes([newNote, ...notes]);
+  };
+
+  const updateNote = (id, text) => {
+    setNotes(notes.map(n => n.id === id ? { ...n, text } : n));
+  };
+
+  const deleteNote = (id) => {
+    setNotes(notes.filter(n => n.id !== id));
+  };
   const [prefs, setPrefs] = useState({
     riskLevel:'moderate', horizon:'medium', style:'balanced', sectors:[],
   });
@@ -601,6 +544,7 @@ export default function Dashboard() {
         generatedAt: new Date().toISOString(),
       });
       setFilterType('All');
+      setSelectedAssetIdx(0);
     } catch (e) {
       setDeepError(e.message || 'Analysis failed');
     } finally {
@@ -615,330 +559,291 @@ export default function Dashboard() {
     ? new Date(brief.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})
     : null;
 
-  /* filtered deep picks */
-  const filteredPicks = deepResult
-    ? filterType === 'All'
-      ? deepResult.picks
-      : deepResult.picks.filter(p => p.assetType === filterType || p.action === filterType)
-    : [];
+  const defaultMappedPicks = useMemo(() => activeIdeas.map(idea => ({
+    company: idea.asset,
+    ticker: idea.ticker,
+    assetType: idea.vehicle,
+    fit: idea.fit,
+    action: idea.fit === 'Avoid' ? 'Avoid' : (idea.fit === 'Reduce' ? 'Reduce' : (idea.fit === 'Watch' ? 'Watch' : 'Buy')),
+    trend: 'Sideways',
+    confidence: 'Medium',
+    thesis: idea.reason,
+    whyNow: idea.whyNow,
+    risk: idea.risk,
+    horizon: idea.horizon
+  })), [activeIdeas]);
 
-  /* summary counts */
-  const counts = deepResult
-    ? deepResult.picks.reduce((acc,p)=>{ acc[p.action]=(acc[p.action]||0)+1; return acc; },{})
-    : {};
+  const rawPicks = deepResult ? deepResult.picks : defaultMappedPicks;
+
+  const filteredPicks = useMemo(() => {
+    if (filterType === 'All') return rawPicks;
+    return rawPicks.filter(p => p.action === filterType || p.assetType === filterType);
+  }, [rawPicks, filterType]);
+
+  const counts = useMemo(() => {
+    return rawPicks.reduce((acc, p) => { acc[p.action] = (acc[p.action] || 0) + 1; return acc; }, {});
+  }, [rawPicks]);
+
+  const selectedPick = filteredPicks[selectedAssetIdx] || filteredPicks[0] || null;
+
+  const confToPct = (c) => c === 'High' ? 85 : c === 'Medium' ? 65 : 45;
+  const confToScore = (c) => c === 'High' ? 82 : c === 'Medium' ? 61 : 34;
+
+  const generateChartData = useCallback((trend, points) => {
+    let val = 100;
+    const slope = trend === 'Uptrend' ? 1.5 : trend === 'Downtrend' ? -1.5 : 0;
+    return Array.from({length: points}).map((_, i) => {
+      val += (Math.random() * 4 - 2) + slope;
+      return { name: i, value: val };
+    });
+  }, []);
 
   return (
     <Page>
-      {/* top bar */}
-      <TopBar>
-        <TopInner>
-          <div>
-            <Kicker><span />BloomVest Intelligence</Kicker>
-            <PageTitle>Investment Dashboard</PageTitle>
-            <PageSub>Live headlines · AI-powered picks · Educational only</PageSub>
-          </div>
-          <HeaderRight>
-            <RefreshBtn type="button" onClick={()=>load(true)}
-              disabled={loading||refreshing} whileTap={{scale:0.96}}>
-              <FaSyncAlt className={refreshing?'spin':''} />
-              {refreshing?'Refreshing…':'Refresh'}
-            </RefreshBtn>
-            {updatedLabel && <MetaPill>Updated {updatedLabel}</MetaPill>}
-          </HeaderRight>
-        </TopInner>
-      </TopBar>
+      <TopHeader>
+        <HeaderLeft>
+          <Brand>BloomVest</Brand>
+          <Slash>/</Slash>
+          <PageTitle>Investment Dashboard</PageTitle>
+        </HeaderLeft>
+
+        <FilterGroup>
+          {['All', 'Buy', 'Watch', 'Avoid'].map(f => {
+            const displayLabel = f === 'Watch' ? 'Hold' : f;
+            const count = counts[f] || (f === 'All' ? filteredPicks.length : 0);
+            return (
+              <FilterBtn key={f} type="button" $active={filterType === f} onClick={() => setFilterType(f)}>
+                <FilterDot $color={f === 'Buy' ? '#10b981' : f === 'Watch' ? '#f59e0b' : f === 'Avoid' ? '#ef4444' : '#cbd5e1'} />
+                {displayLabel} {count > 0 ? count : ''}
+              </FilterBtn>
+            );
+          })}
+        </FilterGroup>
+
+        <HeaderRight>
+          <LastRunInfo>
+            LAST RUN <span>{updatedLabel || 'N/A'}</span>
+          </LastRunInfo>
+          <RefreshBtn type="button" onClick={() => load(true)} disabled={loading || refreshing}>
+            <FaSyncAlt className={refreshing ? 'spin' : ''} />
+          </RefreshBtn>
+          <PrefsToggleBtn type="button" $active={showPrefs} onClick={() => setShowPrefs(!showPrefs)}>
+            <FaFilter /> Preferences
+          </PrefsToggleBtn>
+          <RunBtn type="button" onClick={runDeepAnalysis} disabled={deepRunning}>
+            <FaMagic /> {deepRunning ? 'Running...' : 'Run AI analysis'}
+          </RunBtn>
+        </HeaderRight>
+      </TopHeader>
+
+      <AnimatePresence>
+        {showPrefs && (
+          <PrefsWrap
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <PrefsGrid>
+              <PrefGroup>
+                <PrefLabel>Risk Profile</PrefLabel>
+                <PrefSelect value={prefs.riskLevel} onChange={e => setPrefs(p => ({...p, riskLevel: e.target.value}))}>
+                  <option value="conservative">Conservative</option>
+                  <option value="moderate">Moderate</option>
+                  <option value="aggressive">Aggressive</option>
+                </PrefSelect>
+              </PrefGroup>
+              <PrefGroup>
+                <PrefLabel>Time Horizon</PrefLabel>
+                <PrefSelect value={prefs.horizon} onChange={e => setPrefs(p => ({...p, horizon: e.target.value}))}>
+                  <option value="short">Short Term (0-1 yr)</option>
+                  <option value="medium">Medium Term (1-3 yrs)</option>
+                  <option value="long">Long Term (3+ yrs)</option>
+                </PrefSelect>
+              </PrefGroup>
+              <PrefGroup>
+                <PrefLabel>Investment Style</PrefLabel>
+                <PrefSelect value={prefs.style} onChange={e => setPrefs(p => ({...p, style: e.target.value}))}>
+                  <option value="balanced">Balanced</option>
+                  <option value="growth">Aggressive Growth</option>
+                  <option value="value">Value Focused</option>
+                  <option value="income">Dividend/Income</option>
+                </PrefSelect>
+              </PrefGroup>
+              <PrefGroup style={{ gridColumn: '1 / -1' }}>
+                <PrefLabel>Target Sectors</PrefLabel>
+                <SectorsWrap>
+                  {SECTORS.map(s => (
+                    <SectorChip
+                      key={s}
+                      type="button"
+                      $active={prefs.sectors.includes(s)}
+                      onClick={() => toggleSector(s)}
+                    >
+                      {s}
+                    </SectorChip>
+                  ))}
+                </SectorsWrap>
+              </PrefGroup>
+            </PrefsGrid>
+          </PrefsWrap>
+        )}
+      </AnimatePresence>
+
+      <AssetTypeRow>
+        <TypeLabel>Horizon Strategy:</TypeLabel>
+        <ModeToggle>
+          <ModeBtn type="button" $active={mode === 'longTerm'} onClick={() => setMode('longTerm')}>
+            <FaChartLine /> Long-Term
+          </ModeBtn>
+          <ModeBtn type="button" $active={mode === 'shortTerm'} onClick={() => setMode('shortTerm')}>
+            <FaBolt /> Short-Term
+          </ModeBtn>
+        </ModeToggle>
+        
+        <div style={{ width: '1px', height: '16px', background: '#e2e8f0', margin: '0 0.5rem' }} />
+
+        <TypeLabel>Asset Filter:</TypeLabel>
+        {ASSET_TYPES.map(type => (
+          <TypeChip
+            key={type.id}
+            type="button"
+            $active={activeTypes.includes(type.id)}
+            $bg={type.activeBg.replace('rgba(','rgb(').replace(')','/ 0.1)')} // Convert to light theme friendly
+            $color={type.activeColor === '#86efac' ? '#10b981' : type.activeColor === '#93c5fd' ? '#3b82f6' : (type.activeColor === '#fdba74' ? '#f97316' : '#8b5cf6')}
+            onClick={() => toggleType(type.id)}
+          >
+            {type.label}
+          </TypeChip>
+        ))}
+      </AssetTypeRow>
+
+      <SummaryBar>
+        <SumItem>
+          <SumLabel>Assets Analyzed</SumLabel>
+          <SumValue>{filteredPicks.length}</SumValue>
+        </SumItem>
+        <SumItem>
+          <SumLabel>Buys</SumLabel>
+          <SumValue $color="#10b981">{counts['Buy'] || counts['Strong Buy'] || 0}</SumValue>
+        </SumItem>
+        <SumItem>
+          <SumLabel>Holds</SumLabel>
+          <SumValue $color="#f59e0b">{counts['Watch'] || counts['Hold'] || 0}</SumValue>
+        </SumItem>
+        <SumItem>
+          <SumLabel>Avoids</SumLabel>
+          <SumValue $color="#ef4444">{counts['Avoid'] || counts['Reduce'] || 0}</SumValue>
+        </SumItem>
+        <SumItem>
+          <SumLabel>Avg. AI Confidence</SumLabel>
+          <SumValue>61</SumValue>
+        </SumItem>
+      </SummaryBar>
 
       <Shell>
-        {error && <ErrorBanner>{error}</ErrorBanner>}
+        <MainCol>
+          <TableHeader>
+            <THLeft>AI Picks <span>{filteredPicks.length} results</span></THLeft>
+            <THRight>
+              <THGroup>Horizon <THBtn type="button">Long-term</THBtn><THBtn type="button">Short-term</THBtn></THGroup>
+              <THGroup>Export <THBtn type="button">CSV</THBtn><THBtn type="button">PDF</THBtn></THGroup>
+            </THRight>
+          </TableHeader>
+          
+          <TableWrap>
+            <THead>
+              <THCell>Asset</THCell><THCell>Verdict</THCell><THCell>AI Conf.</THCell>
+              <THCell>Why it fits</THCell><THCell>Main risk</THCell><THCell>Trend</THCell>
+            </THead>
+            {filteredPicks.map((pick, i) => {
+               const isBuy = ['Buy', 'Strong Buy'].includes(pick.action);
+               const isAvoid = ['Avoid', 'Reduce'].includes(pick.action);
+               const vColor = isBuy ? '#10b981' : isAvoid ? '#ef4444' : '#f59e0b';
+               const vBg = isBuy ? '#d1fae5' : isAvoid ? '#fee2e2' : '#fef3c7';
+               const confVal = confToPct(pick.confidence);
+               
+               return (
+                 <TRow key={i} $selected={selectedAssetIdx === i} onClick={() => setSelectedAssetIdx(i)}>
+                   <TCell>
+                     <AssetSymbol>{pick.ticker} <span style={{fontWeight:400,color:'#94a3b8'}}>{pick.company}</span></AssetSymbol>
+                     <MiniTags>
+                       <MiniTag>{pick.assetType}</MiniTag>
+                       <MiniTag>{pick.fit}</MiniTag>
+                     </MiniTags>
+                   </TCell>
+                   <TCell>
+                     <VerdictBadge $bg={vBg} $color={vColor}>
+                       <FilterDot $color={vColor} style={{width:4,height:4}}/> {pick.action}
+                     </VerdictBadge>
+                   </TCell>
+                   <TCell>
+                     <ConfRow>
+                       <ConfScore>{confToScore(pick.confidence)}</ConfScore>
+                       <DeltaText $pos={true}>+3 vs last</DeltaText>
+                     </ConfRow>
+                     <ConfBarWrap><ConfBarFill $color={vColor} $pct={confVal} /></ConfBarWrap>
+                   </TCell>
+                   <TCell><TextSnippet>{pick.thesis}</TextSnippet></TCell>
+                   <TCell><TextSnippet style={{color:'#ef4444'}}>{pick.risk}</TextSnippet></TCell>
+                   <TCell>
+                     <SparkWrap>
+                       <ResponsiveContainer width="100%" height="100%">
+                         <AreaChart data={generateChartData(pick.trend, 10)}>
+                           <Area type="monotone" dataKey="value" stroke={vColor} fill={vColor} fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false} />
+                         </AreaChart>
+                       </ResponsiveContainer>
+                     </SparkWrap>
+                   </TCell>
+                 </TRow>
+               )
+            })}
+          </TableWrap>
+        </MainCol>
 
-        <Panel>
-          {/* header */}
-          <PanelHead>
-            <PanelTitleBlock>
-              <Eyebrow>AI Analysis Engine</Eyebrow>
-              <PanelTitle>Stocks, ETFs &amp; commodities to watch</PanelTitle>
-              <PanelSub>
-                {deepResult
-                  ? `${deepResult.picks.length} picks across ${Object.keys(deepResult.sectorBreakdown||{}).length} sectors · GPT-4o · ${deepResult.headlines?.length||0} live headlines`
-                  : 'Select asset types, set preferences, and run a live AI sweep'}
-              </PanelSub>
-            </PanelTitleBlock>
-            <PrefsToggle type="button" onClick={()=>setShowPrefs(v=>!v)}>
-              {showPrefs?<FaChevronUp size={9}/>:<FaChevronDown size={9}/>}
-              Preferences
-            </PrefsToggle>
-          </PanelHead>
+        <SideCol>
+          <JournalWrap>
+            <JournalHead>
+              <JournalTitle><FaBookOpen /> Trading Journal</JournalTitle>
+              <AddNoteBtn type="button" onClick={addNote}><FaPlus /></AddNoteBtn>
+            </JournalHead>
 
-          {/* preferences */}
-          <AnimatePresence>
-            {showPrefs && (
-              <PrefsWrap
-                initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}}
-                exit={{opacity:0,height:0}} transition={{duration:0.22}}
-              >
-                <PrefsGrid>
-                  <PrefGroup>
-                    <PrefLabel htmlFor="risk">Risk appetite</PrefLabel>
-                    <PrefSelect id="risk" value={prefs.riskLevel}
-                      onChange={e=>setPrefs(p=>({...p,riskLevel:e.target.value}))}>
-                      <option value="conservative">Conservative</option>
-                      <option value="moderate">Moderate</option>
-                      <option value="aggressive">Aggressive</option>
-                    </PrefSelect>
-                  </PrefGroup>
-                  <PrefGroup>
-                    <PrefLabel htmlFor="horizon">Horizon</PrefLabel>
-                    <PrefSelect id="horizon" value={prefs.horizon}
-                      onChange={e=>setPrefs(p=>({...p,horizon:e.target.value}))}>
-                      <option value="short">Short · 1–6 mo</option>
-                      <option value="medium">Medium · 6–18 mo</option>
-                      <option value="long">Long · 2–5 yr</option>
-                    </PrefSelect>
-                  </PrefGroup>
-                  <PrefGroup>
-                    <PrefLabel htmlFor="style">Style</PrefLabel>
-                    <PrefSelect id="style" value={prefs.style}
-                      onChange={e=>setPrefs(p=>({...p,style:e.target.value}))}>
-                      <option value="growth">Growth</option>
-                      <option value="value">Value</option>
-                      <option value="income">Income</option>
-                      <option value="balanced">Balanced</option>
-                    </PrefSelect>
-                  </PrefGroup>
-                </PrefsGrid>
-                <div style={{marginTop:'0.85rem'}}>
-                  <PrefLabel style={{display:'block',marginBottom:'0.4rem'}}>Sectors (optional)</PrefLabel>
-                  <SectorsWrap>
-                    {SECTORS.map(s=>(
-                      <Chip key={s} type="button" $active={prefs.sectors.includes(s)}
-                        $border="rgba(167,139,250,0.5)" $activeBg="rgba(167,139,250,0.13)"
-                        $activeColor="#c4b5fd" onClick={()=>toggleSector(s)}>{s}
-                      </Chip>
-                    ))}
-                  </SectorsWrap>
-                </div>
-              </PrefsWrap>
-            )}
-          </AnimatePresence>
-
-          {/* asset type selector */}
-          <FilterRow>
-            <FilterLabel><FaFilter size={9}/>Asset types</FilterLabel>
-            {ASSET_TYPES.map(t=>(
-              <Chip key={t.id} type="button"
-                $active={activeTypes.includes(t.id)}
-                $border={t.border} $activeBg={t.activeBg} $activeColor={t.activeColor}
-                onClick={()=>toggleType(t.id)}>{t.label}
-              </Chip>
-            ))}
-          </FilterRow>
-
-          {/* run controls */}
-          <ControlsBar>
-            <RunBtn type="button" onClick={runDeepAnalysis}
-              disabled={deepRunning||activeTypes.length===0} whileTap={{scale:0.97}}>
-              <FaSearch className={deepRunning?'spin':''} />
-              {deepRunning?'Analysing live headlines…':'Run AI analysis'}
-            </RunBtn>
-
-            {deepResult && !deepRunning && (
-              <>
-                <CtrlDivider />
-                <RunStatus $ok>
-                  <FaCheckCircle />
-                  {deepResult.fromFallback
-                    ?'Reference data (live AI unavailable)'
-                    :`${deepResult.headlines?.length||0} headlines · ${new Date(deepResult.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})}`}
-                </RunStatus>
-              </>
-            )}
-            {deepError && !deepRunning && (
-              <RunStatus>{deepError}</RunStatus>
-            )}
-            {deepResult && !deepRunning && (
-              <ClearBtn type="button" onClick={()=>setDeepResult(null)}>Clear ×</ClearBtn>
-            )}
-          </ControlsBar>
-
-          {/* summary bar */}
-          {deepResult && !deepRunning && (
-            <SummaryBar>
-              <SumStat>
-                <SumLabel>Total picks</SumLabel>
-                <SumValue>{deepResult.picks.length}</SumValue>
-              </SumStat>
-              {Object.entries(counts).map(([action,count])=>(
-                <SumStat key={action}>
-                  <SumLabel>{action}</SumLabel>
-                  <SumValue $color={(actionChip[action]||actionChip.Watch).color}>{count}</SumValue>
-                </SumStat>
-              ))}
-              <SumStat>
-                <SumLabel>Sectors</SumLabel>
-                <SumValue>{Object.keys(deepResult.sectorBreakdown||{}).length}</SumValue>
-              </SumStat>
-            </SummaryBar>
-          )}
-
-          {/* market context */}
-          {deepResult && !deepRunning && deepResult.marketContext && (
-            <ContextBar>
-              <ContextTheme>{deepResult.topTheme} —</ContextTheme>
-              <ContextText>{deepResult.marketContext}</ContextText>
-            </ContextBar>
-          )}
-
-          {/* sector breakdown */}
-          {deepResult && !deepRunning && deepResult.sectorBreakdown && Object.keys(deepResult.sectorBreakdown).length>0 && (
-            <SectorStrip>
-              {Object.entries(deepResult.sectorBreakdown).map(([sector,note])=>(
-                <SectorBadge key={sector}>
-                  <SectorName>{sector}</SectorName>
-                  <SectorNote>— {note}</SectorNote>
-                </SectorBadge>
-              ))}
-            </SectorStrip>
-          )}
-
-          {/* filter strip for deep results */}
-          {deepResult && !deepRunning && (
-            <FilterRow style={{borderTop:'none'}}>
-              <FilterLabel>Show</FilterLabel>
-              {['All','Strong Buy','Buy','Watch','Reduce','Avoid'].map(f=>(
-                <Chip key={f} type="button" $active={filterType===f}
-                  $border={f==='All'?'rgba(148,163,184,0.4)':actionBorder[f]+'88'||'rgba(148,163,184,0.4)'}
-                  $activeBg={f==='All'?'rgba(255,255,255,0.08)':(actionChip[f]||actionChip.Watch).bg}
-                  $activeColor={f==='All'?'#94a3b8':(actionChip[f]||actionChip.Watch).color}
-                  onClick={()=>setFilterType(f)}
-                >{f}{f!=='All'&&counts[f]?` (${counts[f]})`:''}</Chip>
-              ))}
-            </FilterRow>
-          )}
-
-          {/* loading */}
-          {deepRunning && (
-            <LoadingBox>
-              <Spinner />
-              <LoadingDots><span/><span/><span/></LoadingDots>
-              <div style={{fontWeight:800,color:'#f8fafc'}}>Running Robust Large-Scale Analysis</div>
-              <div style={{fontSize:'0.85rem',color:'#a78bfa',marginTop:'0.2rem'}}>Progress: {deepProgress}%</div>
-              <div style={{fontSize:'0.75rem',color:'#475569',marginTop:'0.4rem'}}>
-                Executing 6 specialized micro-batches for 60 picks total
-              </div>
-            </LoadingBox>
-          )}
-
-          {/* deep results — cards */}
-          {deepResult && !deepRunning && (
-            <CardsGrid>
-              <AnimatePresence mode="popLayout">
-                {filteredPicks.map((pick,i)=>(
-                  <Card
-                    key={`${pick.ticker}-${i}`}
-                    $action={pick.action}
-                    layout
-                    initial={{opacity:0,y:14}}
-                    animate={{opacity:1,y:0}}
-                    exit={{opacity:0,scale:0.96}}
-                    transition={{delay:Math.min(i*0.03,0.3),type:'spring',stiffness:340,damping:30}}
+            <NotesList>
+              {notes.length === 0 ? (
+                <EmptyJournal>
+                  <FaBookOpen />
+                  <p>Your journal is empty.<br/>Start tracking your strategy, wins, and lessons here.</p>
+                </EmptyJournal>
+              ) : (
+                notes.map(note => (
+                  <NoteCard
+                    key={note.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
                   >
-                    {/* top */}
-                    <CardTop>
-                      <CardLeft>
-                        <CompanyName title={pick.company}>{pick.company}</CompanyName>
-                        <TickerRow>
-                          <TickerBadge>{pick.ticker}</TickerBadge>
-                          <TagRow>
-                            <Tag $bg="rgba(255,255,255,0.06)" $color="#475569">{pick.assetType}</Tag>
-                            <Tag $bg="rgba(167,139,250,0.1)" $color="#c4b5fd">{pick.fit}</Tag>
-                          </TagRow>
-                        </TickerRow>
-                        <div style={{fontSize:'0.72rem',color:'#1e293b',marginTop:'0.18rem'}}>{pick.sector}</div>
-                      </CardLeft>
-                      <ActionBadge $a={pick.action}>{pick.action}</ActionBadge>
-                    </CardTop>
+                    <NoteText
+                      placeholder="Type your notes..."
+                      value={note.text}
+                      onChange={e => updateNote(note.id, e.target.value)}
+                      rows={3}
+                    />
+                    <NoteMeta>
+                      <NoteDate>{note.date}</NoteDate>
+                      <DeleteNoteBtn onClick={() => deleteNote(note.id)}>
+                        <FaTrash />
+                      </DeleteNoteBtn>
+                    </NoteMeta>
+                  </NoteCard>
+                ))
+              )}
+            </NotesList>
 
-                    {/* trend + confidence */}
-                    <TrendRow>
-                      <TrendIcon $t={pick.trend}><TrendIconEl trend={pick.trend}/></TrendIcon>
-                      <TrendLabel $t={pick.trend}>{pick.trend}</TrendLabel>
-                      <TrendStrength>{pick.trendStrength}</TrendStrength>
-                      <ConfLabel $c={pick.confidence}>· {pick.confidence} conf.</ConfLabel>
-                    </TrendRow>
-
-                    {/* thesis */}
-                    <Thesis>{pick.thesis}</Thesis>
-
-                    {/* entry signal */}
-                    <EntryBox>⤷ {pick.entrySignal}</EntryBox>
-
-                    {/* price context */}
-                    <PriceCtx>{pick.priceContext}</PriceCtx>
-
-                    {/* catalysts */}
-                    <CatalystList>
-                      {pick.catalysts.map((c,ci)=><CatalystItem key={ci}>{c}</CatalystItem>)}
-                    </CatalystList>
-
-                    {/* risk */}
-                    <RiskBox>⚠ {pick.risk}</RiskBox>
-
-                    {/* horizon */}
-                    <HorizonLine>
-                      <span>Horizon</span>
-                      <HorizonVal>{pick.horizon}</HorizonVal>
-                    </HorizonLine>
-                  </Card>
-                ))}
-              </AnimatePresence>
-            </CardsGrid>
-          )}
-
-          {/* default table — shown before any analysis */}
-          {!deepResult && !deepRunning && (
-            <>
-              <ModeRow>
-                <ModeBtn type="button" $active={mode==='longTerm'} onClick={()=>setMode('longTerm')}>
-                  <FaGem size={10}/> Long-term
-                </ModeBtn>
-                <ModeBtn type="button" $active={mode==='shortTerm'} onClick={()=>setMode('shortTerm')}>
-                  <FaBolt size={10}/> Short-term
-                </ModeBtn>
-              </ModeRow>
-              <TableWrap>
-                <Table>
-                  <THead>
-                    <THCell>Asset</THCell><THCell>Ticker</THCell>
-                    <THCell>Why it fits</THCell><THCell>Why now</THCell>
-                    <THCell>Main risk</THCell><THCell>Horizon</THCell>
-                  </THead>
-                  {activeIdeas.map((idea,i)=>(
-                    <TRow key={`${mode}-${idea.asset}-${i}`}
-                      initial={{opacity:0,y:7}} animate={{opacity:1,y:0}}
-                      transition={{delay:Math.min(i*0.05,0.22),duration:0.24}}>
-                      <TCell>
-                        <AssetName>{idea.asset}</AssetName>
-                        <AssetPills>
-                          <Pill $bg="rgba(34,197,94,0.1)" $color="#86efac">{idea.vehicle}</Pill>
-                          <Pill $bg="rgba(59,130,246,0.1)" $color="#93c5fd">{idea.fit}</Pill>
-                        </AssetPills>
-                      </TCell>
-                      <TCell><TickerMono>{idea.ticker}</TickerMono></TCell>
-                      <TCell>{idea.reason}</TCell>
-                      <TCell>{idea.whyNow}</TCell>
-                      <TCell><RiskText>{idea.risk}</RiskText></TCell>
-                      <TCell><HorizonText>{idea.horizon}</HorizonText></TCell>
-                    </TRow>
-                  ))}
-                </Table>
-              </TableWrap>
-            </>
-          )}
-
-          <PanelFooter>
-            {deepResult ? deepResult.disclaimer : investmentModes.disclaimer}
-          </PanelFooter>
-        </Panel>
+            <Footer>
+              Model: BloomVest-Analyst v1.2 · Run {updatedLabel || 'N/A'}<br/>
+              SEC EDGAR: 14 filings | News wire: 892 headlines
+            </Footer>
+          </JournalWrap>
+        </SideCol>
       </Shell>
     </Page>
   );

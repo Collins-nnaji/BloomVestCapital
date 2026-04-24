@@ -12,6 +12,7 @@ import { useAuth } from '../AuthContext';
 const PageContainer = styled.div`
   min-height: 100vh;
   background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  padding-top: 64px;
 `;
 
 /** Trading UI uses light-on-dark typography — keep a dark canvas so text is readable. */
@@ -20,6 +21,7 @@ const SimulationPage = styled.div`
   position: relative;
   background: linear-gradient(165deg, #020617 0%, #0f172a 45%, #111827 100%);
   color: #e2e8f0;
+  padding-top: 64px;
 
   &::before {
     content: '';
@@ -27,11 +29,15 @@ const SimulationPage = styled.div`
     position: absolute;
     inset: 0;
     background-image:
-      linear-gradient(rgba(148, 163, 184, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(148, 163, 184, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: linear-gradient(180deg, black 30%, transparent 95%);
+      linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(circle at center, black 0%, transparent 90%);
     z-index: 0;
+  }
+  &::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, rgba(34,197,94,0.05) 0%, transparent 70%);
   }
 `;
 
@@ -82,15 +88,25 @@ const ScenariosGrid = styled.div`
 
 const ScenarioCard = styled(motion.div)`
   background: #ffffff;
-  border: 1px solid rgba(15,23,42,0.12);
-  border-radius: 16px;
-  padding: 1.75rem;
+  border: 1px solid rgba(15,23,42,0.1);
+  border-radius: 20px;
+  padding: 2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(34,197,94,0.02) 100%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    border-color: rgba(15,23,42,0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    border-color: rgba(34,197,94,0.25);
+    &::before { opacity: 1; }
   }
 `;
 
@@ -194,6 +210,11 @@ const BuilderHero = styled(motion.div)`
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+  @media (max-width: 480px) {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const BuilderCtaBtn = styled.button`
@@ -549,50 +570,71 @@ const ExitButton = styled.button`
 `;
 
 const BalanceBar = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
-  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  padding: 1.25rem 1.75rem;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 3rem;
   flex-wrap: wrap;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+  @media (max-width: 640px) {
+    gap: 1.5rem;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+  }
 
   @media (max-width: 480px) {
     gap: 1rem;
-    padding: 0.85rem 1rem;
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
-const BalanceStat = styled.div`min-width: 100px;`;
-const BalanceLabel = styled.div`font-size:0.65rem;color:rgba(255,255,255,0.35);text-transform:uppercase;font-weight:700;letter-spacing:0.8px;margin-bottom:0.15rem;`;
-const BalanceValue = styled.div`font-size:1.2rem;font-weight:800;color:${p => p.$color || 'white'};`;
+const BalanceStat = styled.div`
+  min-width: 120px;
+  @media (max-width: 480px) { min-width: 0; width: 100%; }
+`;
+const BalanceLabel = styled.div`font-size:0.6rem;color:rgba(255,255,255,0.3);text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:0.25rem;`;
+const BalanceValue = styled.div`font-size:1.4rem;font-weight:800;color:${p => p.$color || 'white'};letter-spacing:-0.02em;`;
 
 const Card = styled(motion.div)`
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 14px;
+  border-radius: 20px;
   overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  position: relative;
+  &::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, transparent 100%);
+  }
 `;
 
 const CardHead = styled.div`
-  padding: 0.85rem 1.25rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(255,255,255,0.01);
 `;
 
 const CardLabel = styled.h3`
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.7);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.4);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  svg { color: #22c55e; }
+  letter-spacing: 1px;
+  svg { color: #22c55e; font-size: 0.9rem; }
 `;
 
 const CardBody = styled.div`padding: 1.25rem;`;
@@ -629,13 +671,14 @@ const StockRow = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0.4rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
-  transition: all 0.2s ease;
-  border-radius: 6px;
-  &:hover { background: rgba(34,197,94,0.06); }
-  ${p => p.$active && `background: rgba(34,197,94,0.08); border-left: 3px solid #22c55e;`}
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+  margin-bottom: 0.25rem;
+  &:hover { background: rgba(34,197,94,0.08); transform: scale(1.01); }
+  ${p => p.$active && `background: rgba(34,197,94,0.12); border-left: 4px solid #22c55e; box-shadow: 0 4px 15px rgba(0,0,0,0.2);`}
 `;
 
 const StockSymbol = styled.div`font-weight:700;color:white;font-size:0.85rem;`;
@@ -663,15 +706,20 @@ const MetricsRow = styled.div`
 `;
 
 const MetricBox = styled.div`
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 8px;
-  padding: 0.5rem;
+  border-radius: 12px;
+  padding: 0.65rem 0.5rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  transition: border-color 0.2s;
+  &:hover { border-color: rgba(34,197,94,0.3); }
 `;
 
-const MetricLabel = styled.div`font-size:0.6rem;color:rgba(255,255,255,0.3);text-transform:uppercase;font-weight:600;`;
-const MetricValue = styled.div`font-size:0.85rem;font-weight:700;color:white;`;
+const MetricLabel = styled.div`font-size:0.55rem;color:rgba(255,255,255,0.25);text-transform:uppercase;font-weight:800;letter-spacing:1px;`;
+const MetricValue = styled.div`font-size:1rem;font-weight:800;color:white;letter-spacing:-0.01em;`;
 
 const TradeForm = styled.div`
   background: rgba(34,197,94,0.06);

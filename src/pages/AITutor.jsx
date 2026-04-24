@@ -9,6 +9,7 @@ const PageContainer = styled.div`
   background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
   display: flex;
   flex-direction: column;
+  padding-top: 64px;
 `;
 
 const Header = styled.section`
@@ -23,6 +24,11 @@ const HeaderContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const HeaderLeft = styled.div``;
@@ -158,6 +164,9 @@ const SuggestionsGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 0.6rem;
   margin-bottom: 1.5rem;
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const SuggestionCard = styled(motion.button)`

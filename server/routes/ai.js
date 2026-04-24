@@ -63,9 +63,9 @@ function sanitizeAiJson(raw) {
   return clean.trim();
 }
 
-const RSS_PER_FEED = 8;
-const RSS_MAX_TOTAL = 120;
-const RSS_FETCH_MS = 12000;
+const RSS_PER_FEED = 12;
+const RSS_MAX_TOTAL = 180;
+const RSS_FETCH_MS = 15000;
 
 // ─── Alpha Vantage: market news with sentiment ──────────────────────────────
 // Returns { articles: [...], tickerSentiments: Map<ticker, {score, label, count}> }
@@ -711,7 +711,7 @@ CORE REQUIREMENTS:
       "thesis": "...",
       "entrySignal": "...",
       "priceContext": "...",
-      "catalysts": ["...", "..."],
+      "catalysts": ["...", "...", "..."],
       "risk": "...",
       "horizon": "...",
       "fit": "Balanced|Growth|Value|Income|Speculative|Defensive|Momentum|Compounder|Core|Hedge|Catalyst|Cyclical"
@@ -723,7 +723,10 @@ CORE REQUIREMENTS:
 RULES:
 - Calibrate to the user's risk level, horizon, and preferred asset types.
 - Output valid JSON only, no markdown fences.
-- Keep your analysis professional, technical, and objective.`;
+- Keep your analysis professional, technical, and objective.
+- For each pick, the "thesis" should be 2-3 detailed sentences.
+- "entrySignal" should be a specific price action or technical trigger.
+- "priceContext" should reflect the current market sentiment described in the headlines.`;
 
 router.post('/deep-analysis', async (req, res) => {
   try {
@@ -765,6 +768,17 @@ router.post('/deep-analysis', async (req, res) => {
       sectors.length ? `Preferred sectors: ${sectors.join(', ')}` : 'Sectors: no preference — diversify across opportunities in the requested asset types',
     ].join('\n');
 
+    const segmentInstructions = [
+      "Focus on Mega-Cap leaders and major market indices mentioned in the headlines.",
+      "Focus on Mid-Cap growth opportunities and emerging sector leaders.",
+      "Focus on Value plays, Cyclical stocks, and Dividend payers.",
+      "Focus on Technology, AI infrastructure, and Semiconductor specialized plays.",
+      "Focus on Energy, Commodities, and related ETFs/Proxies.",
+      "Focus on Financials, Healthcare, and Defensive sectors.",
+      "Focus on Crypto, Emerging Tech, and high-volatility Catalyst plays.",
+      "Focus on a diverse mix of under-the-radar names mentioned in the headlines that haven't been picked in other segments."
+    ];
+
     const userPrompt = [
       `Today's date: ${new Date().toISOString().slice(0, 10)}`,
       '',
@@ -777,9 +791,9 @@ router.post('/deep-analysis', async (req, res) => {
       headlineLines,
       '',
       `BATCH INFO: This is request ${batchIndex} of ${totalBatches} for a large-scale analysis.`,
-      totalBatches > 1 ? `Focus on a unique segment of the market or specific tickers from the headlines that wouldn't normally be the "top 10" most obvious picks, to ensure a diverse final aggregated list.` : '',
+      `SEGMENT SPECIALIZATION: ${segmentInstructions[batchIndex - 1] || 'Focus on unique tickers from the headlines to ensure a diverse final aggregated list.'}`,
       '',
-      `INSTRUCTIONS: Using ALL the above data return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 10 items), disclaimer (string).`,
+      `INSTRUCTIONS: Using ALL the above data return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 12 items), disclaimer (string).`,
       'The picks MUST be grounded in real data above.',
       'For Crypto picks, use the crypto sentiment data. For ETFs and Commodities, tie to macro headline themes.',
       'Every pick must have all required fields including trend, trendStrength, assetType, entrySignal, priceContext, and exactly 3 catalysts.',

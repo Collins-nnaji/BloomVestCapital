@@ -12,11 +12,9 @@ const PageWrapper = styled.div`
 
 const MainContent = styled.main`
   flex-grow: 1;
-  margin-top: 80px;
   padding-bottom: env(safe-area-inset-bottom, 0);
   
   @media (max-width: 768px) {
-    margin-top: 60px;
     padding-bottom: 2rem;
   }
 `;
