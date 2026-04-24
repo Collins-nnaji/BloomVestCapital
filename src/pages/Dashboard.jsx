@@ -509,12 +509,11 @@ export default function Dashboard() {
         }
       };
 
-      const batchPromises = [];
+      const results = [];
       for (let i = 1; i <= TOTAL_BATCHES; i++) {
-        batchPromises.push(runBatch(i));
+        const res = await runBatch(i);
+        if (res) results.push(res);
       }
-      
-      const results = (await Promise.all(batchPromises)).filter(r => r !== null);
       
       if (results.length === 0) throw new Error('All analysis batches failed');
 

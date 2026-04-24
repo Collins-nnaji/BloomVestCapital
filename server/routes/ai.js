@@ -763,7 +763,7 @@ router.post('/deep-analysis', async (req, res) => {
 
     const { headlines, tickerSentiments } = await fetchAggregatedHeadlines();
     const headlineLines = headlines.length
-      ? buildHeadlineBlock(headlines, 100)
+      ? buildHeadlineBlock(headlines, 60)
       : '(No live headlines available; synthesise from broad 2026 macro themes: AI infrastructure, rate policy, energy transition, consumer health.)';
 
     const sentimentTable = buildTickerSentimentTable(tickerSentiments);
@@ -928,7 +928,7 @@ router.post('/deep-analysis', async (req, res) => {
       const completion = await getOpenAiClient().chat.completions.create({
         model: resolveModel('analysis', 'gpt-4o'),
         temperature: 0.45,
-        max_tokens: 3000,
+        max_tokens: 2000,
         messages: [
           { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
           { role: 'user', content: userPrompt },
@@ -973,7 +973,7 @@ router.post('/deep-analysis', async (req, res) => {
           const completion = await openai.chat.completions.create({
             model: process.env.OPENAI_ANALYSIS_MODEL || 'gpt-4o',
             temperature: 0.45,
-            max_tokens: 3000,
+            max_tokens: 2500,
             messages: [
               { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
               { role: 'user', content: userPrompt },
