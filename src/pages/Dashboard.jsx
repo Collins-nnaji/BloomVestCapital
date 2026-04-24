@@ -382,6 +382,34 @@ const ErrorBanner = styled.div`
   font-size:0.85rem;font-weight:600;
 `;
 
+const ProgressContainer = styled(motion.div)`
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+const ProgressBarWrap = styled.div`
+  flex: 1;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  overflow: hidden;
+`;
+const ProgressFill = styled(motion.div)`
+  height: 100%;
+  background: #0f172a;
+`;
+const ProgressText = styled.div`
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  min-width: 120px;
+`;
+
 /* ── trend icon helper ──────────────────────────────── */
 function TrendIconEl({ trend }) {
   if (trend === 'Uptrend')   return <FaArrowUp />;
@@ -686,6 +714,26 @@ export default function Dashboard() {
               </PrefGroup>
             </PrefsGrid>
           </PrefsWrap>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {deepRunning && (
+          <ProgressContainer
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+          >
+            <ProgressText>Analyzing Batch {Math.ceil((deepProgress / 100) * 6) || 1} of 6</ProgressText>
+            <ProgressBarWrap>
+              <ProgressFill 
+                initial={{ width: 0 }}
+                animate={{ width: `${deepProgress}%` }}
+                transition={{ duration: 0.5 }}
+              />
+            </ProgressBarWrap>
+            <ProgressText style={{ minWidth: '40px', textAlign: 'right' }}>{deepProgress}%</ProgressText>
+          </ProgressContainer>
         )}
       </AnimatePresence>
 
