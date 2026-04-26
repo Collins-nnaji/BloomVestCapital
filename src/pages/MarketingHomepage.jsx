@@ -1,6 +1,7 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(18px); }
@@ -689,7 +690,12 @@ const MarketingHomepage = () => (
     {/* ── Hero ── */}
     <Container>
       <Hero>
-        <HeroLeft>
+        <HeroLeft
+          as={motion.div}
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
           <Eyebrow>
             <span>00</span>
             <EyebrowLine />
@@ -717,7 +723,12 @@ const MarketingHomepage = () => (
         </HeroLeft>
 
         {/* Who we work with card */}
-        <HeroCard>
+        <HeroCard
+          as={motion.div}
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+        >
           <HeroCardHeader>
             <HeroCardLabel>WHO WE WORK WITH</HeroCardLabel>
             <HeroCardSub>BLOOMVEST CAPITAL</HeroCardSub>
@@ -743,7 +754,13 @@ const MarketingHomepage = () => (
       </Hero>
 
       {/* Stats */}
-      <StatsBar>
+      <StatsBar
+        as={motion.div}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
         <Stat><StatNum>£840M+</StatNum><StatLabel>Capital advised on</StatLabel></Stat>
         <Stat><StatNum>47</StatNum><StatLabel>Engagements closed</StatLabel></Stat>
         <Stat><StatNum>12</StatNum><StatLabel>Sectors covered</StatLabel></Stat>
@@ -752,7 +769,13 @@ const MarketingHomepage = () => (
 
     {/* ── What We Do ── */}
     <WhatWeDo>
-      <Container>
+      <Container
+        as={motion.div}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
         <SectionEyebrow>
           <SectionNum>01</SectionNum>
           <EyebrowLine />
@@ -812,7 +835,13 @@ const MarketingHomepage = () => (
 
     {/* ── How We Work ── */}
     <HowSection>
-      <Container>
+      <Container
+        as={motion.div}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
         <SectionEyebrow>
           <SectionNum>02</SectionNum>
           <EyebrowLine />
@@ -867,7 +896,13 @@ const MarketingHomepage = () => (
 
     {/* ── Selected Work ── */}
     <WorkSection>
-      <Container>
+      <Container
+        as={motion.div}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-100px' }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
         <SectionEyebrow>
           <SectionNum>03</SectionNum>
           <EyebrowLine />

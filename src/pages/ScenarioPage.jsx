@@ -9,6 +9,37 @@ import { stocks } from '../data/stockData';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
 
+const SCENARIO_SHOCKS = {
+  'first-investment': {
+    title: '⚠️ Sudden Market Volatility',
+    desc: 'Inflation reports just revealed a sudden 4.2% jump! The overall market pulls back as investors anticipate interest rate hikes. Tech stocks drop 8% while consumer staples hold steady.',
+    question: 'How should you respond to this short-term price drop?',
+    options: [
+      { text: 'Panic sell everything to stop further losses.', correct: false, explanation: 'Panic selling locks in short-term losses and avoids recovering on the long timeline.' },
+      { text: 'Stay calm, re-evaluate your holdings, and consider buying at a discount.', correct: true, explanation: 'Legendary investors buy dips of quality assets during emotional panic.' },
+      { text: 'Ignore asset performance entirely and guess.', correct: false, explanation: 'Blind conviction ignores important economic environments.' }
+    ]
+  },
+  'dividend-income': {
+    title: '📉 Rate Hike Slowdown',
+    desc: 'Corporate yields stabilize as dividend payouts stagnate across industrial sectors.',
+    question: 'What should dividend investors optimize?',
+    options: [
+      { text: 'Dividend consistency over peak yields.', correct: true, explanation: 'A sustainable track record guarantees payments.' },
+      { text: 'High payout ratios irrespective of profits.', correct: false, explanation: 'Unsustainable payout ratios risk company liquidity.' }
+    ]
+  },
+  'tech-growth': {
+    title: '🚀 AI Sector Bubble Warning',
+    desc: 'Analysts warn that AI stock valuations are getting ahead of fundamentals. P/E ratios peak.',
+    question: 'How do you protect a growth-heavy tech portfolio?',
+    options: [
+      { text: 'Double down entirely on the highest P/E growth stocks.', correct: false, explanation: 'Concentrated high P/E investing leaves you open to major drawdown risks.' },
+      { text: 'Balance tech growth with defensive value sectors (Consumer/Healthcare).', correct: true, explanation: 'Diversification stabilizes capital during growth rotations.' }
+    ]
+  }
+};
+
 const PageContainer = styled.div`
   min-height: 100vh;
   background: #f5f5f0;
@@ -2354,7 +2385,36 @@ function LearnTab() {
 
 const ScenarioPage = () => {
   const { user } = useAuth();
+
+  if (!user) {
+    return (
+      <PageContainer>
+        <ContentWrapper>
+          <SignInGate>
+            <SignInGateIcon>🎓</SignInGateIcon>
+            <SignInGateTitle>Sign in to access Academy</SignInGateTitle>
+            <SignInGateDesc>
+              Your progress is saved to your account so you can pick up exactly where you left off — across any device.
+            </SignInGateDesc>
+            <SignInGatePerks>
+              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Progress saved permanently to your account</SignInGatePerk>
+              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Full interactive scenarios & courses</SignInGatePerk>
+              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> AI Coaching tailored to your choices</SignInGatePerk>
+              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Free forever — no credit card needed</SignInGatePerk>
+            </SignInGatePerks>
+            <SignInGateBtn href="/auth?mode=signin" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Sign in to continue</SignInGateBtn>
+            <SignInGateSecondary href="/auth?mode=signup" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Create a free account</SignInGateSecondary>
+          </SignInGate>
+        </ContentWrapper>
+      </PageContainer>
+    );
+  }
+
   const [tab, setTab] = useState('learn');
+  const [marketShock, setMarketShock] = useState(null);
+  const [shockAnswered, setShockAnswered] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [hasTriggeredShock, setHasTriggeredShock] = useState(false);
   const [view, setView] = useState('select');
   const [activeScenario, setActiveScenario] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -2498,6 +2558,10 @@ const ScenarioPage = () => {
     setShowCompletion(false);
     setCompletionReview('');
     setSearchQuery('');
+    setMarketShock(null);
+    setShockAnswered(false);
+    setSelectedOption(null);
+    setHasTriggeredShock(false);
     setView('sim');
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -2651,6 +2715,18 @@ const ScenarioPage = () => {
 
     const newCompleted = checkObjectives(newHoldings, newBalance);
     setCompletedObjectives(newCompleted);
+
+    const investedValue = newHoldings.reduce((sum, h) => {
+      const s = stocks.find(st => st.symbol === h.symbol);
+      return sum + (s ? s.price * h.shares : 0);
+    }, 0);
+
+    if (!hasTriggeredShock && activeScenario && SCENARIO_SHOCKS[activeScenario.id] && investedValue >= (activeScenario.startingBalance * 0.4)) {
+      setMarketShock(SCENARIO_SHOCKS[activeScenario.id]);
+      setShockAnswered(false);
+      setSelectedOption(null);
+      setHasTriggeredShock(true);
+    }
 
     const allDone = activeScenario && newCompleted.length === activeScenario.objectives.length;
 
@@ -3546,6 +3622,102 @@ const ScenarioPage = () => {
               <TryAgainBtn onClick={() => { setShowCompletion(false); setView('select'); setActiveScenario(null); }}>
                 Try Another Scenario
               </TryAgainBtn>
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {marketShock && (
+          <ModalOverlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ModalContent
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              style={{ maxWidth: '550px', borderColor: '#f87171' }}
+            >
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🚨</div>
+              <ModalTitle style={{ color: '#f87171' }}>{marketShock.title}</ModalTitle>
+              <ModalSubtitle style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '2rem' }}>
+                {marketShock.desc}
+              </ModalSubtitle>
+
+              <h3 style={{ color: 'white', fontSize: '1.2rem', marginBottom: '1.5rem', fontFamily: "'Space Grotesk', sans-serif" }}>
+                {marketShock.question}
+              </h3>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+                {marketShock.options.map((opt, idx) => {
+                  const isSel = selectedOption === idx;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => !shockAnswered && setSelectedOption(idx)}
+                      disabled={shockAnswered}
+                      style={{
+                        background: isSel ? 'rgba(34,197,94,0.1)' : 'rgba(255,255,255,0.03)',
+                        border: isSel ? '1px solid #22c55e' : '1px solid rgba(255,255,255,0.08)',
+                        padding: '1rem',
+                        borderRadius: '12px',
+                        color: 'white',
+                        textAlign: 'left',
+                        cursor: shockAnswered ? 'default' : 'pointer',
+                        opacity: shockAnswered && !isSel ? 0.5 : 1,
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {opt.text}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {shockAnswered && selectedOption !== null && (
+                <div
+                  style={{
+                    background: marketShock.options[selectedOption].correct ? 'rgba(34,197,94,0.1)' : 'rgba(248,113,113,0.1)',
+                    border: marketShock.options[selectedOption].correct ? '1px solid #22c55e' : '1px solid #f87171',
+                    padding: '1.25rem',
+                    borderRadius: '12px',
+                    color: marketShock.options[selectedOption].correct ? '#4ade80' : '#f87171',
+                    textAlign: 'left',
+                    marginBottom: '2rem',
+                    fontSize: '0.92rem',
+                    lineHeight: 1.5
+                  }}
+                >
+                  <strong>{marketShock.options[selectedOption].correct ? '✅ Correct Decision!' : '❌ Not Quite.'}</strong>
+                  <p style={{ margin: '0.5rem 0 0', color: '#e2e8f0' }}>{marketShock.options[selectedOption].explanation}</p>
+                </div>
+              )}
+
+              {!shockAnswered ? (
+                <TryAgainBtn
+                  disabled={selectedOption === null}
+                  onClick={() => setShockAnswered(true)}
+                  style={{ width: '100%', opacity: selectedOption === null ? 0.4 : 1 }}
+                >
+                  Submit Choice
+                </TryAgainBtn>
+              ) : (
+                <TryAgainBtn
+                  onClick={() => {
+                    setMarketShock(null);
+                    callAdvisor('SHOCK_RESPONSE', {
+                      eventTitle: marketShock.title,
+                      choice: marketShock.options[selectedOption].text,
+                      isCorrect: marketShock.options[selectedOption].correct
+                    });
+                  }}
+                  style={{ width: '100%', background: '#22c55e' }}
+                >
+                  Continue Simulation
+                </TryAgainBtn>
+              )}
             </ModalContent>
           </ModalOverlay>
         )}

@@ -402,6 +402,15 @@ const THBtn = styled.button`
   cursor: pointer; &:hover { background: #e2e8f0; color: #0f172a; }
 `;
 
+const CopyPicksBtn = styled.button`
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: #eff6ff; border: 1px solid rgba(37,99,235,0.25); border-radius: 6px;
+  padding: 0.35rem 0.75rem; font-size: 0.7rem; font-weight: 700; color: #2563eb;
+  cursor: pointer; transition: all 0.2s; text-transform: none; letter-spacing: normal;
+  &:hover { background: #dbeafe; border-color: rgba(37,99,235,0.45); color: #1d4ed8; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+`;
+
 const TableWrap = styled.div`
   flex: 1; overflow-x: auto; overflow-y: auto;
   &::-webkit-scrollbar { display: none; }
@@ -1007,6 +1016,31 @@ export default function Dashboard() {
     ? new Date(brief.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})
     : null;
 
+  const copyPicksToNotes = useCallback(() => {
+    if (!deepResult || !deepResult.picks) return;
+    const buys = deepResult.picks.filter(p => ['Buy', 'Strong Buy'].includes(p.action));
+    
+    let text = '';
+    if (buys.length > 0) {
+      text = `Recommended buys from AI analysis:\n\n` + 
+        buys.map(p => `• ${p.ticker} (${p.company || p.assetType}): ${p.action}\n  Thesis: ${p.thesis}\n  Risk: ${p.risk}`).join('\n\n');
+    } else {
+      text = `AI Analysis run at ${new Date(deepResult.generatedAt).toLocaleString()}.\nNo explicit Buy recommendations were made.`;
+    }
+
+    const newNote = {
+      id: Date.now(),
+      title: `AI Recommendations - ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`,
+      text: text,
+      tag: 'review',
+      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+    };
+    
+    setNotes(prev => [newNote, ...prev]);
+    setFocusedNote(newNote.id);
+    setDashTab('journal');
+  }, [deepResult]);
+
   const rawPicks = deepResult ? deepResult.picks : [];
 
   const confToPct = (c) => c === 'High' ? 85 : c === 'Medium' ? 65 : 45;
@@ -1447,9 +1481,14 @@ export default function Dashboard() {
             <THLeft>AI Picks <span>{filteredPicks.length} results</span></THLeft>
             <THRight>
               {deepResult && (
-                <THGroup style={{color:'#10b981'}}>
-                  Analysis complete · {new Date(deepResult.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})}
-                </THGroup>
+                <>
+                  <CopyPicksBtn type="button" onClick={copyPicksToNotes}>
+                    <FaBookOpen /> Copy Buys to Notes
+                  </CopyPicksBtn>
+                  <THGroup style={{color:'#10b981'}}>
+                    Analysis complete · {new Date(deepResult.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})}
+                  </THGroup>
+                </>
               )}
             </THRight>
           </TableHeader>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(16px); }
@@ -408,7 +409,12 @@ const MarketingServices = () => {
     <Page>
       <Container>
         {/* Hero */}
-        <HeroSection>
+        <HeroSection
+          as={motion.section}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
           <Eyebrow>
             <span>00</span>
             <EyebrowLine />
@@ -428,7 +434,12 @@ const MarketingServices = () => {
         </HeroSection>
 
         {/* Accordion Nav */}
-        <AccordionNav>
+        <AccordionNav
+          as={motion.div}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+        >
           {SERVICES.map((s, i) => (
             <AccordionItem
               key={s.id}
@@ -446,7 +457,15 @@ const MarketingServices = () => {
 
       {/* Service Sections */}
       {SERVICES.map((s) => (
-        <Container key={s.id} id={s.id}>
+        <Container
+          key={s.id}
+          id={s.id}
+          as={motion.div}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
+        >
           <ServiceDetail>
             <ServiceDetailInner>
               <BigNum>{s.num}</BigNum>
