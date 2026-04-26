@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FaBars, FaTimes, FaChevronRight, FaSignOutAlt } from 'react-icons/fa';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
@@ -20,9 +20,7 @@ const NavbarContainer = styled.header`
 
   ${(props) =>
     props.$scrolled &&
-    `
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  `}
+    `box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);`}
 `;
 
 const NavWrapper = styled.div`
@@ -152,51 +150,104 @@ const SignInLink = styled(RouterLink)`
   }
 `;
 
-const UserWrap = styled.div`
+/* ── Avatar dropdown ─────────────────────────────────────────────── */
+const AvatarWrap = styled.div`
+  position: relative;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+`;
+
+const AvatarBtn = styled.button`
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a2f 100%);
+  border: 2px solid rgba(34, 197, 94, 0.35);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-
-  @media (max-width: 1024px) {
-    display: none;
-  }
-`;
-
-const UserHint = styled.span`
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: rgba(15, 23, 42, 0.45);
-  max-width: 120px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const SignOutBtn = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0.85rem;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  color: #64748b;
-  border: 1px solid rgba(15, 23, 42, 0.1);
-  background: rgba(15, 23, 42, 0.03);
-  cursor: pointer;
+  justify-content: center;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:hover {
-    color: #b91c1c;
-    border-color: rgba(185, 28, 28, 0.25);
-    background: rgba(254, 226, 226, 0.5);
-  }
-
-  @media (max-width: 1024px) {
-    display: none;
+    border-color: rgba(34, 197, 94, 0.7);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.12);
   }
 `;
 
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #fff;
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+  min-width: 210px;
+  padding: 0.5rem;
+  z-index: 2000;
+  opacity: ${p => p.$open ? 1 : 0};
+  pointer-events: ${p => p.$open ? 'all' : 'none'};
+  transform: ${p => p.$open ? 'translateY(0)' : 'translateY(-6px)'};
+  transition: opacity 0.18s ease, transform 0.18s ease;
+`;
+
+const DropdownProfile = styled.div`
+  padding: 0.65rem 0.85rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 0.4rem;
+`;
+
+const DropdownName = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const DropdownEmail = styled.div`
+  font-size: 0.72rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const DropdownSignOut = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.83rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.07);
+    color: #dc2626;
+  }
+
+  svg { font-size: 0.8rem; }
+`;
+
+/* ── Mobile ─────────────────────────────────────────────────────── */
 const MobileToggle = styled.button`
   display: none;
   background: transparent;
@@ -207,9 +258,7 @@ const MobileToggle = styled.button`
   padding: 0.35rem;
   transition: color 0.2s;
 
-  &:hover {
-    color: #22c55e;
-  }
+  &:hover { color: #22c55e; }
 
   @media (max-width: 1024px) {
     display: flex;
@@ -294,21 +343,11 @@ const MobileLink = styled(RouterLink)`
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   transition: all 0.2s;
 
-  &:last-child {
-    border-bottom: none;
-  }
-  &:hover {
-    color: #22c55e;
-    transform: translateX(4px);
-  }
-  &.active {
-    color: #15803d;
-  }
+  &:last-child { border-bottom: none; }
+  &:hover { color: #22c55e; transform: translateX(4px); }
+  &.active { color: #15803d; }
 
-  svg {
-    font-size: 0.75rem;
-    opacity: 0.4;
-  }
+  svg { font-size: 0.75rem; opacity: 0.4; }
 `;
 
 const MobileAuthBtn = styled(RouterLink)`
@@ -326,10 +365,7 @@ const MobileAuthBtn = styled(RouterLink)`
   margin-bottom: 0.65rem;
   transition: all 0.25s;
 
-  &:hover {
-    background: #22c55e;
-    color: #0f172a;
-  }
+  &:hover { background: #22c55e; color: #0f172a; }
 `;
 
 const MobileSignOut = styled.button`
@@ -348,17 +384,16 @@ const MobileSignOut = styled.button`
   cursor: pointer;
   margin-bottom: 0.5rem;
 
-  &:hover {
-    border-color: rgba(185, 28, 28, 0.3);
-    color: #b91c1c;
-  }
+  &:hover { border-color: rgba(185, 28, 28, 0.3); color: #b91c1c; }
 `;
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -366,56 +401,73 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location]);
+  useEffect(() => { setMenuOpen(false); }, [location]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : 'auto';
-    return () => {
-      document.body.style.overflow = 'auto';
-    };
+    return () => { document.body.style.overflow = 'auto'; };
   }, [menuOpen]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const isActive = (path) => (location.pathname === path ? 'active' : '');
 
   const displayName = user?.name || user?.email?.split('@')[0] || '';
+  const initials = displayName
+    ? displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+    : '?';
 
   return (
     <>
       <NavbarContainer $scrolled={scrolled}>
         <NavWrapper>
-          <Logo to="/home">
+          <Logo to="/">
             <img src="/bloomvestlogo.png" alt="BloomVest" />
           </Logo>
 
           <NavCenter>
             <NavGroup>
-              <NavLink to="/home" className={isActive('/home')}>
-                Home
-              </NavLink>
-              <NavLink to="/marketing-services" className={isActive('/marketing-services')}>
-                Services
-              </NavLink>
+              <NavLink to="/" className={isActive('/')}>Home</NavLink>
+              <NavLink to="/marketing-services" className={isActive('/marketing-services')}>Services</NavLink>
             </NavGroup>
             <NavGroup $highlight>
-              <NavLink to="/signals" className={isActive('/signals')}>
-                AI Invest Signals
-              </NavLink>
-              <NavLink to="/scenario" className={isActive('/scenario')}>
-                Academy
-              </NavLink>
+              <NavLink to="/signals" className={isActive('/signals')}>BloomVest Intelligence</NavLink>
+              <NavLink to="/learn" className={isActive('/learn')}>Learn</NavLink>
             </NavGroup>
           </NavCenter>
 
           <NavRight>
             {user ? (
-              <UserWrap>
-                {displayName && <UserHint title={user.email || ''}>{displayName}</UserHint>}
-                <SignOutBtn type="button" onClick={() => signOut()}>
-                  <FaSignOutAlt /> Sign out
-                </SignOutBtn>
-              </UserWrap>
+              <AvatarWrap ref={dropdownRef}>
+                <AvatarBtn
+                  type="button"
+                  onClick={() => setDropdownOpen(o => !o)}
+                  aria-label="Account menu"
+                >
+                  {initials}
+                </AvatarBtn>
+                <DropdownMenu $open={dropdownOpen}>
+                  <DropdownProfile>
+                    <DropdownName>{displayName}</DropdownName>
+                    {user.email && <DropdownEmail>{user.email}</DropdownEmail>}
+                  </DropdownProfile>
+                  <DropdownSignOut
+                    type="button"
+                    onClick={() => { setDropdownOpen(false); signOut(); }}
+                  >
+                    <FaSignOutAlt /> Sign out
+                  </DropdownSignOut>
+                </DropdownMenu>
+              </AvatarWrap>
             ) : (
               <SignInLink to="/auth">Sign in</SignInLink>
             )}
@@ -436,19 +488,11 @@ const Navbar = () => {
 
         {user ? (
           <>
-            {displayName && (
-              <MobileSectionLabel style={{ marginBottom: '0.35rem' }}>Signed in</MobileSectionLabel>
-            )}
-            <div
-              style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: '#0f172a',
-                padding: '0 0.5rem 0.75rem',
-                wordBreak: 'break-word',
-              }}
-            >
-              {user.email || displayName}
+            <MobileSectionLabel style={{ marginBottom: '0.35rem' }}>Signed in as</MobileSectionLabel>
+            <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0f172a', padding: '0 0.5rem 0.75rem', wordBreak: 'break-word' }}>
+              {displayName}{user.email && displayName !== user.email && (
+                <div style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 500, marginTop: '0.1rem' }}>{user.email}</div>
+              )}
             </div>
             <MobileSignOut type="button" onClick={() => { signOut(); setMenuOpen(false); }}>
               <FaSignOutAlt /> Sign out
@@ -462,22 +506,14 @@ const Navbar = () => {
 
         <MobileSection>
           <MobileSectionLabel>Company</MobileSectionLabel>
-          <MobileLink to="/home" className={isActive('/home')}>
-            Home <FaChevronRight />
-          </MobileLink>
-          <MobileLink to="/marketing-services" className={isActive('/marketing-services')}>
-            Services <FaChevronRight />
-          </MobileLink>
+          <MobileLink to="/" className={isActive('/')}>Home <FaChevronRight /></MobileLink>
+          <MobileLink to="/marketing-services" className={isActive('/marketing-services')}>Services <FaChevronRight /></MobileLink>
         </MobileSection>
 
         <MobileSection>
           <MobileSectionLabel>Intelligence Tools</MobileSectionLabel>
-          <MobileLink to="/signals" className={isActive('/signals')}>
-            AI Invest Signals <FaChevronRight />
-          </MobileLink>
-          <MobileLink to="/scenario" className={isActive('/scenario')}>
-            Academy <FaChevronRight />
-          </MobileLink>
+          <MobileLink to="/signals" className={isActive('/signals')}>BloomVest Intelligence <FaChevronRight /></MobileLink>
+          <MobileLink to="/learn" className={isActive('/learn')}>Learn <FaChevronRight /></MobileLink>
         </MobileSection>
       </MobileMenu>
     </>

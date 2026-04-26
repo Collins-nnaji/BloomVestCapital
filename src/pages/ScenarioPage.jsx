@@ -1285,72 +1285,193 @@ const ProGateBtn = styled(Link)`
 /* ── Learn tab styled components ─────────────────────────────────────────── */
 const TabBar = styled.div`
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  background: rgba(15,23,42,0.07);
-  border-radius: 12px;
-  padding: 0.3rem;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 0.25rem;
   width: fit-content;
-  flex-wrap: wrap;
+  @media (max-width: 480px) { width: 100%; }
 `;
 
 const TabBtn = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.4rem;
-  border-radius: 9px;
+  gap: 0.45rem;
+  padding: 0.55rem 1.3rem;
+  border-radius: 8px;
   border: none;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.88rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.83rem;
   font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
-  transition: all 0.2s;
-  background: ${p => p.$active ? '#22c55e' : 'transparent'};
-  color: ${p => p.$active ? '#fff' : 'rgba(15,23,42,0.6)'};
-  &:hover { background: ${p => p.$active ? '#16a34a' : 'rgba(15,23,42,0.08)'}; color: ${p => p.$active ? '#fff' : '#0f172a'}; }
+  transition: all 0.18s;
+  background: ${p => p.$active ? '#0f172a' : 'transparent'};
+  color: ${p => p.$active ? '#fff' : '#64748b'};
+  box-shadow: ${p => p.$active ? '0 2px 8px rgba(15,23,42,0.18)' : 'none'};
+  &:hover { color: ${p => p.$active ? '#fff' : '#0f172a'}; }
+  @media (max-width: 480px) { flex: 1; justify-content: center; padding: 0.5rem 0.75rem; font-size: 0.78rem; }
 `;
 
-const LearnWrap = styled.div`
-  max-width: 900px;
-`;
-
-const LearnProgressBar = styled.div`
-  background: rgba(15,23,42,0.08);
-  border-radius: 999px;
-  height: 8px;
-  overflow: hidden;
-  flex: 1;
-`;
-const LearnProgressFill = styled(motion.div)`
-  height: 100%;
-  background: linear-gradient(90deg, #22c55e, #16a34a);
-  border-radius: 999px;
-`;
-
-const CourseCard = styled(motion.div)`
-  border: 1px solid rgba(15,23,42,0.12);
-  border-radius: 14px;
+/* ── Academy two-panel layout ─────────────────────────────────────────────── */
+const AcademyShell = styled.div`
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 0;
+  min-height: 600px;
   background: #fff;
-  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
   overflow: hidden;
+  box-shadow: 0 2px 16px rgba(15,23,42,0.07);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    border-radius: 14px;
+  }
 `;
 
-const CourseCardHeader = styled.div`
+/* Left column — course list */
+const CourseListCol = styled.div`
+  border-right: 1px solid #f1f5f9;
+  overflow-y: auto;
+  background: #fafbfd;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+  @media (max-width: 768px) {
+    display: ${p => p.$hidden ? 'none' : 'block'};
+    border-right: none;
+    border-bottom: 1px solid #f1f5f9;
+    max-height: 260px;
+  }
+`;
+
+const CourseListHeader = styled.div`
+  padding: 1.1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  background: #fafbfd;
+  z-index: 2;
+`;
+
+const CourseListTitle = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+`;
+
+const CourseItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
+  gap: 0.85rem;
+  padding: 0.85rem 1.25rem;
   cursor: pointer;
-  &:hover { background: rgba(15,23,42,0.02); }
+  border-left: 3px solid ${p => p.$active ? '#10b981' : 'transparent'};
+  background: ${p => p.$active ? '#f0fdf4' : 'transparent'};
+  transition: background 0.15s, border-color 0.15s;
+  &:hover { background: ${p => p.$active ? '#f0fdf4' : '#f8fafc'}; }
 `;
 
 const CourseIcon = styled.div`
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 10px;
-  background: ${p => p.$color || '#22c55e'}22;
-  color: ${p => p.$color || '#22c55e'};
+  background: ${p => p.$color ? `${p.$color}18` : '#f0fdf4'};
+  border: 1px solid ${p => p.$color ? `${p.$color}28` : '#bbf7d0'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+`;
+
+const CourseItemMeta = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const CourseName = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.855rem;
+  font-weight: 700;
+  color: ${p => p.$active ? '#0f172a' : '#334155'};
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+`;
+
+const CourseStats = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-top: 0.1rem;
+`;
+
+const CoursePct = styled.span`
+  color: #10b981;
+  font-weight: 700;
+`;
+
+const InlineProgressRow = styled.div`
+  margin-top: 0.3rem;
+`;
+
+const LearnProgressBar = styled.div`
+  background: #e2e8f0;
+  border-radius: 999px;
+  height: 3px;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const LearnProgressFill = styled(motion.div)`
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  border-radius: 999px;
+`;
+
+/* Right column — lesson list */
+const LessonListCol = styled.div`
+  overflow-y: auto;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+
+  @media (max-width: 768px) {
+    display: ${p => p.$hidden ? 'none' : 'flex'};
+    min-height: 300px;
+  }
+`;
+
+const LessonListHeader = styled.div`
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+`;
+
+const LessonListIcon = styled.div`
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: ${p => p.$color ? `${p.$color}18` : '#f0fdf4'};
+  border: 1px solid ${p => p.$color ? `${p.$color}28` : '#bbf7d0'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1358,268 +1479,504 @@ const CourseIcon = styled.div`
   flex-shrink: 0;
 `;
 
-const CourseMeta = styled.div`
+const LessonListTitleBlock = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const LessonListCourseName = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+`;
+
+const LessonListCourseDesc = styled.div`
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 0.2rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const LessonListBody = styled.div`
+  padding: 0.75rem 0;
   flex: 1;
 `;
 
-const CourseName = styled.div`
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.2rem;
-`;
-
-const CourseStats = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.78rem;
-  color: rgba(15,23,42,0.55);
-  font-weight: 600;
-`;
-
-const CoursePct = styled.span`
-  color: #22c55e;
-  font-weight: 800;
-`;
-
-const InlineProgressRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.35rem;
-`;
-
-const ModuleSection = styled.div`
-  border-top: 1px solid rgba(15,23,42,0.08);
-  padding: 0.5rem 1.25rem 1rem;
-`;
-
 const ModuleTitle = styled.div`
-  font-size: 0.78rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.68rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(15,23,42,0.45);
-  margin: 0.75rem 0 0.4rem;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  padding: 0.6rem 1.5rem 0.3rem;
 `;
 
 const LessonRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.55rem 0.75rem;
-  border-radius: 8px;
+  gap: 0.85rem;
+  padding: 0.65rem 1.5rem;
   cursor: pointer;
-  transition: background 0.15s;
-  &:hover { background: rgba(34,197,94,0.07); }
+  transition: background 0.12s;
+  border-left: 2px solid transparent;
+  &:hover {
+    background: #f8fafc;
+    border-left-color: #10b981;
+  }
 `;
 
 const LessonDot = styled.div`
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: 2px solid ${p => p.$done ? '#22c55e' : 'rgba(15,23,42,0.2)'};
-  background: ${p => p.$done ? '#22c55e' : 'transparent'};
+  border: 1.5px solid ${p => p.$done ? '#10b981' : '#cbd5e1'};
+  background: ${p => p.$done ? '#10b981' : 'transparent'};
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   flex-shrink: 0;
 `;
 
 const LessonName = styled.div`
   flex: 1;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #0f172a;
+  font-size: 0.855rem;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.35;
 `;
 
 const LessonDur = styled.div`
-  font-size: 0.75rem;
-  color: rgba(15,23,42,0.45);
+  font-size: 0.7rem;
+  color: #94a3b8;
   white-space: nowrap;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
 `;
+
+const EmptyLessonCol = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #94a3b8;
+  gap: 0.75rem;
+`;
+
+/* Mobile course/lesson toggle */
+const MobileToggleBar = styled.div`
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+  }
+`;
+
+const MobileToggleBtn = styled.button`
+  flex: 1;
+  padding: 0.65rem;
+  border: none;
+  background: ${p => p.$active ? '#0f172a' : 'transparent'};
+  color: ${p => p.$active ? '#fff' : '#64748b'};
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+`;
+
+/* Summary strip above the shell */
+const LearnSummaryStrip = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  padding: 0.1rem 0;
+`;
+
+const LearnWrap = styled.div`
+  max-width: 100%;
+`;
+
+/* Keep these for compatibility with old code paths */
+const CourseMeta = styled.div`flex:1;min-width:0;`;
+const ModuleSection = styled.div`padding:0;`;
+const CoursesGrid = styled.div``;
+const CourseCard = styled(motion.div)``;
+const CourseCardHeader = styled.div``;
+const ExpandedCoursePanel = styled(motion.div)``;
+const ExpandedPanelHeader = styled.div``;
+const ModulesColumns = styled.div``;
+const ModuleBlock = styled.div``;
 
 /* Lesson reader panel */
 const LessonPanel = styled(motion.div)`
   position: fixed;
   inset: 0;
-  background: #fff;
-  z-index: 200;
+  top: 64px;
+  background: #f8fafc;
+  z-index: 1200;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  -webkit-overflow-scrolling: touch;
 `;
 
 const LessonPanelHeader = styled.div`
   position: sticky;
   top: 0;
-  background: #fff;
-  border-bottom: 1px solid rgba(15,23,42,0.1);
-  padding: 1rem 1.5rem;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.85rem 2rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
   z-index: 10;
+  @media (max-width: 480px) { padding: 0.75rem 1rem; gap: 0.75rem; }
 `;
 
 const LessonBackBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  border: none;
-  background: none;
+  border: 1px solid #e2e8f0;
+  background: #fff;
   cursor: pointer;
-  font-size: 0.88rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.82rem;
   font-weight: 700;
-  color: #22c55e;
-  padding: 0.35rem 0.6rem;
-  border-radius: 7px;
-  &:hover { background: rgba(34,197,94,0.1); }
+  color: #475569;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  transition: all 0.15s;
+  white-space: nowrap;
+  &:hover { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
 `;
 
 const LessonPanelTitle = styled.div`
-  font-size: 1rem;
-  font-weight: 700;
-  color: #0f172a;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
   flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @media (max-width: 480px) { display: none; }
 `;
 
 const LessonBody = styled.div`
-  max-width: 720px;
+  max-width: 740px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2.5rem 2rem 5rem;
   width: 100%;
+  @media (max-width: 640px) { padding: 1.5rem 1rem 4rem; }
 `;
 
 const LessonHeading = styled.h1`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.9rem;
+  font-size: 2rem;
   font-weight: 800;
   color: #0f172a;
-  margin: 0 0 0.5rem;
-  letter-spacing: -0.02em;
+  margin: 0 0 0.6rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  @media (max-width: 480px) { font-size: 1.5rem; }
 `;
 
 const LessonMeta = styled.div`
   display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
-  color: rgba(15,23,42,0.5);
-  font-weight: 600;
-  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-bottom: 2rem;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
 `;
 
 const LessonContent = styled.div`
-  font-size: 0.97rem;
-  line-height: 1.8;
-  color: #1e293b;
-  white-space: pre-wrap;
-  margin-bottom: 2rem;
+  font-size: 0.96rem;
+  line-height: 1.85;
+  color: #334155;
+  margin-bottom: 2.5rem;
 
-  strong { font-weight: 800; color: #0f172a; }
-  em { color: #22c55e; font-style: normal; font-weight: 700; }
+  strong { font-weight: 700; color: #0f172a; }
+  em { color: #10b981; font-style: normal; font-weight: 600; }
+`;
+
+const ContentBlockHeading = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 2rem 0 0.6rem;
+  letter-spacing: -0.015em;
+  padding-left: 0.85rem;
+  border-left: 3px solid #10b981;
+  &:first-child { margin-top: 0; }
+`;
+
+const ContentBlockText = styled.p`
+  font-size: 0.96rem;
+  line-height: 1.85;
+  color: #334155;
+  margin: 0 0 1rem;
 `;
 
 const TakeawayBox = styled.div`
-  background: rgba(34,197,94,0.07);
-  border: 1px solid rgba(34,197,94,0.25);
-  border-radius: 12px;
-  padding: 1.1rem 1.25rem;
-  margin-bottom: 1.75rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
 `;
 
 const TakeawayTitle = styled.div`
-  font-size: 0.8rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #16a34a;
-  margin-bottom: 0.6rem;
+  letter-spacing: 0.1em;
+  color: #059669;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 `;
 
 const TakeawayItem = styled.div`
   display: flex;
-  gap: 0.5rem;
-  font-size: 0.88rem;
+  gap: 0.6rem;
+  font-size: 0.875rem;
   color: #1e293b;
-  line-height: 1.6;
-  margin-bottom: 0.35rem;
+  line-height: 1.65;
+  margin-bottom: 0.5rem;
   &:last-child { margin-bottom: 0; }
 `;
 
+const QuizSection = styled.div`
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  @media (max-width: 480px) { padding: 1rem; border-radius: 12px; }
+`;
+
+const QuizSectionTitle = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`;
+
 const QuizBox = styled.div`
-  border: 1px solid rgba(15,23,42,0.12);
-  border-radius: 14px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  &:last-child { border-bottom: none; padding-bottom: 0; }
 `;
 
 const QuizQ = styled.div`
-  font-size: 1rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #0f172a;
   margin-bottom: 0.85rem;
+  line-height: 1.4;
 `;
 
 const QuizOption = styled.button`
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   width: 100%;
   text-align: left;
-  padding: 0.65rem 0.9rem;
-  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
   border: 1.5px solid ${p =>
-    p.$state === 'correct' ? '#22c55e' :
-    p.$state === 'wrong' ? '#ef4444' :
-    p.$selected ? 'rgba(34,197,94,0.5)' :
-    'rgba(15,23,42,0.14)'};
+    p.$state === 'correct' ? '#10b981' :
+    p.$state === 'wrong' ? '#f43f5e' :
+    p.$selected ? '#10b981' :
+    '#e2e8f0'};
   background: ${p =>
-    p.$state === 'correct' ? 'rgba(34,197,94,0.08)' :
-    p.$state === 'wrong' ? 'rgba(239,68,68,0.06)' :
-    p.$selected ? 'rgba(34,197,94,0.04)' : '#fff'};
+    p.$state === 'correct' ? '#f0fdf4' :
+    p.$state === 'wrong' ? '#fff1f2' :
+    p.$selected ? '#f0fdf4' : '#fafafa'};
   cursor: ${p => p.$state ? 'default' : 'pointer'};
-  font-size: 0.9rem;
-  color: #0f172a;
-  margin-bottom: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${p =>
+    p.$state === 'correct' ? '#065f46' :
+    p.$state === 'wrong' ? '#9f1239' :
+    '#1e293b'};
+  margin-bottom: 0.45rem;
   transition: all 0.15s;
-  &:hover { background: ${p => p.$state ? undefined : 'rgba(34,197,94,0.05)'}; }
+  &:hover { background: ${p => p.$state ? undefined : '#f0fdf4'}; border-color: ${p => p.$state ? undefined : '#10b981'}; }
+`;
+
+const QuizOptionLetter = styled.span`
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: ${p =>
+    p.$state === 'correct' ? '#10b981' :
+    p.$state === 'wrong' ? '#f43f5e' :
+    p.$selected ? '#10b981' :
+    '#e2e8f0'};
+  color: ${p => (p.$state || p.$selected) ? '#fff' : '#94a3b8'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  font-family: 'Space Grotesk', sans-serif;
 `;
 
 const QuizFeedback = styled(motion.div)`
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin-top: 0.6rem;
-  color: ${p => p.$correct ? '#16a34a' : '#dc2626'};
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  background: ${p => p.$correct ? '#f0fdf4' : '#fff1f2'};
+  color: ${p => p.$correct ? '#059669' : '#be123c'};
+  border: 1px solid ${p => p.$correct ? '#bbf7d0' : '#fecdd3'};
 `;
 
 const CompleteBtn = styled.button`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.85rem 1.8rem;
-  background: #22c55e;
+  gap: 0.6rem;
+  padding: 0.9rem 2rem;
+  background: #0f172a;
   color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  &:hover { background: #16a34a; transform: translateY(-1px); }
-  &:disabled { opacity: 0.6; cursor: default; transform: none; }
+  letter-spacing: 0.01em;
+  &:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15,23,42,0.2); }
+  &:disabled { opacity: 0.45; cursor: default; transform: none; box-shadow: none; }
+  @media (max-width: 480px) { width: 100%; justify-content: center; padding: 0.85rem 1rem; }
 `;
 
 const LearnSummary = styled.div`
   display: flex;
   gap: 1.5rem;
   align-items: center;
-  background: rgba(34,197,94,0.07);
-  border: 1px solid rgba(34,197,94,0.2);
+  background: #fff;
+  border: 1px solid #e2e8f0;
   border-radius: 14px;
-  padding: 1rem 1.25rem;
+  padding: 1.1rem 1.4rem;
   margin-bottom: 1.5rem;
+  box-shadow: 0 1px 4px rgba(15,23,42,0.04);
+  @media (max-width: 480px) { gap: 0.85rem; padding: 0.9rem 1rem; }
+`;
+
+const SignInGate = styled.div`
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  text-align: center;
+  max-width: 480px;
+  margin: 2rem auto;
+  box-shadow: 0 2px 12px rgba(15,23,42,0.06);
+`;
+
+const SignInGateIcon = styled.div`
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+`;
+
+const SignInGateTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.5rem;
+`;
+
+const SignInGateDesc = styled.p`
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0 0 1.75rem;
+`;
+
+const SignInGatePerks = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+`;
+
+const SignInGatePerk = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.875rem;
+  color: #1e293b;
+  font-weight: 500;
+`;
+
+const SignInGateBtn = styled.a`
+  display: block;
+  background: #0f172a;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.9rem 2rem;
+  border-radius: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  margin-bottom: 0.75rem;
+  &:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15,23,42,0.2); }
+`;
+
+const SignInGateSecondary = styled.a`
+  display: block;
+  background: transparent;
+  color: #475569;
+  text-decoration: none;
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  &:hover { border-color: #cbd5e1; color: #0f172a; }
 `;
 
 /* ── Learn tab component ─────────────────────────────────────────────────── */
@@ -1628,7 +1985,8 @@ function LearnTab() {
   const [courses, setCourses] = useState([]);
   const [progress, setProgress] = useState({ totalLessons: 0, completedLessons: 0, completedIds: [] });
   const [loading, setLoading] = useState(true);
-  const [expandedCourse, setExpandedCourse] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [mobilePanel, setMobilePanel] = useState('courses');
   const [activeLesson, setActiveLesson] = useState(null);
   const [lessonData, setLessonData] = useState(null);
   const [lessonLoading, setLessonLoading] = useState(false);
@@ -1649,6 +2007,7 @@ function LearnTab() {
         return { ...c, completedLessons: done, totalLessons: allLessons.length };
       });
       setCourses(normalized);
+      if (normalized.length > 0) setSelectedCourse(prev => prev || normalized[0]);
       setProgress({
         totalLessons: progressRes.totalLessons || normalized.reduce((s, c) => s + c.totalLessons, 0),
         completedLessons: progressRes.completedLessons || completedIds.size,
@@ -1661,7 +2020,7 @@ function LearnTab() {
     }
   }, []);
 
-  useEffect(() => { loadCourses(); }, [loadCourses]);
+  useEffect(() => { if (user) loadCourses(); else setLoading(false); }, [user, loadCourses]);
 
   const openLesson = useCallback(async (lessonId) => {
     setActiveLesson(lessonId);
@@ -1695,7 +2054,10 @@ function LearnTab() {
     try {
       const quiz = Array.isArray(lessonData.quiz) ? lessonData.quiz : [];
       const score = quiz.length > 0
-        ? Math.round((quiz.filter((q, i) => quizAnswers[i] === q.correctIndex).length / quiz.length) * 100)
+        ? Math.round((quiz.filter((q, i) => {
+            const ci = q.correctIndex !== undefined ? q.correctIndex : q.answer;
+            return quizAnswers[i] === ci;
+          }).length / quiz.length) * 100)
         : 100;
       await api.completeLessonV2(lessonData.id, score);
       setProgress(prev => {
@@ -1725,53 +2087,88 @@ function LearnTab() {
 
   const completedSet = new Set(progress.completedIds);
 
+  if (!user) {
+    return (
+      <SignInGate>
+        <SignInGateIcon>🎓</SignInGateIcon>
+        <SignInGateTitle>Sign in to access Academy</SignInGateTitle>
+        <SignInGateDesc>
+          Your course progress is saved to your account so you can pick up exactly where you left off — across any device.
+        </SignInGateDesc>
+        <SignInGatePerks>
+          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Progress saved permanently to your account</SignInGatePerk>
+          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Full course library — investing, risk, portfolios</SignInGatePerk>
+          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Quizzes with instant feedback</SignInGatePerk>
+          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Free forever — no credit card needed</SignInGatePerk>
+        </SignInGatePerks>
+        <SignInGateBtn href="/auth?mode=signin" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Sign in to continue</SignInGateBtn>
+        <SignInGateSecondary href="/auth?mode=signup" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Create a free account</SignInGateSecondary>
+      </SignInGate>
+    );
+  }
+
   return (
     <>
-      {/* Summary bar */}
-      <LearnSummary>
-        <FaGraduationCap style={{ fontSize: '1.6rem', color: '#22c55e', flexShrink: 0 }} />
+      {/* Summary strip */}
+      <LearnSummaryStrip>
+        <FaGraduationCap style={{ fontSize: '1.4rem', color: '#22c55e', flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0f172a', marginBottom: '0.3rem' }}>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '0.85rem', color: '#0f172a', marginBottom: '0.25rem' }}>
             {progress.completedLessons} / {progress.totalLessons} lessons completed ({overallPct}%)
           </div>
-          <InlineProgressRow>
-            <LearnProgressBar>
-              <LearnProgressFill
-                initial={{ width: 0 }}
-                animate={{ width: `${overallPct}%` }}
-                transition={{ duration: 0.6 }}
-              />
-            </LearnProgressBar>
-          </InlineProgressRow>
+          <LearnProgressBar>
+            <LearnProgressFill
+              initial={{ width: 0 }}
+              animate={{ width: `${overallPct}%` }}
+              transition={{ duration: 0.6 }}
+            />
+          </LearnProgressBar>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#22c55e' }}>{courses.length}</div>
-          <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'rgba(15,23,42,0.5)' }}>Courses</div>
+          <div style={{ fontSize: '1.3rem', fontWeight: 800, color: '#22c55e', fontFamily: "'Space Grotesk', sans-serif" }}>{courses.length}</div>
+          <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8' }}>Courses</div>
         </div>
-      </LearnSummary>
+      </LearnSummaryStrip>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'rgba(15,23,42,0.5)', fontSize: '0.9rem' }}>
-          <SpinIcon style={{ marginRight: '0.5rem' }} />
-          Loading courses…
+        <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(15,23,42,0.4)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+          <SpinIcon /> Loading courses…
         </div>
       ) : (
-        <LearnWrap>
-          {courses.map((course, i) => {
-            const pct = course.totalLessons > 0
-              ? Math.round((course.completedLessons / course.totalLessons) * 100)
-              : 0;
-            const isOpen = expandedCourse === course.id;
-            return (
-              <CourseCard key={course.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-                <CourseCardHeader onClick={() => setExpandedCourse(isOpen ? null : course.id)}>
+        <AcademyShell>
+          {/* Mobile toggle bar */}
+          <MobileToggleBar style={{ gridColumn: '1/-1' }}>
+            <MobileToggleBtn $active={mobilePanel === 'courses'} onClick={() => setMobilePanel('courses')}>
+              Courses
+            </MobileToggleBtn>
+            <MobileToggleBtn $active={mobilePanel === 'lessons'} onClick={() => setMobilePanel('lessons')}>
+              {selectedCourse ? selectedCourse.title : 'Lessons'}
+            </MobileToggleBtn>
+          </MobileToggleBar>
+
+          {/* Left — course list */}
+          <CourseListCol $hidden={mobilePanel !== 'courses'}>
+            <CourseListHeader>
+              <CourseListTitle>All Courses</CourseListTitle>
+            </CourseListHeader>
+            {courses.map(course => {
+              const pct = course.totalLessons > 0
+                ? Math.round((course.completedLessons / course.totalLessons) * 100)
+                : 0;
+              const isActive = selectedCourse?.id === course.id;
+              return (
+                <CourseItem
+                  key={course.id}
+                  $active={isActive}
+                  onClick={() => { setSelectedCourse(course); setMobilePanel('lessons'); }}
+                >
                   <CourseIcon $color={course.color}>{course.icon}</CourseIcon>
-                  <CourseMeta>
-                    <CourseName>{course.title}</CourseName>
+                  <CourseItemMeta>
+                    <CourseName $active={isActive}>{course.title}</CourseName>
                     <CourseStats>
                       <span>{course.totalLessons} lessons</span>
                       <span>·</span>
-                      <CoursePct>{pct}% done</CoursePct>
+                      <CoursePct>{pct}%</CoursePct>
                     </CourseStats>
                     <InlineProgressRow>
                       <LearnProgressBar>
@@ -1782,43 +2179,55 @@ function LearnTab() {
                         />
                       </LearnProgressBar>
                     </InlineProgressRow>
-                  </CourseMeta>
-                  {isOpen ? <FaChevronUp style={{ color: 'rgba(15,23,42,0.4)', flexShrink: 0 }} /> : <FaChevronDown style={{ color: 'rgba(15,23,42,0.4)', flexShrink: 0 }} />}
-                </CourseCardHeader>
+                  </CourseItemMeta>
+                  <FaChevronRight style={{ color: isActive ? '#10b981' : '#cbd5e1', fontSize: '0.7rem', flexShrink: 0 }} />
+                </CourseItem>
+              );
+            })}
+          </CourseListCol>
 
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <ModuleSection>
-                        {(course.modules || []).map(mod => (
-                          <div key={mod.id}>
-                            <ModuleTitle>{mod.title}</ModuleTitle>
-                            {(mod.lessons || []).map(lesson => (
-                              <LessonRow key={lesson.id} onClick={() => openLesson(lesson.id)}>
-                                <LessonDot $done={completedSet.has(lesson.id)}>
-                                  {completedSet.has(lesson.id) && <FaCheckCircle />}
-                                </LessonDot>
-                                <LessonName>{lesson.title}</LessonName>
-                                <LessonDur><FaClock style={{ marginRight: '0.25rem' }} />{lesson.duration}</LessonDur>
-                                <FaChevronRight style={{ color: 'rgba(15,23,42,0.25)', fontSize: '0.75rem' }} />
-                              </LessonRow>
-                            ))}
-                          </div>
-                        ))}
-                      </ModuleSection>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </CourseCard>
-            );
-          })}
-        </LearnWrap>
+          {/* Right — lesson list for selected course */}
+          <LessonListCol $hidden={mobilePanel !== 'lessons'}>
+            {selectedCourse ? (
+              <>
+                <LessonListHeader>
+                  <LessonListIcon $color={selectedCourse.color}>{selectedCourse.icon}</LessonListIcon>
+                  <LessonListTitleBlock>
+                    <LessonListCourseName>{selectedCourse.title}</LessonListCourseName>
+                    <LessonListCourseDesc>
+                      {selectedCourse.totalLessons} lessons · {selectedCourse.level}
+                      {selectedCourse.description ? ` · ${selectedCourse.description}` : ''}
+                    </LessonListCourseDesc>
+                  </LessonListTitleBlock>
+                </LessonListHeader>
+                <LessonListBody>
+                  {(selectedCourse.modules || []).map(mod => (
+                    <div key={mod.id}>
+                      <ModuleTitle>{mod.title}</ModuleTitle>
+                      {(mod.lessons || []).map(lesson => (
+                        <LessonRow key={lesson.id} onClick={() => openLesson(lesson.id)}>
+                          <LessonDot $done={completedSet.has(lesson.id)}>
+                            {completedSet.has(lesson.id) && <FaCheckCircle />}
+                          </LessonDot>
+                          <LessonName>{lesson.title}</LessonName>
+                          <LessonDur><FaClock />{lesson.duration}</LessonDur>
+                          <FaChevronRight style={{ color: '#cbd5e1', fontSize: '0.65rem', flexShrink: 0 }} />
+                        </LessonRow>
+                      ))}
+                    </div>
+                  ))}
+                </LessonListBody>
+              </>
+            ) : (
+              <EmptyLessonCol>
+                <FaBookOpen style={{ fontSize: '2rem', color: '#e2e8f0' }} />
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, color: '#94a3b8', fontSize: '0.9rem' }}>
+                  Select a course to see its lessons
+                </div>
+              </EmptyLessonCol>
+            )}
+          </LessonListCol>
+        </AcademyShell>
       )}
 
       {/* Lesson reader — full-screen overlay */}
@@ -1854,30 +2263,44 @@ function LearnTab() {
                   <span><FaClock style={{ marginRight: '0.3rem' }} />{lessonData.duration}</span>
                 </LessonMeta>
 
-                {lessonData.content && (
+                {(Array.isArray(lessonData.content) ? lessonData.content : []).length > 0 ? (
+                  <LessonContent>
+                    {lessonData.content.map((block, bi) => (
+                      <div key={bi}>
+                        {block.heading && <ContentBlockHeading>{block.heading}</ContentBlockHeading>}
+                        {block.text && <ContentBlockText>{block.text}</ContentBlockText>}
+                      </div>
+                    ))}
+                  </LessonContent>
+                ) : lessonData.content && typeof lessonData.content === 'string' ? (
                   <LessonContent dangerouslySetInnerHTML={{ __html: lessonData.content }} />
-                )}
+                ) : null}
 
                 {Array.isArray(lessonData.keyTakeaways) && lessonData.keyTakeaways.length > 0 && (
                   <TakeawayBox>
-                    <TakeawayTitle>Key Takeaways</TakeawayTitle>
+                    <TakeawayTitle><FaCheckCircle /> Key Takeaways</TakeawayTitle>
                     {lessonData.keyTakeaways.map((t, i) => (
-                      <TakeawayItem key={i}><FaCheckCircle style={{ color: '#22c55e', flexShrink: 0, marginTop: '0.2rem' }} /> {t}</TakeawayItem>
+                      <TakeawayItem key={i}><FaCheckCircle style={{ color: '#10b981', flexShrink: 0, marginTop: '0.2rem', fontSize: '0.75rem' }} /> {t}</TakeawayItem>
                     ))}
                   </TakeawayBox>
                 )}
 
                 {Array.isArray(lessonData.quiz) && lessonData.quiz.length > 0 && (
-                  <>
-                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.85rem' }}>Quick Quiz</div>
-                    {lessonData.quiz.map((q, qi) => (
+                  <QuizSection>
+                    <QuizSectionTitle>
+                      <FaBullseye style={{ color: '#10b981' }} /> Knowledge Check
+                    </QuizSectionTitle>
+                    {lessonData.quiz.map((q, qi) => {
+                      const correctIdx = q.correctIndex !== undefined ? q.correctIndex : q.answer;
+                      const letters = ['A','B','C','D','E'];
+                      return (
                       <QuizBox key={qi}>
                         <QuizQ>{qi + 1}. {q.question}</QuizQ>
                         {(q.options || []).map((opt, oi) => {
                           const answered = quizAnswers[qi] !== undefined;
                           const selected = quizAnswers[qi] === oi;
                           const state = answered
-                            ? (oi === q.correctIndex ? 'correct' : selected ? 'wrong' : null)
+                            ? (oi === correctIdx ? 'correct' : selected ? 'wrong' : null)
                             : null;
                           return (
                             <QuizOption
@@ -1886,6 +2309,9 @@ function LearnTab() {
                               $state={state}
                               onClick={() => handleQuizAnswer(qi, oi)}
                             >
+                              <QuizOptionLetter $selected={selected} $state={state}>
+                                {letters[oi] || oi + 1}
+                              </QuizOptionLetter>
                               {opt}
                             </QuizOption>
                           );
@@ -1893,18 +2319,19 @@ function LearnTab() {
                         <AnimatePresence>
                           {quizAnswers[qi] !== undefined && (
                             <QuizFeedback
-                              $correct={quizAnswers[qi] === q.correctIndex}
+                              $correct={quizAnswers[qi] === correctIdx}
                               initial={{ opacity: 0, y: -4 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0 }}
                             >
-                              {quizAnswers[qi] === q.correctIndex ? '✓ Correct!' : `✗ The answer is: ${q.options[q.correctIndex]}`}
+                              {quizAnswers[qi] === correctIdx ? '✓ Correct!' : `✗ The answer is: ${q.options[correctIdx]}`}
                             </QuizFeedback>
                           )}
                         </AnimatePresence>
                       </QuizBox>
-                    ))}
-                  </>
+                      );
+                    })}
+                  </QuizSection>
                 )}
 
                 <CompleteBtn onClick={handleComplete} disabled={completing || completedSet.has(lessonData.id)}>
@@ -1927,7 +2354,7 @@ function LearnTab() {
 
 const ScenarioPage = () => {
   const { user } = useAuth();
-  const [tab, setTab] = useState('scenarios');
+  const [tab, setTab] = useState('learn');
   const [view, setView] = useState('select');
   const [activeScenario, setActiveScenario] = useState(null);
   const [balance, setBalance] = useState(0);
@@ -2072,6 +2499,7 @@ const ScenarioPage = () => {
     setCompletionReview('');
     setSearchQuery('');
     setView('sim');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     setAiLoading(true);
     try {
@@ -2381,11 +2809,11 @@ const ScenarioPage = () => {
       <PageContainer>
         <ContentWrapper>
           <TabBar style={{marginTop:'0.5rem'}}>
-            <TabBtn $active={tab === 'scenarios'} onClick={() => setTab('scenarios')}>
-              <FaPlay style={{fontSize:'0.75rem'}} /> Scenarios
-            </TabBtn>
             <TabBtn $active={tab === 'learn'} onClick={() => setTab('learn')}>
               <FaBookOpen style={{fontSize:'0.8rem'}} /> Courses
+            </TabBtn>
+            <TabBtn $active={tab === 'scenarios'} onClick={() => setTab('scenarios')}>
+              <FaPlay style={{fontSize:'0.75rem'}} /> Scenarios
             </TabBtn>
           </TabBar>
 

@@ -235,7 +235,8 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const fromLocation = location.state?.from;
-  const from = fromLocation ? (fromLocation.pathname + (fromLocation.search || '')) : '/';
+  const storedPath = sessionStorage.getItem('auth_return_path');
+  const from = fromLocation ? (fromLocation.pathname + (fromLocation.search || '')) : (storedPath || '/');
   const modeParam = new URLSearchParams(location.search).get('mode');
   useEffect(() => {
     if (modeParam === 'signup' || modeParam === 'signin') setMode(modeParam);
@@ -260,6 +261,7 @@ const AuthPage = () => {
       } else {
         await signInWithEmail(email, password);
       }
+      sessionStorage.removeItem('auth_return_path');
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -275,7 +277,7 @@ const AuthPage = () => {
         transition={{ duration: 0.5 }}
       >
         <LogoText>
-          <h1>Bloom<span>Vest</span></h1>
+          <img src="/bloomvestlogo.png" alt="BloomVest" style={{ height: 44, marginBottom: '0.75rem' }} />
           <p>{mode === 'signup' ? 'Create your free account' : 'Welcome back'}</p>
         </LogoText>
 

@@ -24,26 +24,25 @@ function App() {
             <Layout>
               <Routes>
                 {/* Marketing site */}
-                <Route path="/home" element={<MarketingHomepage />} />
+                <Route path="/" element={<MarketingHomepage />} />
+                <Route path="/home" element={<Navigate to="/" replace />} />
                 <Route path="/marketing-services" element={<MarketingServices />} />
                 <Route path="/contact" element={<ContactPage />} />
 
-                {/* AI Invest Signals */}
+                {/* BloomVest Intelligence */}
                 <Route path="/signals" element={<Dashboard />} />
 
-                {/* Academy (was /scenario) */}
-                <Route path="/scenario" element={<ScenarioPage />} />
-                <Route path="/ai-tutor" element={<Navigate to="/scenario" replace />} />
+                {/* Learn — courses, scenarios & academy */}
+                <Route path="/learn" element={<ScenarioPage />} />
+                <Route path="/scenario" element={<Navigate to="/learn" replace />} />
+                <Route path="/ai-tutor" element={<Navigate to="/learn" replace />} />
 
                 {/* Auth */}
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
 
-                {/* Default: redirect root to homepage */}
-                <Route path="/" element={<Navigate to="/home" replace />} />
-
                 {/* Catch-all */}
-                <Route path="*" element={<Navigate to="/home" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Layout>
           </Suspense>

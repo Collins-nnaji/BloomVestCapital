@@ -2498,6 +2498,192 @@ async function seed() {
         [m15id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
     }
 
+    // =====================================================
+    // COURSE 8: ETFs & Index Investing
+    // =====================================================
+    console.log('\n📈 Inserting Course 8: ETFs & Index Investing...');
+    const course8 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['ETFs & Index Investing', 'Master the most powerful wealth-building tools available to everyday investors. Learn how ETFs and index funds work, how to build a diversified portfolio with low costs, and why most active managers fail to beat the market.', 'beginner', '📈', '#6366f1', 8]
+    );
+    const c8 = course8.rows[0].id;
+
+    console.log('  📦 Module 16: ETF Essentials');
+    const m16 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c8, 'ETF Essentials', 'Understand what ETFs are and how to use them', 1]);
+    const m16id = m16.rows[0].id;
+
+    const etfLessons1 = [
+      { title: 'What Is an ETF?', desc: 'Understand how Exchange-Traded Funds work and why they are one of the best investment vehicles.', dur: '9 min', icon: '📊', sort: 44,
+        content: [
+          { heading: 'ETF Basics', text: 'An Exchange-Traded Fund (ETF) is a basket of securities — stocks, bonds, or commodities — that trades on a stock exchange just like a single stock. When you buy one share of an S&P 500 ETF, you instantly own tiny pieces of 500 different companies. They combine the diversification of mutual funds with the trading flexibility of stocks.' },
+          { heading: 'How ETFs Are Structured', text: 'Most ETFs track an index passively — they simply hold the same securities in the same proportions as the index. This is why they are called index funds. Vanguard\'s VOO tracks the S&P 500. iShares IVV does the same. BlackRock, Vanguard, and State Street are the three largest ETF providers, collectively managing trillions of dollars.' },
+          { heading: 'ETFs vs. Mutual Funds vs. Individual Stocks', text: 'ETFs trade during market hours at real-time prices (like stocks). Mutual funds price once per day after market close. ETFs typically have lower fees than actively managed mutual funds. Unlike individual stocks, a single ETF gives you instant diversification. This combination of low cost, liquidity, and diversification makes ETFs ideal for most investors.' }
+        ],
+        takeaways: ['An ETF holds a basket of securities and trades like a single stock', 'Most ETFs passively track an index, keeping costs low', 'ETFs offer stock-like flexibility plus mutual-fund-like diversification', 'Vanguard, BlackRock, and State Street dominate the ETF industry'],
+        quiz: [
+          { question: 'What does an ETF hold?', options: ['Only one stock', 'A basket of securities', 'Only government bonds', 'Cash and gold'], answer: 1 },
+          { question: 'How do ETFs differ from mutual funds in terms of trading?', options: ['ETFs only trade monthly', 'ETFs trade throughout the day like stocks', 'Mutual funds trade 24/7', 'There is no difference'], answer: 1 },
+          { question: 'What does a passively managed ETF do?', options: ['A manager picks the best stocks', 'It tracks an index automatically', 'It holds only cash during downturns', 'It is managed by AI'], answer: 1 }
+        ]
+      },
+      { title: 'The Case for Index Investing', desc: 'Why the evidence overwhelmingly supports passive index investing over active stock picking.', dur: '10 min', icon: '📉', sort: 45,
+        content: [
+          { heading: 'Active Management\'s Failure Rate', text: 'The SPIVA report consistently shows that over 15 years, roughly 90% of actively managed large-cap funds underperform their benchmark index. If professional fund managers with research teams, Bloomberg terminals, and decades of experience cannot consistently beat the market, the odds for individual stock pickers are even worse.' },
+          { heading: 'Why the Market Is Hard to Beat', text: 'Markets are efficient — prices reflect available information nearly instantly. When Apple announces strong earnings, the stock adjusts within milliseconds. To beat the market consistently, you need an edge that almost no one has. And even if you do outperform for a few years, the fees from active management often erase those gains.' },
+          { heading: 'The Cost Advantage', text: 'Vanguard\'s VOO has an expense ratio of just 0.03% per year — that is $3 on a $10,000 investment. Actively managed funds often charge 1% or more — $100 on the same investment. Over 30 years at 8% returns, that 1% difference costs you over 25% of your final portfolio value. Low fees are one of the few guaranteed edges in investing.' }
+        ],
+        takeaways: ['~90% of actively managed funds underperform the index over 15 years', 'Markets are efficient — prices adjust almost instantly', 'High fees of active funds erode returns significantly', 'A 1% fee difference can cost 25%+ of your portfolio over 30 years'],
+        quiz: [
+          { question: 'What percentage of large-cap active funds underperform their benchmark over 15 years?', options: ['About 10%', 'About 50%', 'About 90%', 'About 70%'], answer: 2 },
+          { question: 'What is a typical expense ratio for a Vanguard index ETF?', options: ['1.5% per year', '0.75% per year', '0.03% per year', '5% per year'], answer: 2 },
+          { question: 'Why is it hard to consistently beat the market?', options: ['Markets are inefficient', 'Prices reflect available information almost instantly', 'There are too many rules', 'Only governments can beat it'], answer: 1 }
+        ]
+      },
+      { title: 'Building a Portfolio with ETFs', desc: 'How to construct a simple, powerful portfolio using just a few ETFs.', dur: '11 min', icon: '🏗️', sort: 46,
+        content: [
+          { heading: 'The Three-Fund Portfolio', text: 'John Bogle\'s three-fund concept uses just three ETFs: a US total market fund (e.g., VTI), an international stock fund (e.g., VXUS), and a bond fund (e.g., BND). This gives you exposure to thousands of securities worldwide with minimal cost and complexity. Many financial advisors consider this the ideal core portfolio for most investors.' },
+          { heading: 'Asset Allocation by Age', text: 'A common rule: subtract your age from 110 to get your stock percentage. At 30: 80% stocks, 20% bonds. At 50: 60% stocks, 40% bonds. At 65: 45% stocks, 55% bonds. Younger investors can afford more risk because they have time to recover from downturns. Adjust based on your risk tolerance and goals — this is a starting point, not a rule.' },
+          { heading: 'Target-Date Funds as an Alternative', text: 'If choosing your own allocation feels overwhelming, target-date funds do it automatically. Vanguard\'s Target Retirement 2055 Fund holds a mix appropriate for someone retiring around 2055 and gradually becomes more conservative as that year approaches. They are slightly more expensive (0.10-0.15%) but remove all complexity. Perfect for retirement accounts.' }
+        ],
+        takeaways: ['The three-fund portfolio (US stocks + international + bonds) covers everything', 'Subtract your age from 110 for a rough stock allocation target', 'Rebalance annually to maintain your target allocation', 'Target-date funds automate allocation and rebalancing for you'],
+        quiz: [
+          { question: 'What does the three-fund portfolio include?', options: ['Only US stocks', 'US stocks, international stocks, and bonds', 'Gold, real estate, and crypto', 'Only bonds and cash'], answer: 1 },
+          { question: 'According to the age-based rule, how much should a 40-year-old have in stocks?', options: ['40%', '60%', '70%', '80%'], answer: 2 },
+          { question: 'What is a target-date fund?', options: ['A fund that bets on a specific date', 'A fund that automatically adjusts allocation as your retirement year approaches', 'A short-term trading fund', 'A fund that targets specific companies'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of etfLessons1) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m16id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    // =====================================================
+    // COURSE 9: Options Trading Fundamentals
+    // =====================================================
+    console.log('\n🎯 Inserting Course 9: Options Trading Fundamentals...');
+    const course9 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['Options Trading Fundamentals', 'Demystify options — one of the most misunderstood yet powerful financial instruments. Learn calls, puts, key strategies, and how to use options for income, hedging, or speculation without gambling your portfolio.', 'advanced', '🎯', '#dc2626', 9]
+    );
+    const c9 = course9.rows[0].id;
+
+    console.log('  📦 Module 17: Options Basics');
+    const m17 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c9, 'Options Basics', 'Understand what options are and the key terminology', 1]);
+    const m17id = m17.rows[0].id;
+
+    const optLessons1 = [
+      { title: 'Calls and Puts Explained', desc: 'Understand the two types of options contracts and what they give you the right to do.', dur: '12 min', icon: '📞', sort: 47,
+        content: [
+          { heading: 'What Is an Option?', text: 'An options contract gives the buyer the right — but not the obligation — to buy or sell an asset at a specific price (the strike price) before or on a specific date (expiration). You pay a premium for this right. The seller of the option collects the premium and takes on the obligation to fulfill the contract if the buyer exercises it.' },
+          { heading: 'Call Options', text: 'A call option gives you the right to BUY 100 shares at the strike price. You buy a call when you expect the stock to rise. Example: Stock is at $100. You buy a $110 call for $2 (one contract = $200 total). If the stock rises to $130 before expiration, your call is now worth at least $20 — a 900% return on your $200. If the stock stays below $110, the call expires worthless.' },
+          { heading: 'Put Options', text: 'A put option gives you the right to SELL 100 shares at the strike price. You buy a put when you expect the stock to fall, or to protect existing holdings. Example: You own 100 shares of a $100 stock. You buy a $95 put for $1.50 ($150 total). If the stock crashes to $70, your put lets you sell at $95 — limiting your loss. Puts are insurance for your portfolio.' }
+        ],
+        takeaways: ['Calls give you the right to buy at the strike price — profit when stock rises', 'Puts give you the right to sell at the strike price — profit when stock falls', 'Options control 100 shares per contract', 'Buyers pay a premium; sellers collect it and take on obligation'],
+        quiz: [
+          { question: 'What does a call option give you the right to do?', options: ['Sell at the strike price', 'Buy at the strike price', 'Print money', 'Short the stock'], answer: 1 },
+          { question: 'When would you buy a put option?', options: ['When you expect the stock to rise sharply', 'When you want to protect against a stock falling', 'When you have no opinion on direction', 'When dividends are declared'], answer: 1 },
+          { question: 'How many shares does one options contract typically control?', options: ['1', '10', '100', '1000'], answer: 2 }
+        ]
+      },
+      { title: 'Options Pricing & Key Terms', desc: 'Learn the vocabulary and pricing mechanics every options trader must know.', dur: '11 min', icon: '💲', sort: 48,
+        content: [
+          { heading: 'The Greeks Overview', text: 'Options prices are influenced by several factors called "the Greeks." Delta measures how much the option\'s price moves per $1 move in the stock (a delta of 0.50 means the option gains $0.50 for every $1 the stock rises). Theta measures time decay — options lose value every day as expiration approaches. Vega measures sensitivity to volatility changes.' },
+          { heading: 'Intrinsic vs. Time Value', text: 'An option\'s price (premium) = Intrinsic Value + Time Value. Intrinsic value is the immediate profit if exercised now. A $100 call on a $110 stock has $10 of intrinsic value. Time value is what remains — the extra premium reflecting the possibility the option becomes more valuable before expiration. At expiration, options have zero time value.' },
+          { heading: 'In-the-Money vs. Out-of-the-Money', text: 'A call is in-the-money (ITM) when the stock price is above the strike price. A $100 call is ITM when the stock is at $105. It is out-of-the-money (OTM) when the stock is at $95. ITM options are more expensive but have higher delta. OTM options are cheaper, have more leverage, but expire worthless more often — higher risk, higher reward.' }
+        ],
+        takeaways: ['Delta shows how much option price moves per $1 in stock', 'Theta is time decay — options lose value daily as expiration nears', 'Option price = Intrinsic value + Time value', 'In-the-money options cost more but have higher probability of profit'],
+        quiz: [
+          { question: 'What does Delta measure in options?', options: ['Volatility impact', 'How much option price moves per $1 in stock', 'Time remaining to expiration', 'The interest rate effect'], answer: 1 },
+          { question: 'What is Theta in options trading?', options: ['Profit percentage', 'Time decay — daily loss of option value', 'The volatility measure', 'The strike price impact'], answer: 1 },
+          { question: 'A $100 call with the stock at $108 is:', options: ['Out-of-the-money', 'At-the-money', 'In-the-money', 'Expired'], answer: 2 }
+        ]
+      },
+      { title: 'Covered Calls & Protective Puts', desc: 'Two beginner-friendly strategies to generate income and protect your portfolio.', dur: '12 min', icon: '🛡️', sort: 49,
+        content: [
+          { heading: 'The Covered Call Strategy', text: 'A covered call means you own 100 shares and sell a call option against them. You collect the premium immediately. If the stock stays below the strike, the call expires and you keep the premium as income — repeat monthly. If the stock rises above the strike, your shares get "called away" at that price. Best for stocks you own and are neutral-to-moderately bullish on.' },
+          { heading: 'Covered Call Example', text: 'You own 100 shares of XYZ at $50. You sell a $55 call expiring in 30 days for $1.50 ($150 income). Scenario A: Stock stays below $55 — call expires, you keep $150. That is 3% income in 30 days. Scenario B: Stock rises to $60 — your shares are sold at $55. You made $5/share profit plus the $1.50 premium = $6.50/share total gain.' },
+          { heading: 'The Protective Put Strategy', text: 'Buying a put on shares you already own is like buying insurance. If you hold $50,000 of stocks going into a volatile earnings season, buying puts limits your downside. It costs money (the premium) but provides peace of mind. The put expires worthless if the stock doesn\'t fall — you\'ve paid for protection you didn\'t need, just like car insurance on a year with no accidents.' }
+        ],
+        takeaways: ['Covered calls generate monthly income on stocks you already own', 'Risk: your shares get called away if the stock surges above the strike', 'Protective puts are portfolio insurance — you pay a premium for downside protection', 'Both are beginner-friendly and limit, rather than amplify, risk'],
+        quiz: [
+          { question: 'What is a covered call?', options: ['Buying a call with no stock position', 'Selling a call against shares you already own', 'Buying puts for protection', 'Shorting a stock'], answer: 1 },
+          { question: 'What happens if you have a covered call and the stock rises above the strike at expiration?', options: ['You owe money to the buyer', 'Your shares are sold at the strike price', 'Nothing happens', 'You must buy more shares'], answer: 1 },
+          { question: 'A protective put is most similar to:', options: ['A lottery ticket', 'Portfolio insurance', 'A savings account', 'A margin loan'], answer: 1 }
+        ]
+      },
+    ];
+
+    for (const l of optLessons1) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m17id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
+    // =====================================================
+    // COURSE 10: Behavioral Finance & Investor Psychology
+    // =====================================================
+    console.log('\n🧠 Inserting Course 10: Behavioral Finance & Investor Psychology...');
+    const course10 = await pool.query(
+      `INSERT INTO courses (title, description, level, icon, color, sort_order) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      ['Behavioral Finance & Investor Psychology', 'Discover why smart people make terrible investment decisions — and how to stop. Learn the cognitive biases, emotional traps, and psychological shortcuts that destroy returns, and build the mental framework of consistently successful investors.', 'intermediate', '🧠', '#7c3aed', 10]
+    );
+    const c10 = course10.rows[0].id;
+
+    console.log('  📦 Module 18: The Biased Investor');
+    const m18 = await pool.query(`INSERT INTO modules (course_id, title, description, sort_order) VALUES ($1, $2, $3, $4) RETURNING id`, [c10, 'The Biased Investor', 'Understand the cognitive biases that wreck portfolios', 1]);
+    const m18id = m18.rows[0].id;
+
+    const behavLessons1 = [
+      { title: 'Why Investors Are Their Own Worst Enemy', desc: 'DALBAR studies show the average investor dramatically underperforms the market. Here is why.', dur: '10 min', icon: '🤦', sort: 50,
+        content: [
+          { heading: 'The Performance Gap', text: 'DALBAR\'s annual Quantitative Analysis of Investor Behavior consistently shows that the average equity fund investor earns about half the returns of the S&P 500 over 20 years. The S&P 500 returned roughly 9.9% annually over 20 years; average investors earned about 5.5%. The gap exists not because of bad funds — but because investors buy high and sell low at exactly the wrong times.' },
+          { heading: 'Loss Aversion', text: 'Nobel Prize winner Daniel Kahneman found that losses feel about twice as painful as equivalent gains feel good. Losing $1,000 hurts psychologically as much as gaining $2,000 feels good. This asymmetry leads investors to sell stocks during downturns to "stop the pain" — exactly when they should be buying. Loss aversion is arguably the single most destructive bias in investing.' },
+          { heading: 'Overconfidence Bias', text: 'Studies consistently show that most investors believe they are above-average stock pickers — statistically impossible. Overconfident investors trade too much (trading costs erode returns), take excessive risks, and dismiss warning signs. Research by Barber and Odean showed that the most active traders earned 6.5 percentage points less per year than buy-and-hold investors.' }
+        ],
+        takeaways: ['Average investors earn ~half the market return due to poor timing decisions', 'Loss aversion makes losses feel 2x more painful than equivalent gains', 'Overconfidence leads to excessive trading — destroying net returns', 'The cure: automation and removing emotion from investment decisions'],
+        quiz: [
+          { question: 'According to DALBAR, why do average investors underperform the market?', options: ['They choose bad funds', 'They buy high and sell low at the wrong times', 'They pay too much in taxes', 'They invest too little money'], answer: 1 },
+          { question: 'What is loss aversion?', options: ['Refusing to take any risk', 'Losses feel about twice as painful as equivalent gains feel good', 'Only investing in safe assets', 'Selling winners too early'], answer: 1 },
+          { question: 'Research shows the most active traders earn how much less per year than buy-and-hold investors?', options: ['1%', '2%', '6.5%', '15%'], answer: 2 }
+        ]
+      },
+      { title: 'Common Cognitive Biases in Investing', desc: 'Identify the specific mental shortcuts that lead even experienced investors astray.', dur: '11 min', icon: '🧩', sort: 51,
+        content: [
+          { heading: 'Recency Bias & FOMO', text: 'Recency bias makes us assume the recent past will continue indefinitely. After a bull market, investors expect stocks to keep rising and pile in near peaks. After a crash, they expect more pain and sell at the bottom. This is why retail money flows show investors consistently buying high and selling low. FOMO (Fear of Missing Out) is recency bias on steroids — buying meme stocks and crypto after massive runs.' },
+          { heading: 'Confirmation Bias & Anchoring', text: 'Confirmation bias means we seek information that confirms what we already believe and dismiss contradictory evidence. If you think a stock is great, you read bullish news and ignore warnings. Anchoring means we attach to arbitrary reference points — an investor who bought a stock at $100 might refuse to sell at $90 even though nothing supports the $100 price. These biases prevent rational decision-making.' },
+          { heading: 'Herd Mentality & Narrative Fallacy', text: 'Humans are social animals — we look to others for cues on how to behave. In markets, herd behavior creates bubbles (everyone buying) and crashes (everyone selling). Legendary investor Warren Buffett\'s advice: "Be fearful when others are greedy, and greedy when others are fearful." The narrative fallacy is our tendency to create stories that explain market moves in hindsight — these stories are comforting but often wrong.' }
+        ],
+        takeaways: ['Recency bias leads investors to extrapolate recent trends too far into the future', 'Confirmation bias causes us to ignore evidence that contradicts our beliefs', 'Herd mentality creates bubbles — buying when everyone else is buying is usually wrong', 'Buffett: "Be fearful when others are greedy, greedy when others are fearful"'],
+        quiz: [
+          { question: 'What is recency bias?', options: ['Trusting recent news over old data', 'Assuming recent trends will continue indefinitely', 'Ignoring all news after 30 days', 'Only investing in new companies'], answer: 1 },
+          { question: 'What is confirmation bias?', options: ['Researching both sides equally', 'Seeking information that confirms existing beliefs and dismissing contradictions', 'Being very careful before investing', 'Using data to confirm trade entries'], answer: 1 },
+          { question: 'What does Warren Buffett recommend about herd behavior?', options: ['Follow the crowd for safety', 'Be greedy when others are greedy', 'Be fearful when others are greedy, and greedy when others are fearful', 'Ignore the market entirely'], answer: 2 }
+        ]
+      },
+      { title: 'Building a Bias-Proof Investment Process', desc: 'Practical systems to remove emotion from investing and build lasting wealth.', dur: '10 min', icon: '⚙️', sort: 52,
+        content: [
+          { heading: 'Automate Everything', text: 'The single most effective way to remove emotion from investing is automation. Set up automatic monthly transfers to your investment account. Use automatic rebalancing. Dollar-cost average into index funds automatically. When investing is automatic, you buy consistently through ups and downs without needing willpower or making emotional decisions. This alone closes most of the investor behavior gap.' },
+          { heading: 'Create Investment Rules in Advance', text: 'Precommitment strategies work. Write your investment policy statement before markets get volatile: "I will rebalance when any allocation drifts more than 5%. I will not sell during a crash unless my life situation changes. I will add money monthly regardless of news." These rules, made when you are calm, protect you from emotional decisions made when you are panicked.' },
+          { heading: 'Reduce Your Exposure to Financial Noise', text: 'Studies show that investors who check their portfolios less frequently make better decisions. Checking daily leads to reactive, emotional trading. Quarterly or annual reviews are optimal for long-term investors. Turn off financial news notifications. The media\'s business model requires creating anxiety — "Markets tumble!" gets clicks; "Markets flat, long-term plan on track" does not.' }
+        ],
+        takeaways: ['Automate contributions and rebalancing to remove emotion from the equation', 'Write your investment rules in advance when you are calm — not in a crisis', 'Reduce portfolio check frequency — daily checking leads to worse decisions', 'Financial media profits from anxiety; its urgency is almost never actionable for long-term investors'],
+        quiz: [
+          { question: 'What is the most effective way to remove emotional decisions from investing?', options: ['Watching more financial news', 'Automation — automatic contributions and rebalancing', 'Trading actively', 'Only buying after major crashes'], answer: 1 },
+          { question: 'Why should you write investment rules in advance?', options: ['For tax purposes', 'Rules made when calm protect against emotional decisions during panic', 'It is required by law', 'To impress your financial advisor'], answer: 1 },
+          { question: 'How often should a long-term investor ideally review their portfolio?', options: ['Multiple times per day', 'Weekly', 'Quarterly or annually', 'Every 10 years'], answer: 2 }
+        ]
+      },
+    ];
+
+    for (const l of behavLessons1) {
+      console.log(`    📝 Lesson: ${l.title}`);
+      await pool.query(`INSERT INTO lessons (module_id, title, description, duration, icon, content, key_takeaways, quiz, sort_order) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+        [m18id, l.title, l.desc, l.dur, l.icon, JSON.stringify(l.content), JSON.stringify(l.takeaways), JSON.stringify(l.quiz), l.sort]);
+    }
+
     await enrichSeededLessons();
 
     // Final summary

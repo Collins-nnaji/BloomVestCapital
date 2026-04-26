@@ -19,10 +19,10 @@ const pulse = keyframes`0%,100%{opacity:1}50%{opacity:.45}`;
 
 /* ── page ───────────────────────────────────────────── */
 const Page = styled.div`
-  min-height:calc(100vh - 80px);
-  background:#ffffff;
-  font-family:'Inter',system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
   padding-top: 64px;
   color: #0f172a;
   &::-webkit-scrollbar { display: none; }
@@ -30,16 +30,19 @@ const Page = styled.div`
 `;
 
 const TopHeader = styled.div`
-  padding: 1rem 1.25rem;
+  padding: 0.85rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #f8fafc;
+  border-bottom: 1px solid #f1f5f9;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.5rem;
 
-  @media (max-width: 768px) {
-    padding: 0.85rem 1rem;
+  @media (max-width: 640px) {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
   }
 `;
 
@@ -47,6 +50,7 @@ const HeaderLeft = styled.div`
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
+  flex: 1;
 `;
 const Brand = styled.span`
   font-size: 0.8rem;
@@ -74,11 +78,10 @@ const FilterGroup = styled.div`
   padding: 4px;
   border: 1px solid #e2e8f0;
   gap: 2px;
-  flex-wrap: wrap;
 
-  @media (max-width: 480px) {
+  @media (max-width: 640px) {
     width: 100%;
-    order: 3;
+    justify-content: space-between;
   }
 `;
 const FilterBtn = styled.button`
@@ -94,8 +97,14 @@ const FilterBtn = styled.button`
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  flex: 1;
+  justify-content: center;
   transition: all 0.2s;
   &:hover { color: #0f172a; }
+
+  @media (min-width: 641px) {
+    flex: none;
+  }
 `;
 const FilterDot = styled.span`
   width: 6px; height: 6px; border-radius: 50%;
@@ -108,7 +117,7 @@ const HeaderRight = styled.div`
   gap: 0.5rem;
   flex-wrap: wrap;
 
-  @media (max-width: 600px) {
+  @media (max-width: 640px) {
     width: 100%;
     justify-content: flex-end;
   }
@@ -148,38 +157,49 @@ const PrefsToggleBtn = styled.button`
 const RunBtn = styled(motion.button)`
   background: #0f172a; color: #ffffff;
   border: none; border-radius: 8px;
-  padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 600;
+  padding: 0.55rem 1rem; font-size: 0.8rem; font-weight: 700;
   display: inline-flex; align-items: center; gap: 0.5rem;
-  cursor: pointer;
+  cursor: pointer; white-space: nowrap;
   &:hover { background: #1e293b; }
   &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  @media (max-width: 640px) {
+    flex: 1;
+    justify-content: center;
+    padding: 0.6rem 0.75rem;
+  }
 `;
 
 /* ── summary bar ────────────────────────────────────── */
 const SummaryBar = styled.div`
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   background: #fcfcfc;
-  overflow-x: auto;
+  border-bottom: 1px solid #f1f5f9;
 
-  @media (max-width: 768px) {
+  @media (max-width: 640px) {
     grid-template-columns: repeat(3, 1fr);
-  }
-  @media (max-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);
   }
 `;
 const SumItem = styled.div`
-  padding: 0.75rem 1.25rem;
-  display: flex; flex-direction: column; gap: 0.2rem;
+  padding: 0.75rem 1rem;
+  display: flex; flex-direction: column; gap: 0.15rem;
+  border-right: 1px solid #f1f5f9;
+  &:last-child { border-right: none; }
+
+  @media (max-width: 640px) {
+    padding: 0.65rem 0.75rem;
+    /* hide last stat on mobile to fit 3-column */
+    &:nth-child(4) { display: none; }
+  }
 `;
 const SumLabel = styled.div`
-  font-size: 0.65rem; font-weight: 700; color: #94a3b8;
+  font-size: 0.6rem; font-weight: 700; color: #94a3b8;
   text-transform: uppercase; letter-spacing: 0.08em;
 `;
 const SumValue = styled.div`
-  font-size: 1.4rem; font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700; color: ${p => p.$color || '#0f172a'};
+  font-size: 1.25rem; font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800; color: ${p => p.$color || '#0f172a'};
 `;
 
 /* ── preferences & filters ──────────────────────────── */
@@ -214,10 +234,16 @@ const SectorChip = styled(motion.button)`
 `;
 
 const AssetTypeRow = styled.div`
-  padding: 0.75rem 1.25rem;
-  display: flex; align-items: center; gap: 0.65rem;
+  padding: 0.65rem 1.25rem;
+  display: flex; align-items: center; gap: 0.5rem;
   background: #ffffff;
-  flex-wrap: wrap;
+  border-bottom: 1px solid #f8fafc;
+  overflow-x: auto; flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  @media (max-width: 640px) { padding: 0.6rem 1rem; gap: 0.4rem; }
 `;
 const TypeLabel = styled.span`
   font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;
@@ -254,7 +280,8 @@ const SourcesPanel = styled(motion.div)`
 `;
 const SourcesPanelHeader = styled.div`
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1rem;
+  margin-bottom: 1rem; gap: 0.75rem;
+  @media (max-width: 640px) { flex-direction: column; align-items: stretch; }
 `;
 const SourcesPanelTitle = styled.div`
   font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; font-weight: 700; color: #0f172a;
@@ -264,9 +291,10 @@ const SourcesPanelTitle = styled.div`
 const SourcesSearch = styled.input`
   background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
   padding: 0.4rem 0.75rem; font-size: 0.8rem; color: #0f172a;
-  font-family: inherit; width: 220px;
+  font-family: inherit; width: 220px; min-width: 0;
   &:focus { outline: none; border-color: #94a3b8; }
   &::placeholder { color: #94a3b8; }
+  @media (max-width: 640px) { width: 100%; }
 `;
 const SourcesGrid = styled.div`
   display: flex; flex-direction: column; gap: 0.35rem;
@@ -334,23 +362,26 @@ const TChg = styled.span`
 const Shell = styled.div`
   display: grid;
   grid-template-columns: 2.3fr 1fr;
-  @media(max-width:1100px) { grid-template-columns: 1fr; }
+  @media (max-width: 1100px) { grid-template-columns: 1fr; }
 `;
 
 const MainCol = styled.div`
   display: flex; flex-direction: column;
+  min-width: 0;
 `;
 
 const SideCol = styled.div`
   display: flex; flex-direction: column;
   background: #fafafa;
+  @media (max-width: 1100px) { display: none; }
 `;
 
 /* ── master table ───────────────────────────────────── */
 const TableHeader = styled.div`
   display: flex; justify-content: space-between; align-items: center;
-  padding: 0.8rem 1.5rem;
+  padding: 0.8rem 1.25rem;
   background: #ffffff;
+  border-bottom: 1px solid #f8fafc;
 `;
 const THLeft = styled.div`
   font-family: 'Space Grotesk', sans-serif; font-size: 0.9rem; font-weight: 700; color: #0f172a;
@@ -377,6 +408,7 @@ const TableWrap = styled.div`
 const THead = styled.div`
   display: grid; grid-template-columns: 1.4fr 0.8fr 1.2fr 2.5fr 1.5fr 0.6fr;
   min-width: 700px;
+  @media (max-width: 640px) { display: none; }
 `;
 const THCell = styled.div`
   padding: 0.6rem 1rem; font-size: 0.6rem; font-weight: 700; color: #94a3b8;
@@ -388,21 +420,23 @@ const TRow = styled(motion.div)`
   cursor: pointer;
   background: ${p => p.$selected ? '#f8fafc' : '#ffffff'};
   border-left: 3px solid ${p => p.$selected ? '#10b981' : 'transparent'};
+  border-bottom: 1px solid #f8fafc;
   &:hover { background: #f8fafc; }
 
-  @media(max-width: 640px) {
+  @media (max-width: 640px) {
     display: flex; flex-direction: column; min-width: unset;
-    padding: 0.85rem 1rem; gap: 0.35rem;
-    border-left: none;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 1rem;
+    gap: 0.5rem;
     border-left: 3px solid ${p => p.$selected ? '#10b981' : 'transparent'};
+    border-bottom: 1px solid #f1f5f9;
   }
 `;
 const TCell = styled.div`
-  padding: 1rem; display: flex; flex-direction: column; justify-content: center;
+  padding: 0.85rem 1rem; display: flex; flex-direction: column; justify-content: center;
 
-  @media(max-width: 640px) {
+  @media (max-width: 640px) {
     padding: 0;
+    /* hide confidence bar, risk, spark on mobile */
     &:nth-child(3), &:nth-child(5), &:nth-child(6) { display: none; }
   }
 `;
@@ -434,6 +468,31 @@ const AllocText = styled.div`font-weight: 700; font-size: 0.8rem; color: #0f172a
 
 const SparkWrap = styled.div`height: 30px; width: 100%;`;
 
+/* ── dash tabs ──────────────────────────────────────── */
+const DashTabBar = styled.div`
+  display: flex; gap: 0; border-bottom: 1px solid #f1f5f9;
+  background: #ffffff; padding: 0 1.5rem;
+  @media (max-width: 640px) { padding: 0; }
+`;
+const DashTabBtn = styled.button`
+  padding: 0.85rem 1.5rem;
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 700;
+  border: none; background: transparent; cursor: pointer;
+  color: ${p => p.$active ? '#0f172a' : '#94a3b8'};
+  border-bottom: 2px solid ${p => p.$active ? '#10b981' : 'transparent'};
+  margin-bottom: -1px; transition: color 0.2s, border-color 0.2s;
+  display: flex; align-items: center; gap: 0.4rem;
+  white-space: nowrap;
+  &:hover { color: #0f172a; }
+
+  @media (max-width: 640px) {
+    flex: 1;
+    justify-content: center;
+    padding: 0.85rem 0.5rem;
+    font-size: 0.82rem;
+  }
+`;
+
 /* ── journal pane ───────────────────────────────────── */
 const JournalWrap = styled.div`
   display: flex; flex-direction: column; height: 100%;
@@ -448,9 +507,10 @@ const JournalTitle = styled.h3`
   display: flex; align-items: center; gap: 0.5rem;
 `;
 const AddNoteBtn = styled.button`
-  background: #0f172a; color: #ffffff; border: none; border-radius: 6px;
-  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: background 0.2s;
+  background: #0f172a; color: #ffffff; border: none; border-radius: 8px;
+  padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.82rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+  cursor: pointer; transition: background 0.2s; white-space: nowrap;
   &:hover { background: #1e293b; }
 `;
 const NotesList = styled.div`
@@ -459,15 +519,18 @@ const NotesList = styled.div`
   &::-webkit-scrollbar { display: none; }
 `;
 const NoteCard = styled(motion.div)`
-  background: #ffffff; border: 1px solid #f1f5f9; border-radius: 12px;
-  padding: 1rem; position: relative;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
+  padding: 1rem 1.1rem; position: relative;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  transition: border-color 0.2s;
   &:hover { border-color: #cbd5e1; }
 `;
 const NoteText = styled.textarea`
   width: 100%; border: none; background: transparent; font-family: inherit;
-  font-size: 0.85rem; color: #0f172a; line-height: 1.5; resize: none;
+  font-size: 0.9rem; color: #0f172a; line-height: 1.6; resize: none;
+  -webkit-appearance: none;
   &:focus { outline: none; }
+  @media (max-width: 640px) { font-size: 1rem; }
 `;
 const NoteMeta = styled.div`
   display: flex; justify-content: space-between; align-items: center;
@@ -485,6 +548,23 @@ const EmptyJournal = styled.div`
   padding: 4rem 2rem; text-align: center; color: #94a3b8; gap: 1rem;
   svg { font-size: 2rem; opacity: 0.3; }
   p { font-size: 0.85rem; margin: 0; line-height: 1.5; }
+`;
+
+const JournalFullPage = styled.div`
+  max-width: 900px; margin: 0 auto; padding: 1.5rem 1.5rem;
+  @media (max-width: 640px) { padding: 1rem; }
+`;
+const JournalFullHeader = styled.div`
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1.25rem;
+`;
+const JournalFullTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #0f172a;
+  display: flex; align-items: center; gap: 0.5rem; margin: 0;
+`;
+const JournalNotesGrid = styled.div`
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; gap: 0.75rem; }
 `;
 
 const Footer = styled.div`
@@ -673,6 +753,7 @@ export default function Dashboard() {
   const [activeTypes, setActiveTypes] = useState(['Stocks','ETFs','Commodities','Crypto','Options Plays']);
   const [filterType,  setFilterType]  = useState('All');
   const [filterAsset, setFilterAsset] = useState('All');
+  const [dashTab, setDashTab] = useState('picks');
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem('bv_notes');
     return saved ? JSON.parse(saved) : [];
@@ -883,6 +964,48 @@ export default function Dashboard() {
         </HeaderRight>
       </TopHeader>
 
+      <DashTabBar>
+        <DashTabBtn $active={dashTab === 'picks'} onClick={() => setDashTab('picks')}>
+          <FaMagic /> AI Picks
+        </DashTabBtn>
+        <DashTabBtn $active={dashTab === 'journal'} onClick={() => setDashTab('journal')}>
+          <FaBookOpen /> Trading Journal
+        </DashTabBtn>
+      </DashTabBar>
+
+      {dashTab === 'journal' ? (
+        <JournalFullPage>
+          <JournalFullHeader>
+            <JournalFullTitle><FaBookOpen /> Trading Journal</JournalFullTitle>
+            <AddNoteBtn type="button" onClick={addNote}><FaPlus /> New note</AddNoteBtn>
+          </JournalFullHeader>
+          {notes.length === 0 ? (
+            <EmptyJournal>
+              <FaBookOpen />
+              <p>Your journal is empty.<br/>Start tracking your strategy, wins, and lessons here.</p>
+            </EmptyJournal>
+          ) : (
+            <JournalNotesGrid>
+              {notes.map(note => (
+                <NoteCard key={note.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                  <NoteText
+                    placeholder="Type your notes..."
+                    value={note.text}
+                    onChange={e => updateNote(note.id, e.target.value)}
+                    rows={5}
+                  />
+                  <NoteMeta>
+                    <NoteDate>{note.date}</NoteDate>
+                    <DeleteNoteBtn onClick={() => deleteNote(note.id)}><FaTrash /></DeleteNoteBtn>
+                  </NoteMeta>
+                </NoteCard>
+              ))}
+            </JournalNotesGrid>
+          )}
+        </JournalFullPage>
+      ) : null}
+
+      {dashTab === 'picks' && <>
       <AnimatePresence>
         {showPrefs && (
           <PrefsWrap
@@ -1156,49 +1279,13 @@ export default function Dashboard() {
         </MainCol>
 
         <SideCol>
-          <JournalWrap>
-            <JournalHead>
-              <JournalTitle><FaBookOpen /> Trading Journal</JournalTitle>
-              <AddNoteBtn type="button" onClick={addNote}><FaPlus /></AddNoteBtn>
-            </JournalHead>
-
-            <NotesList>
-              {notes.length === 0 ? (
-                <EmptyJournal>
-                  <FaBookOpen />
-                  <p>Your journal is empty.<br/>Start tracking your strategy, wins, and lessons here.</p>
-                </EmptyJournal>
-              ) : (
-                notes.map(note => (
-                  <NoteCard
-                    key={note.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                  >
-                    <NoteText
-                      placeholder="Type your notes..."
-                      value={note.text}
-                      onChange={e => updateNote(note.id, e.target.value)}
-                      rows={3}
-                    />
-                    <NoteMeta>
-                      <NoteDate>{note.date}</NoteDate>
-                      <DeleteNoteBtn onClick={() => deleteNote(note.id)}>
-                        <FaTrash />
-                      </DeleteNoteBtn>
-                    </NoteMeta>
-                  </NoteCard>
-                ))
-              )}
-            </NotesList>
-
-            <Footer>
-              AI analysis last run: {updatedLabel || 'Not yet run'}<br/>
-              Sources: RSS feeds · Alpha Vantage · Finnhub
-            </Footer>
-          </JournalWrap>
+          <Footer>
+            AI analysis last run: {updatedLabel || 'Not yet run'}<br/>
+            Sources: RSS feeds · Alpha Vantage · Finnhub
+          </Footer>
         </SideCol>
       </Shell>
+      </>}
     </Page>
 
     <AnimatePresence>
