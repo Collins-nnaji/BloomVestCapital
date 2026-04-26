@@ -1086,4 +1086,38 @@ Keep it factual, educational, and jargon-free. Do NOT give personalised investme
   }
 });
 
+/* ── Journal AI assistant ───────────────────────────── */
+router.post('/journal-assist', async (req, res) => {
+  try {
+    const { noteContent, action } = req.body;
+    if (!noteContent?.trim()) return res.status(400).json({ error: 'No note content provided' });
+
+    const systemPrompt = `You are a trading journal assistant for BloomVest Capital. You help investors reflect on their trades, decisions, and strategies. Be concise, insightful, and educational. Never give direct financial advice — frame everything as educational analysis and reflection prompts.`;
+
+    const actionPrompts = {
+      summarise: `Summarise the key points from this trading journal note in 3-4 bullet points. Be concise.\n\nNote:\n${noteContent}`,
+      analyse: `Analyse this trading journal entry. Identify:\n1. The core thesis or decision being described\n2. Potential psychological biases at play (if any)\n3. What went well or could be improved\n4. A key learning to carry forward\n\nNote:\n${noteContent}`,
+      improve: `Suggest 3 specific improvements to this trader's thinking or approach based on what they wrote. Frame each as an actionable reflection question.\n\nNote:\n${noteContent}`,
+      risks: `Identify the key risks and blind spots in this trading note. What is the trader potentially missing or underweighting? Be direct but constructive.\n\nNote:\n${noteContent}`,
+    };
+
+    const userPrompt = actionPrompts[action] || actionPrompts.summarise;
+
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('chat', 'gpt-4o-mini'),
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: 350,
+      temperature: 0.6,
+    });
+
+    res.json({ result: completion.choices[0].message.content });
+  } catch (err) {
+    console.error('Journal assist error:', err);
+    res.status(500).json({ error: 'Failed to analyse note' });
+  }
+});
+
 module.exports = router;

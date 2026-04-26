@@ -197,4 +197,11 @@ export const api = {
       body: JSON.stringify({ title, source }),
     });
   },
+
+  async journalAssist(noteContent, action) {
+    return request('/ai/journal-assist', {
+      method: 'POST',
+      body: JSON.stringify({ noteContent, action }),
+    });
+  },
 };

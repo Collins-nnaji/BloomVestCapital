@@ -5,7 +5,9 @@ import {
   FaBolt, FaGem, FaSyncAlt, FaSearch,
   FaChevronDown, FaChevronUp, FaCheckCircle,
   FaArrowUp, FaArrowDown, FaMinus, FaExchangeAlt,
-  FaFilter, FaBookOpen, FaPlus, FaTrash, FaMagic, FaSpinner, FaChartLine
+  FaFilter, FaBookOpen, FaPlus, FaTrash, FaMagic, FaSpinner, FaChartLine,
+  FaBold, FaItalic, FaListUl, FaTag, FaRobot, FaTimes, FaLightbulb,
+  FaExclamationTriangle, FaAlignLeft, FaSearch as FaSearchIcon
 } from 'react-icons/fa';
 import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import { api } from '../api';
@@ -494,18 +496,6 @@ const DashTabBtn = styled.button`
 `;
 
 /* ── journal pane ───────────────────────────────────── */
-const JournalWrap = styled.div`
-  display: flex; flex-direction: column; height: 100%;
-`;
-const JournalHead = styled.div`
-  padding: 1.5rem 2rem;
-  display: flex; justify-content: space-between; align-items: center;
-  background: #ffffff;
-`;
-const JournalTitle = styled.h3`
-  font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;
-  display: flex; align-items: center; gap: 0.5rem;
-`;
 const AddNoteBtn = styled.button`
   background: #0f172a; color: #ffffff; border: none; border-radius: 8px;
   padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.4rem;
@@ -513,34 +503,149 @@ const AddNoteBtn = styled.button`
   cursor: pointer; transition: background 0.2s; white-space: nowrap;
   &:hover { background: #1e293b; }
 `;
-const NotesList = styled.div`
-  flex: 1; overflow-y: auto; padding: 1.5rem 2rem;
-  display: flex; flex-direction: column; gap: 1rem;
-  &::-webkit-scrollbar { display: none; }
+
+const JournalGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; gap: 0.85rem; }
 `;
+
 const NoteCard = styled(motion.div)`
-  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px;
-  padding: 1rem 1.1rem; position: relative;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
-  transition: border-color 0.2s;
-  &:hover { border-color: #cbd5e1; }
+  background: #ffffff;
+  border: 1px solid ${p => p.$focused ? '#0f172a' : '#e2e8f0'};
+  border-radius: 16px;
+  display: flex; flex-direction: column;
+  box-shadow: ${p => p.$focused ? '0 0 0 3px rgba(15,23,42,0.06)' : '0 1px 6px rgba(0,0,0,0.04)'};
+  transition: border-color 0.2s, box-shadow 0.2s;
+  overflow: hidden;
 `;
-const NoteText = styled.textarea`
-  width: 100%; border: none; background: transparent; font-family: inherit;
-  font-size: 0.9rem; color: #0f172a; line-height: 1.6; resize: none;
-  -webkit-appearance: none;
-  &:focus { outline: none; }
-  @media (max-width: 640px) { font-size: 1rem; }
+
+const NoteCardHeader = styled.div`
+  padding: 0.75rem 1rem 0.5rem;
+  display: flex; align-items: center; gap: 0.5rem;
+  border-bottom: 1px solid #f8fafc;
 `;
+
+const NoteTagBadge = styled.span`
+  font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem; border-radius: 5px;
+  background: ${p => p.$bg || '#f1f5f9'}; color: ${p => p.$color || '#64748b'};
+`;
+
+const NoteTitle = styled.input`
+  flex: 1; border: none; background: transparent;
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; font-weight: 700;
+  color: #0f172a; outline: none;
+  &::placeholder { color: #cbd5e1; font-weight: 500; }
+`;
+
+const NoteToolbar = styled.div`
+  display: flex; align-items: center; gap: 2px;
+  padding: 0.35rem 0.75rem; background: #f8fafc;
+  border-bottom: 1px solid #f1f5f9; flex-wrap: wrap;
+`;
+
+const ToolbarBtn = styled.button`
+  width: 28px; height: 28px; border-radius: 6px;
+  border: none; background: ${p => p.$active ? '#e2e8f0' : 'transparent'};
+  color: ${p => p.$active ? '#0f172a' : '#94a3b8'};
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; cursor: pointer; transition: all 0.15s;
+  &:hover { background: #e2e8f0; color: #0f172a; }
+`;
+
+const ToolbarDivider = styled.div`
+  width: 1px; height: 16px; background: #e2e8f0; margin: 0 2px;
+`;
+
+const TagSelector = styled.select`
+  border: none; background: transparent; font-size: 0.72rem; font-weight: 700;
+  color: #64748b; cursor: pointer; outline: none; padding: 0.15rem 0.3rem;
+  border-radius: 4px;
+  &:hover { background: #e2e8f0; }
+`;
+
+const NoteBody = styled.div`
+  padding: 0.75rem 1rem; flex: 1; min-height: 120px;
+  font-size: 0.88rem; color: #0f172a; line-height: 1.7;
+  outline: none; white-space: pre-wrap; word-break: break-word;
+  overflow-y: auto;
+  &:empty::before { content: attr(data-placeholder); color: #cbd5e1; pointer-events: none; }
+  b, strong { font-weight: 700; }
+  i, em { font-style: italic; }
+  ul { padding-left: 1.25rem; margin: 0.25rem 0; }
+  li { margin-bottom: 0.2rem; }
+  @media (max-width: 640px) { font-size: 1rem; min-height: 100px; }
+`;
+
 const NoteMeta = styled.div`
   display: flex; justify-content: space-between; align-items: center;
-  margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f8fafc;
+  padding: 0.5rem 1rem 0.65rem; border-top: 1px solid #f8fafc;
 `;
-const NoteDate = styled.span`font-size: 0.65rem; font-weight: 600; color: #94a3b8;`;
+
+const NoteDate = styled.span`font-size: 0.62rem; font-weight: 600; color: #cbd5e1;`;
+
+const NoteActions = styled.div`display: flex; align-items: center; gap: 0.35rem;`;
+
+const AIBtn = styled.button`
+  display: flex; align-items: center; gap: 0.3rem;
+  padding: 0.3rem 0.65rem; border-radius: 6px;
+  border: 1px solid #e2e8f0; background: #ffffff;
+  color: #64748b; font-size: 0.7rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s;
+  &:hover { border-color: #10b981; color: #10b981; background: #f0fdf4; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+`;
+
 const DeleteNoteBtn = styled.button`
-  background: transparent; border: none; color: #cbd5e1; cursor: pointer;
-  font-size: 0.8rem; transition: color 0.2s;
-  &:hover { color: #ef4444; }
+  background: transparent; border: none; color: #e2e8f0; cursor: pointer;
+  font-size: 0.78rem; padding: 0.3rem; border-radius: 5px; transition: all 0.15s;
+  &:hover { color: #ef4444; background: #fef2f2; }
+`;
+
+const AIPanel = styled(motion.div)`
+  margin: 0 1rem 0.75rem;
+  border: 1px solid #e2e8f0; border-radius: 12px;
+  overflow: hidden; background: #fafafa;
+`;
+
+const AIPanelHeader = styled.div`
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.65rem 0.9rem; background: #0f172a;
+`;
+
+const AIPanelTitle = styled.div`
+  font-size: 0.72rem; font-weight: 800; color: #ffffff;
+  display: flex; align-items: center; gap: 0.4rem; letter-spacing: 0.02em;
+  span { color: #4ade80; }
+`;
+
+const AIPanelActions = styled.div`
+  display: flex; gap: 0.35rem;
+`;
+
+const AIActionBtn = styled.button`
+  padding: 0.25rem 0.6rem; border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.75); font-size: 0.65rem; font-weight: 700;
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  &:hover { background: rgba(255,255,255,0.18); color: #fff; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &.active { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.4); color: #4ade80; }
+`;
+
+const AIPanelBody = styled.div`
+  padding: 0.85rem 0.9rem;
+  font-size: 0.8rem; color: #374151; line-height: 1.7;
+  white-space: pre-wrap;
+  min-height: 60px;
+`;
+
+const AIThinking = styled.div`
+  display: flex; align-items: center; gap: 0.5rem;
+  color: #94a3b8; font-size: 0.78rem; font-style: italic;
+  padding: 0.85rem 0.9rem;
 `;
 
 const EmptyJournal = styled.div`
@@ -561,10 +666,6 @@ const JournalFullHeader = styled.div`
 const JournalFullTitle = styled.h2`
   font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 800; color: #0f172a;
   display: flex; align-items: center; gap: 0.5rem; margin: 0;
-`;
-const JournalNotesGrid = styled.div`
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;
-  @media (max-width: 640px) { grid-template-columns: 1fr; gap: 0.75rem; }
 `;
 
 const Footer = styled.div`
@@ -755,26 +856,50 @@ export default function Dashboard() {
   const [filterAsset, setFilterAsset] = useState('All');
   const [dashTab, setDashTab] = useState('picks');
   const [notes, setNotes] = useState(() => {
-    const saved = localStorage.getItem('bv_notes');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('bv_notes_v2');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
   });
-  
+  const [focusedNote, setFocusedNote] = useState(null);
+  const [aiState, setAiState] = useState({}); // { [noteId]: { loading, result, action } }
+
   useEffect(() => {
-    localStorage.setItem('bv_notes', JSON.stringify(notes));
+    localStorage.setItem('bv_notes_v2', JSON.stringify(notes));
   }, [notes]);
 
   const addNote = () => {
-    const newNote = { id: Date.now(), text: '', date: new Date().toLocaleDateString() };
-    setNotes([newNote, ...notes]);
+    const newNote = {
+      id: Date.now(),
+      title: '',
+      text: '',
+      tag: 'trade',
+      date: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+    };
+    setNotes(prev => [newNote, ...prev]);
+    setFocusedNote(newNote.id);
   };
 
-  const updateNote = (id, text) => {
-    setNotes(notes.map(n => n.id === id ? { ...n, text } : n));
+  const updateNote = (id, field, value) => {
+    setNotes(prev => prev.map(n => n.id === id ? { ...n, [field]: value } : n));
   };
 
   const deleteNote = (id) => {
-    setNotes(notes.filter(n => n.id !== id));
+    setNotes(prev => prev.filter(n => n.id !== id));
+    setAiState(prev => { const s = { ...prev }; delete s[id]; return s; });
   };
+
+  const runJournalAI = useCallback(async (noteId, action) => {
+    const note = notes.find(n => n.id === noteId);
+    if (!note?.text?.trim()) return;
+    setAiState(prev => ({ ...prev, [noteId]: { loading: true, result: null, action } }));
+    try {
+      const { result } = await api.journalAssist(note.text, action);
+      setAiState(prev => ({ ...prev, [noteId]: { loading: false, result, action } }));
+    } catch {
+      setAiState(prev => ({ ...prev, [noteId]: { loading: false, result: 'Could not connect to AI. Please try again.', action } }));
+    }
+  }, [notes]);
   const [prefs, setPrefs] = useState({
     riskLevel:'moderate', horizon:'medium', style:'balanced', sectors:[],
   });
@@ -977,30 +1102,157 @@ export default function Dashboard() {
         <JournalFullPage>
           <JournalFullHeader>
             <JournalFullTitle><FaBookOpen /> Trading Journal</JournalFullTitle>
-            <AddNoteBtn type="button" onClick={addNote}><FaPlus /> New note</AddNoteBtn>
+            <AddNoteBtn type="button" onClick={addNote}><FaPlus /> New entry</AddNoteBtn>
           </JournalFullHeader>
           {notes.length === 0 ? (
             <EmptyJournal>
               <FaBookOpen />
-              <p>Your journal is empty.<br/>Start tracking your strategy, wins, and lessons here.</p>
+              <p>Your journal is empty.<br />Log trades, ideas, and lessons — then let AI analyse your thinking.</p>
             </EmptyJournal>
           ) : (
-            <JournalNotesGrid>
-              {notes.map(note => (
-                <NoteCard key={note.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                  <NoteText
-                    placeholder="Type your notes..."
-                    value={note.text}
-                    onChange={e => updateNote(note.id, e.target.value)}
-                    rows={5}
-                  />
-                  <NoteMeta>
-                    <NoteDate>{note.date}</NoteDate>
-                    <DeleteNoteBtn onClick={() => deleteNote(note.id)}><FaTrash /></DeleteNoteBtn>
-                  </NoteMeta>
-                </NoteCard>
-              ))}
-            </JournalNotesGrid>
+            <JournalGrid>
+              {notes.map(note => {
+                const ai = aiState[note.id] || {};
+                const TAG_STYLES = {
+                  trade:    { $bg: '#dcfce7', $color: '#15803d' },
+                  idea:     { $bg: '#eff6ff', $color: '#2563eb' },
+                  review:   { $bg: '#fef3c7', $color: '#b45309' },
+                  mistake:  { $bg: '#fee2e2', $color: '#dc2626' },
+                  lesson:   { $bg: '#f3e8ff', $color: '#7c3aed' },
+                };
+                const tagStyle = TAG_STYLES[note.tag] || TAG_STYLES.trade;
+                const isFocused = focusedNote === note.id;
+
+                const execCmd = (cmd, val) => {
+                  document.execCommand(cmd, false, val);
+                };
+
+                return (
+                  <NoteCard
+                    key={note.id}
+                    $focused={isFocused}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    onFocus={() => setFocusedNote(note.id)}
+                  >
+                    {/* Header row — title + tag */}
+                    <NoteCardHeader>
+                      <NoteTagBadge {...tagStyle}>{note.tag}</NoteTagBadge>
+                      <NoteTitle
+                        placeholder="Entry title..."
+                        value={note.title}
+                        onChange={e => updateNote(note.id, 'title', e.target.value)}
+                      />
+                    </NoteCardHeader>
+
+                    {/* Formatting toolbar */}
+                    <NoteToolbar>
+                      <ToolbarBtn title="Bold" onMouseDown={e => { e.preventDefault(); execCmd('bold'); }}>
+                        <FaBold />
+                      </ToolbarBtn>
+                      <ToolbarBtn title="Italic" onMouseDown={e => { e.preventDefault(); execCmd('italic'); }}>
+                        <FaItalic />
+                      </ToolbarBtn>
+                      <ToolbarBtn title="Bullet list" onMouseDown={e => { e.preventDefault(); execCmd('insertUnorderedList'); }}>
+                        <FaListUl />
+                      </ToolbarBtn>
+                      <ToolbarDivider />
+                      <FaTag style={{ fontSize: '0.65rem', color: '#cbd5e1', marginLeft: '2px' }} />
+                      <TagSelector
+                        value={note.tag}
+                        onChange={e => updateNote(note.id, 'tag', e.target.value)}
+                      >
+                        <option value="trade">Trade</option>
+                        <option value="idea">Idea</option>
+                        <option value="review">Review</option>
+                        <option value="mistake">Mistake</option>
+                        <option value="lesson">Lesson</option>
+                      </TagSelector>
+                    </NoteToolbar>
+
+                    {/* Rich text content area */}
+                    <NoteBody
+                      contentEditable
+                      suppressContentEditableWarning
+                      data-placeholder="Write your trade notes, thesis, or observations..."
+                      onInput={e => updateNote(note.id, 'text', e.currentTarget.innerText)}
+                      dangerouslySetInnerHTML={note._html !== undefined ? undefined : undefined}
+                      ref={el => {
+                        if (el && el.innerText !== note.text && document.activeElement !== el) {
+                          el.innerText = note.text;
+                        }
+                      }}
+                    />
+
+                    {/* AI panel */}
+                    <AnimatePresence>
+                      {(ai.result || ai.loading) && (
+                        <AIPanel
+                          key="ai"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <AIPanelHeader>
+                            <AIPanelTitle>
+                              <FaRobot /> BloomVest <span>AI</span>
+                              {ai.action && <span style={{ color: '#94a3b8', fontWeight: 400, textTransform: 'capitalize', marginLeft: 4 }}>— {ai.action}</span>}
+                            </AIPanelTitle>
+                            <AIActionBtn onClick={() => setAiState(prev => { const s = {...prev}; delete s[note.id]; return s; })}>
+                              ✕
+                            </AIActionBtn>
+                          </AIPanelHeader>
+                          {ai.loading ? (
+                            <AIThinking>
+                              <FaSpinner style={{ animation: `${spinAnim.getName ? '' : 'spin'} 0.8s linear infinite` }} />
+                              Analysing your entry...
+                            </AIThinking>
+                          ) : (
+                            <AIPanelBody>{ai.result}</AIPanelBody>
+                          )}
+                        </AIPanel>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Footer — date + actions */}
+                    <NoteMeta>
+                      <NoteDate>{note.date}</NoteDate>
+                      <NoteActions>
+                        <AIBtn
+                          type="button"
+                          disabled={ai.loading || !note.text?.trim()}
+                          title="Summarise"
+                          onClick={() => runJournalAI(note.id, 'summarise')}
+                        >
+                          <FaAlignLeft /> Summarise
+                        </AIBtn>
+                        <AIBtn
+                          type="button"
+                          disabled={ai.loading || !note.text?.trim()}
+                          title="Deep analysis"
+                          onClick={() => runJournalAI(note.id, 'analyse')}
+                        >
+                          <FaRobot /> Analyse
+                        </AIBtn>
+                        <AIBtn
+                          type="button"
+                          disabled={ai.loading || !note.text?.trim()}
+                          title="Spot risks"
+                          onClick={() => runJournalAI(note.id, 'risks')}
+                        >
+                          <FaExclamationTriangle /> Risks
+                        </AIBtn>
+                        <DeleteNoteBtn type="button" onClick={() => deleteNote(note.id)} title="Delete">
+                          <FaTrash />
+                        </DeleteNoteBtn>
+                      </NoteActions>
+                    </NoteMeta>
+                  </NoteCard>
+                );
+              })}
+            </JournalGrid>
           )}
         </JournalFullPage>
       ) : null}
