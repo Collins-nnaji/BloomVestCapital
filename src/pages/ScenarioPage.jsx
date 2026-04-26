@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown, FaMagic, FaChevronRight, FaSave, FaBullseye, FaSpinner, FaBookOpen, FaArrowLeft, FaChevronDown, FaChevronUp, FaGraduationCap } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown, FaMagic, FaChevronRight, FaSave, FaBullseye, FaSpinner, FaBookOpen, FaArrowLeft, FaChevronDown, FaChevronUp, FaGraduationCap, FaTrash, FaUser, FaCoins, FaBrain, FaShieldAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { scenarios, difficultyColors } from '../data/scenarios';
 import { stocks } from '../data/stockData';
@@ -11,8 +11,10 @@ import { useAuth } from '../AuthContext';
 
 const PageContainer = styled.div`
   min-height: 100vh;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  background: #f5f5f0;
   padding-top: 64px;
+  font-family: 'Inter', sans-serif;
+  color: #0a0f1e;
 `;
 
 /** Trading UI uses light-on-dark typography — keep a dark canvas so text is readable. */
@@ -57,6 +59,7 @@ const PageHeader = styled(motion.div)`
 `;
 
 const PageTitle = styled.h1`
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.75rem;
   font-weight: 800;
   color: #0f172a;
@@ -65,10 +68,11 @@ const PageTitle = styled.h1`
 `;
 
 const PageSubtitle = styled.p`
-  color: rgba(15,23,42,0.72);
-  font-size: 1.2rem;
-  line-height: 1.6;
-  font-weight: 450;
+  font-family: 'Inter', sans-serif;
+  color: rgba(15,23,42,0.65);
+  font-size: 1.1rem;
+  line-height: 1.65;
+  font-weight: 400;
 `;
 
 const ScenariosGrid = styled.div`
@@ -87,26 +91,19 @@ const ScenariosGrid = styled.div`
 `;
 
 const ScenarioCard = styled(motion.div)`
-  background: #ffffff;
-  border: 1px solid rgba(15,23,42,0.1);
-  border-radius: 20px;
+  background: #dce8e0;
+  border: 1px solid rgba(15,23,42,0.08);
+  border-radius: 16px;
   padding: 2rem;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 
-  &::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(34,197,94,0.02) 100%);
-    opacity: 0; transition: opacity 0.3s;
-  }
-
   &:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-    border-color: rgba(34,197,94,0.25);
-    &::before { opacity: 1; }
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(0,0,0,0.08);
+    border-color: rgba(34,197,94,0.3);
   }
 `;
 
@@ -143,7 +140,8 @@ const DifficultyBadge = styled.span`
 `;
 
 const ScenarioCardTitle = styled.h3`
-  font-size: 1.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 0.6rem;
@@ -203,8 +201,8 @@ const BuilderHero = styled(motion.div)`
   margin-bottom: 1.25rem;
   padding: 1.25rem;
   border-radius: 16px;
-  border: 1px solid rgba(56,189,248,0.3);
-  background: linear-gradient(130deg, rgba(34,197,94,0.12), #ffffff);
+  border: 1px solid rgba(15,23,42,0.1);
+  background: #dce8e0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -255,6 +253,7 @@ const FilterSearch = styled.div`
   border: 1px solid rgba(15,23,42,0.14);
   background: #ffffff;
   padding: 0.6rem 0.8rem;
+
 `;
 
 const FilterInput = styled.input`
@@ -294,8 +293,10 @@ const SectionHeader = styled.div`
 `;
 
 const SectionTitle = styled.h3`
+  font-family: 'Space Grotesk', sans-serif;
   color: #0f172a;
   font-size: 1rem;
+  font-weight: 700;
   letter-spacing: -0.01em;
 `;
 
@@ -321,9 +322,11 @@ const BuilderHead = styled.div`
 `;
 
 const BuilderTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
   color: #0f172a;
   font-size: 1.35rem;
   font-weight: 800;
+  letter-spacing: -0.02em;
 `;
 
 const Stepper = styled.div`
@@ -547,10 +550,12 @@ const BarIcon = styled.span`
 `;
 
 const BarTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.15rem;
   font-weight: 700;
   color: white;
   flex: 1;
+  letter-spacing: -0.01em;
 `;
 
 const ExitButton = styled.button`
@@ -1018,10 +1023,12 @@ const CelebrationEmoji = styled.div`
 `;
 
 const ModalTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.75rem;
   font-weight: 800;
   color: white;
   margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 `;
 
 const ModalSubtitle = styled.p`
@@ -1065,6 +1072,7 @@ const LearningsSection = styled.div`
 `;
 
 const LearningTitle = styled.h4`
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.1rem;
   font-weight: 800;
   color: white;
@@ -1279,10 +1287,11 @@ const TabBar = styled.div`
   display: flex;
   gap: 0.5rem;
   margin-bottom: 2rem;
-  background: rgba(15,23,42,0.06);
+  background: rgba(15,23,42,0.07);
   border-radius: 12px;
   padding: 0.3rem;
   width: fit-content;
+  flex-wrap: wrap;
 `;
 
 const TabBtn = styled.button`
@@ -1292,7 +1301,8 @@ const TabBtn = styled.button`
   padding: 0.6rem 1.4rem;
   border-radius: 9px;
   border: none;
-  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
@@ -1485,6 +1495,7 @@ const LessonBody = styled.div`
 `;
 
 const LessonHeading = styled.h1`
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.9rem;
   font-weight: 800;
   color: #0f172a;
@@ -1955,6 +1966,10 @@ const ScenarioPage = () => {
   }, [messages, aiLoading, scrollToBottom]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [tab]);
+
+  useEffect(() => {
     let cancelled = false;
 
     const loadCustomScenarios = async () => {
@@ -2365,29 +2380,12 @@ const ScenarioPage = () => {
     return (
       <PageContainer>
         <ContentWrapper>
-          <PageHeader
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <PageTitle>
-              {tab === 'scenarios'
-                ? <>Investment <span style={{color:'#22c55e'}}>Scenarios</span></>
-                : <>Investment <span style={{color:'#22c55e'}}>Academy</span></>}
-            </PageTitle>
-            <PageSubtitle style={{maxWidth:760,margin:'0.5rem auto 0'}}>
-              {tab === 'scenarios'
-                ? <>A real investing simulator with guided missions, live portfolio mechanics, and a personal <strong style={{color:'#22c55e'}}>AI tutor</strong>. Build confidence before risking real capital.</>
-                : <>Structured courses on investing fundamentals, analysis, and strategy — with quizzes and progress tracking.</>}
-            </PageSubtitle>
-          </PageHeader>
-
-          <TabBar>
+          <TabBar style={{marginTop:'0.5rem'}}>
             <TabBtn $active={tab === 'scenarios'} onClick={() => setTab('scenarios')}>
               <FaPlay style={{fontSize:'0.75rem'}} /> Scenarios
             </TabBtn>
             <TabBtn $active={tab === 'learn'} onClick={() => setTab('learn')}>
-              <FaBookOpen style={{fontSize:'0.8rem'}} /> Learn
+              <FaBookOpen style={{fontSize:'0.8rem'}} /> Courses
             </TabBtn>
           </TabBar>
 

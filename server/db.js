@@ -113,6 +113,19 @@ CREATE TABLE IF NOT EXISTS user_subscriptions (
 CREATE INDEX IF NOT EXISTS idx_modules_course ON modules(course_id);
 CREATE INDEX IF NOT EXISTS idx_lessons_module ON lessons(module_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON user_subscriptions(email);
+CREATE TABLE IF NOT EXISTS leads (
+  id SERIAL PRIMARY KEY,
+  type VARCHAR(30) NOT NULL CHECK (type IN ('book_call', 'discuss_service', 'general')),
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  company VARCHAR(255),
+  message TEXT,
+  service VARCHAR(100),
+  preferred_time VARCHAR(100),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
+CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(type);
 `;
 
 async function initializeDatabase() {

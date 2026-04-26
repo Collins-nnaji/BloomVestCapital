@@ -58,9 +58,27 @@ setInterval(() => {
 function sanitizeAiJson(raw) {
   if (!raw) return '';
   let clean = raw.trim();
-  // Remove markdown code block markers
   clean = clean.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '');
-  return clean.trim();
+  clean = clean.trim();
+  // If JSON appears truncated, attempt to close open structures so JSON.parse has a chance
+  if (clean.startsWith('{') && !clean.endsWith('}')) {
+    // Count unclosed arrays and objects to patch the tail
+    let depth = 0; let inStr = false; let escape = false;
+    for (const ch of clean) {
+      if (escape) { escape = false; continue; }
+      if (ch === '\\' && inStr) { escape = true; continue; }
+      if (ch === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (ch === '{' || ch === '[') depth++;
+      else if (ch === '}' || ch === ']') depth--;
+    }
+    // Trim trailing incomplete token (incomplete string or bare key)
+    clean = clean.replace(/,?\s*"[^"]*$/, '').replace(/,?\s*[^}\]]*$/, '');
+    // Close open structures
+    while (depth-- > 0) clean += depth === 0 ? '}' : ']';
+    if (!clean.endsWith('}')) clean += '}';
+  }
+  return clean;
 }
 
 const RSS_PER_FEED = 12;
@@ -710,7 +728,7 @@ CORE REQUIREMENTS:
     {
       "company": "...",
       "ticker": "...",
-      "assetType": "Stock|ETF|Commodity|Crypto|Options Play",
+      "assetType": "Stocks|ETFs|Commodities|Crypto|Options Plays",
       "sector": "...",
       "action": "Strong Buy|Buy|Watch|Reduce|Avoid",
       "confidence": "High|Medium|Low",
@@ -730,11 +748,12 @@ CORE REQUIREMENTS:
 
 RULES:
 - Calibrate to the user's risk level, horizon, and preferred asset types.
-- Output valid JSON only, no markdown fences.
+- Output ONLY valid JSON — no markdown fences, no extra text before or after.
 - Keep your analysis professional, technical, and objective.
-- For each pick, the "thesis" should be 2-3 detailed sentences.
-- "entrySignal" should be a specific price action or technical trigger.
-- "priceContext" should reflect the current market sentiment described in the headlines.`;
+- Return 15-20 picks per response.
+- The "assetType" field MUST be exactly one of: "Stocks", "ETFs", "Commodities", "Crypto", "Options Plays" — no other values.
+- For each pick: "thesis" = 2-3 detailed sentences, "entrySignal" = specific price action or technical trigger, "priceContext" = current market sentiment context, "catalysts" = up to 3 items, "risk" = 1-2 sentences.
+- Ensure the JSON is complete and valid — do not truncate.`;
 
 router.post('/deep-analysis', async (req, res) => {
   try {
@@ -908,7 +927,17 @@ router.post('/deep-analysis', async (req, res) => {
     const normalisePick = (p) => ({
       company: String(p.company || 'Unknown').slice(0, 100),
       ticker: String(p.ticker || '—').slice(0, 12),
-      assetType: ['Stock', 'ETF', 'Commodity', 'Crypto', 'Options Play'].includes(p.assetType) ? p.assetType : 'Stock',
+      assetType: (() => {
+        const VALID = ['Stocks','ETFs','Commodities','Crypto','Options Plays'];
+        if (VALID.includes(p.assetType)) return p.assetType;
+        // Snap stray AI values to canonical ones
+        const t = String(p.assetType || '').toLowerCase();
+        if (t.includes('etf'))     return 'ETFs';
+        if (t.includes('crypto') || t.includes('coin') || t.includes('token')) return 'Crypto';
+        if (t.includes('option'))  return 'Options Plays';
+        if (t.includes('commodi') || t.includes('gold') || t.includes('oil') || t.includes('silver')) return 'Commodities';
+        return 'Stocks';
+      })(),
       sector: String(p.sector || 'Unknown').slice(0, 60),
       action: ['Strong Buy', 'Buy', 'Watch', 'Reduce', 'Avoid'].includes(p.action) ? p.action : 'Watch',
       confidence: ['High', 'Medium', 'Low'].includes(p.confidence) ? p.confidence : 'Medium',
@@ -928,7 +957,7 @@ router.post('/deep-analysis', async (req, res) => {
       const completion = await getOpenAiClient().chat.completions.create({
         model: resolveModel('analysis', 'gpt-4o'),
         temperature: 0.45,
-        max_tokens: 2000,
+        max_tokens: 3500,
         messages: [
           { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
           { role: 'user', content: userPrompt },
@@ -973,7 +1002,7 @@ router.post('/deep-analysis', async (req, res) => {
           const completion = await openai.chat.completions.create({
             model: process.env.OPENAI_ANALYSIS_MODEL || 'gpt-4o',
             temperature: 0.45,
-            max_tokens: 2500,
+            max_tokens: 3500,
             messages: [
               { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
               { role: 'user', content: userPrompt },
@@ -1022,6 +1051,38 @@ router.post('/deep-analysis', async (req, res) => {
   } catch (err) {
     console.error('Deep analysis error:', err);
     res.status(500).json({ error: 'Failed to run deep analysis' });
+  }
+});
+
+// Single-headline AI insight
+router.post('/analyse-headline', async (req, res) => {
+  try {
+    const { title, source } = req.body;
+    if (!title) return res.status(400).json({ error: 'title required' });
+
+    const prompt = `You are a concise financial analyst. A user wants a quick educational insight on this news headline:
+
+"${title}"
+Source: ${source || 'Unknown'}
+
+Respond in 3 short bullet points (max 20 words each):
+1. What this likely means for markets / investors
+2. Which asset class or sector is most affected
+3. One key risk to watch
+
+Keep it factual, educational, and jargon-free. Do NOT give personalised investment advice.`;
+
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('chat', 'gpt-4o-mini'),
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 220,
+      temperature: 0.5,
+    });
+
+    res.json({ insight: completion.choices[0].message.content });
+  } catch (err) {
+    console.error('Headline analysis error:', err);
+    res.status(500).json({ error: 'Failed to analyse headline' });
   }
 });
 

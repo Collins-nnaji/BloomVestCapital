@@ -236,6 +236,10 @@ const AuthPage = () => {
   const location = useLocation();
   const fromLocation = location.state?.from;
   const from = fromLocation ? (fromLocation.pathname + (fromLocation.search || '')) : '/';
+  const modeParam = new URLSearchParams(location.search).get('mode');
+  useEffect(() => {
+    if (modeParam === 'signup' || modeParam === 'signin') setMode(modeParam);
+  }, [modeParam]);
 
   useEffect(() => {
     if (user) navigate(from, { replace: true });

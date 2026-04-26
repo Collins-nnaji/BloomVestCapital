@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { ThemeProvider } from 'styled-components';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import Layout from './components/Layout';
 import Loader from './components/Loader';
@@ -10,7 +10,9 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const AuthCallback = lazy(() => import('./components/AuthCallback'));
 const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
-const AITutor = lazy(() => import('./pages/AITutor'));
+const MarketingHomepage = lazy(() => import('./pages/MarketingHomepage'));
+const MarketingServices = lazy(() => import('./pages/MarketingServices'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
 
 function App() {
   return (
@@ -21,19 +23,27 @@ function App() {
           <Suspense fallback={<Loader />}>
             <Layout>
               <Routes>
-                {/* The Entry */}
-                <Route path="/" element={<Dashboard />} />
-                
-                {/* Legacy / Tools */}
+                {/* Marketing site */}
+                <Route path="/home" element={<MarketingHomepage />} />
+                <Route path="/marketing-services" element={<MarketingServices />} />
+                <Route path="/contact" element={<ContactPage />} />
+
+                {/* AI Invest Signals */}
+                <Route path="/signals" element={<Dashboard />} />
+
+                {/* Academy (was /scenario) */}
                 <Route path="/scenario" element={<ScenarioPage />} />
-                <Route path="/ai-tutor" element={<AITutor />} />
-                
+                <Route path="/ai-tutor" element={<Navigate to="/scenario" replace />} />
+
                 {/* Auth */}
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
-                
+
+                {/* Default: redirect root to homepage */}
+                <Route path="/" element={<Navigate to="/home" replace />} />
+
                 {/* Catch-all */}
-                <Route path="*" element={<Dashboard />} />
+                <Route path="*" element={<Navigate to="/home" replace />} />
               </Routes>
             </Layout>
           </Suspense>

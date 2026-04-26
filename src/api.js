@@ -183,4 +183,18 @@ export const api = {
       }),
     });
   },
+
+  async submitLead(data) {
+    return request('/leads', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  async analyseHeadline(title, source) {
+    return request('/ai/analyse-headline', {
+      method: 'POST',
+      body: JSON.stringify({ title, source }),
+    });
+  },
 };

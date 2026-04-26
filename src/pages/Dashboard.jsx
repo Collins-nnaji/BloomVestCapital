@@ -30,11 +30,17 @@ const Page = styled.div`
 `;
 
 const TopHeader = styled.div`
-  padding: 1.25rem 2rem;
+  padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #f8fafc;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+
+  @media (max-width: 768px) {
+    padding: 0.85rem 1rem;
+  }
 `;
 
 const HeaderLeft = styled.div`
@@ -68,6 +74,12 @@ const FilterGroup = styled.div`
   padding: 4px;
   border: 1px solid #e2e8f0;
   gap: 2px;
+  flex-wrap: wrap;
+
+  @media (max-width: 480px) {
+    width: 100%;
+    order: 3;
+  }
 `;
 const FilterBtn = styled.button`
   background: ${p => p.$active ? '#ffffff' : 'transparent'};
@@ -93,7 +105,13 @@ const FilterDot = styled.span`
 const HeaderRight = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    justify-content: flex-end;
+  }
 `;
 const LastRunInfo = styled.div`
   font-size: 0.7rem;
@@ -102,6 +120,8 @@ const LastRunInfo = styled.div`
   letter-spacing: 0.05em;
   font-weight: 600;
   span { font-family: 'JetBrains Mono', monospace; color: #0f172a; margin-left: 4px; }
+
+  @media (max-width: 600px) { display: none; }
 `;
 const RefreshBtn = styled(motion.button)`
   display: inline-flex; align-items: center; justify-content: center;
@@ -118,6 +138,12 @@ const PrefsToggleBtn = styled.button`
   color: ${p => p.$active ? '#0f172a' : '#64748b'};
   font-size: 0.75rem; font-weight: 700; cursor: pointer;
   &:hover { border-color: #cbd5e1; color: #0f172a; }
+
+  @media (max-width: 480px) {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.7rem;
+    span { display: none; }
+  }
 `;
 const RunBtn = styled(motion.button)`
   background: #0f172a; color: #ffffff;
@@ -134,9 +160,17 @@ const SummaryBar = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   background: #fcfcfc;
+  overflow-x: auto;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 const SumItem = styled.div`
-  padding: 0.8rem 2rem;
+  padding: 0.75rem 1.25rem;
   display: flex; flex-direction: column; gap: 0.2rem;
 `;
 const SumLabel = styled.div`
@@ -150,7 +184,7 @@ const SumValue = styled.div`
 
 /* ── preferences & filters ──────────────────────────── */
 const PrefsWrap = styled(motion.div)`
-  padding: 1.5rem 2rem;
+  padding: 1.25rem;
   background: #ffffff;
 `;
 const PrefsGrid = styled.div`
@@ -180,9 +214,10 @@ const SectorChip = styled(motion.button)`
 `;
 
 const AssetTypeRow = styled.div`
-  padding: 0.8rem 2rem;
-  display: flex; align-items: center; gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  display: flex; align-items: center; gap: 0.65rem;
   background: #ffffff;
+  flex-wrap: wrap;
 `;
 const TypeLabel = styled.span`
   font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em;
@@ -209,6 +244,74 @@ const ModeBtn = styled.button`
   display: flex; align-items: center; gap: 0.4rem;
 `;
 
+
+/* ── sources panel ──────────────────────────────────── */
+const SourcesPanel = styled(motion.div)`
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1.25rem 1.25rem;
+  overflow: hidden;
+`;
+const SourcesPanelHeader = styled.div`
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+const SourcesPanelTitle = styled.div`
+  font-family: 'Space Grotesk', sans-serif; font-size: 0.88rem; font-weight: 700; color: #0f172a;
+  display: flex; align-items: center; gap: 0.5rem;
+  span { font-family: 'Inter', sans-serif; font-weight: 400; color: #94a3b8; font-size: 0.75rem; }
+`;
+const SourcesSearch = styled.input`
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+  padding: 0.4rem 0.75rem; font-size: 0.8rem; color: #0f172a;
+  font-family: inherit; width: 220px;
+  &:focus { outline: none; border-color: #94a3b8; }
+  &::placeholder { color: #94a3b8; }
+`;
+const SourcesGrid = styled.div`
+  display: flex; flex-direction: column; gap: 0.35rem;
+  max-height: 480px; overflow-y: auto;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+`;
+const SourceItem = styled.div`
+  display: flex; flex-direction: column; gap: 0.35rem;
+  padding: 0.6rem 0.75rem; border-radius: 8px;
+  border: 1px solid transparent;
+  background: #f8fafc;
+  transition: all 0.15s;
+  &:hover { border-color: #e2e8f0; background: #ffffff; }
+`;
+const SourceRow = styled.div`
+  display: flex; align-items: flex-start; gap: 0.75rem;
+`;
+const SourceBadge = styled.span`
+  font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: #64748b; background: #e2e8f0; border-radius: 4px;
+  padding: 0.15rem 0.4rem; white-space: nowrap; flex-shrink: 0; margin-top: 2px;
+`;
+const SourceTitle = styled.a`
+  font-size: 0.82rem; font-weight: 500; color: #0f172a; text-decoration: none; flex: 1; line-height: 1.45;
+  &:hover { color: #10b981; text-decoration: underline; }
+`;
+const SourceActions = styled.div`
+  display: flex; align-items: center; gap: 0.5rem; margin-left: auto; flex-shrink: 0;
+`;
+const AnalyseBtn = styled.button`
+  font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 5px;
+  border: 1px solid #e2e8f0; background: #ffffff; color: #64748b; cursor: pointer;
+  display: flex; align-items: center; gap: 0.3rem;
+  transition: all 0.15s;
+  &:hover { border-color: #10b981; color: #10b981; background: #f0fdf4; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+`;
+const InsightBox = styled.div`
+  font-size: 0.78rem; color: #374151; line-height: 1.6;
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  white-space: pre-wrap;
+`;
 
 /* ── ticker ─────────────────────────────────────────── */
 const TickerBar = styled.div`
@@ -267,13 +370,13 @@ const THBtn = styled.button`
 `;
 
 const TableWrap = styled.div`
-  flex: 1; overflow-y: auto;
+  flex: 1; overflow-x: auto; overflow-y: auto;
   &::-webkit-scrollbar { display: none; }
   -ms-overflow-style: none; scrollbar-width: none;
 `;
 const THead = styled.div`
   display: grid; grid-template-columns: 1.4fr 0.8fr 1.2fr 2.5fr 1.5fr 0.6fr;
-  @media(max-width: 900px) { min-width: 800px; }
+  min-width: 700px;
 `;
 const THCell = styled.div`
   padding: 0.6rem 1rem; font-size: 0.6rem; font-weight: 700; color: #94a3b8;
@@ -281,14 +384,27 @@ const THCell = styled.div`
 `;
 const TRow = styled(motion.div)`
   display: grid; grid-template-columns: 1.4fr 0.8fr 1.2fr 2.5fr 1.5fr 0.6fr;
+  min-width: 700px;
   cursor: pointer;
-  @media(max-width: 900px) { min-width: 800px; }
   background: ${p => p.$selected ? '#f8fafc' : '#ffffff'};
   border-left: 3px solid ${p => p.$selected ? '#10b981' : 'transparent'};
   &:hover { background: #f8fafc; }
+
+  @media(max-width: 640px) {
+    display: flex; flex-direction: column; min-width: unset;
+    padding: 0.85rem 1rem; gap: 0.35rem;
+    border-left: none;
+    border-bottom: 1px solid #f1f5f9;
+    border-left: 3px solid ${p => p.$selected ? '#10b981' : 'transparent'};
+  }
 `;
 const TCell = styled.div`
   padding: 1rem; display: flex; flex-direction: column; justify-content: center;
+
+  @media(max-width: 640px) {
+    padding: 0;
+    &:nth-child(3), &:nth-child(5), &:nth-child(6) { display: none; }
+  }
 `;
 const AssetSymbol = styled.div`font-weight: 800; color: #0f172a; font-size: 0.85rem;`;
 const AssetNameText = styled.div`font-size: 0.75rem; color: #64748b; margin-top: 0.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;`;
@@ -410,6 +526,79 @@ const ProgressText = styled.div`
   min-width: 120px;
 `;
 
+/* ── auth modal ─────────────────────────────────────── */
+const ModalOverlay = styled(motion.div)`
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(2, 6, 23, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+`;
+const ModalCard = styled(motion.div)`
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem;
+  width: 100%; max-width: 400px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: 0;
+  position: relative;
+`;
+const ModalClose = styled.button`
+  position: absolute; top: 1rem; right: 1rem;
+  background: rgba(15,23,42,0.06); border: none;
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; color: #64748b; cursor: pointer;
+  transition: all 0.15s;
+  &:hover { background: rgba(15,23,42,0.1); color: #0f172a; }
+`;
+const ModalIcon = styled.div`
+  width: 60px; height: 60px; border-radius: 18px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; margin-bottom: 1.25rem;
+  box-shadow: 0 8px 24px rgba(15,23,42,0.15);
+`;
+const ModalTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.35rem; font-weight: 800; color: #0f172a;
+  margin: 0 0 0.5rem; letter-spacing: -0.02em;
+`;
+const ModalDesc = styled.p`
+  font-size: 0.88rem; color: #64748b; line-height: 1.6;
+  margin: 0 0 1.75rem;
+`;
+const ModalPerks = styled.div`
+  display: flex; flex-direction: column; gap: 0.5rem;
+  width: 100%; margin-bottom: 1.75rem;
+`;
+const ModalPerk = styled.div`
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.82rem; color: #374151; font-weight: 500;
+  background: #f8fafc; border-radius: 8px; padding: 0.6rem 0.75rem;
+  text-align: left;
+`;
+const ModalSignInBtn = styled.button`
+  width: 100%; padding: 0.85rem;
+  background: #0f172a; color: #ffffff;
+  border: none; border-radius: 12px;
+  font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; margin-bottom: 0.65rem;
+  &:hover { background: #15803d; }
+`;
+const ModalCreateBtn = styled.button`
+  width: 100%; padding: 0.75rem;
+  background: transparent; color: #0f172a;
+  border: 1.5px solid rgba(15,23,42,0.15);
+  border-radius: 12px; font-size: 0.88rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  &:hover { border-color: rgba(15,23,42,0.35); background: rgba(15,23,42,0.03); }
+`;
+const ModalNote = styled.p`
+  font-size: 0.72rem; color: #94a3b8; margin: 0.75rem 0 0;
+`;
+
 /* ── trend icon helper ──────────────────────────────── */
 function TrendIconEl({ trend }) {
   if (trend === 'Uptrend')   return <FaArrowUp />;
@@ -428,6 +617,18 @@ const ASSET_TYPES = [
 ];
 
 const SECTORS = ['Technology','Health Care','Financials','Energy','Consumer','Industrials','Materials','Utilities'];
+
+// Server now returns exact chip ids, but keep a client-side guard for old cached results
+const normaliseAssetType = (t = '') => {
+  const VALID = ['Stocks','ETFs','Commodities','Crypto','Options Plays'];
+  if (VALID.includes(t)) return t;
+  const s = t.toLowerCase();
+  if (s.includes('etf'))     return 'ETFs';
+  if (s.includes('crypto') || s.includes('coin') || s.includes('token')) return 'Crypto';
+  if (s.includes('option'))  return 'Options Plays';
+  if (s.includes('commodi')) return 'Commodities';
+  return 'Stocks';
+};
 
 const defaultModes = {
   disclaimer:'Educational commentary only, not financial advice.',
@@ -464,8 +665,14 @@ export default function Dashboard() {
   const [deepResult,  setDeepResult]  = useState(null);
   const [deepError,   setDeepError]   = useState(null);
   const [showPrefs,   setShowPrefs]   = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSources, setShowSources] = useState(false);
+  const [sourcesQuery, setSourcesQuery] = useState('');
+  const [headlineInsights, setHeadlineInsights] = useState({});
+  const [headlineLoading,  setHeadlineLoading]  = useState({});
   const [activeTypes, setActiveTypes] = useState(['Stocks','ETFs','Commodities','Crypto','Options Plays']);
   const [filterType,  setFilterType]  = useState('All');
+  const [filterAsset, setFilterAsset] = useState('All');
   const [notes, setNotes] = useState(() => {
     const saved = localStorage.getItem('bv_notes');
     return saved ? JSON.parse(saved) : [];
@@ -514,9 +721,7 @@ export default function Dashboard() {
 
   const runDeepAnalysis = useCallback(async () => {
     if (!user) {
-      if (window.confirm('Please log in to use the Deep Analysis engine.')) {
-        navigate('/auth');
-      }
+      setShowAuthModal(true);
       return;
     }
     setDeepRunning(true); setDeepProgress(0); setDeepError(null); setDeepResult(null);
@@ -579,42 +784,50 @@ export default function Dashboard() {
     }
   }, [prefs, activeTypes, user, navigate]);
 
-  const investmentModes = brief?.investmentModes || defaultModes;
-  const activeIdeas = mode === 'shortTerm' ? investmentModes.shortTerm : investmentModes.longTerm;
+  const handleAnalyseHeadline = useCallback(async (idx, title, source) => {
+    if (headlineLoading[idx]) return;
+    setHeadlineLoading(prev => ({ ...prev, [idx]: true }));
+    try {
+      const { insight } = await api.analyseHeadline(title, source);
+      setHeadlineInsights(prev => ({ ...prev, [idx]: insight }));
+    } catch {
+      setHeadlineInsights(prev => ({ ...prev, [idx]: 'Could not load analysis right now.' }));
+    } finally {
+      setHeadlineLoading(prev => ({ ...prev, [idx]: false }));
+    }
+  }, [headlineLoading]);
 
   const updatedLabel = brief?.generatedAt
     ? new Date(brief.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})
     : null;
 
-  const defaultMappedPicks = useMemo(() => activeIdeas.map(idea => ({
-    company: idea.asset,
-    ticker: idea.ticker,
-    assetType: idea.vehicle,
-    fit: idea.fit,
-    action: idea.fit === 'Avoid' ? 'Avoid' : (idea.fit === 'Reduce' ? 'Reduce' : (idea.fit === 'Watch' ? 'Watch' : 'Buy')),
-    trend: 'Sideways',
-    confidence: 'Medium',
-    thesis: idea.reason,
-    whyNow: idea.whyNow,
-    risk: idea.risk,
-    horizon: idea.horizon
-  })), [activeIdeas]);
+  const rawPicks = deepResult ? deepResult.picks : [];
 
-  const rawPicks = deepResult ? deepResult.picks : defaultMappedPicks;
+  const confToPct = (c) => c === 'High' ? 85 : c === 'Medium' ? 65 : 45;
+  const confToScore = (c) => c === 'High' ? 82 : c === 'Medium' ? 61 : 34;
 
   const filteredPicks = useMemo(() => {
-    if (filterType === 'All') return rawPicks;
-    return rawPicks.filter(p => p.action === filterType || p.assetType === filterType);
-  }, [rawPicks, filterType]);
+    return rawPicks.filter(p => {
+      const actionOk = filterType === 'All'
+        || (filterType === 'Buy' && (p.action === 'Buy' || p.action === 'Strong Buy'))
+        || (filterType === 'Watch' && p.action === 'Watch')
+        || (filterType === 'Avoid' && (p.action === 'Avoid' || p.action === 'Reduce'));
+      const assetOk = filterAsset === 'All' || normaliseAssetType(p.assetType) === filterAsset;
+      return actionOk && assetOk;
+    });
+  }, [rawPicks, filterType, filterAsset]);
 
   const counts = useMemo(() => {
     return rawPicks.reduce((acc, p) => { acc[p.action] = (acc[p.action] || 0) + 1; return acc; }, {});
   }, [rawPicks]);
 
-  const selectedPick = filteredPicks[selectedAssetIdx] || filteredPicks[0] || null;
+  const avgConfidence = useMemo(() => {
+    if (!rawPicks.length) return null;
+    const sum = rawPicks.reduce((s, p) => s + confToPct(p.confidence), 0);
+    return Math.round(sum / rawPicks.length);
+  }, [rawPicks]);
 
-  const confToPct = (c) => c === 'High' ? 85 : c === 'Medium' ? 65 : 45;
-  const confToScore = (c) => c === 'High' ? 82 : c === 'Medium' ? 61 : 34;
+  const selectedPick = filteredPicks[selectedAssetIdx] || filteredPicks[0] || null;
 
   const generateChartData = useCallback((trend, points) => {
     let val = 100;
@@ -626,6 +839,7 @@ export default function Dashboard() {
   }, []);
 
   return (
+    <>
     <Page>
       <TopHeader>
         <HeaderLeft>
@@ -637,7 +851,10 @@ export default function Dashboard() {
         <FilterGroup>
           {['All', 'Buy', 'Watch', 'Avoid'].map(f => {
             const displayLabel = f === 'Watch' ? 'Hold' : f;
-            const count = counts[f] || (f === 'All' ? filteredPicks.length : 0);
+            const assetFiltered = filterAsset === 'All' ? rawPicks : rawPicks.filter(p => normaliseAssetType(p.assetType) === filterAsset);
+            const count = f === 'All' ? assetFiltered.length
+              : f === 'Buy' ? assetFiltered.filter(p => ['Buy','Strong Buy'].includes(p.action)).length
+              : assetFiltered.filter(p => p.action === f).length;
             return (
               <FilterBtn key={f} type="button" $active={filterType === f} onClick={() => setFilterType(f)}>
                 <FilterDot $color={f === 'Buy' ? '#10b981' : f === 'Watch' ? '#f59e0b' : f === 'Avoid' ? '#ef4444' : '#cbd5e1'} />
@@ -654,6 +871,9 @@ export default function Dashboard() {
           <RefreshBtn type="button" onClick={() => load(true)} disabled={loading || refreshing}>
             <FaSyncAlt className={refreshing ? 'spin' : ''} />
           </RefreshBtn>
+          <PrefsToggleBtn type="button" $active={showSources} onClick={() => setShowSources(!showSources)}>
+            <FaBookOpen /> Sources
+          </PrefsToggleBtn>
           <PrefsToggleBtn type="button" $active={showPrefs} onClick={() => setShowPrefs(!showPrefs)}>
             <FaFilter /> Preferences
           </PrefsToggleBtn>
@@ -738,16 +958,6 @@ export default function Dashboard() {
       </AnimatePresence>
 
       <AssetTypeRow>
-        <TypeLabel>Horizon Strategy:</TypeLabel>
-        <ModeToggle>
-          <ModeBtn type="button" $active={mode === 'longTerm'} onClick={() => setMode('longTerm')}>
-            <FaChartLine /> Long-Term
-          </ModeBtn>
-          <ModeBtn type="button" $active={mode === 'shortTerm'} onClick={() => setMode('shortTerm')}>
-            <FaBolt /> Short-Term
-          </ModeBtn>
-        </ModeToggle>
-        
         <div style={{ width: '1px', height: '16px', background: '#e2e8f0', margin: '0 0.5rem' }} />
 
         <TypeLabel>Asset Filter:</TypeLabel>
@@ -755,15 +965,83 @@ export default function Dashboard() {
           <TypeChip
             key={type.id}
             type="button"
-            $active={activeTypes.includes(type.id)}
-            $bg={type.activeBg.replace('rgba(','rgb(').replace(')','/ 0.1)')} // Convert to light theme friendly
+            $active={filterAsset === type.id}
+            $bg={type.activeBg.replace('rgba(','rgb(').replace(')','/ 0.1)')}
             $color={type.activeColor === '#86efac' ? '#10b981' : type.activeColor === '#93c5fd' ? '#3b82f6' : (type.activeColor === '#fdba74' ? '#f97316' : '#8b5cf6')}
-            onClick={() => toggleType(type.id)}
+            onClick={() => setFilterAsset(prev => prev === type.id ? 'All' : type.id)}
           >
             {type.label}
           </TypeChip>
         ))}
       </AssetTypeRow>
+
+      <AnimatePresence>
+        {showSources && (
+          <SourcesPanel
+            key="sources"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            {(() => {
+              const headlines = brief?.headlines || [];
+              const filtered = sourcesQuery.trim()
+                ? headlines.filter(h => h.title?.toLowerCase().includes(sourcesQuery.toLowerCase()) || h.source?.toLowerCase().includes(sourcesQuery.toLowerCase()))
+                : headlines;
+              return (
+                <>
+                  <SourcesPanelHeader>
+                    <SourcesPanelTitle>
+                      News Sources <span>{filtered.length} articles being analysed</span>
+                    </SourcesPanelTitle>
+                    <SourcesSearch
+                      placeholder="Filter headlines..."
+                      value={sourcesQuery}
+                      onChange={e => setSourcesQuery(e.target.value)}
+                    />
+                  </SourcesPanelHeader>
+                  <SourcesGrid>
+                    {filtered.length === 0 && (
+                      <div style={{color:'#94a3b8',fontSize:'0.82rem',padding:'0.5rem'}}>
+                        {headlines.length === 0 ? 'Headlines will appear after the next refresh.' : 'No results.'}
+                      </div>
+                    )}
+                    {filtered.map((h, idx) => {
+                      const key = headlines.indexOf(h);
+                      const insight = headlineInsights[key];
+                      const loading = headlineLoading[key];
+                      return (
+                        <SourceItem key={key}>
+                          <SourceRow>
+                            <SourceBadge>{h.source || 'News'}</SourceBadge>
+                            <SourceTitle href={h.link} target="_blank" rel="noopener noreferrer">
+                              {h.title}
+                            </SourceTitle>
+                            <SourceActions>
+                              {!insight && (
+                                <AnalyseBtn
+                                  type="button"
+                                  disabled={loading}
+                                  onClick={() => handleAnalyseHeadline(key, h.title, h.source)}
+                                >
+                                  {loading ? <FaSpinner style={{animation:'spin 0.8s linear infinite'}} /> : <FaChartLine />}
+                                  {loading ? 'Analysing...' : 'AI Insight'}
+                                </AnalyseBtn>
+                              )}
+                            </SourceActions>
+                          </SourceRow>
+                          {insight && <InsightBox>{insight}</InsightBox>}
+                        </SourceItem>
+                      );
+                    })}
+                  </SourcesGrid>
+                </>
+              );
+            })()}
+          </SourcesPanel>
+        )}
+      </AnimatePresence>
 
       <SummaryBar>
         <SumItem>
@@ -784,7 +1062,7 @@ export default function Dashboard() {
         </SumItem>
         <SumItem>
           <SumLabel>Avg. AI Confidence</SumLabel>
-          <SumValue>61</SumValue>
+          <SumValue>{avgConfidence !== null ? `${avgConfidence}%` : '—'}</SumValue>
         </SumItem>
       </SummaryBar>
 
@@ -793,8 +1071,11 @@ export default function Dashboard() {
           <TableHeader>
             <THLeft>AI Picks <span>{filteredPicks.length} results</span></THLeft>
             <THRight>
-              <THGroup>Horizon <THBtn type="button">Long-term</THBtn><THBtn type="button">Short-term</THBtn></THGroup>
-              <THGroup>Export <THBtn type="button">CSV</THBtn><THBtn type="button">PDF</THBtn></THGroup>
+              {deepResult && (
+                <THGroup style={{color:'#10b981'}}>
+                  Analysis complete · {new Date(deepResult.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})}
+                </THGroup>
+              )}
             </THRight>
           </TableHeader>
           
@@ -803,6 +1084,32 @@ export default function Dashboard() {
               <THCell>Asset</THCell><THCell>Verdict</THCell><THCell>AI Conf.</THCell>
               <THCell>Why it fits</THCell><THCell>Main risk</THCell><THCell>Trend</THCell>
             </THead>
+            {!deepResult && !deepRunning && (
+              <div style={{
+                display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+                padding:'3.5rem 2rem', gap:'0.75rem', color:'#94a3b8', textAlign:'center'
+              }}>
+                <FaMagic style={{fontSize:'1.8rem', color:'#cbd5e1'}} />
+                <div style={{fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'0.95rem', color:'#64748b'}}>
+                  No analysis yet
+                </div>
+                <div style={{fontSize:'0.8rem', maxWidth:300}}>
+                  Set your preferences and click <strong style={{color:'#0f172a'}}>Run AI analysis</strong> to generate live market picks based on today's news.
+                </div>
+              </div>
+            )}
+            {deepRunning && (
+              <div style={{
+                display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+                padding:'3.5rem 2rem', gap:'0.75rem', color:'#94a3b8', textAlign:'center'
+              }}>
+                <FaSpinner style={{fontSize:'1.8rem', color:'#10b981', animation:'spin 0.8s linear infinite'}} />
+                <div style={{fontFamily:"'Space Grotesk',sans-serif", fontWeight:700, fontSize:'0.95rem', color:'#64748b'}}>
+                  Analysing markets... {deepProgress}%
+                </div>
+                <div style={{fontSize:'0.8rem'}}>Reading today's headlines across all sources</div>
+              </div>
+            )}
             {filteredPicks.map((pick, i) => {
                const isBuy = ['Buy', 'Strong Buy'].includes(pick.action);
                const isAvoid = ['Avoid', 'Reduce'].includes(pick.action);
@@ -827,7 +1134,7 @@ export default function Dashboard() {
                    <TCell>
                      <ConfRow>
                        <ConfScore>{confToScore(pick.confidence)}</ConfScore>
-                       <DeltaText $pos={true}>+3 vs last</DeltaText>
+                       <DeltaText $pos={pick.confidence === 'High'}>AI scored</DeltaText>
                      </ConfRow>
                      <ConfBarWrap><ConfBarFill $color={vColor} $pct={confVal} /></ConfBarWrap>
                    </TCell>
@@ -886,12 +1193,63 @@ export default function Dashboard() {
             </NotesList>
 
             <Footer>
-              Model: BloomVest-Analyst v1.2 · Run {updatedLabel || 'N/A'}<br/>
-              SEC EDGAR: 14 filings | News wire: 892 headlines
+              AI analysis last run: {updatedLabel || 'Not yet run'}<br/>
+              Sources: RSS feeds · Alpha Vantage · Finnhub
             </Footer>
           </JournalWrap>
         </SideCol>
       </Shell>
     </Page>
+
+    <AnimatePresence>
+      {showAuthModal && (
+        <ModalOverlay
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={() => setShowAuthModal(false)}
+        >
+          <ModalCard
+            initial={{ opacity: 0, scale: 0.94, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.94, y: 16 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            onClick={e => e.stopPropagation()}
+          >
+            <ModalClose onClick={() => setShowAuthModal(false)}>✕</ModalClose>
+            <ModalIcon>🔐</ModalIcon>
+            <ModalTitle>Sign in to unlock this</ModalTitle>
+            <ModalDesc>
+              The AI analysis engine reads live market headlines and generates picks tailored to your preferences. Free to use — just needs an account.
+            </ModalDesc>
+            <ModalPerks>
+              <ModalPerk>
+                <span style={{color:'#10b981',fontWeight:700,fontSize:'1rem'}}>✓</span>
+                Run live AI analysis on today's market news
+              </ModalPerk>
+              <ModalPerk>
+                <span style={{color:'#10b981',fontWeight:700,fontSize:'1rem'}}>✓</span>
+                Save preferences — risk level, sectors, horizon
+              </ModalPerk>
+              <ModalPerk>
+                <span style={{color:'#10b981',fontWeight:700,fontSize:'1rem'}}>✓</span>
+                Keep a personal trading journal
+              </ModalPerk>
+              <ModalPerk>
+                <span style={{color:'#10b981',fontWeight:700,fontSize:'1rem'}}>✓</span>
+                Access Academy scenarios and courses
+              </ModalPerk>
+            </ModalPerks>
+            <ModalSignInBtn onClick={() => { setShowAuthModal(false); navigate('/auth?mode=signin'); }}>
+              Sign in
+            </ModalSignInBtn>
+            <ModalCreateBtn onClick={() => { setShowAuthModal(false); navigate('/auth?mode=signup'); }}>
+              Create a free account
+            </ModalCreateBtn>
+            <ModalNote>No credit card required · Free forever</ModalNote>
+          </ModalCard>
+        </ModalOverlay>
+      )}
+    </AnimatePresence>
+    </>
   );
 }

@@ -89,6 +89,35 @@ const NavLink = styled(RouterLink)`
   }
 `;
 
+const BookCallBtn = styled(RouterLink)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: white;
+  background: #0a0f1e;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &::before {
+    content: '●';
+    color: #22c55e;
+    font-size: 0.5rem;
+  }
+
+  &:hover {
+    background: #15803d;
+  }
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
+`;
+
 const NavRight = styled.div`
   display: flex;
   align-items: center;
@@ -356,20 +385,25 @@ const Navbar = () => {
     <>
       <NavbarContainer $scrolled={scrolled}>
         <NavWrapper>
-          <Logo to="/">
+          <Logo to="/home">
             <img src="/bloomvestlogo.png" alt="BloomVest" />
           </Logo>
 
           <NavCenter>
+            <NavGroup>
+              <NavLink to="/home" className={isActive('/home')}>
+                Home
+              </NavLink>
+              <NavLink to="/marketing-services" className={isActive('/marketing-services')}>
+                Services
+              </NavLink>
+            </NavGroup>
             <NavGroup $highlight>
-              <NavLink to="/" end className={isActive('/')}>
-                Insights
+              <NavLink to="/signals" className={isActive('/signals')}>
+                AI Invest Signals
               </NavLink>
               <NavLink to="/scenario" className={isActive('/scenario')}>
-                Scenarios
-              </NavLink>
-              <NavLink to="/ai-tutor" className={isActive('/ai-tutor')}>
-                AI Tutor
+                Academy
               </NavLink>
             </NavGroup>
           </NavCenter>
@@ -385,6 +419,7 @@ const Navbar = () => {
             ) : (
               <SignInLink to="/auth">Sign in</SignInLink>
             )}
+            <BookCallBtn to="/contact">Book a call</BookCallBtn>
             <MobileToggle type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu">
               <FaBars />
             </MobileToggle>
@@ -426,15 +461,22 @@ const Navbar = () => {
         )}
 
         <MobileSection>
+          <MobileSectionLabel>Company</MobileSectionLabel>
+          <MobileLink to="/home" className={isActive('/home')}>
+            Home <FaChevronRight />
+          </MobileLink>
+          <MobileLink to="/marketing-services" className={isActive('/marketing-services')}>
+            Services <FaChevronRight />
+          </MobileLink>
+        </MobileSection>
+
+        <MobileSection>
           <MobileSectionLabel>Intelligence Tools</MobileSectionLabel>
-          <MobileLink to="/" className={isActive('/')}>
-            Insights <FaChevronRight />
+          <MobileLink to="/signals" className={isActive('/signals')}>
+            AI Invest Signals <FaChevronRight />
           </MobileLink>
           <MobileLink to="/scenario" className={isActive('/scenario')}>
-            Scenarios <FaChevronRight />
-          </MobileLink>
-          <MobileLink to="/ai-tutor" className={isActive('/ai-tutor')}>
-            AI Tutor <FaChevronRight />
+            Academy <FaChevronRight />
           </MobileLink>
         </MobileSection>
       </MobileMenu>
