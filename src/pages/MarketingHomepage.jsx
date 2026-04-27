@@ -71,6 +71,8 @@ const HeroHeadline = styled.h1`
     font-style: italic;
     color: #15803d;
   }
+
+  @media (max-width: 480px) { font-size: clamp(2rem, 8vw, 2.6rem); margin-bottom: 1rem; }
 `;
 
 const HeroSub = styled.p`
@@ -79,6 +81,7 @@ const HeroSub = styled.p`
   color: rgba(15, 23, 42, 0.62);
   max-width: 440px;
   margin: 0 0 2.25rem;
+  @media (max-width: 480px) { font-size: 0.95rem; max-width: 100%; margin-bottom: 1.5rem; }
 `;
 
 const HeroCTAs = styled.div`
@@ -86,11 +89,13 @@ const HeroCTAs = styled.div`
   align-items: center;
   gap: 1.25rem;
   flex-wrap: wrap;
+  @media (max-width: 480px) { flex-direction: column; align-items: stretch; gap: 0.75rem; }
 `;
 
 const BtnPrimary = styled(Link)`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.9rem 1.75rem;
   background: #0a0f1e;
@@ -108,11 +113,13 @@ const BtnPrimary = styled(Link)`
   }
 
   &:hover { background: #15803d; transform: translateY(-1px); }
+  @media (max-width: 480px) { width: 100%; padding: 0.85rem 1rem; }
 `;
 
 const BtnGhost = styled(Link)`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
   padding: 0.9rem 1.4rem;
   color: #0a0f1e;
@@ -123,6 +130,7 @@ const BtnGhost = styled(Link)`
   transition: all 0.2s ease;
 
   &:hover { color: #15803d; border-color: #15803d; }
+  @media (max-width: 480px) { width: 100%; padding: 0.85rem 1rem; border: 1px solid rgba(15,23,42,0.2); border-radius: 10px; }
 `;
 
 // ─── Hero Right Card ────────────────────────────────────────────────────────
@@ -238,6 +246,7 @@ const StatsBar = styled.div`
   gap: 3.5rem;
   flex-wrap: wrap;
   @media (max-width: 640px) { gap: 2rem; }
+  @media (max-width: 480px) { gap: 1.5rem; padding: 1.75rem 0; }
 `;
 
 const Stat = styled.div``;
@@ -249,6 +258,7 @@ const StatNum = styled.div`
   color: #0a0f1e;
   line-height: 1;
   margin-bottom: 0.35rem;
+  @media (max-width: 480px) { font-size: 1.7rem; }
 `;
 
 const StatLabel = styled.div`

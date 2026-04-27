@@ -204,4 +204,15 @@ export const api = {
       body: JSON.stringify({ noteContent, action }),
     });
   },
+
+  async saveAnalysis(payload, preferences) {
+    return request('/ai/analysis/save', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), payload, preferences }),
+    });
+  },
+
+  async getSavedAnalysis() {
+    return request(`/ai/analysis/saved?sessionId=${getSessionId()}`);
+  },
 };

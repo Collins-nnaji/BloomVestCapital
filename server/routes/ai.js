@@ -1,6 +1,6 @@
 const express = require('express');
 const { pool, getOrCreateUser } = require('../db');
-const { getOpenAiClient, hasAiCredentials, resolveModel, getClientMode, OpenAI } = require('../openai-client');
+const { getOpenAiClient, hasAiCredentials, resolveModel, getClientMode } = require('../openai-client');
 
 const router = express.Router();
 
@@ -198,6 +198,7 @@ async function fetchFinnhubNews() {
     const k = String(item.headline || '').slice(0, 100).toLowerCase();
     if (!k || seen.has(k)) continue;
     seen.add(k);
+    const fhDate = item.datetime ? new Date(item.datetime * 1000) : null;
     out.push({
       title: item.headline || '',
       summary: item.summary ? item.summary.slice(0, 350) : '',
@@ -206,6 +207,7 @@ async function fetchFinnhubNews() {
       sentiment: '',
       tickers: item.related || '',
       category: item.category || 'general',
+      pubDate: fhDate ? fhDate.toISOString() : null,
     });
   }
   return out.slice(0, 100);
@@ -242,15 +244,27 @@ function parseRssHeadlines(xml, limit = 14) {
   const items = [];
   const re = /<item\b[^>]*>([\s\S]*?)<\/item>/gi;
   let m;
-  while ((m = re.exec(xml)) !== null && items.length < limit) {
+  while ((m = re.exec(xml)) !== null) {
     const block = m[1];
     const tm = block.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
     const lm = block.match(/<link\b[^>]*>([\s\S]*?)<\/link>/i);
+    const dm = block.match(/<pubDate\b[^>]*>([\s\S]*?)<\/pubDate>/i)
+            || block.match(/<dc:date\b[^>]*>([\s\S]*?)<\/dc:date>/i)
+            || block.match(/<updated\b[^>]*>([\s\S]*?)<\/updated>/i);
     const title = decodeXmlEntities(tm ? tm[1].trim() : '');
-    const link = lm ? decodeXmlEntities(lm[1].trim()) : null;
-    if (title) items.push({ title, link });
+    const link  = lm ? decodeXmlEntities(lm[1].trim()) : null;
+    const pubDateRaw = dm ? dm[1].trim() : null;
+    const pubDate = pubDateRaw ? new Date(pubDateRaw) : null;
+    if (title) items.push({ title, link, pubDate: pubDate && !isNaN(pubDate) ? pubDate : null });
   }
-  return items;
+  // Sort newest first, items without dates go to end
+  items.sort((a, b) => {
+    if (a.pubDate && b.pubDate) return b.pubDate - a.pubDate;
+    if (a.pubDate) return -1;
+    if (b.pubDate) return 1;
+    return 0;
+  });
+  return items.slice(0, limit);
 }
 
 function normalizeHeadlineKey(title) {
@@ -280,10 +294,14 @@ async function fetchOneRssFeed({ url, source, id }) {
     }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const xml = await res.text();
-    const rows = parseRssHeadlines(xml, RSS_PER_FEED);
-    return rows.map((h) => ({
+    const rows = parseRssHeadlines(xml, RSS_PER_FEED * 3); // parse more, then filter by age
+    const cutoff = Date.now() - 48 * 60 * 60 * 1000; // drop anything older than 48 h
+    const fresh = rows.filter(h => !h.pubDate || h.pubDate.getTime() >= cutoff);
+    const final = (fresh.length > 0 ? fresh : rows).slice(0, RSS_PER_FEED); // fall back to all if none pass
+    return final.map((h) => ({
       title: h.title,
       link: h.link,
+      pubDate: h.pubDate ? h.pubDate.toISOString() : null,
       source,
       sourceId: id,
     }));
@@ -312,6 +330,13 @@ async function fetchAggregatedHeadlines() {
     ...avNews,
     ...fhNews,
   ];
+
+  // Sort all sources newest-first before dedup so freshest wins
+  merged.sort((a, b) => {
+    const ta = a.pubDate ? new Date(a.pubDate).getTime() : 0;
+    const tb = b.pubDate ? new Date(b.pubDate).getTime() : 0;
+    return tb - ta;
+  });
 
   const seen = new Set();
   const out = [];
@@ -478,7 +503,7 @@ router.get('/daily-brief', async (req, res) => {
       return res.json(dailyBriefCache.payload);
     }
 
-    const { headlines } = await fetchAggregatedHeadlines();
+    const { headlines, tickerSentiments } = await fetchAggregatedHeadlines();
     const headlineLines = headlines.length
       ? buildHeadlineBlock(headlines, 60)
       : '(No headlines retrieved; give general 2026 learner-focused market education themes: diversification, rates awareness, earnings quality, and risk management.)';
@@ -698,10 +723,22 @@ router.get('/daily-brief', async (req, res) => {
       }
     }
 
+    // Serialize ticker sentiments for the frontend sentiment tab
+    const tickerSentimentArray = [...tickerSentiments.entries()]
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 60)
+      .map(([ticker, v]) => ({
+        ticker,
+        label: v.label,
+        avgScore: v.avgScore,
+        count: v.count,
+      }));
+
     const payload = {
       generatedAt: new Date().toISOString(),
       headlines: headlines.slice(0, 60),
       investmentModes,
+      tickerSentiments: tickerSentimentArray,
       ...analysis,
     };
 
@@ -991,51 +1028,9 @@ router.post('/deep-analysis', async (req, res) => {
     } catch (aiErr) {
       const isRateLimit = aiErr.message.includes('429');
       const isAuthError = aiErr.message.includes('401') || aiErr.message.includes('403');
-      
-      console.error(`[AI] Primary deep analysis AI step failed (${getClientMode()}):`, aiErr.message);
-      
-      // Attempt fallback to standard OpenAI if primary failed and we have a standard key
-      if (process.env.OPENAI_API_KEY && getClientMode() === 'azure') {
-        try {
-          console.log('[AI] Attempting fallback to standard OpenAI (gpt-4o)...');
-          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-          const completion = await openai.chat.completions.create({
-            model: process.env.OPENAI_ANALYSIS_MODEL || 'gpt-4o',
-            temperature: 0.45,
-            max_tokens: 3500,
-            messages: [
-              { role: 'system', content: DEEP_ANALYSIS_SYSTEM },
-              { role: 'user', content: userPrompt },
-            ],
-          });
 
-          const raw = completion.choices[0]?.message?.content;
-          if (raw) {
-            console.log('[AI] Fallback to standard OpenAI successful.');
-            const parsed = JSON.parse(sanitizeAiJson(raw));
-            const picks = Array.isArray(parsed.picks) ? parsed.picks.slice(0, 20).map(normalisePick) : fallback.picks;
-            const sectorBreakdown = (parsed.sectorBreakdown && typeof parsed.sectorBreakdown === 'object') ? parsed.sectorBreakdown : {};
+      console.error(`[AI] Deep analysis failed (${getClientMode()}):`, aiErr.message);
 
-            return res.json({
-              topTheme: String(parsed.topTheme || fallback.topTheme).slice(0, 120),
-              marketContext: String(parsed.marketContext || fallback.marketContext).slice(0, 800),
-              sectorBreakdown,
-              picks,
-              disclaimer: String(parsed.disclaimer || fallback.disclaimer).slice(0, 600),
-              generatedAt: new Date().toISOString(),
-              fromFallback: false,
-              headlines: headlines.slice(0, 60),
-              sentimentSummary: sentimentTable ? `${tickerSentiments.size} tickers tracked` : 'No sentiment data',
-              preferences: { riskLevel, horizon, sectors, style, assetTypes },
-              note: 'Generated via standard OpenAI fallback'
-            });
-          }
-        } catch (fallbackErr) {
-          console.error('[AI] Fallback deep analysis failed:', fallbackErr.message);
-        }
-      }
-      
-      // In production, mask internal AI errors from end-users
       const userFriendlyError = (isRateLimit || isAuthError)
         ? 'Market analysis service is temporarily busy. Showing reference data.'
         : 'Live AI analysis is currently unavailable. Showing reference data.';
@@ -1117,6 +1112,47 @@ router.post('/journal-assist', async (req, res) => {
   } catch (err) {
     console.error('Journal assist error:', err);
     res.status(500).json({ error: 'Failed to analyse note' });
+  }
+});
+
+// ─── Save deep analysis result for authenticated user ────────────────────────
+router.post('/analysis/save', async (req, res) => {
+  try {
+    const { sessionId, payload, preferences } = req.body;
+    if (!sessionId) return res.status(400).json({ error: 'sessionId required' });
+    const dbUser = await getOrCreateUser(sessionId);
+    await pool.query(
+      `INSERT INTO user_analysis (user_id, payload, preferences, generated_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (user_id) DO UPDATE
+         SET payload = EXCLUDED.payload,
+             preferences = EXCLUDED.preferences,
+             generated_at = NOW()`,
+      [dbUser.id, JSON.stringify(payload), JSON.stringify(preferences || {})]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Analysis save error:', err);
+    res.status(500).json({ error: 'Failed to save analysis' });
+  }
+});
+
+// ─── Load last saved deep analysis for authenticated user ────────────────────
+router.get('/analysis/saved', async (req, res) => {
+  try {
+    const { sessionId } = req.query;
+    if (!sessionId) return res.status(400).json({ error: 'sessionId required' });
+    const dbUser = await getOrCreateUser(sessionId);
+    const result = await pool.query(
+      'SELECT payload, preferences, generated_at FROM user_analysis WHERE user_id = $1',
+      [dbUser.id]
+    );
+    if (result.rows.length === 0) return res.json({ saved: null });
+    const row = result.rows[0];
+    res.json({ saved: { ...row.payload, generatedAt: row.generated_at, savedPreferences: row.preferences } });
+  } catch (err) {
+    console.error('Analysis load error:', err);
+    res.status(500).json({ error: 'Failed to load analysis' });
   }
 });
 

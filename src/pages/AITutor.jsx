@@ -16,6 +16,7 @@ const Header = styled.section`
   background: linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0.04) 100%);
   border-bottom: 1px solid rgba(34,197,94,0.15);
   padding: 2rem 1.5rem 1.5rem;
+  @media (max-width: 480px) { padding: 1.25rem 1rem 1rem; }
 `;
 
 const HeaderContent = styled.div`
@@ -74,6 +75,7 @@ const ChatArea = styled.div`
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  @media (max-width: 480px) { padding: 1rem; }
 `;
 
 const MessagesContainer = styled.div`
@@ -117,6 +119,7 @@ const MessageBubble = styled.div`
   white-space: pre-wrap;
   strong { font-weight: 700; color: #22c55e; }
   @media (max-width: 768px) { max-width: 88%; }
+  @media (max-width: 480px) { max-width: 92%; padding: 0.75rem 0.9rem; font-size: 0.85rem; }
 `;
 
 const InputArea = styled.div`
@@ -164,9 +167,8 @@ const SuggestionsGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 0.6rem;
   margin-bottom: 1.5rem;
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 400px) { grid-template-columns: 1fr; gap: 0.45rem; }
 `;
 
 const SuggestionCard = styled(motion.button)`

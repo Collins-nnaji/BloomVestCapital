@@ -126,6 +126,12 @@ CREATE TABLE IF NOT EXISTS leads (
 );
 CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
 CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(type);
+CREATE TABLE IF NOT EXISTS user_analysis (
+  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  payload JSONB NOT NULL,
+  preferences JSONB,
+  generated_at TIMESTAMPTZ DEFAULT NOW()
+);
 `;
 
 async function initializeDatabase() {
