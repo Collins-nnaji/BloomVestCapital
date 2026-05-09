@@ -87,35 +87,6 @@ const NavLink = styled(RouterLink)`
   }
 `;
 
-const BookCallBtn = styled(RouterLink)`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1.1rem;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.82rem;
-  color: white;
-  background: #0a0f1e;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-
-  &::before {
-    content: '●';
-    color: #22c55e;
-    font-size: 0.5rem;
-  }
-
-  &:hover {
-    background: #15803d;
-  }
-
-  @media (max-width: 1024px) {
-    display: none;
-  }
-`;
-
 const NavRight = styled.div`
   display: flex;
   align-items: center;
@@ -435,10 +406,6 @@ const Navbar = () => {
           </Logo>
 
           <NavCenter>
-            <NavGroup>
-              <NavLink to="/" className={isActive('/')}>Home</NavLink>
-              <NavLink to="/marketing-services" className={isActive('/marketing-services')}>Services</NavLink>
-            </NavGroup>
             <NavGroup $highlight>
               <NavLink to="/signals" className={isActive('/signals')}>BloomVest Intelligence</NavLink>
               <NavLink to="/learn" className={isActive('/learn')}>Learn</NavLink>
@@ -471,7 +438,6 @@ const Navbar = () => {
             ) : (
               <SignInLink to="/auth">Sign in</SignInLink>
             )}
-            <BookCallBtn to="/contact">Book a call</BookCallBtn>
             <MobileToggle type="button" onClick={() => setMenuOpen(true)} aria-label="Open menu">
               <FaBars />
             </MobileToggle>
@@ -505,13 +471,7 @@ const Navbar = () => {
         )}
 
         <MobileSection>
-          <MobileSectionLabel>Company</MobileSectionLabel>
-          <MobileLink to="/" className={isActive('/')}>Home <FaChevronRight /></MobileLink>
-          <MobileLink to="/marketing-services" className={isActive('/marketing-services')}>Services <FaChevronRight /></MobileLink>
-        </MobileSection>
-
-        <MobileSection>
-          <MobileSectionLabel>Intelligence Tools</MobileSectionLabel>
+          <MobileSectionLabel>App</MobileSectionLabel>
           <MobileLink to="/signals" className={isActive('/signals')}>BloomVest Intelligence <FaChevronRight /></MobileLink>
           <MobileLink to="/learn" className={isActive('/learn')}>Learn <FaChevronRight /></MobileLink>
         </MobileSection>

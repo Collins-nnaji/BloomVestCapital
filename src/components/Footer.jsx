@@ -147,9 +147,8 @@ const Footer = () => {
           </LogoText>
 
           <NavLinks>
-            <FooterNavLink to="/">Insights</FooterNavLink>
-            <FooterNavLink to="/scenario">Scenarios</FooterNavLink>
-            <FooterNavLink to="/ai-tutor">AI Tutor</FooterNavLink>
+            <FooterNavLink to="/signals">BloomVest Intelligence</FooterNavLink>
+            <FooterNavLink to="/learn">Learn</FooterNavLink>
             <FooterNavLink to="/auth">Sign in</FooterNavLink>
           </NavLinks>
 

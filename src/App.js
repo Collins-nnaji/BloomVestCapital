@@ -10,9 +10,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const AuthCallback = lazy(() => import('./components/AuthCallback'));
 const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
-const MarketingHomepage = lazy(() => import('./pages/MarketingHomepage'));
-const MarketingServices = lazy(() => import('./pages/MarketingServices'));
-const ContactPage = lazy(() => import('./pages/ContactPage'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 
 function App() {
   return (
@@ -23,11 +21,10 @@ function App() {
           <Suspense fallback={<Loader />}>
             <Layout>
               <Routes>
-                {/* Marketing site */}
-                <Route path="/" element={<MarketingHomepage />} />
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/home" element={<Navigate to="/" replace />} />
-                <Route path="/marketing-services" element={<MarketingServices />} />
-                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/marketing-services" element={<Navigate to="/" replace />} />
+                <Route path="/contact" element={<Navigate to="/" replace />} />
 
                 {/* BloomVest Intelligence */}
                 <Route path="/signals" element={<Dashboard />} />
