@@ -44,6 +44,29 @@ const DAILY_BRIEF_CACHE_MS = 25 * 60 * 1000;
 let deepAnalysisCache = new Map();
 const DEEP_ANALYSIS_CACHE_MS = 15 * 60 * 1000;
 
+// Shared headlines cache — all 8 parallel batches reuse one RSS/AV/Finnhub fetch
+// instead of hitting external APIs 8× simultaneously.
+let headlinesCache = { at: 0, promise: null, payload: null };
+const HEADLINES_CACHE_MS = 3 * 60 * 1000;
+
+function getSharedHeadlines() {
+  const now = Date.now();
+  if (headlinesCache.payload && now - headlinesCache.at < HEADLINES_CACHE_MS) {
+    return Promise.resolve(headlinesCache.payload);
+  }
+  if (headlinesCache.promise) return headlinesCache.promise;
+  headlinesCache.promise = fetchAggregatedHeadlines().then(result => {
+    headlinesCache.payload = result;
+    headlinesCache.at = Date.now();
+    headlinesCache.promise = null;
+    return result;
+  }).catch(err => {
+    headlinesCache.promise = null;
+    throw err;
+  });
+  return headlinesCache.promise;
+}
+
 // Cleanup old cache entries periodically
 setInterval(() => {
   const now = Date.now();
@@ -637,6 +660,8 @@ router.get('/daily-brief', async (req, res) => {
       ],
     };
 
+    let aiStepsFailed = 0;
+
     if (hasAiCredentials('default') && headlines.length > 0) {
       try {
         const userPrompt = `Today's date (server): ${new Date().toISOString().slice(0, 10)}\n\nHeadline titles from public RSS:\n${headlineLines}\n\nReturn JSON with keys: dayTheme (string), signals (array of {stance, title, detail}), narrative (string), disclaimer (string).`;
@@ -674,6 +699,7 @@ router.get('/daily-brief', async (req, res) => {
         }
       } catch (e) {
         console.warn('Daily brief AI step failed:', e.message);
+        aiStepsFailed++;
       }
 
       try {
@@ -720,6 +746,7 @@ router.get('/daily-brief', async (req, res) => {
         }
       } catch (e) {
         console.warn('Investment modes AI step failed:', e.message);
+        aiStepsFailed++;
       }
     }
 
@@ -734,11 +761,15 @@ router.get('/daily-brief', async (req, res) => {
         count: v.count,
       }));
 
+    const allAiStepsFailed = hasAiCredentials() && aiStepsFailed > 0;
+    if (allAiStepsFailed) console.warn(`[AI] Brief sending aiError flag (${aiStepsFailed} step(s) failed)`);
+
     const payload = {
       generatedAt: new Date().toISOString(),
       headlines: headlines.slice(0, 60),
       investmentModes,
       tickerSentiments: tickerSentimentArray,
+      ...(allAiStepsFailed ? { aiError: 'AI connection failed — analysis unavailable. Check server logs.' } : {}),
       ...analysis,
     };
 
@@ -817,7 +848,7 @@ router.post('/deep-analysis', async (req, res) => {
       return res.json({ ...cached.payload, fromCache: true });
     }
 
-    const { headlines, tickerSentiments } = await fetchAggregatedHeadlines();
+    const { headlines, tickerSentiments } = await getSharedHeadlines();
     const headlineLines = headlines.length
       ? buildHeadlineBlock(headlines, 60)
       : '(No live headlines available; synthesise from broad 2026 macro themes: AI infrastructure, rate policy, energy transition, consumer health.)';

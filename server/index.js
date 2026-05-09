@@ -1,4 +1,4 @@
-try { require('dotenv').config(); } catch (e) { /* .env not present on Netlify */ }
+try { require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); } catch (e) { /* .env not present on Netlify */ }
 const express = require('express');
 const cors = require('cors');
 const { initializeDatabase } = require('./db');

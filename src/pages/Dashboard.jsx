@@ -791,24 +791,32 @@ export default function Dashboard() {
     setDeepRunning(true); setDeepProgress(0); setDeepBatch(0);
     setDeepError(null); setDeepResult(null);
     try {
+      // Fire all 8 batches in parallel — each resolves independently,
+      // progress ticks as each one lands.
       let completed = 0;
-      const results = [];
+      const settled = await Promise.allSettled(
+        Array.from({ length: TOTAL_BATCHES }, (_, i) =>
+          api.runDeepAnalysis({
+            ...prefs, assetTypes: activeTypes,
+            batchIndex: i + 1, totalBatches: TOTAL_BATCHES,
+          }).then(res => {
+            completed++;
+            setDeepProgress(Math.round((completed / TOTAL_BATCHES) * 100));
+            setDeepBatch(completed);
+            return res;
+          })
+        )
+      );
 
-      for (let i=1; i<=TOTAL_BATCHES; i++) {
-        setDeepBatch(i);
-        try {
-          const res = await api.runDeepAnalysis({
-            ...prefs, assetTypes:activeTypes, batchIndex:i, totalBatches:TOTAL_BATCHES
-          });
-          if (res) results.push(res);
-        } catch(err) {
-          console.error(`Batch ${i} failed:`, err.message);
-        }
-        completed++;
-        setDeepProgress(Math.round((completed/TOTAL_BATCHES)*100));
-      }
+      const results = settled
+        .filter(s => s.status === 'fulfilled' && s.value)
+        .map(s => s.value);
 
-      if (results.length===0) throw new Error('All analysis batches failed');
+      settled
+        .filter(s => s.status === 'rejected')
+        .forEach(s => console.error('Batch failed:', s.reason?.message));
+
+      if (results.length === 0) throw new Error('All analysis batches failed');
 
       const combinedPicks = [];
       const combinedSectorBreakdown = {};
@@ -1212,7 +1220,8 @@ export default function Dashboard() {
         <BriefWrap>
           {loading && <EmptyState><SpinnerGreen/><EmptyTitle>Loading brief…</EmptyTitle></EmptyState>}
           {error && <EmptyState><FaExclamationTriangle style={{color:'#ef4444'}}/><EmptyTitle>{error}</EmptyTitle></EmptyState>}
-          {brief && (
+          {brief?.aiError && <EmptyState><FaExclamationTriangle style={{color:'#ef4444'}}/><EmptyTitle>{brief.aiError}</EmptyTitle><EmptyDesc>Check the server AI connection and try refreshing.</EmptyDesc></EmptyState>}
+          {brief && !brief.aiError && (
             <>
               <BriefHero>
                 <BriefTheme>{brief.dayTheme||'Markets in focus'}</BriefTheme>

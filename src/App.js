@@ -11,6 +11,8 @@ const AuthPage = lazy(() => import('./pages/AuthPage'));
 const AuthCallback = lazy(() => import('./components/AuthCallback'));
 const ScenarioPage = lazy(() => import('./pages/ScenarioPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
 
 function App() {
   return (
@@ -33,6 +35,10 @@ function App() {
                 <Route path="/learn" element={<ScenarioPage />} />
                 <Route path="/scenario" element={<Navigate to="/learn" replace />} />
                 <Route path="/ai-tutor" element={<Navigate to="/learn" replace />} />
+
+                {/* Legal */}
+                <Route path="/privacy" element={<PrivacyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
 
                 {/* Auth */}
                 <Route path="/auth" element={<AuthPage />} />

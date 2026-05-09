@@ -5,185 +5,107 @@ import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
   background: #ffffff;
-  border-top: 1px solid rgba(15,23,42,0.12);
-  padding: 2rem 0 1.5rem;
-  padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(15,23,42,0.08);
+  padding: 0.75rem 0;
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   width: 100%;
-
-  @media (max-width: 480px) {
-    padding: 1.5rem 0 1.25rem;
-  }
 `;
 
 const Inner = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
-
-  @media (max-width: 480px) {
-    padding: 0 1rem;
-  }
-`;
-
-const TopRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
   flex-wrap: wrap;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(15,23,42,0.08);
+  gap: 0.5rem 1.25rem;
+
+  @media (max-width: 480px) {
+    padding: 0 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 `;
 
-const LogoText = styled(Link)`
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: #0f172a;
+const LogoLink = styled(Link)`
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  transition: color 0.2s ease;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  img {
-    height: 32px;
-  }
-
-  &:hover {
-    opacity: 0.9;
-  }
+  &:hover { opacity: 0.8; }
+  img { height: 24px; }
 `;
 
-const NavLinks = styled.div`
+const Links = styled.div`
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
-
-  @media (max-width: 600px) {
-    gap: 1rem;
-  }
 `;
 
-const FooterNavLink = styled(Link)`
-  font-family: 'DM Sans', sans-serif;
-  color: #334155;
-  font-size: 0.82rem;
+const FLink = styled(Link)`
+  color: #64748b;
+  font-size: 0.75rem;
   font-weight: 500;
   text-decoration: none;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: #22c55e;
-  }
+  font-family: 'DM Sans', sans-serif;
+  &:hover { color: #22c55e; }
 `;
 
-const SocialIcons = styled.div`
+const Right = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.85rem;
 `;
 
 const SocialLink = styled.a`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
   border-radius: 6px;
-  background: rgba(15,23,42,0.06);
-  color: #334155;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-
-  &:hover {
-    color: #22c55e;
-    background: rgba(34,197,94,0.1);
-  }
-`;
-
-const BrandTagline = styled.p`
-  margin: 0;
-  padding: 1rem 0 0;
-  font-size: 0.84rem;
+  background: rgba(15,23,42,0.05);
   color: #64748b;
-  line-height: 1.55;
-  max-width: 640px;
-  font-weight: 500;
+  font-size: 0.78rem;
+  transition: all 0.18s;
+  &:hover { color: #22c55e; background: rgba(34,197,94,0.1); }
 `;
 
-const BottomRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 1rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-`;
-
-const Copyright = styled.p`
-  font-family: 'DM Sans', sans-serif;
-  color: #475569;
-  font-size: 0.75rem;
-  margin: 0;
-  line-height: 1.5;
-`;
-
-const PoweredBy = styled.span`
-  font-family: 'DM Sans', sans-serif;
-  color: #64748b;
+const Copyright = styled.span`
+  color: #94a3b8;
   font-size: 0.72rem;
+  font-family: 'DM Sans', sans-serif;
 `;
 
-const Footer = () => {
-  return (
-    <FooterContainer>
-      <Inner>
-        <TopRow>
-          <LogoText to="/">
-            <img src="/bloomvestlogo.png" alt="BloomVest" />
-          </LogoText>
+const Footer = () => (
+  <FooterContainer>
+    <Inner>
+      <LogoLink to="/">
+        <img src="/bloomvestlogo.png" alt="BloomVest" />
+      </LogoLink>
 
-          <NavLinks>
-            <FooterNavLink to="/signals">BloomVest Intelligence</FooterNavLink>
-            <FooterNavLink to="/learn">Learn</FooterNavLink>
-            <FooterNavLink to="/auth">Sign in</FooterNavLink>
-          </NavLinks>
+      <Links>
+        <FLink to="/signals">Intelligence</FLink>
+        <FLink to="/learn">Learn</FLink>
+        <FLink to="/privacy">Privacy</FLink>
+        <FLink to="/terms">Terms</FLink>
+        <FLink to="/auth">Sign in</FLink>
+      </Links>
 
-          <SocialIcons>
-            <SocialLink
-              href="https://www.linkedin.com/company/bloomvest-finance"
-              aria-label="LinkedIn"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaLinkedin />
-            </SocialLink>
-            <SocialLink
-              href="https://twitter.com/bloomvest"
-              aria-label="Twitter"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaTwitter />
-            </SocialLink>
-          </SocialIcons>
-        </TopRow>
-
-        <BrandTagline>
-          BloomVest Finance — a modern investment insights platform for people who don&apos;t have time to chase every headline. Educational content only;
-          not personalized financial advice.
-        </BrandTagline>
-
-        <BottomRow>
-          <Copyright>&copy; 2026 BloomVest. All rights reserved.</Copyright>
-          <PoweredBy>Powered by OpenAI</PoweredBy>
-        </BottomRow>
-      </Inner>
-    </FooterContainer>
-  );
-};
+      <Right>
+        <Copyright>&copy; 2026 BloomVest</Copyright>
+        <SocialLink href="https://www.linkedin.com/company/bloomvest-finance" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+          <FaLinkedin />
+        </SocialLink>
+        <SocialLink href="https://twitter.com/bloomvest" aria-label="Twitter / X" target="_blank" rel="noopener noreferrer">
+          <FaTwitter />
+        </SocialLink>
+      </Right>
+    </Inner>
+  </FooterContainer>
+);
 
 export default Footer;
