@@ -1146,6 +1146,91 @@ router.post('/journal-assist', async (req, res) => {
   }
 });
 
+// ─── Document / Earnings Analyst ─────────────────────────────────────────────
+// Accepts: { text, docType, question? }
+// docType: 'earnings' | '10k' | '8k' | 'general'
+router.post('/analyse-document', async (req, res) => {
+  try {
+    if (!hasAiCredentials()) return res.status(503).json({ error: 'AI not configured' });
+    const { text, docType = 'general', question } = req.body;
+    if (!text || text.trim().length < 50) return res.status(400).json({ error: 'Document text too short' });
+
+    const docLabels = { earnings: 'earnings call transcript', '10k': '10-K annual report', '8k': '8-K filing', general: 'financial document' };
+    const docLabel = docLabels[docType] || docLabels.general;
+
+    const systemPrompt = `You are a senior equity research analyst at a top investment bank.
+You excel at extracting investment-relevant insights from financial documents with precision and brevity.
+Always structure your output as valid JSON matching the schema provided.`;
+
+    const analysisPrompt = `Analyse this ${docLabel} and return a JSON object with this exact schema:
+{
+  "summary": "2-3 sentence executive summary of the most important findings",
+  "keyMetrics": [{ "label": "metric name", "value": "value or description", "direction": "up|down|flat|neutral" }],
+  "positives": ["string", ...],
+  "risks": ["string", ...],
+  "signals": [{ "type": "bullish|bearish|neutral", "detail": "actionable signal" }],
+  "verdict": { "stance": "Buy|Hold|Sell|Watch", "rationale": "1-2 sentences", "confidence": "High|Medium|Low" }
+}
+${question ? `\nSpecific question to address in the summary: ${question}` : ''}
+
+Document text (first 12000 chars):
+${text.slice(0, 12000)}`;
+
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('analysis', 'gpt-4o'),
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: analysisPrompt },
+      ],
+      max_tokens: 1200,
+      temperature: 0.3,
+    });
+
+    let parsed;
+    try {
+      const raw = completion.choices[0].message.content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      parsed = JSON.parse(raw);
+    } catch {
+      return res.status(500).json({ error: 'Could not parse AI response' });
+    }
+
+    res.json({ analysis: parsed });
+  } catch (err) {
+    console.error('Document analysis error:', err);
+    res.status(500).json({ error: 'Document analysis failed' });
+  }
+});
+
+// ─── Watchlist quote (lightweight proxy to avoid CORS on client) ──────────────
+// Uses Alpha Vantage GLOBAL_QUOTE if key is present, else returns null price
+router.get('/quote/:symbol', async (req, res) => {
+  try {
+    const { symbol } = req.params;
+    const AV_KEY = process.env.ALPHA_VANTAGE_KEY;
+    if (!AV_KEY) return res.json({ symbol, price: null, change: null, changePct: null });
+
+    const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(symbol)}&apikey=${AV_KEY}`;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const r = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    const data = await r.json();
+    const q = data['Global Quote'];
+    if (!q || !q['05. price']) return res.json({ symbol, price: null, change: null, changePct: null });
+
+    res.json({
+      symbol,
+      price: parseFloat(q['05. price']),
+      change: parseFloat(q['09. change']),
+      changePct: parseFloat(q['10. change percent']),
+      volume: parseInt(q['06. volume'], 10),
+      prevClose: parseFloat(q['08. previous close']),
+    });
+  } catch (err) {
+    res.json({ symbol: req.params.symbol, price: null, change: null, changePct: null });
+  }
+});
+
 // ─── Save deep analysis result for authenticated user ────────────────────────
 router.post('/analysis/save', async (req, res) => {
   try {

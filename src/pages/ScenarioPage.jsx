@@ -37,8 +37,28 @@ const SCENARIO_SHOCKS = {
       { text: 'Double down entirely on the highest P/E growth stocks.', correct: false, explanation: 'Concentrated high P/E investing leaves you open to major drawdown risks.' },
       { text: 'Balance tech growth with defensive value sectors (Consumer/Healthcare).', correct: true, explanation: 'Diversification stabilizes capital during growth rotations.' }
     ]
+  },
+  'options-trading': {
+    title: '⚡ Volatility Spike (VIX)',
+    desc: 'Implied volatility jumps: option premiums are richer and bid/ask spreads widen. Your long options show larger mark-to-market swings.',
+    question: 'What is the most educational takeaway while volatility is high?',
+    options: [
+      { text: 'Assume higher premium means the market “knows” the stock will moon.', correct: false, explanation: 'Premium reflects fear and demand for protection — not a guaranteed price path.' },
+      { text: 'Treat options as defined-risk positions with a plan for time decay (theta).', correct: true, explanation: 'Volatility changes teach why timing and position size matter for options.' },
+      { text: 'Ignore position size because options are “cheap.”', correct: false, explanation: 'Leverage works both ways; small premium can still be a large % of capital at risk.' }
+    ]
   }
 };
+
+/** Simplified educational premium: intrinsic + rough time value from spot & DTE */
+function estimateOptionPremiumPerShare(underlyingPrice, strike, right, dte) {
+  const S = Number(underlyingPrice) || 0;
+  const K = Number(strike) || S;
+  const intrinsic = right === 'CALL' ? Math.max(0, S - K) : Math.max(0, K - S);
+  const t = Math.max(1, Math.min(365, Number(dte) || 30));
+  const timeValue = S * 0.16 * Math.sqrt(t / 365) * (0.85 + Math.min(0.35, Math.abs(K - S) / Math.max(S, 1)));
+  return Math.max(0.05, intrinsic + timeValue);
+}
 
 const PageContainer = styled.div`
   min-height: 100vh;
@@ -54,7 +74,7 @@ const SimulationPage = styled.div`
   position: relative;
   background: linear-gradient(165deg, #020617 0%, #0f172a 45%, #111827 100%);
   color: #e2e8f0;
-  padding-top: 64px;
+  padding-top: calc(64px + 1.25rem);
 
   &::before {
     content: '';
@@ -675,6 +695,33 @@ const CardLabel = styled.h3`
 
 const CardBody = styled.div`padding: 1.25rem;`;
 
+const OptionsLabShell = styled(Card)`
+  border-color: rgba(251, 191, 36, 0.3);
+  background: linear-gradient(165deg, rgba(251, 191, 36, 0.08) 0%, rgba(255, 255, 255, 0.02) 50%);
+`;
+
+const ScrollTopButton = styled(motion.button)`
+  position: fixed;
+  bottom: 1.35rem;
+  right: 1.35rem;
+  z-index: 100;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.94);
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+  &:hover {
+    border-color: rgba(34, 197, 94, 0.65);
+    color: #4ade80;
+  }
+`;
+
 const SearchBar = styled.div`
   display: flex;
   align-items: center;
@@ -994,6 +1041,28 @@ const ChatInput = styled.input`
   outline: none;
   &:focus { border-color: #22c55e; }
   &::placeholder { color: rgba(255,255,255,0.2); }
+`;
+
+const ChatTextArea = styled.textarea`
+  flex: 1;
+  min-height: 48px;
+  max-height: 140px;
+  resize: vertical;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: white;
+  font-size: 0.85rem;
+  font-family: inherit;
+  outline: none;
+  line-height: 1.45;
+  &:focus {
+    border-color: #22c55e;
+  }
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.22);
+  }
 `;
 
 const SendBtn = styled.button`
@@ -2056,6 +2125,10 @@ function LearnTab() {
   const openLesson = useCallback(async (lessonId) => {
     setActiveLesson(lessonId);
     setLessonData(null);
+    // LessonPanel is a fixed overlay with its own scroll — scroll the panel, not window
+    requestAnimationFrame(() => {
+      if (lessonPanelRef.current) lessonPanelRef.current.scrollTop = 0;
+    });
     setQuizAnswers({});
     setLessonLoading(true);
     try {
@@ -2265,6 +2338,7 @@ function LearnTab() {
       <AnimatePresence>
         {activeLesson && (
           <LessonPanel
+            ref={lessonPanelRef}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
@@ -2425,6 +2499,13 @@ const ScenarioPage = () => {
   const [messages, setMessages] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [customQuestion, setCustomQuestion] = useState('');
+  const [optionLegs, setOptionLegs] = useState([]);
+  const [optUnderlying, setOptUnderlying] = useState('SPY');
+  const [optRight, setOptRight] = useState('CALL');
+  const [optStrike, setOptStrike] = useState('');
+  const [optContracts, setOptContracts] = useState('1');
+  const [optDte, setOptDte] = useState(45);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [completedObjectives, setCompletedObjectives] = useState([]);
   const [showCompletion, setShowCompletion] = useState(false);
   const [completionReview, setCompletionReview] = useState('');
@@ -2441,6 +2522,7 @@ const ScenarioPage = () => {
   const [builderPreview, setBuilderPreview] = useState(null);
 
   const messagesEndRef = useRef(null);
+  const lessonPanelRef = useRef(null);
 
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
@@ -2455,6 +2537,13 @@ const ScenarioPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [tab]);
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 420);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [view, tab]);
 
   useEffect(() => {
     let cancelled = false;
@@ -2484,12 +2573,12 @@ const ScenarioPage = () => {
     setTimeout(() => setNotification(null), 3000);
   }, []);
 
-  const checkObjectives = useCallback((currentHoldings, currentBalance, scenario = activeScenario) => {
+  const checkObjectives = useCallback((currentHoldings, currentBalance, scenario = activeScenario, legs = optionLegs) => {
     if (!scenario?.objectives?.length) return [];
     const done = scenario.objectives
       .filter((obj) => {
         if (typeof obj.check === 'function') {
-          return obj.check(currentHoldings, stocks, currentBalance);
+          return obj.check(currentHoldings, stocks, currentBalance, legs, scenario);
         }
         if (obj.rule) {
           return evaluateObjectiveRule(obj.rule, currentHoldings, currentBalance, scenario);
@@ -2498,7 +2587,7 @@ const ScenarioPage = () => {
       })
       .map((obj) => obj.id);
     return done;
-  }, [activeScenario]);
+  }, [activeScenario, optionLegs]);
 
   const getPortfolioSummary = useCallback(() => {
     const invested = holdings.reduce((sum, h) => {
@@ -2519,6 +2608,41 @@ const ScenarioPage = () => {
     return { completed, remaining };
   }, [activeScenario, completedObjectives]);
 
+  const buildAdvisorExtras = useCallback(
+    (legsForSummary = optionLegs) => {
+      const legs = Array.isArray(legsForSummary) ? legsForSummary : optionLegs;
+      const strip = (t) =>
+        String(t || '')
+          .replace(/<[^>]*>/g, '')
+          .replace(/\*\*/g, '')
+          .trim();
+      const conv = messages
+        .slice(-10)
+        .map((m) => `${m.isAi ? 'Tutor' : 'Student'}: ${strip(m.text).slice(0, 400)}`)
+        .filter(Boolean)
+        .join('\n');
+      const isOpt = activeScenario?.id === 'options-trading';
+      let optText = '';
+      if (isOpt) {
+        optText =
+          legs.length === 0
+            ? 'No open option legs yet.'
+            : legs
+                .map(
+                  (l) =>
+                    `${l.side} ${l.contracts}× ${l.underlying} ${l.right} $${Number(l.strike).toFixed(2)} strike | premium paid ~$${(l.entryPremiumPerShare * 100 * l.contracts).toFixed(0)} | DTE at open ${l.dteAtOpen}`
+                )
+                .join('\n');
+      }
+      return {
+        conversation: conv,
+        scenarioKind: isOpt ? 'options' : 'equity',
+        optionsSummary: isOpt ? optText : undefined,
+      };
+    },
+    [messages, activeScenario, optionLegs]
+  );
+
   const addAiMessage = useCallback((text) => {
     setMessages(prev => [...prev, { text, isAi: true, time: timeNow() }]);
   }, []);
@@ -2527,24 +2651,29 @@ const ScenarioPage = () => {
     setMessages(prev => [...prev, { text, isAi: false, time: timeNow() }]);
   }, []);
 
-  const callAdvisor = useCallback(async (action, details = {}) => {
-    if (!activeScenario) return;
-    setAiLoading(true);
-    try {
-      const result = await api.getScenarioAdvice(
-        action,
-        activeScenario.title,
-        details,
-        getPortfolioSummary(),
-        getObjectivesSummary()
-      );
-      addAiMessage(result.advice);
-    } catch (err) {
-      addAiMessage("I'm having trouble connecting right now. Let me know if you'd like to try again!");
-    } finally {
-      setAiLoading(false);
-    }
-  }, [activeScenario, getPortfolioSummary, getObjectivesSummary, addAiMessage]);
+  const callAdvisor = useCallback(
+    async (action, details = {}, legsSnapshot = null) => {
+      if (!activeScenario) return;
+      setAiLoading(true);
+      const legsSnap = legsSnapshot !== null && legsSnapshot !== undefined ? legsSnapshot : optionLegs;
+      try {
+        const result = await api.getScenarioAdvice(
+          action,
+          activeScenario.title,
+          details,
+          getPortfolioSummary(),
+          getObjectivesSummary(),
+          buildAdvisorExtras(legsSnap)
+        );
+        addAiMessage(result.advice);
+      } catch (err) {
+        addAiMessage("I'm having trouble connecting right now. Let me know if you'd like to try again!");
+      } finally {
+        setAiLoading(false);
+      }
+    },
+    [activeScenario, optionLegs, getPortfolioSummary, getObjectivesSummary, buildAdvisorExtras, addAiMessage]
+  );
 
   const startScenario = useCallback(async (scenario) => {
     setActiveScenario(scenario);
@@ -2562,18 +2691,36 @@ const ScenarioPage = () => {
     setShockAnswered(false);
     setSelectedOption(null);
     setHasTriggeredShock(false);
+    setOptionLegs([]);
+    setOptUnderlying('SPY');
+    setOptRight('CALL');
+    setOptContracts('1');
+    setOptDte(45);
     setView('sim');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const spyPx = stocks.find((s) => s.symbol === 'SPY')?.price || 500;
+    if (scenario.id === 'options-trading') {
+      setOptStrike(String(Math.round(spyPx / 5) * 5));
+    } else {
+      setOptStrike('');
+    }
 
     setAiLoading(true);
     try {
       const objectiveLabels = scenario.objectives.map(o => o.label);
+      const isOpt = scenario.id === 'options-trading';
       const result = await api.getScenarioAdvice(
         'START_SCENARIO',
         scenario.title,
         {},
         { balance: scenario.startingBalance, holdings: [], invested: 0 },
-        { completed: [], remaining: objectiveLabels }
+        { completed: [], remaining: objectiveLabels },
+        {
+          scenarioKind: isOpt ? 'options' : 'equity',
+          optionsSummary: isOpt ? 'No open option legs yet.' : undefined,
+          conversation: '',
+        }
       );
       setMessages([{ text: result.advice, isAi: true, time: timeNow() }]);
     } catch (err) {
@@ -2713,15 +2860,25 @@ const ScenarioPage = () => {
 
     addUserMessage(`Bought ${shares} shares of ${stock.symbol} at $${stock.price.toFixed(2)}`);
 
-    const newCompleted = checkObjectives(newHoldings, newBalance);
+    const newCompleted = checkObjectives(newHoldings, newBalance, activeScenario, optionLegs);
     setCompletedObjectives(newCompleted);
 
     const investedValue = newHoldings.reduce((sum, h) => {
       const s = stocks.find(st => st.symbol === h.symbol);
       return sum + (s ? s.price * h.shares : 0);
     }, 0);
+    const optionPremiumPaid = optionLegs.reduce(
+      (s, l) => s + l.entryPremiumPerShare * 100 * l.contracts,
+      0
+    );
+    const deployedForShock = investedValue + optionPremiumPaid;
 
-    if (!hasTriggeredShock && activeScenario && SCENARIO_SHOCKS[activeScenario.id] && investedValue >= (activeScenario.startingBalance * 0.4)) {
+    if (
+      !hasTriggeredShock &&
+      activeScenario &&
+      SCENARIO_SHOCKS[activeScenario.id] &&
+      deployedForShock >= activeScenario.startingBalance * (activeScenario.id === 'options-trading' ? 0.32 : 0.4)
+    ) {
       setMarketShock(SCENARIO_SHOCKS[activeScenario.id]);
       setShockAnswered(false);
       setSelectedOption(null);
@@ -2742,7 +2899,8 @@ const ScenarioPage = () => {
           activeScenario.title,
           { symbol: stock.symbol, name: stock.name, shares, price: stock.price, total, sector: stock.sector, pe: stock.pe, dividend: stock.dividend },
           { balance: newBalance, holdings: newHoldings, invested },
-          { completed: activeScenario.objectives.map(o => o.label), remaining: [] }
+          { completed: activeScenario.objectives.map(o => o.label), remaining: [] },
+          buildAdvisorExtras(optionLegs)
         );
         addAiMessage(result.advice);
         setCompletionReview(result.advice);
@@ -2765,7 +2923,21 @@ const ScenarioPage = () => {
         dividend: stock.dividend,
       });
     }
-  }, [selectedStock, quantity, balance, holdings, activeScenario, checkObjectives, showNotif, addUserMessage, addAiMessage, callAdvisor]);
+  }, [
+    selectedStock,
+    quantity,
+    balance,
+    holdings,
+    activeScenario,
+    optionLegs,
+    checkObjectives,
+    showNotif,
+    addUserMessage,
+    addAiMessage,
+    callAdvisor,
+    hasTriggeredShock,
+    buildAdvisorExtras,
+  ]);
 
   const handleSell = useCallback(async () => {
     if (!selectedStock || !quantity || parseInt(quantity) <= 0) return;
@@ -2798,7 +2970,7 @@ const ScenarioPage = () => {
 
     addUserMessage(`Sold ${shares} shares of ${stock.symbol} at $${stock.price.toFixed(2)}`);
 
-    const newCompleted = checkObjectives(newHoldings, newBalance);
+    const newCompleted = checkObjectives(newHoldings, newBalance, activeScenario, optionLegs);
     setCompletedObjectives(newCompleted);
 
     callAdvisor('SELL_STOCK', {
@@ -2808,7 +2980,177 @@ const ScenarioPage = () => {
       price: stock.price,
       total,
     });
-  }, [selectedStock, quantity, balance, holdings, checkObjectives, showNotif, addUserMessage, callAdvisor]);
+  }, [selectedStock, quantity, balance, holdings, optionLegs, checkObjectives, showNotif, addUserMessage, callAdvisor, activeScenario]);
+
+  const handleOpenOption = useCallback(async () => {
+    if (activeScenario?.id !== 'options-trading' || aiLoading) return;
+    const und = stocks.find((s) => s.symbol === optUnderlying);
+    if (!und) return;
+    const strike = parseFloat(optStrike, 10);
+    if (!Number.isFinite(strike) || strike <= 0) {
+      showNotif('Enter a valid strike price.', 'error');
+      return;
+    }
+    const contracts = Math.max(1, Math.min(20, parseInt(optContracts, 10) || 1));
+    const prem = estimateOptionPremiumPerShare(und.price, strike, optRight, optDte);
+    const cost = prem * 100 * contracts;
+    if (cost > balance) {
+      showNotif('Not enough cash for this premium.', 'error');
+      return;
+    }
+    const newBalance = balance - cost;
+    const leg = {
+      id: `opt-${Date.now()}`,
+      underlying: optUnderlying,
+      right: optRight,
+      side: 'LONG',
+      strike,
+      contracts,
+      entryPremiumPerShare: prem,
+      dteAtOpen: optDte,
+    };
+    const newLegs = [...optionLegs, leg];
+    setOptionLegs(newLegs);
+    setBalance(newBalance);
+    setTransactions((prev) => [
+      ...prev,
+      {
+        type: 'OPTION_OPEN',
+        right: optRight,
+        underlying: optUnderlying,
+        contracts,
+        strike,
+        premium: cost,
+        time: timeNow(),
+      },
+    ]);
+    addUserMessage(
+      `Opened long ${optRight} on ${optUnderlying} — strike $${strike}, ${contracts} contract(s), ~$${cost.toFixed(0)} premium (100× multiplier).`
+    );
+    const newCompleted = checkObjectives(holdings, newBalance, activeScenario, newLegs);
+    setCompletedObjectives(newCompleted);
+
+    const investedValue = holdings.reduce((sum, h) => {
+      const s = stocks.find((st) => st.symbol === h.symbol);
+      return sum + (s ? s.price * h.shares : 0);
+    }, 0);
+    const optionPrem = newLegs.reduce((s, l) => s + l.entryPremiumPerShare * 100 * l.contracts, 0);
+    if (
+      !hasTriggeredShock &&
+      activeScenario &&
+      SCENARIO_SHOCKS[activeScenario.id] &&
+      investedValue + optionPrem >= activeScenario.startingBalance * 0.32
+    ) {
+      setMarketShock(SCENARIO_SHOCKS[activeScenario.id]);
+      setShockAnswered(false);
+      setSelectedOption(null);
+      setHasTriggeredShock(true);
+    }
+
+    const allDone = activeScenario && newCompleted.length === activeScenario.objectives.length;
+    if (allDone) {
+      setAiLoading(true);
+      try {
+        const invested = holdings.reduce((sum, h) => {
+          const s = stocks.find((st) => st.symbol === h.symbol);
+          return sum + (s ? s.price * h.shares : 0);
+        }, 0);
+        const result = await api.getScenarioAdvice(
+          'COMPLETE_SCENARIO',
+          activeScenario.title,
+          { optionLeg: leg, premiumPaid: cost },
+          { balance: newBalance, holdings, invested },
+          { completed: activeScenario.objectives.map((o) => o.label), remaining: [] },
+          buildAdvisorExtras(newLegs)
+        );
+        addAiMessage(result.advice);
+        setCompletionReview(result.advice);
+        setTimeout(() => setShowCompletion(true), 1200);
+      } catch (err) {
+        setCompletionReview('Congratulations! You completed the options simulation.');
+        setTimeout(() => setShowCompletion(true), 1200);
+      } finally {
+        setAiLoading(false);
+      }
+    } else {
+      callAdvisor(
+        'OPEN_OPTION',
+        {
+          leg,
+          totalPremium: cost,
+          spot: und.price,
+          dte: optDte,
+        },
+        newLegs
+      );
+    }
+  }, [
+    activeScenario,
+    aiLoading,
+    optUnderlying,
+    optStrike,
+    optRight,
+    optContracts,
+    optDte,
+    balance,
+    optionLegs,
+    holdings,
+    checkObjectives,
+    showNotif,
+    addUserMessage,
+    callAdvisor,
+    hasTriggeredShock,
+    buildAdvisorExtras,
+    addAiMessage,
+  ]);
+
+  const handleCloseOption = useCallback(
+    async (legId) => {
+      if (activeScenario?.id !== 'options-trading' || aiLoading) return;
+      const leg = optionLegs.find((l) => l.id === legId);
+      if (!leg) return;
+      const und = stocks.find((s) => s.symbol === leg.underlying);
+      if (!und) return;
+      const intrinsic =
+        leg.right === 'CALL'
+          ? Math.max(0, und.price - leg.strike)
+          : Math.max(0, leg.strike - und.price);
+      const closeVal = intrinsic * 100 * leg.contracts;
+      const newBalance = balance + closeVal;
+      const newLegs = optionLegs.filter((l) => l.id !== legId);
+      setBalance(newBalance);
+      setOptionLegs(newLegs);
+      setTransactions((prev) => [
+        ...prev,
+        {
+          type: 'OPTION_CLOSE',
+          legId,
+          credit: closeVal,
+          time: timeNow(),
+        },
+      ]);
+      addUserMessage(
+        `Closed ${leg.right} on ${leg.underlying} @ $${leg.strike} — intrinsic-only exercise value ~$${closeVal.toFixed(0)} credited (simplified model).`
+      );
+      const newCompleted = checkObjectives(holdings, newBalance, activeScenario, newLegs);
+      setCompletedObjectives(newCompleted);
+      callAdvisor(
+        'CLOSE_OPTION',
+        { leg, closeVal, spot: und.price, intrinsicPerShare: intrinsic },
+        newLegs
+      );
+    },
+    [
+      activeScenario,
+      aiLoading,
+      optionLegs,
+      balance,
+      holdings,
+      checkObjectives,
+      addUserMessage,
+      callAdvisor,
+    ]
+  );
 
   const handleQuickAction = useCallback(async (action) => {
     if (aiLoading) return;
@@ -2825,6 +3167,24 @@ const ScenarioPage = () => {
       } else {
         showNotif('Select a stock first!', 'error');
       }
+    } else if (action === 'greeks') {
+      addUserMessage('Explain delta, gamma, theta, vega in plain English for my positions.');
+      callAdvisor('ASK_ADVICE', {
+        question:
+          'Explain delta, gamma, theta, and vega in plain English for a beginner. Relate it to my current simulated portfolio and option legs if any.',
+      });
+    } else if (action === 'breakeven') {
+      addUserMessage('Walk me through breakeven and max loss on my options.');
+      callAdvisor('ASK_ADVICE', {
+        question:
+          'For each open long option in this simulation, estimate breakeven for the underlying (roughly) and state max loss (premium paid). Use simple numbers.',
+      });
+    } else if (action === 'iv') {
+      addUserMessage('What is implied volatility and why did my premium change?');
+      callAdvisor('ASK_ADVICE', {
+        question:
+          'What is implied volatility in one paragraph, and why does it make option premiums expand or contract? Keep it educational, not advice.',
+      });
     }
   }, [aiLoading, selectedStock, addUserMessage, callAdvisor, showNotif]);
 
@@ -2836,9 +3196,22 @@ const ScenarioPage = () => {
     callAdvisor('ASK_ADVICE', { question: q });
   }, [customQuestion, aiLoading, addUserMessage, callAdvisor]);
 
-  const handleKeyPress = useCallback((e) => {
-    if (e.key === 'Enter') handleCustomQuestion();
-  }, [handleCustomQuestion]);
+  const handleChatKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleCustomQuestion();
+      }
+    },
+    [handleCustomQuestion]
+  );
+
+  const insertAskChip = useCallback(
+    (text) => {
+      setCustomQuestion(text);
+    },
+    []
+  );
 
   const scenarioAssets = activeScenario?.assets;
   const filteredStocks = stocks.filter(s => {
@@ -2996,6 +3369,17 @@ const ScenarioPage = () => {
           </>
           )}
         </ContentWrapper>
+        {showScrollTop && (
+          <ScrollTopButton
+            type="button"
+            aria-label="Scroll to top"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <FaChevronUp />
+          </ScrollTopButton>
+        )}
       </PageContainer>
     );
   }
@@ -3280,6 +3664,17 @@ const ScenarioPage = () => {
             </BuilderActions>
           </BuilderShell>
         </ContentWrapper>
+        {showScrollTop && (
+          <ScrollTopButton
+            type="button"
+            aria-label="Scroll to top"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <FaChevronUp />
+          </ScrollTopButton>
+        )}
       </PageContainer>
     );
   }
@@ -3318,7 +3713,161 @@ const ScenarioPage = () => {
               <BalanceLabel>Holdings</BalanceLabel>
               <BalanceValue>{holdings.length} stocks</BalanceValue>
             </BalanceStat>
+            {activeScenario?.id === 'options-trading' && (
+              <BalanceStat>
+                <BalanceLabel>Option legs</BalanceLabel>
+                <BalanceValue>{optionLegs.length} open</BalanceValue>
+              </BalanceStat>
+            )}
           </BalanceBar>
+
+          {activeScenario?.id === 'options-trading' && (
+            <OptionsLabShell>
+              <CardHead>
+                <CardLabel>
+                  <FaChartLine /> Options Lab — long calls & puts (100× multiplier)
+                </CardLabel>
+                <DifficultyBadge $color="#fbbf24">Educational</DifficultyBadge>
+              </CardHead>
+              <CardBody>
+                <div style={{ fontSize: '0.78rem', color: 'rgba(226,232,240,0.55)', lineHeight: 1.5, marginBottom: '0.85rem' }}>
+                  Premiums are a simplified intrinsic + time-value model (not live market quotes). Each contract represents 100 shares. Max loss on a long option is the premium you pay.
+                </div>
+                <div style={{ display: 'grid', gap: '0.65rem', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))' }}>
+                  <div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, marginBottom: 4 }}>UNDERLYING</div>
+                    <select
+                      value={optUnderlying}
+                      onChange={(e) => {
+                        const sym = e.target.value;
+                        setOptUnderlying(sym);
+                        const px = stocks.find((s) => s.symbol === sym)?.price;
+                        if (px) setOptStrike(String(Math.round(px / 5) * 5));
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem 0.6rem',
+                        borderRadius: 8,
+                        border: '1px solid rgba(255,255,255,0.12)',
+                        background: 'rgba(0,0,0,0.35)',
+                        color: '#e2e8f0',
+                        fontSize: '0.82rem',
+                      }}
+                    >
+                      {['SPY', 'QQQ', 'AAPL', 'MSFT', 'NVDA', 'IWM'].map((sym) => (
+                        <option key={sym} value={sym}>
+                          {sym}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, marginBottom: 4 }}>RIGHT</div>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      {['CALL', 'PUT'].map((r) => (
+                        <button
+                          key={r}
+                          type="button"
+                          onClick={() => setOptRight(r)}
+                          style={{
+                            flex: 1,
+                            padding: '0.45rem',
+                            borderRadius: 8,
+                            border: '1px solid ' + (optRight === r ? 'rgba(34,197,94,0.6)' : 'rgba(255,255,255,0.1)'),
+                            background: optRight === r ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.04)',
+                            color: '#e2e8f0',
+                            fontWeight: 800,
+                            fontSize: '0.75rem',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {r}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, marginBottom: 4 }}>STRIKE</div>
+                    <TradeInput
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={optStrike}
+                      onChange={(e) => setOptStrike(e.target.value)}
+                      placeholder="Strike"
+                    />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, marginBottom: 4 }}>CONTRACTS</div>
+                    <TradeInput
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={optContracts}
+                      onChange={(e) => setOptContracts(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', fontWeight: 700, marginBottom: 4 }}>DTE (days)</div>
+                    <TradeInput
+                      type="number"
+                      min="1"
+                      max="365"
+                      value={optDte}
+                      onChange={(e) => setOptDte(Math.max(1, Math.min(365, parseInt(e.target.value, 10) || 30)))}
+                    />
+                  </div>
+                </div>
+                {(() => {
+                  const und = stocks.find((s) => s.symbol === optUnderlying);
+                  const k = parseFloat(optStrike, 10);
+                  const c = Math.max(1, Math.min(20, parseInt(optContracts, 10) || 1));
+                  const prem = und && Number.isFinite(k) ? estimateOptionPremiumPerShare(und.price, k, optRight, optDte) : 0;
+                  const tot = prem * 100 * c;
+                  return (
+                    <div style={{ marginTop: '0.75rem', fontSize: '0.8rem', color: 'rgba(226,232,240,0.75)' }}>
+                      Spot ~<strong>${und?.price?.toFixed(2) || '—'}</strong> · Est. premium{' '}
+                      <strong>${prem.toFixed(2)}</strong>/share → <strong>${tot.toFixed(0)}</strong> total debit
+                    </div>
+                  );
+                })()}
+                <div style={{ marginTop: '0.85rem', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  <BuyBtn type="button" onClick={handleOpenOption} disabled={aiLoading}>
+                    <FaArrowUp /> Open long {optRight}
+                  </BuyBtn>
+                </div>
+                {optionLegs.length > 0 && (
+                  <div style={{ marginTop: '1rem' }}>
+                    <div style={{ fontSize: '0.68rem', fontWeight: 800, color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>OPEN POSITIONS</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {optionLegs.map((l) => (
+                        <div
+                          key={l.id}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '0.5rem 0.65rem',
+                            borderRadius: 10,
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            fontSize: '0.78rem',
+                          }}
+                        >
+                          <span style={{ color: '#e2e8f0' }}>
+                            {l.side} {l.contracts}× {l.underlying} {l.right} ${l.strike}
+                          </span>
+                          <SellBtn type="button" style={{ padding: '0.35rem 0.65rem', fontSize: '0.72rem' }} onClick={() => handleCloseOption(l.id)}>
+                            Close (intrinsic)
+                          </SellBtn>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardBody>
+            </OptionsLabShell>
+          )}
 
           {/* Stock Selector */}
           <Card>
@@ -3547,23 +4096,79 @@ const ScenarioPage = () => {
 
             <QuickActions>
               <QuickBtn onClick={() => handleQuickAction('advice')} disabled={aiLoading}>
-                <FaLightbulb style={{ marginRight: '0.2rem' }} /> Teach me what to buy next
+                <FaLightbulb style={{ marginRight: '0.2rem' }} /> What should I do next?
               </QuickBtn>
               <QuickBtn onClick={() => handleQuickAction('progress')} disabled={aiLoading}>
                 <FaTrophy style={{ marginRight: '0.2rem' }} /> Review my progress
               </QuickBtn>
               <QuickBtn onClick={() => handleQuickAction('explain')} disabled={aiLoading}>
-                <FaSearch style={{ marginRight: '0.2rem' }} /> Explain this stock to me
+                <FaSearch style={{ marginRight: '0.2rem' }} /> Explain selected stock
               </QuickBtn>
+              {activeScenario?.id === 'options-trading' && (
+                <>
+                  <QuickBtn onClick={() => handleQuickAction('greeks')} disabled={aiLoading}>
+                    <FaBrain style={{ marginRight: '0.2rem' }} /> Greeks in plain English
+                  </QuickBtn>
+                  <QuickBtn onClick={() => handleQuickAction('breakeven')} disabled={aiLoading}>
+                    <FaBullseye style={{ marginRight: '0.2rem' }} /> Breakeven & max loss
+                  </QuickBtn>
+                  <QuickBtn onClick={() => handleQuickAction('iv')} disabled={aiLoading}>
+                    <FaChartLine style={{ marginRight: '0.2rem' }} /> Implied volatility
+                  </QuickBtn>
+                </>
+              )}
             </QuickActions>
 
+            <div
+              style={{
+                padding: '0.45rem 1.25rem 0',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 6,
+                borderTop: '1px solid rgba(255,255,255,0.04)',
+              }}
+            >
+              {(activeScenario?.id === 'options-trading'
+                ? [
+                    'What is assignment vs expiration?',
+                    'When would I buy a put instead of shorting stock?',
+                    'What is a covered call in one paragraph?',
+                    'How does the 100 share multiplier affect my P/L?',
+                  ]
+                : [
+                    'What is diversification in one sentence?',
+                    'What mistake do beginners make in this scenario?',
+                    'How would rising rates affect my picks?',
+                  ]
+              ).map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => insertAskChip(chip)}
+                  disabled={aiLoading}
+                  style={{
+                    fontSize: '0.68rem',
+                    padding: '0.28rem 0.55rem',
+                    borderRadius: 999,
+                    border: '1px solid rgba(148,163,184,0.35)',
+                    background: 'rgba(255,255,255,0.04)',
+                    color: 'rgba(226,232,240,0.85)',
+                    cursor: aiLoading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+
             <InputRow>
-              <ChatInput
-                placeholder="Ask the AI advisor..."
+              <ChatTextArea
+                placeholder="Ask anything — Enter to send, Shift+Enter for new line…"
                 value={customQuestion}
-                onChange={e => setCustomQuestion(e.target.value)}
-                onKeyDown={handleKeyPress}
+                onChange={(e) => setCustomQuestion(e.target.value)}
+                onKeyDown={handleChatKeyDown}
                 disabled={aiLoading}
+                rows={2}
               />
               <SendBtn onClick={handleCustomQuestion} disabled={aiLoading || !customQuestion.trim()}>
                 <FaPaperPlane />
@@ -3572,6 +4177,18 @@ const ScenarioPage = () => {
           </Card>
         </RightColumn>
       </SimContainer>
+
+      {showScrollTop && (
+        <ScrollTopButton
+          type="button"
+          aria-label="Scroll to top"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <FaChevronUp />
+        </ScrollTopButton>
+      )}
 
       {/* Completion Modal */}
       <AnimatePresence>

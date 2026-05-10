@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FaBolt, FaGem, FaSyncAlt, FaSearch,
-  FaChevronDown, FaChevronUp, FaCheckCircle,
-  FaArrowUp, FaArrowDown, FaMinus, FaExchangeAlt,
+  FaBolt, FaGem, FaSyncAlt,
+  FaChevronDown, FaChevronUp,
   FaFilter, FaBookOpen, FaPlus, FaTrash, FaMagic, FaSpinner, FaChartLine,
-  FaBold, FaItalic, FaListUl, FaTag, FaRobot, FaTimes, FaLightbulb,
+  FaBold, FaItalic, FaListUl, FaTag, FaRobot,
   FaExclamationTriangle, FaAlignLeft, FaNewspaper, FaSignal, FaCalendarAlt,
-  FaFire, FaShieldAlt, FaBullseye, FaClock
+  FaStar, FaFileAlt, FaCheckDouble,
 } from 'react-icons/fa';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { extractTextFromPdfArrayBuffer } from '../utils/extractPdfText';
 
 /* ── animations ─────────────────────────────────────── */
 const slide    = keyframes`from{transform:translateX(0)}to{transform:translateX(-50%)}`;
@@ -603,6 +603,174 @@ const EmptyJournal = styled.div`
   svg{font-size:2rem;opacity:0.3;}p{font-size:0.85rem;margin:0;line-height:1.5;}
 `;
 
+/* ── watchlist ──────────────────────────────────────── */
+const WatchlistWrap = styled.div`max-width:960px;margin:0 auto;padding:1.5rem;@media(max-width:640px){padding:1rem;}`;
+const WatchlistHeader = styled.div`
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;
+`;
+const WatchlistTitle = styled.h2`
+  font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:#0f172a;
+  display:flex;align-items:center;gap:0.5rem;margin:0;
+`;
+const AddTickerForm = styled.form`
+  display:flex;gap:0.5rem;align-items:center;
+  @media(max-width:640px){width:100%;}
+`;
+const TickerInput = styled.input`
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;
+  padding:0.5rem 0.85rem;font-size:0.85rem;font-weight:700;color:#0f172a;
+  font-family:'Space Grotesk',sans-serif;text-transform:uppercase;width:100px;
+  &:focus{outline:none;border-color:#10b981;background:#fff;box-shadow:0 0 0 3px rgba(16,185,129,0.08);}
+  &::placeholder{text-transform:none;font-weight:400;color:#cbd5e1;}
+`;
+const AddTickerBtn = styled.button`
+  background:#0f172a;color:#fff;border:none;border-radius:8px;
+  padding:0.5rem 1rem;font-size:0.78rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:0.4rem;white-space:nowrap;
+  &:hover{background:#1e293b;}&:disabled{opacity:0.5;cursor:not-allowed;}
+`;
+const WatchGrid = styled.div`
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;
+  @media(max-width:640px){grid-template-columns:1fr 1fr;}
+`;
+const WatchCard = styled(motion.div)`
+  background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:1.1rem;
+  position:relative;transition:box-shadow 0.2s,border-color 0.2s;
+  &:hover{box-shadow:0 4px 16px rgba(0,0,0,0.07);border-color:#cbd5e1;}
+`;
+const WatchCardTop = styled.div`display:flex;align-items:flex-start;justify-content:space-between;`;
+const WatchSymbol = styled.div`
+  font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:#0f172a;
+`;
+const WatchPrice = styled.div`
+  font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:800;
+  color:#0f172a;margin-top:0.35rem;
+`;
+const WatchChange = styled.div`
+  font-size:0.78rem;font-weight:700;
+  color:${p=>p.$pos?'#10b981':'#ef4444'};
+  display:flex;align-items:center;gap:0.25rem;margin-top:0.1rem;
+`;
+const shimmer = keyframes`0%{background-position:200% 0}100%{background-position:-200% 0}`;
+const WatchLoading = styled.div`
+  height:28px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);
+  background-size:200% 100%;animation:${shimmer} 1.5s infinite;
+  border-radius:6px;margin-top:0.5rem;
+`;
+const RemoveWatchBtn = styled.button`
+  width:22px;height:22px;border-radius:6px;flex-shrink:0;
+  background:transparent;border:none;color:#cbd5e1;cursor:pointer;font-size:0.75rem;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+  &:hover{background:#fee2e2;color:#ef4444;}
+`;
+const WatchEmptyCard = styled.div`
+  border:2px dashed #e2e8f0;border-radius:14px;padding:2.5rem 1rem;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0.5rem;color:#94a3b8;text-align:center;grid-column:1/-1;
+`;
+const WatchAIBar = styled.div`
+  margin-top:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;
+`;
+const WatchAIBarHeader = styled.div`
+  padding:0.65rem 1rem;background:#0f172a;display:flex;align-items:center;justify-content:space-between;
+`;
+const WatchAIBarTitle = styled.div`
+  font-size:0.72rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:0.4rem;
+`;
+const WatchAIBtn = styled.button`
+  padding:0.28rem 0.7rem;border-radius:6px;border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.08);color:#fff;font-size:0.7rem;font-weight:700;
+  cursor:pointer;transition:all 0.15s;
+  &:hover{background:rgba(255,255,255,0.18);}&:disabled{opacity:0.5;cursor:not-allowed;}
+`;
+const WatchAIBody = styled.div`
+  padding:1rem;font-size:0.82rem;color:#374151;line-height:1.7;white-space:pre-wrap;min-height:48px;
+`;
+
+/* ── document analyst ───────────────────────────────── */
+const DocWrap = styled.div`max-width:960px;margin:0 auto;padding:1.5rem;@media(max-width:640px){padding:1rem;}`;
+const DocHeader = styled.div`margin-bottom:1.25rem;`;
+const DocTitle = styled.h2`
+  font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;color:#0f172a;
+  display:flex;align-items:center;gap:0.5rem;margin:0 0 0.3rem;
+`;
+const DocSubtitle = styled.div`font-size:0.8rem;color:#64748b;line-height:1.5;`;
+const DocTypeRow = styled.div`display:flex;gap:0.5rem;margin-bottom:0.85rem;flex-wrap:wrap;`;
+const DocTypeBtn = styled.button`
+  padding:0.35rem 0.8rem;border-radius:6px;font-size:0.73rem;font-weight:700;cursor:pointer;
+  border:1px solid ${p=>p.$active?'#0f172a':'#e2e8f0'};
+  background:${p=>p.$active?'#0f172a':'#fff'};
+  color:${p=>p.$active?'#fff':'#64748b'};
+  transition:all 0.15s;
+  &:hover{border-color:#0f172a;color:${p=>p.$active?'#fff':'#0f172a'};}
+`;
+const DocInputWrap = styled.div`display:flex;flex-direction:column;gap:0.65rem;`;
+const DocQuestionInput = styled.input`
+  width:100%;border:1px solid #e2e8f0;border-radius:8px;
+  padding:0.6rem 1rem;font-size:0.85rem;color:#0f172a;font-family:'Inter',sans-serif;
+  background:#f8fafc;box-sizing:border-box;
+  &:focus{outline:none;border-color:#10b981;background:#fff;box-shadow:0 0 0 3px rgba(16,185,129,0.08);}
+  &::placeholder{color:#94a3b8;}
+`;
+const DocTextArea = styled.textarea`
+  width:100%;min-height:200px;border:1px solid #e2e8f0;border-radius:12px;
+  padding:1rem;font-size:0.85rem;color:#0f172a;line-height:1.7;font-family:'Inter',sans-serif;
+  resize:vertical;background:#f8fafc;box-sizing:border-box;
+  &:focus{outline:none;border-color:#10b981;background:#fff;box-shadow:0 0 0 3px rgba(16,185,129,0.08);}
+  &::placeholder{color:#94a3b8;}
+`;
+const DocAnalyseBtn = styled(motion.button)`
+  background:#0f172a;color:#fff;border:none;border-radius:10px;
+  padding:0.65rem 1.5rem;font-size:0.85rem;font-weight:700;
+  display:flex;align-items:center;gap:0.5rem;cursor:pointer;
+  &:hover{background:#1e293b;}&:disabled{opacity:0.55;cursor:not-allowed;}
+`;
+const DocResultGrid = styled.div`
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem;
+  @media(max-width:640px){grid-template-columns:1fr;}
+`;
+const DocResultCard = styled(motion.div)`
+  background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1.1rem;
+`;
+const DocResultLabel = styled.div`
+  font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;
+  color:#94a3b8;margin-bottom:0.6rem;
+`;
+const DocSummaryCard = styled(DocResultCard)`
+  grid-column:1/-1;border-left:3px solid #10b981;
+`;
+const DocSummaryText = styled.div`font-size:0.88rem;color:#0f172a;line-height:1.7;`;
+const DocMetricRow = styled.div`
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.4rem 0;border-bottom:1px solid #f1f5f9;
+  &:last-child{border-bottom:none;}
+`;
+const DocMetricLabel = styled.div`font-size:0.8rem;color:#475569;font-weight:500;`;
+const DocMetricValue = styled.div`
+  font-size:0.82rem;font-weight:700;
+  color:${p=>p.$dir==='up'?'#10b981':p.$dir==='down'?'#ef4444':'#0f172a'};
+`;
+const DocBullet = styled.div`
+  font-size:0.82rem;color:#374151;line-height:1.55;padding:0.3rem 0 0.3rem 0.85rem;position:relative;
+  &:before{content:"•";position:absolute;left:0;color:${p=>p.$color||'#10b981'};}
+`;
+const DocSignalBadge = styled.div`
+  display:inline-flex;align-items:center;gap:0.35rem;margin-bottom:0.4rem;
+  padding:0.35rem 0.7rem;border-radius:8px;font-size:0.75rem;font-weight:700;
+  background:${p=>p.$type==='bullish'?'#dcfce7':p.$type==='bearish'?'#fee2e2':'#f1f5f9'};
+  color:${p=>p.$type==='bullish'?'#15803d':p.$type==='bearish'?'#dc2626':'#64748b'};
+`;
+const DocVerdictBox = styled(DocResultCard)`
+  grid-column:1/-1;
+  background:${p=>p.$stance==='Buy'?'#f0fdf4':p.$stance==='Sell'?'#fef2f2':p.$stance==='Hold'?'#fefce8':'#f8fafc'};
+  border-color:${p=>p.$stance==='Buy'?'#bbf7d0':p.$stance==='Sell'?'#fecaca':p.$stance==='Hold'?'#fde68a':'#e2e8f0'};
+`;
+const DocVerdictStance = styled.div`
+  font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:800;
+  color:${p=>p.$stance==='Buy'?'#15803d':p.$stance==='Sell'?'#dc2626':p.$stance==='Hold'?'#b45309':'#0f172a'};
+  margin-bottom:0.35rem;
+`;
+
 /* ── auth modal ─────────────────────────────────────── */
 const ModalOverlay = styled(motion.div)`
   position:fixed;inset:0;z-index:2000;background:rgba(2,6,23,0.6);backdrop-filter:blur(6px);
@@ -706,8 +874,26 @@ export default function Dashboard() {
   const [expandedRows, setExpandedRows] = useState({});
   const [selectedRow,  setSelectedRow]  = useState(null);
 
-  // tabs: 'picks' | 'brief' | 'news' | 'sentiment' | 'journal'
+  // tabs: 'picks' | 'brief' | 'news' | 'sentiment' | 'journal' | 'watchlist' | 'analyst'
   const [dashTab, setDashTab] = useState('picks');
+
+  // watchlist state
+  const [watchlist, setWatchlist] = useState(() => {
+    try { const s = localStorage.getItem('bv_watchlist_v1'); return s ? JSON.parse(s) : ['SPY','QQQ','NVDA','AAPL','BTC']; } catch { return ['SPY','QQQ','NVDA','AAPL','BTC']; }
+  });
+  const [watchQuotes, setWatchQuotes] = useState({});
+  const [watchLoading, setWatchLoading] = useState({});
+  const [tickerInput, setTickerInput] = useState('');
+  const [watchAI, setWatchAI] = useState({ loading: false, result: null });
+
+  // document analyst state
+  const [docText, setDocText] = useState('');
+  const [docPdfLoading, setDocPdfLoading] = useState(false);
+  const [docType, setDocType] = useState('earnings');
+  const [docQuestion, setDocQuestion] = useState('');
+  const [docLoading, setDocLoading] = useState(false);
+  const [docResult, setDocResult] = useState(null);
+  const [docError, setDocError] = useState(null);
 
   // news tab state
   const [newsQuery,      setNewsQuery]      = useState('');
@@ -731,6 +917,104 @@ export default function Dashboard() {
   const [activeTypes, setActiveTypes] = useState(['Stocks','ETFs','Commodities','Crypto','Options Plays']);
 
   useEffect(() => { localStorage.setItem('bv_notes_v2', JSON.stringify(notes)); }, [notes]);
+  useEffect(() => { localStorage.setItem('bv_watchlist_v1', JSON.stringify(watchlist)); }, [watchlist]);
+
+  // Fetch quotes for all watchlist symbols
+  const fetchQuote = useCallback(async (symbol) => {
+    setWatchLoading(p => ({ ...p, [symbol]: true }));
+    try {
+      const data = await api.getQuote(symbol);
+      setWatchQuotes(p => ({ ...p, [symbol]: data }));
+    } catch {
+      setWatchQuotes(p => ({ ...p, [symbol]: { symbol, price: null } }));
+    } finally {
+      setWatchLoading(p => ({ ...p, [symbol]: false }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (dashTab !== 'watchlist') return;
+    watchlist.forEach(sym => { if (!watchQuotes[sym]) fetchQuote(sym); });
+  }, [dashTab, watchlist, watchQuotes, fetchQuote]);
+
+  const addToWatchlist = useCallback((e) => {
+    e.preventDefault();
+    const sym = tickerInput.trim().toUpperCase();
+    if (!sym || watchlist.includes(sym)) { setTickerInput(''); return; }
+    setWatchlist(p => [...p, sym]);
+    setTickerInput('');
+    fetchQuote(sym);
+  }, [tickerInput, watchlist, fetchQuote]);
+
+  const removeFromWatchlist = useCallback((sym) => {
+    setWatchlist(p => p.filter(s => s !== sym));
+    setWatchQuotes(p => { const n = { ...p }; delete n[sym]; return n; });
+  }, []);
+
+  const runWatchlistAI = useCallback(async () => {
+    if (!watchlist.length) return;
+    setWatchAI({ loading: true, result: null });
+    const quoteLines = watchlist.map(sym => {
+      const q = watchQuotes[sym];
+      if (!q?.price) return `${sym}: no price data`;
+      const pct = q.changePct != null ? ` (${q.changePct >= 0 ? '+' : ''}${q.changePct.toFixed(2)}%)` : '';
+      return `${sym}: $${q.price.toFixed(2)}${pct}`;
+    }).join(', ');
+    try {
+      const { insight } = await api.analyseHeadline(
+        `Watchlist snapshot — ${quoteLines}`,
+        'BloomVest Watchlist'
+      );
+      setWatchAI({ loading: false, result: insight });
+    } catch {
+      setWatchAI({ loading: false, result: 'Could not generate watchlist briefing.' });
+    }
+  }, [watchlist, watchQuotes]);
+
+  const handlePdfUpload = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      setDocError('Please upload a PDF file.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setDocError('PDF too large — please use a file under 10 MB.');
+      return;
+    }
+    setDocPdfLoading(true);
+    setDocError(null);
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const { text } = await extractTextFromPdfArrayBuffer(arrayBuffer);
+      if (text.length < 50) {
+        setDocError(
+          'Could not extract text from this PDF. It may be scanned (image-only). Try another file or paste the text manually.'
+        );
+        return;
+      }
+      setDocText(text);
+    } catch (err) {
+      setDocError(err?.message || 'Failed to read the PDF. Please paste the text manually.');
+    } finally {
+      setDocPdfLoading(false);
+      // Reset file input so same file can be re-uploaded
+      e.target.value = '';
+    }
+  }, []);
+
+  const runDocAnalysis = useCallback(async () => {
+    if (!docText.trim() || docText.trim().length < 50) return;
+    setDocLoading(true); setDocResult(null); setDocError(null);
+    try {
+      const { analysis } = await api.analyseDocument(docText, docType, docQuestion);
+      setDocResult(analysis);
+    } catch (e) {
+      setDocError(e.message || 'Analysis failed');
+    } finally {
+      setDocLoading(false);
+    }
+  }, [docText, docType, docQuestion]);
 
   const addNote = () => {
     const n = { id:Date.now(), title:'', text:'', tag:'trade',
@@ -969,6 +1253,8 @@ export default function Dashboard() {
         <DashTabBtn $active={dashTab==='brief'}     onClick={()=>setDashTab('brief')}><FaCalendarAlt/>Market Brief</DashTabBtn>
         <DashTabBtn $active={dashTab==='news'}      onClick={()=>setDashTab('news')}><FaNewspaper/>News Feed</DashTabBtn>
         <DashTabBtn $active={dashTab==='sentiment'} onClick={()=>setDashTab('sentiment')}><FaSignal/>Sentiment</DashTabBtn>
+        <DashTabBtn $active={dashTab==='watchlist'} onClick={()=>setDashTab('watchlist')}><FaStar/>Watchlist</DashTabBtn>
+        <DashTabBtn $active={dashTab==='analyst'}   onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Analyst</DashTabBtn>
         <DashTabBtn $active={dashTab==='journal'}   onClick={()=>setDashTab('journal')}><FaBookOpen/>Journal</DashTabBtn>
       </DashTabBar>
 
@@ -1056,11 +1342,35 @@ export default function Dashboard() {
           </AssetTypeRow>
 
           <SummaryBar>
-            <SumItem><SumLabel>Assets Analyzed</SumLabel><SumValue>{rawPicks.length}</SumValue></SumItem>
-            <SumItem><SumLabel>Buys</SumLabel><SumValue $color="#10b981">{(counts['Buy']||0)+(counts['Strong Buy']||0)}</SumValue></SumItem>
-            <SumItem><SumLabel>Holds</SumLabel><SumValue $color="#f59e0b">{counts['Watch']||0}</SumValue></SumItem>
-            <SumItem><SumLabel>Avoids</SumLabel><SumValue $color="#ef4444">{(counts['Avoid']||0)+(counts['Reduce']||0)}</SumValue></SumItem>
-            <SumItem><SumLabel>Avg. Confidence</SumLabel><SumValue>{avgConfidence!==null?`${avgConfidence}%`:'—'}</SumValue></SumItem>
+            <SumItem>
+              <SumLabel>Assets Analyzed</SumLabel>
+              <SumValue>{rawPicks.length || '—'}</SumValue>
+              {rawPicks.length > 0 && <div style={{fontSize:'0.6rem',color:'#94a3b8',marginTop:2}}>{TOTAL_BATCHES} batches · live data</div>}
+            </SumItem>
+            <SumItem>
+              <SumLabel>Buy Signals</SumLabel>
+              <SumValue $color="#10b981">{(counts['Buy']||0)+(counts['Strong Buy']||0) || '—'}</SumValue>
+              {(counts['Strong Buy']||0) > 0 && <div style={{fontSize:'0.6rem',color:'#10b981',marginTop:2}}>{counts['Strong Buy']} strong</div>}
+            </SumItem>
+            <SumItem>
+              <SumLabel>Watch / Hold</SumLabel>
+              <SumValue $color="#f59e0b">{counts['Watch']||0 || '—'}</SumValue>
+            </SumItem>
+            <SumItem>
+              <SumLabel>Avoid / Reduce</SumLabel>
+              <SumValue $color="#ef4444">{(counts['Avoid']||0)+(counts['Reduce']||0) || '—'}</SumValue>
+            </SumItem>
+            <SumItem>
+              <SumLabel>Avg. Confidence</SumLabel>
+              <SumValue $color={avgConfidence!=null?(avgConfidence>=70?'#10b981':avgConfidence>=50?'#f59e0b':'#ef4444'):'#0f172a'}>
+                {avgConfidence!=null?`${avgConfidence}%`:'—'}
+              </SumValue>
+              {avgConfidence!=null && (
+                <div style={{marginTop:3,height:3,background:'#f1f5f9',borderRadius:2,overflow:'hidden',width:'100%'}}>
+                  <div style={{height:'100%',width:`${avgConfidence}%`,background:avgConfidence>=70?'#10b981':avgConfidence>=50?'#f59e0b':'#ef4444',borderRadius:2}}/>
+                </div>
+              )}
+            </SumItem>
           </SummaryBar>
 
           <Shell>
@@ -1538,6 +1848,284 @@ export default function Dashboard() {
             Sentiment signals are for educational purposes only — not financial advice.
           </div>
         </SentimentWrap>
+      )}
+
+      {/* ══════════════════════════════════════════════
+          WATCHLIST TAB
+      ══════════════════════════════════════════════ */}
+      {dashTab==='watchlist' && (
+        <WatchlistWrap>
+          <WatchlistHeader>
+            <div>
+              <WatchlistTitle><FaStar style={{color:'#f59e0b'}}/> My Watchlist</WatchlistTitle>
+              <div style={{fontSize:'0.75rem',color:'#94a3b8',marginTop:'0.15rem'}}>
+                Track tickers — prices refresh on each visit. Add up to 20 symbols.
+              </div>
+            </div>
+            <AddTickerForm onSubmit={addToWatchlist}>
+              <TickerInput
+                value={tickerInput}
+                onChange={e=>setTickerInput(e.target.value.toUpperCase())}
+                placeholder="e.g. TSLA"
+                maxLength={6}
+              />
+              <AddTickerBtn type="submit" disabled={!tickerInput.trim() || watchlist.length >= 20}>
+                <FaPlus/> Add
+              </AddTickerBtn>
+            </AddTickerForm>
+          </WatchlistHeader>
+
+          <WatchGrid>
+            {watchlist.length === 0 && (
+              <WatchEmptyCard>
+                <FaStar style={{fontSize:'2rem',opacity:0.2}}/>
+                <div style={{fontWeight:700,color:'#64748b'}}>No tickers yet</div>
+                <div style={{fontSize:'0.78rem'}}>Add symbols above to track them here.</div>
+              </WatchEmptyCard>
+            )}
+            {watchlist.map((sym, idx) => {
+              const q = watchQuotes[sym];
+              const loading = watchLoading[sym];
+              const isPos = q?.change != null && q.change >= 0;
+              return (
+                <WatchCard key={sym}
+                  initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:idx*0.04}}>
+                  <WatchCardTop>
+                    <WatchSymbol>{sym}</WatchSymbol>
+                    <div style={{display:'flex',gap:'0.35rem',alignItems:'center'}}>
+                      {!q && !loading && (
+                        <button type="button" onClick={()=>fetchQuote(sym)}
+                          style={{fontSize:'0.65rem',color:'#10b981',fontWeight:700,background:'none',border:'none',cursor:'pointer',padding:0}}>
+                          Load
+                        </button>
+                      )}
+                      <RemoveWatchBtn type="button" onClick={()=>removeFromWatchlist(sym)} title="Remove">✕</RemoveWatchBtn>
+                    </div>
+                  </WatchCardTop>
+
+                  {loading && <WatchLoading/>}
+
+                  {!loading && q?.price != null && (
+                    <>
+                      <WatchPrice>${q.price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2})}</WatchPrice>
+                      {q.change != null && (
+                        <WatchChange $pos={isPos}>
+                          {isPos ? '▲' : '▼'} {Math.abs(q.change).toFixed(2)}
+                          {q.changePct != null && <span>({isPos?'+':''}{q.changePct.toFixed(2)}%)</span>}
+                        </WatchChange>
+                      )}
+                      {q.volume != null && (
+                        <div style={{fontSize:'0.65rem',color:'#94a3b8',marginTop:'0.4rem',fontFamily:"'JetBrains Mono',monospace"}}>
+                          Vol {(q.volume/1e6).toFixed(1)}M
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {!loading && q && q.price == null && (
+                    <div style={{fontSize:'0.75rem',color:'#94a3b8',marginTop:'0.5rem'}}>
+                      No price data
+                      <div style={{fontSize:'0.65rem',marginTop:'0.2rem'}}>Add ALPHA_VANTAGE_KEY to enable live quotes</div>
+                    </div>
+                  )}
+                </WatchCard>
+              );
+            })}
+          </WatchGrid>
+
+          {/* AI Watchlist Brief */}
+          <WatchAIBar>
+            <WatchAIBarHeader>
+              <WatchAIBarTitle>
+                <FaRobot style={{color:'#4ade80'}}/> AI Watchlist Brief
+              </WatchAIBarTitle>
+              <WatchAIBtn
+                type="button"
+                disabled={watchAI.loading || watchlist.length === 0}
+                onClick={runWatchlistAI}
+              >
+                {watchAI.loading ? <><Spinner style={{marginRight:4}}/>Analysing…</> : 'Generate Brief'}
+              </WatchAIBtn>
+            </WatchAIBarHeader>
+            {(watchAI.result || watchAI.loading) && (
+              <WatchAIBody>
+                {watchAI.loading
+                  ? <span style={{color:'#94a3b8',fontStyle:'italic'}}>Generating your watchlist briefing…</span>
+                  : watchAI.result
+                }
+              </WatchAIBody>
+            )}
+            {!watchAI.result && !watchAI.loading && (
+              <WatchAIBody style={{color:'#94a3b8'}}>
+                Click "Generate Brief" to get an AI summary of what's happening with your tracked tickers based on current market context.
+              </WatchAIBody>
+            )}
+          </WatchAIBar>
+        </WatchlistWrap>
+      )}
+
+      {/* ══════════════════════════════════════════════
+          DOCUMENT ANALYST TAB
+      ══════════════════════════════════════════════ */}
+      {dashTab==='analyst' && (
+        <DocWrap>
+          <DocHeader>
+            <DocTitle><FaFileAlt style={{color:'#10b981'}}/> Document Analyst</DocTitle>
+            <DocSubtitle>
+              Paste an earnings call transcript, 10-K filing, 8-K, or any financial document.
+              The AI extracts key metrics, investment signals, risks, and a verdict.
+            </DocSubtitle>
+          </DocHeader>
+
+          <DocTypeRow>
+            {[
+              {id:'earnings', label:'Earnings Call'},
+              {id:'10k',      label:'10-K Annual'},
+              {id:'8k',       label:'8-K Filing'},
+              {id:'general',  label:'General Doc'},
+            ].map(t => (
+              <DocTypeBtn key={t.id} type="button" $active={docType===t.id} onClick={()=>setDocType(t.id)}>
+                {t.label}
+              </DocTypeBtn>
+            ))}
+          </DocTypeRow>
+
+          {/* PDF upload row */}
+          <div style={{display:'flex',alignItems:'center',gap:'0.65rem',marginBottom:'0.75rem',flexWrap:'wrap'}}>
+            <label style={{
+              display:'inline-flex',alignItems:'center',gap:0.4+'rem',
+              padding:'0.45rem 1rem',borderRadius:'8px',border:'1px solid #e2e8f0',
+              background:'#f8fafc',color:'#475569',fontSize:'0.78rem',fontWeight:700,
+              cursor: docPdfLoading ? 'not-allowed' : 'pointer',
+              opacity: docPdfLoading ? 0.6 : 1,
+              transition:'border-color 0.15s,background 0.15s',
+            }}
+              onMouseEnter={e=>{e.currentTarget.style.borderColor='#10b981';e.currentTarget.style.background='#f0fdf4';}}
+              onMouseLeave={e=>{e.currentTarget.style.borderColor='#e2e8f0';e.currentTarget.style.background='#f8fafc';}}
+            >
+              {docPdfLoading ? <><Spinner style={{color:'#10b981',marginRight:4}}/> Reading PDF…</> : <><FaFileAlt style={{color:'#10b981'}}/> Upload PDF</>}
+              <input
+                type="file" accept="application/pdf" style={{display:'none'}}
+                disabled={docPdfLoading}
+                onChange={handlePdfUpload}
+              />
+            </label>
+            <div style={{fontSize:'0.72rem',color:'#94a3b8',lineHeight:1.4}}>
+              Upload a text-layer PDF — or paste text directly below.
+            </div>
+          </div>
+
+          <DocInputWrap>
+            <DocQuestionInput
+              placeholder="Optional: Ask a specific question (e.g. What was management's guidance for Q3?)"
+              value={docQuestion}
+              onChange={e=>setDocQuestion(e.target.value)}
+            />
+            <DocTextArea
+              placeholder={`Paste ${docType === 'earnings' ? 'earnings call transcript' : docType === '10k' ? '10-K text (key sections)' : docType === '8k' ? '8-K filing text' : 'financial document text'} here…\n\nOr upload a PDF above. The AI reads up to ~12,000 characters.`}
+              value={docText}
+              onChange={e=>setDocText(e.target.value)}
+            />
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'0.5rem'}}>
+              <div style={{fontSize:'0.72rem',color:'#94a3b8'}}>
+                {docText.length.toLocaleString()} chars · AI reads first ~12,000
+                {docText.length > 0 && <button type="button" onClick={()=>{setDocText('');setDocResult(null);setDocError(null);}} style={{marginLeft:8,fontSize:'0.65rem',color:'#94a3b8',background:'none',border:'none',cursor:'pointer',textDecoration:'underline'}}>Clear</button>}
+              </div>
+              <DocAnalyseBtn
+                type="button"
+                onClick={runDocAnalysis}
+                disabled={docLoading || docText.trim().length < 50}
+                whileTap={{scale:0.97}}
+              >
+                {docLoading ? <><Spinner/> Analysing…</> : <><FaCheckDouble/> Analyse Document</>}
+              </DocAnalyseBtn>
+            </div>
+          </DocInputWrap>
+
+          {docError && (
+            <div style={{marginTop:'1rem',padding:'0.85rem 1rem',background:'#fef2f2',border:'1px solid #fecaca',borderRadius:10,fontSize:'0.82rem',color:'#dc2626'}}>
+              {docError}
+            </div>
+          )}
+
+          {docResult && (
+            <AnimatePresence>
+              <DocResultGrid>
+                <DocSummaryCard initial={{opacity:0,y:10}} animate={{opacity:1,y:0}}>
+                  <DocResultLabel>Executive Summary</DocResultLabel>
+                  <DocSummaryText>{docResult.summary}</DocSummaryText>
+                </DocSummaryCard>
+
+                {docResult.keyMetrics?.length > 0 && (
+                  <DocResultCard initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.05}}>
+                    <DocResultLabel>Key Metrics</DocResultLabel>
+                    {docResult.keyMetrics.map((m,i) => (
+                      <DocMetricRow key={i}>
+                        <DocMetricLabel>{m.label}</DocMetricLabel>
+                        <DocMetricValue $dir={m.direction}>
+                          {m.direction==='up' ? '▲ ' : m.direction==='down' ? '▼ ' : ''}{m.value}
+                        </DocMetricValue>
+                      </DocMetricRow>
+                    ))}
+                  </DocResultCard>
+                )}
+
+                {(docResult.positives?.length > 0 || docResult.risks?.length > 0) && (
+                  <DocResultCard initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.08}}>
+                    {docResult.positives?.length > 0 && (
+                      <>
+                        <DocResultLabel>Positives</DocResultLabel>
+                        {docResult.positives.map((p,i) => <DocBullet key={i} $color="#10b981">{p}</DocBullet>)}
+                      </>
+                    )}
+                    {docResult.risks?.length > 0 && (
+                      <>
+                        <DocResultLabel style={{marginTop:'0.75rem'}}>Risks</DocResultLabel>
+                        {docResult.risks.map((r,i) => <DocBullet key={i} $color="#ef4444">{r}</DocBullet>)}
+                      </>
+                    )}
+                  </DocResultCard>
+                )}
+
+                {docResult.signals?.length > 0 && (
+                  <DocResultCard initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.1}}>
+                    <DocResultLabel>Investment Signals</DocResultLabel>
+                    {docResult.signals.map((s,i) => (
+                      <div key={i}>
+                        <DocSignalBadge $type={s.type}>
+                          {s.type==='bullish' ? '▲ Bullish' : s.type==='bearish' ? '▼ Bearish' : '— Neutral'}
+                        </DocSignalBadge>
+                        <div style={{fontSize:'0.8rem',color:'#374151',lineHeight:1.55,marginBottom:'0.5rem'}}>{s.detail}</div>
+                      </div>
+                    ))}
+                  </DocResultCard>
+                )}
+
+                {docResult.verdict && (
+                  <DocVerdictBox
+                    $stance={docResult.verdict.stance}
+                    initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.12}}>
+                    <DocResultLabel>AI Verdict</DocResultLabel>
+                    <DocVerdictStance $stance={docResult.verdict.stance}>
+                      {docResult.verdict.stance} · {docResult.verdict.confidence} Confidence
+                    </DocVerdictStance>
+                    <div style={{fontSize:'0.85rem',color:'#374151',lineHeight:1.6}}>{docResult.verdict.rationale}</div>
+                  </DocVerdictBox>
+                )}
+              </DocResultGrid>
+            </AnimatePresence>
+          )}
+
+          {!docResult && !docLoading && (
+            <div style={{marginTop:'2.5rem',textAlign:'center',color:'#94a3b8',fontSize:'0.82rem',lineHeight:1.6}}>
+              <FaFileAlt style={{fontSize:'2rem',opacity:0.2,display:'block',margin:'0 auto 0.75rem'}}/>
+              Paste a document above and click Analyse to extract investment intelligence from any financial text.
+            </div>
+          )}
+
+          <div style={{marginTop:'1.5rem',fontSize:'0.68rem',color:'#94a3b8',lineHeight:1.5}}>
+            For educational purposes only. Not financial advice. Always verify key figures against official filings.
+          </div>
+        </DocWrap>
       )}
 
       {/* ══════════════════════════════════════════════

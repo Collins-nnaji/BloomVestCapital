@@ -6,7 +6,7 @@ const router = express.Router();
 
 const ADVISOR_PROMPT = `You are BloomVest's AI Investment Advisor guiding a student through a hands-on investing simulation. You are an encouraging, expert teacher.
 
-CONTEXT: The student is using a virtual trading simulator with $100,000 in fake money. They are working through a guided investment scenario to learn.
+CONTEXT: The student is using a virtual trading simulator with virtual cash. They are working through a guided investment scenario to learn.
 
 YOUR ROLE:
 - Explain WHY each investment decision matters using simple language
@@ -20,6 +20,14 @@ YOUR ROLE:
 - Be encouraging but honest about risks
 
 NEVER give real financial advice. Always remind this is for educational purposes if they ask about real money.`;
+
+const OPTIONS_ADVISOR_ADDENDUM = `
+
+OPTIONS / DERIVATIVES MODE (when the scenario is about options):
+- The student may hold long calls and long puts on equities/ETFs (100 shares per contract in US markets).
+- Explain: strike, expiration, intrinsic vs extrinsic value, leverage, max loss (premium paid), breakeven, delta/theta/gamma in plain English.
+- Contrast buying options vs owning stock; discuss when puts hedge a stock position.
+- Keep math simple; use round numbers. Never recommend real trades.`;
 
 const BUILDER_PROMPT = `You design interactive investing simulation scenarios for BloomVest, an educational app.
 
@@ -202,7 +210,17 @@ function mapScenarioRow(row) {
 
 router.post('/advisor', async (req, res) => {
   try {
-    const { sessionId, scenarioTitle, action, details, portfolio, objectives } = req.body;
+    const {
+      sessionId,
+      scenarioTitle,
+      action,
+      details,
+      portfolio,
+      objectives,
+      conversation,
+      optionsSummary,
+      scenarioKind,
+    } = req.body;
     if (!sessionId || !action) {
       return res.status(400).json({ error: 'sessionId and action are required' });
     }
@@ -210,6 +228,14 @@ router.post('/advisor', async (req, res) => {
     const user = await getOrCreateUser(sessionId);
 
     let userMessage = '';
+    const convSnippet =
+      typeof conversation === 'string' && conversation.trim().length > 0
+        ? `\n\nRecent chat (for continuity — answer in context):\n${conversation.trim().slice(0, 6000)}`
+        : '';
+    const optSnippet =
+      scenarioKind === 'options' && typeof optionsSummary === 'string' && optionsSummary.trim()
+        ? `\n\nOptions positions (simulated):\n${optionsSummary.trim().slice(0, 2000)}`
+        : '';
 
     switch (action) {
       case 'START_SCENARIO':
@@ -232,6 +258,22 @@ Analyze this purchase: Was it a good choice for this scenario? What should they 
         userMessage = `The student just SOLD ${details.shares} shares of ${details.symbol} at $${details.price} per share.
 Their current portfolio: Cash: $${portfolio.balance}, Holdings: ${JSON.stringify(portfolio.holdings)}.
 Explain what selling means in this context and suggest next steps.`;
+        break;
+
+      case 'OPEN_OPTION':
+        userMessage = `The student opened a simulated options position in "${scenarioTitle}":
+${JSON.stringify(details || {})}
+Cash: $${portfolio?.balance}, Stock holdings: ${JSON.stringify(portfolio?.holdings)}.
+Objectives remaining: ${JSON.stringify(objectives?.remaining || [])}.
+Coach them: risk, max loss, breakeven, how this fits the lesson, and what to watch next.`;
+        break;
+
+      case 'CLOSE_OPTION':
+        userMessage = `The student closed a simulated options position in "${scenarioTitle}":
+${JSON.stringify(details || {})}
+Cash: $${portfolio?.balance}, Stock holdings: ${JSON.stringify(portfolio?.holdings)}.
+Objectives remaining: ${JSON.stringify(objectives?.remaining || [])}.
+Explain P/L conceptually and what they learned.`;
         break;
 
       case 'ASK_ADVICE':
@@ -260,13 +302,18 @@ Give them a thorough performance review: what they did well, what they learned, 
         userMessage = details?.question || 'The student needs help with their scenario.';
     }
 
+    userMessage = `${userMessage}${optSnippet}${convSnippet}`;
+
+    const systemContent =
+      scenarioKind === 'options' ? `${ADVISOR_PROMPT}${OPTIONS_ADVISOR_ADDENDUM}` : ADVISOR_PROMPT;
+
     const completion = await getOpenAiClient().chat.completions.create({
       model: resolveModel('chat', 'gpt-4o-mini'),
       messages: [
-        { role: 'system', content: ADVISOR_PROMPT },
+        { role: 'system', content: systemContent },
         { role: 'user', content: userMessage },
       ],
-      max_tokens: 600,
+      max_tokens: scenarioKind === 'options' ? 750 : 650,
       temperature: 0.7,
     });
 

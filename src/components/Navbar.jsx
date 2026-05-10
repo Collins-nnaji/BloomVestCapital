@@ -59,31 +59,46 @@ const NavCenter = styled.nav`
 const NavGroup = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.1rem;
-  padding: 0.3rem;
-  border-radius: 12px;
-  background: ${(props) => (props.$highlight ? 'rgba(34,197,94,0.06)' : 'transparent')};
+  gap: 0.25rem;
 `;
 
 const NavLink = styled(RouterLink)`
-  color: rgba(15, 23, 42, 0.65);
+  font-family: 'Space Grotesk', sans-serif;
+  color: rgba(15, 23, 42, 0.55);
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
-  transition: all 0.2s ease;
-  padding: 0.4rem 0.75rem;
-  border-radius: 8px;
+  transition: color 0.15s ease;
+  padding: 0.45rem 0.85rem;
+  border-radius: 0;
   white-space: nowrap;
+  position: relative;
+  letter-spacing: -0.01em;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0.85rem;
+    right: 0.85rem;
+    height: 2px;
+    border-radius: 2px;
+    background: #10b981;
+    transform: scaleX(0);
+    transition: transform 0.18s ease;
+    transform-origin: left center;
+  }
 
   &:hover {
     color: #0f172a;
-    background: rgba(15, 23, 42, 0.05);
+    background: transparent;
   }
 
   &.active {
-    color: #15803d;
-    background: rgba(34, 197, 94, 0.1);
-    font-weight: 700;
+    color: #0f172a;
+    background: transparent;
+    font-weight: 800;
+    &::after { transform: scaleX(1); }
   }
 `;
 
@@ -406,8 +421,8 @@ const Navbar = () => {
           </Logo>
 
           <NavCenter>
-            <NavGroup $highlight>
-              <NavLink to="/signals" className={isActive('/signals')}>BloomVest Intelligence</NavLink>
+            <NavGroup>
+              <NavLink to="/signals" className={isActive('/signals')}>Investment Intelligence</NavLink>
               <NavLink to="/learn" className={isActive('/learn')}>Learn</NavLink>
             </NavGroup>
           </NavCenter>
@@ -472,7 +487,7 @@ const Navbar = () => {
 
         <MobileSection>
           <MobileSectionLabel>App</MobileSectionLabel>
-          <MobileLink to="/signals" className={isActive('/signals')}>BloomVest Intelligence <FaChevronRight /></MobileLink>
+          <MobileLink to="/signals" className={isActive('/signals')}>Investment Intelligence <FaChevronRight /></MobileLink>
           <MobileLink to="/learn" className={isActive('/learn')}>Learn <FaChevronRight /></MobileLink>
         </MobileSection>
       </MobileMenu>

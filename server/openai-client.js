@@ -1,10 +1,29 @@
-const { OpenAI } = require('openai');
+const { OpenAI, AzureOpenAI } = require('openai');
 
 let cachedClient;
 
+/** Resource root for AzureOpenAI SDK (no /openai or /openai/v1 suffix). */
+function normalizeAzureResourceEndpoint(raw) {
+  let e = String(raw || '')
+    .trim()
+    .replace(/\/$/, '');
+  if (e.endsWith('/openai/v1')) e = e.slice(0, -'/openai/v1'.length);
+  else if (e.endsWith('/openai')) e = e.slice(0, -'/openai'.length);
+  return e.replace(/\/$/, '');
+}
+
+function getAzureApiVersion() {
+  return (
+    process.env.AZURE_OPENAI_API_VERSION ||
+    process.env.OPENAI_API_VERSION ||
+    '2024-10-21'
+  ).trim();
+}
+
 /**
  * Resolve credentials without caching the HTTP client (reads latest process.env).
- * Azure Foundry / AI Services: set AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_KEY (or AZURE_OPENAI_API_KEY).
+ * Azure: set AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_KEY (or AZURE_OPENAI_API_KEY).
+ *   Use AzureOpenAI SDK (deployments path + api-version + api-key header). Set AZURE_OPENAI_API_VERSION if needed.
  * Standard OpenAI: set OPENAI_API_KEY (optional OPENAI_BASE_URL for proxies).
  */
 function getAiConfig() {
@@ -19,27 +38,51 @@ function getAiConfig() {
     (process.env.OPENAI_BASE_URL || '').trim().replace(/\/$/, '') || 'https://api.openai.com/v1';
 
   if (azureEndpoint && azureKey) {
-    if (!azureEndpoint.endsWith('/openai/v1')) {
-      azureEndpoint = `${azureEndpoint}/openai/v1`;
-    }
-    return { baseURL: azureEndpoint, apiKey: azureKey, mode: 'azure' };
+    const resourceRoot = normalizeAzureResourceEndpoint(azureEndpoint);
+    const openAiCompatibleBase = resourceRoot
+      ? `${resourceRoot}/openai/v1`
+      : '';
+    return {
+      baseURL: openAiCompatibleBase,
+      apiKey: azureKey,
+      mode: 'azure',
+      azureResourceEndpoint: resourceRoot,
+    };
   }
 
   if (openaiKey) {
-    return { baseURL: openaiBase, apiKey: openaiKey, mode: 'openai' };
+    return { baseURL: openaiBase, apiKey: openaiKey, mode: 'openai', azureResourceEndpoint: '' };
   }
 
-  return { baseURL: '', apiKey: '', mode: 'none' };
+  return { baseURL: '', apiKey: '', mode: 'none', azureResourceEndpoint: '' };
 }
 
 function getClient() {
   if (!cachedClient) {
-    const { baseURL, apiKey, mode } = getAiConfig();
-    if (!apiKey || !baseURL) {
+    const { baseURL, apiKey, mode, azureResourceEndpoint } = getAiConfig();
+    if (!apiKey || mode === 'none') {
       throw new Error('No AI credentials configured (Azure or OPENAI_API_KEY)');
     }
-    console.log(`[AI] Client ready — mode=${mode}, baseURL=${baseURL}`);
-    cachedClient = new OpenAI({ apiKey, baseURL });
+    if (mode === 'azure') {
+      if (!azureResourceEndpoint) {
+        throw new Error('AZURE_OPENAI_ENDPOINT is empty');
+      }
+      const apiVersion = getAzureApiVersion();
+      console.log(
+        `[AI] Client ready — mode=azure, endpoint=${azureResourceEndpoint}, apiVersion=${apiVersion}`
+      );
+      cachedClient = new AzureOpenAI({
+        endpoint: azureResourceEndpoint,
+        apiKey,
+        apiVersion,
+      });
+    } else {
+      if (!baseURL) {
+        throw new Error('No AI base URL configured');
+      }
+      console.log(`[AI] Client ready — mode=openai, baseURL=${baseURL}`);
+      cachedClient = new OpenAI({ apiKey, baseURL });
+    }
   }
   return cachedClient;
 }
@@ -78,8 +121,10 @@ function resolveModel(kind = 'default') {
 }
 
 function hasAiCredentials() {
-  const { apiKey, baseURL } = getAiConfig();
-  return Boolean(apiKey && baseURL);
+  const { apiKey, baseURL, mode, azureResourceEndpoint } = getAiConfig();
+  if (!apiKey) return false;
+  if (mode === 'azure') return Boolean(azureResourceEndpoint);
+  return Boolean(baseURL);
 }
 
 function getClientMode() {
@@ -88,14 +133,20 @@ function getClientMode() {
 
 /** Startup diagnostics (no secrets). */
 function logAiConfigSummary() {
-  const { baseURL, mode } = getAiConfig();
+  const { baseURL, mode, azureResourceEndpoint } = getAiConfig();
   if (mode === 'none') {
     console.warn(
       '[AI] No credentials: set AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_KEY, or OPENAI_API_KEY. Deep analysis and chat will fall back or fail.'
     );
     return;
   }
-  console.log(`[AI] Config: mode=${mode}, endpoint=${baseURL}`);
+  if (mode === 'azure') {
+    console.log(
+      `[AI] Config: mode=azure, endpoint=${azureResourceEndpoint}, apiVersion=${getAzureApiVersion()}`
+    );
+    return;
+  }
+  console.log(`[AI] Config: mode=openai, endpoint=${baseURL}`);
 }
 
 const getOpenAiClient = getClient;

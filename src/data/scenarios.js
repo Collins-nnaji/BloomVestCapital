@@ -241,6 +241,59 @@ export const scenarios = [
     learningGoals: ['Currency markets', 'Interest rate and forex relationship', 'Safe haven currencies', 'Global diversification hedging']
   },
   {
+    id: 'options-trading',
+    title: 'Stock Options: Calls, Puts & Defined Risk',
+    difficulty: 'Advanced',
+    duration: '28 min',
+    icon: '📊',
+    assets: ['SPY', 'QQQ', 'AAPL', 'MSFT', 'NVDA', 'IWM', 'BND'],
+    description:
+      'Full options lab: buy the underlying, then open long calls and long puts with realistic premium math. AI explains Greeks in plain English, breakeven, and max loss.',
+    briefing:
+      'You will use the Options Lab to open long calls and long puts (European-style simplified math). Each contract controls 100 shares. You will also hold stock/ETF shares so you can see how options relate to the underlying. Your AI tutor explains leverage, hedging with puts, and why most long options expire worthless — without jargon walls.',
+    startingBalance: 35000,
+    objectives: [
+      {
+        id: 'own-underlying',
+        label: 'Buy at least 20 shares of SPY, QQQ, or IWM (your underlying)',
+        check: (h) => {
+          const syms = ['SPY', 'QQQ', 'IWM'];
+          return h.some((x) => syms.includes(x.symbol) && x.shares >= 20);
+        },
+      },
+      {
+        id: 'long-call',
+        label: 'Open a long call (bullish / leveraged upside)',
+        check: (h, stocks, bal, legs) =>
+          Array.isArray(legs) && legs.some((l) => l.right === 'CALL' && l.side === 'LONG'),
+      },
+      {
+        id: 'long-put',
+        label: 'Open a long put (bearish or portfolio hedge)',
+        check: (h, stocks, bal, legs) =>
+          Array.isArray(legs) && legs.some((l) => l.right === 'PUT' && l.side === 'LONG'),
+      },
+      {
+        id: 'keep-cash-buffer',
+        label: 'Keep at least $5,000 cash after opening positions (risk buffer)',
+        check: (h, stocks, bal, legs, scenario) => bal >= 5000,
+      },
+    ],
+    tips: [
+      'Long call: pay premium; max loss = premium paid; profit if underlying rises past strike + premium.',
+      'Long put: pay premium; max loss = premium paid; profit if underlying falls below strike − premium.',
+      'One contract = 100 shares — multiply premium per share by 100 for total cost.',
+      'Puts on an index ETF can hedge a stock portfolio (imperfect hedge but educational).',
+    ],
+    learningGoals: [
+      'Calls vs puts',
+      'Strike & premium',
+      'Defined risk (max loss)',
+      'Leverage vs stock',
+      'Hedging intuition',
+    ],
+  },
+  {
     id: 'multi-asset',
     title: 'Multi-Asset Portfolio: The Complete Investor',
     difficulty: 'Advanced',
