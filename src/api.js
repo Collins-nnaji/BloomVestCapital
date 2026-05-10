@@ -242,16 +242,22 @@ export const api = {
     });
   },
 
-  async getCourses() {
-    return request(`/courses?sessionId=${getSessionId()}`);
+  async getCourses(options = {}) {
+    const path = options.preview
+      ? '/courses'
+      : `/courses?sessionId=${getSessionId()}`;
+    return request(path);
   },
 
   async getCourse(courseId) {
     return request(`/courses/${courseId}?sessionId=${getSessionId()}`);
   },
 
-  async getLesson(lessonId) {
-    return request(`/courses/lessons/${lessonId}?sessionId=${getSessionId()}`);
+  async getLesson(lessonId, options = {}) {
+    const path = options.preview
+      ? `/courses/lessons/${lessonId}`
+      : `/courses/lessons/${lessonId}?sessionId=${getSessionId()}`;
+    return request(path);
   },
 
   async completeLessonV2(lessonId, quizScore) {

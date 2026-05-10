@@ -1999,86 +1999,6 @@ const LearnSummary = styled.div`
   @media (max-width: 480px) { gap: 0.85rem; padding: 0.9rem 1rem; }
 `;
 
-const SignInGate = styled.div`
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  text-align: center;
-  max-width: 480px;
-  margin: 2rem auto;
-  box-shadow: 0 2px 12px rgba(15,23,42,0.06);
-`;
-
-const SignInGateIcon = styled.div`
-  font-size: 2.8rem;
-  margin-bottom: 1rem;
-`;
-
-const SignInGateTitle = styled.h2`
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.5rem;
-`;
-
-const SignInGateDesc = styled.p`
-  font-size: 0.9rem;
-  color: #64748b;
-  line-height: 1.6;
-  margin: 0 0 1.75rem;
-`;
-
-const SignInGatePerks = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0 0 2rem;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-`;
-
-const SignInGatePerk = styled.li`
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.875rem;
-  color: #1e293b;
-  font-weight: 500;
-`;
-
-const SignInGateBtn = styled.a`
-  display: block;
-  background: #0f172a;
-  color: #fff;
-  text-decoration: none;
-  padding: 0.9rem 2rem;
-  border-radius: 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.92rem;
-  font-weight: 700;
-  transition: all 0.2s;
-  margin-bottom: 0.75rem;
-  &:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(15,23,42,0.2); }
-`;
-
-const SignInGateSecondary = styled.a`
-  display: block;
-  background: transparent;
-  color: #475569;
-  text-decoration: none;
-  padding: 0.75rem 2rem;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  &:hover { border-color: #cbd5e1; color: #0f172a; }
-`;
-
 /* ── Learn tab component ─────────────────────────────────────────────────── */
 function LearnTab() {
   const { user } = useAuth();
@@ -2096,31 +2016,50 @@ function LearnTab() {
   const loadCourses = useCallback(async () => {
     setLoading(true);
     try {
-      const [coursesRes, progressRes] = await Promise.all([
-        api.getCourses(),
-        api.getCourseProgress(),
-      ]);
-      const completedIds = new Set(progressRes.completedIds || []);
-      const normalized = (coursesRes.courses || []).map(c => {
-        const allLessons = (c.modules || []).flatMap(m => m.lessons || []);
-        const done = allLessons.filter(l => completedIds.has(l.id)).length;
-        return { ...c, completedLessons: done, totalLessons: allLessons.length };
-      });
-      setCourses(normalized);
-      if (normalized.length > 0) setSelectedCourse(prev => prev || normalized[0]);
-      setProgress({
-        totalLessons: progressRes.totalLessons || normalized.reduce((s, c) => s + c.totalLessons, 0),
-        completedLessons: progressRes.completedLessons || completedIds.size,
-        completedIds: [...completedIds],
-      });
+      if (user) {
+        const [coursesRes, progressRes] = await Promise.all([
+          api.getCourses(),
+          api.getCourseProgress(),
+        ]);
+        const completedIds = new Set(progressRes.completedIds || []);
+        const normalized = (coursesRes.courses || []).map(c => {
+          const allLessons = (c.modules || []).flatMap(m => m.lessons || []);
+          const done = allLessons.filter(l => completedIds.has(l.id)).length;
+          return { ...c, completedLessons: done, totalLessons: allLessons.length };
+        });
+        setCourses(normalized);
+        if (normalized.length > 0) setSelectedCourse(prev => prev || normalized[0]);
+        setProgress({
+          totalLessons: progressRes.totalLessons || normalized.reduce((s, c) => s + c.totalLessons, 0),
+          completedLessons: progressRes.completedLessons || completedIds.size,
+          completedIds: [...completedIds],
+        });
+      } else {
+        const coursesRes = await api.getCourses({ preview: true });
+        const normalized = (coursesRes.courses || []).map(c => {
+          const allLessons = (c.modules || []).flatMap(m => m.lessons || []);
+          const done = allLessons.filter(l => l.completed).length;
+          return { ...c, completedLessons: done, totalLessons: allLessons.length };
+        });
+        setCourses(normalized);
+        if (normalized.length > 0) setSelectedCourse(prev => prev || normalized[0]);
+        const totalLessons = normalized.reduce((s, c) => s + c.totalLessons, 0);
+        setProgress({
+          totalLessons,
+          completedLessons: 0,
+          completedIds: [],
+        });
+      }
     } catch (e) {
       console.warn('LearnTab load error:', e.message);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
-  useEffect(() => { if (user) loadCourses(); else setLoading(false); }, [user, loadCourses]);
+  useEffect(() => {
+    loadCourses();
+  }, [loadCourses]);
 
   const openLesson = useCallback(async (lessonId) => {
     setActiveLesson(lessonId);
@@ -2132,14 +2071,14 @@ function LearnTab() {
     setQuizAnswers({});
     setLessonLoading(true);
     try {
-      const res = await api.getLesson(lessonId);
+      const res = await api.getLesson(lessonId, { preview: !user });
       setLessonData(res.lesson);
     } catch (e) {
       console.warn('Lesson load error:', e.message);
     } finally {
       setLessonLoading(false);
     }
-  }, []);
+  }, [user]);
 
   const closeLesson = useCallback(() => {
     setActiveLesson(null);
@@ -2154,6 +2093,11 @@ function LearnTab() {
 
   const handleComplete = async () => {
     if (!lessonData || completing) return;
+    if (!user) {
+      sessionStorage.setItem('auth_return_path', '/learn');
+      window.location.href = '/auth?mode=signin';
+      return;
+    }
     setCompleting(true);
     try {
       const quiz = Array.isArray(lessonData.quiz) ? lessonData.quiz : [];
@@ -2191,26 +2135,6 @@ function LearnTab() {
 
   const completedSet = new Set(progress.completedIds);
 
-  if (!user) {
-    return (
-      <SignInGate>
-        <SignInGateIcon>🎓</SignInGateIcon>
-        <SignInGateTitle>Sign in to access Academy</SignInGateTitle>
-        <SignInGateDesc>
-          Your course progress is saved to your account so you can pick up exactly where you left off — across any device.
-        </SignInGateDesc>
-        <SignInGatePerks>
-          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Progress saved permanently to your account</SignInGatePerk>
-          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Full course library — investing, risk, portfolios</SignInGatePerk>
-          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Quizzes with instant feedback</SignInGatePerk>
-          <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Free forever — no credit card needed</SignInGatePerk>
-        </SignInGatePerks>
-        <SignInGateBtn href="/auth?mode=signin" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Sign in to continue</SignInGateBtn>
-        <SignInGateSecondary href="/auth?mode=signup" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Create a free account</SignInGateSecondary>
-      </SignInGate>
-    );
-  }
-
   return (
     <>
       {/* Summary strip */}
@@ -2218,12 +2142,14 @@ function LearnTab() {
         <FaGraduationCap style={{ fontSize: '1.4rem', color: '#22c55e', flexShrink: 0 }} />
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '0.85rem', color: '#0f172a', marginBottom: '0.25rem' }}>
-            {progress.completedLessons} / {progress.totalLessons} lessons completed ({overallPct}%)
+            {user
+              ? `${progress.completedLessons} / ${progress.totalLessons} lessons completed (${overallPct}%)`
+              : `Preview · ${progress.totalLessons} lessons — sign in to save progress`}
           </div>
           <LearnProgressBar>
             <LearnProgressFill
               initial={{ width: 0 }}
-              animate={{ width: `${overallPct}%` }}
+              animate={{ width: `${user ? overallPct : 0}%` }}
               transition={{ duration: 0.6 }}
             />
           </LearnProgressBar>
@@ -2439,10 +2365,19 @@ function LearnTab() {
                   </QuizSection>
                 )}
 
-                <CompleteBtn onClick={handleComplete} disabled={completing || completedSet.has(lessonData.id)}>
-                  {completing ? <><SpinIcon /> Saving…</> :
-                   completedSet.has(lessonData.id) ? <><FaCheckCircle /> Already completed</> :
-                   <><FaCheckCircle /> Mark as complete</>}
+                <CompleteBtn
+                  onClick={handleComplete}
+                  disabled={!!user && (completing || completedSet.has(lessonData.id))}
+                >
+                  {!user ? (
+                    <><FaCheckCircle /> Sign in to save progress</>
+                  ) : completing ? (
+                    <><SpinIcon /> Saving…</>
+                  ) : completedSet.has(lessonData.id) ? (
+                    <><FaCheckCircle /> Already completed</>
+                  ) : (
+                    <><FaCheckCircle /> Mark as complete</>
+                  )}
                 </CompleteBtn>
               </LessonBody>
             ) : (
@@ -2459,30 +2394,6 @@ function LearnTab() {
 
 const ScenarioPage = () => {
   const { user } = useAuth();
-
-  if (!user) {
-    return (
-      <PageContainer>
-        <ContentWrapper>
-          <SignInGate>
-            <SignInGateIcon>🎓</SignInGateIcon>
-            <SignInGateTitle>Sign in to access Academy</SignInGateTitle>
-            <SignInGateDesc>
-              Your progress is saved to your account so you can pick up exactly where you left off — across any device.
-            </SignInGateDesc>
-            <SignInGatePerks>
-              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Progress saved permanently to your account</SignInGatePerk>
-              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Full interactive scenarios & courses</SignInGatePerk>
-              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> AI Coaching tailored to your choices</SignInGatePerk>
-              <SignInGatePerk><FaCheckCircle style={{ color: '#10b981', flexShrink: 0 }} /> Free forever — no credit card needed</SignInGatePerk>
-            </SignInGatePerks>
-            <SignInGateBtn href="/auth?mode=signin" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Sign in to continue</SignInGateBtn>
-            <SignInGateSecondary href="/auth?mode=signup" onClick={() => sessionStorage.setItem('auth_return_path', '/learn')}>Create a free account</SignInGateSecondary>
-          </SignInGate>
-        </ContentWrapper>
-      </PageContainer>
-    );
-  }
 
   const [tab, setTab] = useState('learn');
   const [marketShock, setMarketShock] = useState(null);
@@ -2676,6 +2587,11 @@ const ScenarioPage = () => {
   );
 
   const startScenario = useCallback(async (scenario) => {
+    if (!user) {
+      sessionStorage.setItem('auth_return_path', '/learn');
+      window.location.href = '/auth?mode=signin';
+      return;
+    }
     setActiveScenario(scenario);
     setBalance(scenario.startingBalance);
     setHoldings([]);
@@ -2732,7 +2648,7 @@ const ScenarioPage = () => {
     } finally {
       setAiLoading(false);
     }
-  }, []);
+  }, [user]);
 
   const resetBuilder = useCallback(() => {
     setBuilderStep(0);
@@ -2741,9 +2657,14 @@ const ScenarioPage = () => {
   }, []);
 
   const goToBuilder = useCallback(() => {
+    if (!user) {
+      sessionStorage.setItem('auth_return_path', '/learn');
+      window.location.href = '/auth?mode=signin';
+      return;
+    }
     resetBuilder();
     setView('builder');
-  }, [resetBuilder]);
+  }, [resetBuilder, user]);
 
   const updateBuilder = useCallback((key, value) => {
     setBuilder((prev) => ({ ...prev, [key]: value }));
@@ -3270,6 +3191,14 @@ const ScenarioPage = () => {
             <LearnTab />
           ) : (
           <>
+          {!user && (
+            <Card style={{ padding: '0.85rem 1rem', marginBottom: '0.75rem', background: 'linear-gradient(135deg, rgba(14,165,233,0.08), rgba(34,197,94,0.06)', border: '1px solid rgba(14,165,233,0.25)' }}>
+              <div style={{ fontWeight: 800, fontSize: '0.82rem', color: '#0f172a', marginBottom: '0.2rem' }}>Sign in to run scenarios</div>
+              <div style={{ fontSize: '0.8rem', color: 'rgba(15,23,42,0.72)', lineHeight: 1.45 }}>
+                You can browse the library below. Starting a simulation or creating a custom scenario requires a free account.
+              </div>
+            </Card>
+          )}
           <BuilderHero
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
