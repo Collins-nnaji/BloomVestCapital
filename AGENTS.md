@@ -23,7 +23,9 @@ BloomVest Finance is a React SPA (Create React App) with an Express/Node.js back
 
 ### Backend notes
 - Backend server entry: `server/index.js` (Express on port 5000)
-- Requires `DATABASE_URL` and `OPENAI_API_KEY` in `.env` (already present)
+- Requires `DATABASE_URL`. AI: either Azure (`AZURE_OPENAI_ENDPOINT` + `AZURE_OPENAI_KEY`) or OpenAI (`OPENAI_API_KEY`) — see `.env.example`
+- `.env` values override exported shell variables when the server loads (avoid stale endpoints after edits)
+- Restart **`npm run server`** (or `npm run dev`) after changing `.env`. Restart **`npm start`** too if you change any `REACT_APP_*` variable (CRA bakes those in at compile time)
 - Database schema auto-initializes on server start
 - Pages use `src/api.js` client which calls the backend; they fall back to localStorage if the backend is unreachable
 

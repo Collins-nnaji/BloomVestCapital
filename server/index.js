@@ -1,4 +1,13 @@
-try { require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }); } catch (e) { /* .env not present on Netlify */ }
+const path = require('path');
+try {
+  require('dotenv').config({
+    path: path.resolve(__dirname, '../.env'),
+    // Prefer values from .env over stale variables exported in the shell (common dev footgun).
+    override: true,
+  });
+} catch (e) {
+  /* .env not present on Netlify */
+}
 const express = require('express');
 const cors = require('cors');
 const { initializeDatabase } = require('./db');
@@ -10,6 +19,7 @@ const scenarioRoutes = require('./routes/scenario');
 const billingRoutes = require('./routes/billing');
 const authRoutes = require('./routes/auth');
 const leadsRoutes = require('./routes/leads');
+const { logAiConfigSummary } = require('./openai-client');
 
 const app = express();
 
@@ -44,6 +54,7 @@ async function ensureDb() {
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
   ensureDb().then(() => {
+    logAiConfigSummary();
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   }).catch(err => {
     console.error('Failed to start server:', err);
