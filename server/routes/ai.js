@@ -1272,4 +1272,358 @@ router.get('/analysis/saved', async (req, res) => {
   }
 });
 
+// ─── Live Market Data ────────────────────────────────────────────────────────
+// Aggregates NGX stocks (Alpha Vantage), crypto (CoinGecko), forex (ExchangeRate API)
+// Cached 5 min to stay within free-tier rate limits.
+
+const marketCache = { data: null, ts: 0 };
+const MARKET_CACHE_MS = 5 * 60 * 1000;
+
+const NGX_SYMBOLS = ['DANGCEM.LAG', 'MTNN.LAG', 'GTCO.LAG'];
+const US_SYMBOLS  = ['AAPL', 'NVDA'];
+const CRYPTO_IDS  = ['bitcoin', 'ethereum', 'solana', 'binancecoin'];
+
+async function fetchAVQuote(symbol) {
+  const key = process.env.ALPHA_VANTAGE_KEY;
+  if (!key) return null;
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(
+      `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${key}`,
+      { signal: ctl.signal }
+    );
+    clearTimeout(t);
+    const d = await r.json();
+    const q = d['Global Quote'];
+    if (!q || !q['05. price']) return null;
+    return {
+      symbol,
+      price: parseFloat(q['05. price']),
+      change: parseFloat(q['09. change']),
+      changePct: parseFloat(q['10. change percent']),
+      volume: parseInt(q['06. volume'], 10) || 0,
+    };
+  } catch { return null; }
+}
+
+async function fetchCryptoQuotes() {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${CRYPTO_IDS.join(',')}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true`,
+      { signal: ctl.signal }
+    );
+    clearTimeout(t);
+    const d = await r.json();
+    const symbolMap = { bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', binancecoin: 'BNB' };
+    const nameMap   = { bitcoin: 'Bitcoin', ethereum: 'Ethereum', solana: 'Solana', binancecoin: 'BNB' };
+    return CRYPTO_IDS.map(id => {
+      const coin = d[id];
+      if (!coin) return null;
+      return {
+        symbol: symbolMap[id] || id.toUpperCase(),
+        name: nameMap[id] || id,
+        price: coin.usd,
+        changePct: coin.usd_24h_change || 0,
+        volume: coin.usd_24h_vol || 0,
+        category: 'crypto',
+      };
+    }).filter(Boolean);
+  } catch { return []; }
+}
+
+async function fetchForexRates() {
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch('https://open.er-api.com/v6/latest/USD', { signal: ctl.signal });
+    clearTimeout(t);
+    const d = await r.json();
+    if (!d.rates) return null;
+    return {
+      USDNGN: d.rates.NGN || null,
+      USDGHS: d.rates.GHS || null,
+      USDKES: d.rates.KES || null,
+      USDZAR: d.rates.ZAR || null,
+      timestamp: d.time_last_update_utc || new Date().toISOString(),
+    };
+  } catch { return null; }
+}
+
+router.get('/market-data', async (req, res) => {
+  const now = Date.now();
+  if (marketCache.data && (now - marketCache.ts) < MARKET_CACHE_MS) {
+    return res.json({ ...marketCache.data, cached: true });
+  }
+  try {
+    const [cryptoQuotes, forex, ...equityQuotes] = await Promise.all([
+      fetchCryptoQuotes(),
+      fetchForexRates(),
+      fetchAVQuote(NGX_SYMBOLS[0]),
+      fetchAVQuote(NGX_SYMBOLS[1]),
+      fetchAVQuote(NGX_SYMBOLS[2]),
+      fetchAVQuote(US_SYMBOLS[0]),
+      fetchAVQuote(US_SYMBOLS[1]),
+    ]);
+
+    const ngx = equityQuotes.slice(0, 3).filter(Boolean).map(q => ({ ...q, category: 'ngx' }));
+    const us  = equityQuotes.slice(3).filter(Boolean).map(q => ({ ...q, category: 'us' }));
+
+    const result = { ngx, us, crypto: cryptoQuotes, forex, updatedAt: new Date().toISOString(), cached: false };
+    marketCache.data = result;
+    marketCache.ts = now;
+    res.json(result);
+  } catch (err) {
+    console.error('Market data error:', err);
+    res.status(500).json({ error: 'Failed to fetch market data' });
+  }
+});
+
+// ─── Africa-Focused AI Trade Ideas ───────────────────────────────────────────
+// Generates structured buy/watch/avoid signals calibrated for Nigerian/African
+// retail investors. Cached 20 min — one AI call per window.
+
+const tradeIdeasCache = { data: null, ts: 0 };
+const TRADE_IDEAS_CACHE_MS = 20 * 60 * 1000;
+
+const TRADE_IDEAS_SYSTEM = `You are BloomVest's Africa-focused investment analyst. Your audience is Nigerian and African retail investors who can access:
+- NGX-listed stocks (e.g. DANGCEM, MTNN, ZENITHBANK, GTCO, AIRTELAFRI, BUAFOODS, SEPLAT)
+- US stocks and ETFs available via Bamboo, Chaka, or Trove (the main investment apps for Nigerians)
+- Crypto (available everywhere in Nigeria)
+- Dollar-denominated assets as a naira hedge
+
+Your job: return 8-10 trade ideas as a JSON array. Each idea must be grounded in the live headlines provided.
+
+JSON schema (array of objects, no wrapper):
+[
+  {
+    "ticker": "DANGCEM",
+    "company": "Dangote Cement",
+    "exchange": "NGX",
+    "action": "Buy" | "Watch" | "Avoid" | "Strong Buy" | "Reduce",
+    "confidence": "High" | "Medium" | "Low",
+    "assetType": "NGX Stock" | "US Stock" | "ETF" | "Crypto" | "Commodity",
+    "thesis": "2-3 sentence explanation in plain English grounded in the headlines",
+    "catalyst": "The single most important upcoming catalyst",
+    "risk": "The single biggest risk in one sentence",
+    "horizon": "Short (< 3 months)" | "Medium (3-12 months)" | "Long (1-3 years)",
+    "nairaAngle": "Why this matters specifically for a Nigerian investor (FX hedge, local business, etc.)"
+  }
+]
+
+RULES:
+- Always include at least 2 NGX stocks if there is any African/Nigerian market context in the headlines.
+- Always include at least 1 crypto pick relevant to the ₦/$ dynamic.
+- Always include at least 1 US ETF or stock accessible via Nigerian apps.
+- Use plain English. No jargon. If something is speculative, say so.
+- Output ONLY valid JSON array — no markdown, no extra text.`;
+
+router.post('/trade-ideas', async (_req, res) => {
+  const now = Date.now();
+  if (tradeIdeasCache.data && (now - tradeIdeasCache.ts) < TRADE_IDEAS_CACHE_MS) {
+    return res.json({ ideas: tradeIdeasCache.data, cached: true, generatedAt: tradeIdeasCache.generatedAt });
+  }
+
+  try {
+    const { headlines } = await getSharedHeadlines();
+    const headlineBlock = headlines.length
+      ? buildHeadlineBlock(headlines, 50)
+      : '(No live headlines. Use broad 2026 macro context: naira pressure, high Nigerian interest rates, AI sector growth, oil price volatility.)';
+
+    const userPrompt = `Today: ${new Date().toISOString().slice(0, 10)}\n\nLive market headlines:\n${headlineBlock}\n\nGenerate 8-10 Africa-focused trade ideas as a JSON array.`;
+
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('default', 'gpt-4o'),
+      messages: [
+        { role: 'system', content: TRADE_IDEAS_SYSTEM },
+        { role: 'user',   content: userPrompt },
+      ],
+      temperature: 0.4,
+      max_tokens: 3000,
+    });
+
+    const raw = (completion.choices?.[0]?.message?.content || '').trim();
+    let ideas;
+    try {
+      ideas = JSON.parse(raw);
+      if (!Array.isArray(ideas)) throw new Error('Not an array');
+    } catch {
+      // Try extracting JSON array from response
+      const match = raw.match(/\[[\s\S]*\]/);
+      if (!match) throw new Error('Could not parse AI response as JSON array');
+      ideas = JSON.parse(match[0]);
+    }
+
+    // Sanitise fields
+    ideas = ideas.slice(0, 10).map(idea => ({
+      ticker:      String(idea.ticker || '').slice(0, 12),
+      company:     String(idea.company || idea.ticker || '').slice(0, 60),
+      exchange:    String(idea.exchange || '').slice(0, 10),
+      action:      String(idea.action || 'Watch').slice(0, 20),
+      confidence:  String(idea.confidence || 'Medium').slice(0, 10),
+      assetType:   String(idea.assetType || 'US Stock').slice(0, 20),
+      thesis:      String(idea.thesis || '').slice(0, 500),
+      catalyst:    String(idea.catalyst || '').slice(0, 200),
+      risk:        String(idea.risk || '').slice(0, 200),
+      horizon:     String(idea.horizon || '').slice(0, 30),
+      nairaAngle:  String(idea.nairaAngle || '').slice(0, 300),
+    }));
+
+    const generatedAt = new Date().toISOString();
+    tradeIdeasCache.data = ideas;
+    tradeIdeasCache.ts = now;
+    tradeIdeasCache.generatedAt = generatedAt;
+
+    res.json({ ideas, cached: false, generatedAt });
+  } catch (err) {
+    console.error('Trade ideas error:', err);
+    res.status(500).json({ error: 'Failed to generate trade ideas: ' + err.message });
+  }
+});
+
+// ─── Earnings & Economic Calendar ────────────────────────────────────────────
+// Fetches upcoming earnings (Finnhub) + high-impact economic events (Finnhub)
+// and generates a short AI pre-briefing for the week ahead.
+// Cached 30 min.
+
+const calendarCache = { data: null, ts: 0 };
+const CALENDAR_CACHE_MS = 30 * 60 * 1000;
+
+// Major tickers Nigerian investors can access via Bamboo/Chaka + NGX blue-chips
+const WATCHED_TICKERS = new Set([
+  'AAPL','MSFT','NVDA','GOOGL','AMZN','META','TSLA','AMD','JPM','BAC',
+  'GS','MS','WMT','COST','V','MA','BRK.B','XOM','CVX','NFLX',
+  'UBER','COIN','MSTR','MCD','DIS','INTC','QCOM','ARM','PLTR',
+]);
+
+async function fetchEarningsCalendar() {
+  const key = process.env.FINNHUB_KEY;
+  if (!key) return [];
+  const today = new Date();
+  const from  = today.toISOString().slice(0, 10);
+  const to    = new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(
+      `https://finnhub.io/api/v1/calendar/earnings?from=${from}&to=${to}&token=${key}`,
+      { signal: ctl.signal }
+    );
+    clearTimeout(t);
+    const d = await r.json();
+    const items = (d.earningsCalendar || []);
+    // Keep only watched tickers + those with estimate data, sort by date
+    const filtered = items
+      .filter(e => WATCHED_TICKERS.has(e.symbol) || e.epsEstimate != null)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, 30);
+    return filtered.map(e => ({
+      type:            'earnings',
+      symbol:          e.symbol,
+      date:            e.date,
+      hour:            e.hour || '',         // bmo = before market open, amc = after market close
+      epsEstimate:     e.epsEstimate ?? null,
+      revenueEstimate: e.revenueEstimate ?? null,
+      quarter:         e.quarter ?? null,
+      year:            e.year ?? null,
+      isWatched:       WATCHED_TICKERS.has(e.symbol),
+    }));
+  } catch { return []; }
+}
+
+async function fetchEconomicCalendar() {
+  const key = process.env.FINNHUB_KEY;
+  if (!key) return [];
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(
+      `https://finnhub.io/api/v1/calendar/economic?token=${key}`,
+      { signal: ctl.signal }
+    );
+    clearTimeout(t);
+    const d = await r.json();
+    const now = new Date();
+    const cutoff = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
+    return (d.economicCalendar || [])
+      .filter(e => {
+        const t = new Date(e.time);
+        return t >= now && t <= cutoff && (e.impact === 'high' || e.country === 'US' || e.country === 'NG');
+      })
+      .sort((a, b) => new Date(a.time) - new Date(b.time))
+      .slice(0, 25)
+      .map(e => ({
+        type:     'economic',
+        event:    e.event,
+        country:  e.country,
+        impact:   e.impact,
+        time:     e.time,
+        actual:   e.actual ?? null,
+        estimate: e.estimate ?? null,
+        prev:     e.prev ?? null,
+        unit:     e.unit || '',
+      }));
+  } catch { return []; }
+}
+
+async function generateCalendarBriefing(earnings, economic) {
+  const earningsLines = earnings.slice(0, 10).map(e =>
+    `${e.date} ${e.hour ? `(${e.hour})` : ''}: ${e.symbol} Q${e.quarter}${e.epsEstimate != null ? ` | EPS est. $${e.epsEstimate.toFixed(2)}` : ''}`
+  ).join('\n');
+
+  const econLines = economic.slice(0, 8).map(e =>
+    `${e.time.slice(0, 10)} [${e.country}] ${e.event} — impact: ${e.impact}${e.estimate != null ? `, est: ${e.estimate}${e.unit}` : ''}`
+  ).join('\n');
+
+  const prompt = `You are BloomVest's market education assistant for Nigerian investors.
+
+Upcoming earnings (next 10 days):
+${earningsLines || '(none found)'}
+
+High-impact economic events:
+${econLines || '(none found)'}
+
+Write a concise weekly calendar briefing (4-6 sentences) covering:
+1. The 2-3 most important earnings reports to watch and why they matter
+2. The key economic events that could move markets
+3. One specific note about what this means for Nigerian investors (naira, oil price, inflation)
+
+Keep it plain English, educational, no financial advice. Return as plain text only.`;
+
+  try {
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('default', 'gpt-4o-mini'),
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.4,
+      max_tokens: 350,
+    });
+    return completion.choices?.[0]?.message?.content?.trim() || '';
+  } catch { return ''; }
+}
+
+router.get('/calendar', async (_req, res) => {
+  const now = Date.now();
+  if (calendarCache.data && (now - calendarCache.ts) < CALENDAR_CACHE_MS) {
+    return res.json({ ...calendarCache.data, cached: true });
+  }
+  try {
+    const [earnings, economic] = await Promise.all([
+      fetchEarningsCalendar(),
+      fetchEconomicCalendar(),
+    ]);
+
+    const briefing = await generateCalendarBriefing(earnings, economic);
+
+    const result = { earnings, economic, briefing, generatedAt: new Date().toISOString(), cached: false };
+    calendarCache.data = result;
+    calendarCache.ts = now;
+    res.json(result);
+  } catch (err) {
+    console.error('Calendar error:', err);
+    res.status(500).json({ error: 'Failed to fetch calendar data' });
+  }
+});
+
 module.exports = router;

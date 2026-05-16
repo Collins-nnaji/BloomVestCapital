@@ -12,8 +12,10 @@ import {
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { extractTextFromPdfArrayBuffer } from '../utils/extractPdfText';
+import MarketPage from './MarketPage';
+import TradeIdeasPage from './TradeIdeasPage';
 
 /* ── animations ─────────────────────────────────────── */
 const slide    = keyframes`from{transform:translateX(0)}to{transform:translateX(-50%)}`;
@@ -440,38 +442,55 @@ const SentimentLabel = styled.span`
 
 /* ── sentiment tab ──────────────────────────────────── */
 const SentimentWrap = styled.div`padding:1.25rem;`;
+const SentimentIntro = styled.div`
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:1rem 1.15rem;margin-bottom:1rem;
+`;
+const SentimentIntroTitle = styled.h3`
+  font-family:'Space Grotesk',sans-serif;font-size:0.92rem;font-weight:800;color:#0f172a;margin:0 0 0.4rem;
+`;
+const SentimentIntroText = styled.p`
+  font-size:0.8rem;color:#64748b;line-height:1.6;margin:0 0 0.75rem;
+`;
+const SentimentLegend = styled.div`
+  display:flex;flex-wrap:wrap;gap:0.4rem;
+`;
+const LegendChip = styled.span`
+  font-size:0.68rem;font-weight:600;padding:0.25rem 0.55rem;border-radius:6px;
+  background:${p=>p.$bg};color:${p=>p.$color};border:1px solid ${p=>p.$border};
+`;
 const SentimentHeader = styled.div`
   display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;
 `;
 const SentimentTitle = styled.div`
   font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:700;color:#0f172a;
-  display:flex;align-items:center;gap:0.5rem;
+  display:flex;flex-direction:column;gap:0.15rem;
   span{font-family:'Inter',sans-serif;font-weight:400;color:#94a3b8;font-size:0.75rem;}
 `;
 const SentTable = styled.div`
   border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;
 `;
 const SentTHead = styled.div`
-  display:grid;grid-template-columns:0.6fr 1.4fr 0.8fr 2fr 0.8fr;
+  display:grid;grid-template-columns:0.5fr 1.3fr 0.9fr 2.2fr;
   background:#f8fafc;border-bottom:1px solid #e2e8f0;
-  @media(max-width:640px){grid-template-columns:0.8fr 1.2fr 1fr;}
+  @media(max-width:640px){grid-template-columns:0.6fr 1.2fr 1.2fr;}
 `;
 const SentTH = styled.div`
-  padding:0.6rem 1rem;font-size:0.6rem;font-weight:700;color:#94a3b8;
-  text-transform:uppercase;letter-spacing:0.1em;
-  @media(max-width:640px){&:nth-child(4),&:nth-child(5){display:none;}}
+  padding:0.6rem 1rem;font-size:0.62rem;font-weight:700;color:#64748b;
+  letter-spacing:0.02em;line-height:1.35;
+  @media(max-width:640px){&:nth-child(4){display:none;}}
 `;
 const SentTRow = styled(motion.div)`
-  display:grid;grid-template-columns:0.6fr 1.4fr 0.8fr 2fr 0.8fr;
+  display:grid;grid-template-columns:0.5fr 1.3fr 0.9fr 2.2fr;
   border-bottom:1px solid #f1f5f9;background:#ffffff;
   &:last-child{border-bottom:none;}
   &:hover{background:#f8fafc;}
-  @media(max-width:640px){grid-template-columns:0.8fr 1.2fr 1fr;}
+  @media(max-width:640px){grid-template-columns:0.6fr 1.2fr 1.2fr;}
 `;
 const SentTD = styled.div`
   padding:0.75rem 1rem;display:flex;align-items:center;font-size:0.8rem;
-  @media(max-width:640px){&:nth-child(4),&:nth-child(5){display:none;}}
+  @media(max-width:640px){&:nth-child(4){display:none;}}
 `;
+const MoodHint = styled.div`font-size:0.68rem;color:#94a3b8;margin-top:0.2rem;line-height:1.4;`;
 const ScoreBar = styled.div`
   height:6px;border-radius:3px;background:#f1f5f9;flex:1;overflow:hidden;margin-left:0.5rem;
 `;
@@ -837,6 +856,21 @@ const SENTIMENT_COLORS = {
   'Bearish':           { dot:'#ef4444', bg:'#fee2e2', color:'#dc2626', border:'#fecaca' },
 };
 
+/** Plain-language labels for Alpha Vantage / news sentiment terms */
+const SENTIMENT_PLAIN = {
+  'Bullish':          { title: 'Positive',     hint: 'News is mostly upbeat about this symbol' },
+  'Somewhat-Bullish': { title: 'Slightly positive', hint: 'News leans positive, but not strongly' },
+  'Neutral':          { title: 'Mixed / neutral', hint: 'News is balanced or unclear' },
+  'Somewhat-Bearish': { title: 'Slightly negative', hint: 'News leans negative, but not strongly' },
+  'Bearish':          { title: 'Negative',     hint: 'News is mostly cautious or downbeat' },
+};
+
+const SOURCE_PLAIN = {
+  alphavantage: 'Scored from live financial news',
+  picks: 'Estimated from your AI stock picks',
+  headlines: 'Estimated from headline keywords',
+};
+
 const normaliseAssetType = (t='') => {
   const VALID = ['Stocks','ETFs','Commodities','Crypto','Options Plays'];
   if (VALID.includes(t)) return t;
@@ -852,6 +886,21 @@ function sentimentColor(label) {
   return SENTIMENT_COLORS[label] || SENTIMENT_COLORS['Neutral'];
 }
 
+function plainSentiment(label) {
+  return SENTIMENT_PLAIN[label] || SENTIMENT_PLAIN['Neutral'];
+}
+
+/** Turn Alpha Vantage-style score (-1 to +1) into readable text */
+function scoreToMoodText(avgScore) {
+  if (avgScore == null || Number.isNaN(Number(avgScore))) return null;
+  const n = Number(avgScore);
+  if (n >= 0.3) return 'Strong positive tone in recent news';
+  if (n >= 0.1) return 'Mild positive tone in recent news';
+  if (n <= -0.3) return 'Strong negative tone in recent news';
+  if (n <= -0.1) return 'Mild negative tone in recent news';
+  return 'Balanced or mixed tone in recent news';
+}
+
 /* ── component ──────────────────────────────────────── */
 export default function Dashboard() {
   const [loading,    setLoading]    = useState(true);
@@ -861,6 +910,7 @@ export default function Dashboard() {
   const [briefMode,  setBriefMode]  = useState('longTerm');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [deepRunning,  setDeepRunning]  = useState(false);
   const [deepProgress, setDeepProgress] = useState(0);
@@ -874,8 +924,13 @@ export default function Dashboard() {
   const [expandedRows, setExpandedRows] = useState({});
   const [selectedRow,  setSelectedRow]  = useState(null);
 
-  // tabs: 'picks' | 'brief' | 'news' | 'sentiment' | 'journal' | 'watchlist' | 'analyst'
+  // tabs: 'picks' | 'trade-ideas' | 'markets' | 'brief' | 'news' | 'sentiment' | 'journal' | 'watchlist' | 'analyst'
   const [dashTab, setDashTab] = useState('picks');
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'trade-ideas' || tab === 'markets') setDashTab(tab);
+  }, [searchParams]);
 
   // watchlist state
   const [watchlist, setWatchlist] = useState(() => {
@@ -1250,9 +1305,11 @@ export default function Dashboard() {
       {/* ── tabs ── */}
       <DashTabBar>
         <DashTabBtn $active={dashTab==='picks'}     onClick={()=>setDashTab('picks')}><FaMagic/>AI Picks</DashTabBtn>
+        <DashTabBtn $active={dashTab==='trade-ideas'} onClick={()=>setDashTab('trade-ideas')}><FaBolt/>Trade Ideas</DashTabBtn>
+        <DashTabBtn $active={dashTab==='markets'}   onClick={()=>setDashTab('markets')}><FaChartLine/>Markets</DashTabBtn>
         <DashTabBtn $active={dashTab==='brief'}     onClick={()=>setDashTab('brief')}><FaCalendarAlt/>Market Brief</DashTabBtn>
         <DashTabBtn $active={dashTab==='news'}      onClick={()=>setDashTab('news')}><FaNewspaper/>News Feed</DashTabBtn>
-        <DashTabBtn $active={dashTab==='sentiment'} onClick={()=>setDashTab('sentiment')}><FaSignal/>Sentiment</DashTabBtn>
+        <DashTabBtn $active={dashTab==='sentiment'} onClick={()=>setDashTab('sentiment')}><FaSignal/>Market Mood</DashTabBtn>
         <DashTabBtn $active={dashTab==='watchlist'} onClick={()=>setDashTab('watchlist')}><FaStar/>Watchlist</DashTabBtn>
         <DashTabBtn $active={dashTab==='analyst'}   onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Analyst</DashTabBtn>
         <DashTabBtn $active={dashTab==='journal'}   onClick={()=>setDashTab('journal')}><FaBookOpen/>Journal</DashTabBtn>
@@ -1328,6 +1385,9 @@ export default function Dashboard() {
       {/* ══════════════════════════════════════════════
           AI PICKS TAB
       ══════════════════════════════════════════════ */}
+      {dashTab==='trade-ideas' && <TradeIdeasPage embedded />}
+      {dashTab==='markets' && <MarketPage embedded />}
+
       {dashTab==='picks' && (
         <>
           <AssetTypeRow>
@@ -1642,7 +1702,7 @@ export default function Dashboard() {
               return (
                 <NewsItem key={key} initial={{opacity:0}} animate={{opacity:1}} transition={{delay:Math.min(idx*0.015,0.3)}}>
                   <NewsItemTop>
-                    {h.sentiment && <SentimentDot $color={sc.dot} title={h.sentiment}/>}
+                    {h.sentiment && <SentimentDot $color={sc.dot} title={plainSentiment(h.sentiment).hint}/>}
                     <NewsBadge>{h.source||'News'}</NewsBadge>
                     {h.pubDate && (
                       <span style={{fontSize:'0.6rem',color:'#94a3b8',whiteSpace:'nowrap',flexShrink:0,marginTop:'3px'}}>
@@ -1671,11 +1731,8 @@ export default function Dashboard() {
                     <TickerPillRow>
                       {tickers.map((t,ti)=><TickerPill key={ti}>{t}</TickerPill>)}
                       {h.sentiment && (
-                        <SentimentLabel $bg={sc.bg} $color={sc.color} $border={sc.border}>{h.sentiment}</SentimentLabel>
-                      )}
-                      {h.sentimentScore!=null && (
-                        <SentimentLabel $bg="#f8fafc" $color="#64748b" $border="#e2e8f0">
-                          score {h.sentimentScore>=0?'+':''}{Number(h.sentimentScore).toFixed(3)}
+                        <SentimentLabel $bg={sc.bg} $color={sc.color} $border={sc.border} title={plainSentiment(h.sentiment).hint}>
+                          {plainSentiment(h.sentiment).title}
                         </SentimentLabel>
                       )}
                     </TickerPillRow>
@@ -1698,17 +1755,37 @@ export default function Dashboard() {
       ══════════════════════════════════════════════ */}
       {dashTab==='sentiment' && (
         <SentimentWrap>
+          <SentimentIntro>
+            <SentimentIntroTitle>What is market mood?</SentimentIntroTitle>
+            <SentimentIntroText>
+              This tab shows whether <strong>recent news</strong> sounds positive, negative, or mixed for each stock symbol.
+              It is <strong>not</strong> a buy/sell signal — it only reflects the tone of headlines and articles we scan.
+              Symbols like <strong>AAPL</strong> or <strong>NVDA</strong> are stock tickers (short codes for companies).
+            </SentimentIntroText>
+            <SentimentLegend>
+              {Object.entries(SENTIMENT_PLAIN).map(([key, p]) => {
+                const sc = sentimentColor(key);
+                return (
+                  <LegendChip key={key} $bg={sc.bg} $color={sc.color} $border={sc.border} title={p.hint}>
+                    {p.title}
+                  </LegendChip>
+                );
+              })}
+            </SentimentLegend>
+          </SentimentIntro>
+
           <SentimentHeader>
             <SentimentTitle>
-              Ticker Sentiment
-              {brief?.tickerSentiments?.length > 0
-                ? <span>from Alpha Vantage — {brief.tickerSentiments.length} tickers</span>
-                : deepResult?.picks?.length > 0
-                  ? <span>from AI deep analysis picks</span>
-                  : <span>extracted from news headlines</span>
-              }
+              Symbols ranked by news mood
+              <span>
+                {brief?.tickerSentiments?.length > 0
+                  ? `${brief.tickerSentiments.length} symbols from live news`
+                  : deepResult?.picks?.length > 0
+                    ? `${deepResult.picks.length} symbols from your AI picks`
+                    : 'Refresh or run AI analysis to load data'}
+              </span>
             </SentimentTitle>
-            <RefreshBtn type="button" onClick={()=>load(true)} disabled={loading||refreshing} title="Refresh data">
+            <RefreshBtn type="button" onClick={()=>load(true)} disabled={loading||refreshing} title="Refresh news data">
               <FaSyncAlt className={refreshing?'spin':''}/>
             </RefreshBtn>
           </SentimentHeader>
@@ -1778,8 +1855,8 @@ export default function Dashboard() {
             if (rows.length === 0) return (
               <EmptyState>
                 <FaSignal/>
-                <EmptyTitle>No sentiment data yet</EmptyTitle>
-                <EmptyDesc>Run the AI Deep Analysis or refresh the daily brief to populate sentiment data.</EmptyDesc>
+                <EmptyTitle>No market mood data yet</EmptyTitle>
+                <EmptyDesc>Click Refresh above, or run AI Analysis on the AI Picks tab. We need recent news before moods can be calculated.</EmptyDesc>
               </EmptyState>
             );
 
@@ -1787,53 +1864,54 @@ export default function Dashboard() {
 
             return (
               <>
-                <div style={{fontSize:'0.7rem',color:'#94a3b8',marginBottom:'0.75rem',display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                  <span style={{background:'#f1f5f9',border:'1px solid #e2e8f0',borderRadius:4,padding:'2px 7px',fontWeight:600,color:'#64748b'}}>
-                    {source === 'alphavantage' ? 'Alpha Vantage' : source === 'picks' ? 'AI Deep Analysis' : 'News Headlines'}
-                  </span>
-                  <span>{rows.length} tickers tracked</span>
+                <div style={{fontSize:'0.75rem',color:'#64748b',marginBottom:'0.75rem',lineHeight:1.5}}>
+                  <strong style={{color:'#0f172a'}}>Data source:</strong>{' '}
+                  {SOURCE_PLAIN[source] || SOURCE_PLAIN.headlines}
+                  {' · '}{rows.length} symbol{rows.length !== 1 ? 's' : ''}
                 </div>
                 <SentTable>
                   <SentTHead>
-                    <SentTH>#</SentTH>
-                    <SentTH>Ticker</SentTH>
-                    <SentTH>{source==='picks'?'Confidence':'Mentions'}</SentTH>
-                    <SentTH>Sentiment</SentTH>
-                    <SentTH>Signal</SentTH>
+                    <SentTH>Rank</SentTH>
+                    <SentTH>Symbol</SentTH>
+                    <SentTH>{source==='picks' ? 'AI confidence' : 'News mentions'}</SentTH>
+                    <SentTH>Overall mood</SentTH>
                   </SentTHead>
                   {rows.map((row,i)=>{
                     const sc = sentimentColor(row.topLabel);
+                    const plain = plainSentiment(row.topLabel);
                     const pct = Math.min(100, Math.round((row.count/maxCount)*100));
+                    const moodText = scoreToMoodText(row.avgScore);
                     return (
                       <SentTRow key={row.ticker} initial={{opacity:0}} animate={{opacity:1}} transition={{delay:i*0.02}}>
                         <SentTD><RankBadge $rank={i+1}>{i+1}</RankBadge></SentTD>
                         <SentTD>
-                          <div style={{fontWeight:800,fontSize:'0.85rem',fontFamily:"'Space Grotesk',sans-serif"}}>{row.ticker}</div>
+                          <div style={{fontWeight:800,fontSize:'0.85rem',fontFamily:"'Space Grotesk',sans-serif"}} title="Stock symbol">{row.ticker}</div>
                           {row.name && <div style={{fontSize:'0.65rem',color:'#94a3b8',marginTop:1}}>{row.name}</div>}
                         </SentTD>
                         <SentTD>
-                          <div style={{fontWeight:700,color:'#0f172a'}}>{source==='picks' ? `${row.confidence??row.count}%` : row.count}</div>
-                          {source==='picks' && row.action && <div style={{fontSize:'0.6rem',color:'#94a3b8'}}>{row.action}</div>}
-                        </SentTD>
-                        <SentTD>
-                          <div style={{display:'flex',flexDirection:'column',gap:'0.3rem',flex:1}}>
-                            <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
-                              <SentimentLabel $bg={sc.bg} $color={sc.color} $border={sc.border}>{row.topLabel}</SentimentLabel>
-                              {row.avgScore!=null && (
-                                <span style={{fontSize:'0.65rem',color:'#94a3b8',fontFamily:"'JetBrains Mono',monospace",fontWeight:600}}>
-                                  {row.avgScore>=0?'+':''}{Number(row.avgScore).toFixed(2)}
-                                </span>
-                              )}
-                            </div>
-                            <ScoreBar><ScoreFill $pct={pct} $color={sc.dot}/></ScoreBar>
+                          <div style={{fontWeight:700,color:'#0f172a'}}>
+                            {source==='picks' ? `${row.confidence ?? row.count}% sure` : `${row.count} article${row.count !== 1 ? 's' : ''}`}
                           </div>
+                          {source==='picks' && row.action && (
+                            <div style={{fontSize:'0.68rem',color:'#64748b',marginTop:2}}>AI view: {row.action}</div>
+                          )}
+                          {source!=='picks' && (
+                            <div style={{fontSize:'0.65rem',color:'#94a3b8',marginTop:2}}>How often it appeared in news</div>
+                          )}
                         </SentTD>
                         <SentTD>
-                          <div style={{display:'flex',alignItems:'center',gap:'0.35rem'}}>
-                            <SentimentDot $color={sc.dot}/>
-                            <span style={{fontSize:'0.75rem',color:sc.color,fontWeight:700}}>
-                              {row.topLabel.includes('Bullish')?'Bullish':row.topLabel.includes('Bearish')?'Bearish':'Neutral'}
-                            </span>
+                          <div style={{display:'flex',flexDirection:'column',gap:'0.35rem',flex:1,width:'100%'}}>
+                            <div style={{display:'flex',alignItems:'center',gap:'0.5rem',flexWrap:'wrap'}}>
+                              <SentimentDot $color={sc.dot}/>
+                              <SentimentLabel $bg={sc.bg} $color={sc.color} $border={sc.border} title={plain.hint}>
+                                {plain.title}
+                              </SentimentLabel>
+                            </div>
+                            <MoodHint>{moodText || plain.hint}</MoodHint>
+                            <ScoreBar title="Relative attention in the news feed">
+                              <ScoreFill $pct={pct} $color={sc.dot}/>
+                            </ScoreBar>
+                            <MoodHint style={{marginTop:0}}>Bar = how much coverage vs. other symbols on this list</MoodHint>
                           </div>
                         </SentTD>
                       </SentTRow>
@@ -1845,7 +1923,7 @@ export default function Dashboard() {
           })()}
 
           <div style={{marginTop:'1rem',fontSize:'0.68rem',color:'#94a3b8',lineHeight:1.5}}>
-            Sentiment signals are for educational purposes only — not financial advice.
+            Market mood is based on news tone only — for learning, not financial advice. Always do your own research before investing.
           </div>
         </SentimentWrap>
       )}

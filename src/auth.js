@@ -1,25 +1,19 @@
 import { createAuthClient } from '@neondatabase/neon-js/auth';
-import { ensureApiBase } from './api';
 
-let authClient = null;
-let authClientBase = null;
-
-async function getAuthClient() {
-  if (typeof window === 'undefined') return null;
-  const base = await ensureApiBase();
-  if (!authClient || authClientBase !== base) {
-    authClient = createAuthClient(`${base}/auth`);
-    authClientBase = base;
-  }
-  return authClient;
-}
+// Use backend proxy for ALL auth - avoids 403 from Neon (origin/trusted domains)
+const getAuthBaseUrl = () => {
+  if (typeof window === 'undefined') return '';
+  const api = process.env.REACT_APP_API_URL || '';
+  return api ? `${api.replace(/\/$/, '')}/api/auth` : `${window.location.origin}/api/auth`;
+};
+const authBaseUrl = getAuthBaseUrl();
+const authClient = typeof window !== 'undefined' && authBaseUrl ? createAuthClient(authBaseUrl) : null;
 
 export const auth = {
   async getSession() {
-    const client = await getAuthClient();
-    if (!client) return null;
+    if (!authClient) return null;
     try {
-      const { data } = await client.getSession();
+      const { data } = await authClient.getSession();
       if (!data?.session) return null;
       return { session: { ...data.session, user: data.user }, user: data.user };
     } catch {
@@ -28,26 +22,23 @@ export const auth = {
   },
 
   async signUpWithEmail(email, password, name) {
-    const client = await getAuthClient();
-    if (!client) throw new Error('Auth not configured');
-    const { data, error } = await client.signUp.email({ email, password, name });
+    if (!authClient) throw new Error('Auth not configured');
+    const { data, error } = await authClient.signUp.email({ email, password, name });
     if (error) throw new Error(error.message || 'Sign up failed');
     return data;
   },
 
   async signInWithEmail(email, password) {
-    const client = await getAuthClient();
-    if (!client) throw new Error('Auth not configured');
-    const { data, error } = await client.signIn.email({ email, password });
+    if (!authClient) throw new Error('Auth not configured');
+    const { data, error } = await authClient.signIn.email({ email, password });
     if (error) throw new Error(error.message || 'Sign in failed');
     return data;
   },
 
   async signInWithGoogle() {
-    const client = await getAuthClient();
-    if (!client) throw new Error('Auth not configured');
+    if (!authClient) throw new Error('Auth not configured');
     const callbackURL = typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '/auth/callback';
-    const { data, error } = await client.signIn.social({
+    const { data, error } = await authClient.signIn.social({
       provider: 'google',
       callbackURL,
     });
@@ -56,10 +47,9 @@ export const auth = {
   },
 
   async signOut() {
-    const client = await getAuthClient();
-    if (client) {
+    if (authClient) {
       try {
-        await client.signOut();
+        await authClient.signOut();
       } catch {}
     }
     window.location.href = '/';

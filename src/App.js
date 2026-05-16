@@ -30,6 +30,9 @@ function App() {
 
                 {/* BloomVest Intelligence */}
                 <Route path="/signals" element={<Dashboard />} />
+                <Route path="/market" element={<Navigate to="/signals?tab=markets" replace />} />
+                <Route path="/trade-ideas" element={<Navigate to="/signals?tab=trade-ideas" replace />} />
+                <Route path="/calendar" element={<Navigate to="/signals" replace />} />
 
                 {/* Learn — courses, scenarios & academy */}
                 <Route path="/learn" element={<ScenarioPage />} />

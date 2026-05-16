@@ -367,4 +367,16 @@ export const api = {
   async getQuote(symbol) {
     return request(`/ai/quote/${encodeURIComponent(symbol)}`);
   },
+
+  async getMarketData() {
+    return request('/ai/market-data');
+  },
+
+  async getTradeIdeas() {
+    return request('/ai/trade-ideas', { method: 'POST', body: JSON.stringify({}) });
+  },
+
+  async getCalendar() {
+    return request('/ai/calendar');
+  },
 };
