@@ -1,55 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import AppShell, { ShellWrapper } from './AppShell';
 import OnboardingModal from './OnboardingModal';
 import { needsOnboarding } from '../utils/learningState';
 import styled from 'styled-components';
 
-const PageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-`;
+// Public paths render with no shell, no navbar, no popup
+const PUBLIC_PATHS = ['/', '/auth', '/privacy', '/terms'];
 
-const MainContent = styled.main`
-  flex-grow: 1;
-  padding-bottom: env(safe-area-inset-bottom, 0);
-  
-  @media (max-width: 768px) {
-    padding-bottom: 2rem;
-  }
+const PublicWrapper = styled.div`
+  min-height: 100vh;
 `;
 
 const Layout = ({ children }) => {
   const location = useLocation();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const isPublic = PUBLIC_PATHS.some(p =>
+    p === '/' ? location.pathname === '/' : location.pathname.startsWith(p)
+  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
   useEffect(() => {
-    const skip = ['/auth', '/privacy', '/terms'].some((p) => location.pathname.startsWith(p));
-    if (!skip && needsOnboarding()) {
-      setShowOnboarding(true);
-    }
-  }, [location.pathname]);
+    if (isPublic) return;
+    if (needsOnboarding()) setShowOnboarding(true);
+  }, [location.pathname, isPublic]);
+
+  if (isPublic) {
+    return <PublicWrapper>{children}</PublicWrapper>;
+  }
 
   return (
-    <PageWrapper>
-      <Navbar />
-      <MainContent>
-        {children}
-      </MainContent>
-      <Footer />
+    <ShellWrapper>
+      <AppShell>{children}</AppShell>
       <AnimatePresence>
         {showOnboarding && (
           <OnboardingModal key="onboarding" onClose={() => setShowOnboarding(false)} />
         )}
       </AnimatePresence>
-    </PageWrapper>
+    </ShellWrapper>
   );
 };
 

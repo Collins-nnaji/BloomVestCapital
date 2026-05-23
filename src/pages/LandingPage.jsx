@@ -605,14 +605,11 @@ export default function LandingPage() {
             ))}
           </AudienceRow>
           <HeroActions initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-            <BtnPrimary to="/academy">
-              <FaGraduationCap /> Start learning
+            <BtnPrimary to="/auth">
+              Enter the console
             </BtnPrimary>
-            <BtnGhost to="/academy?tab=scenarios">
-              <FaPlay /> Practice scenarios
-            </BtnGhost>
-            <BtnGhost to="/mentor">
-              <FaRobot /> Ask Mentor
+            <BtnGhost to="/console">
+              <FaPlay /> Explore
             </BtnGhost>
           </HeroActions>
         </div>
@@ -755,12 +752,9 @@ export default function LandingPage() {
         <CtaTitle>Ready to build real financial confidence?</CtaTitle>
         <CtaSub>Start free. No brokerage required. Educational platform — not financial advice.</CtaSub>
         <CtaActions>
-          <CtaPrimary to="/academy">
-            <FaGraduationCap /> Bloomvest Academy
+          <CtaPrimary to="/auth">
+            Enter the console
           </CtaPrimary>
-          <CtaGhost to="/iq">
-            <FaBolt /> Bloomvest IQ
-          </CtaGhost>
         </CtaActions>
       </CtaBand>
 

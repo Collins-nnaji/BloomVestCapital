@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import Loader from './components/Loader';
 import { AuthProvider } from './AuthContext';
 
+const HomePage = lazy(() => import('./pages/HomePage'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const AuthPage = lazy(() => import('./pages/AuthPage'));
 const AuthCallback = lazy(() => import('./components/AuthCallback'));
@@ -25,7 +26,8 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/home" element={<Navigate to="/" replace />} />
+                <Route path="/console" element={<HomePage />} />
+                <Route path="/home" element={<Navigate to="/console" replace />} />
                 <Route path="/marketing-services" element={<Navigate to="/" replace />} />
                 <Route path="/contact" element={<Navigate to="/" replace />} />
 
