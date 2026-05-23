@@ -88,11 +88,11 @@ const Footer = () => (
       </LogoLink>
 
       <Links>
-        <FLink to="/signals">Intelligence</FLink>
-        <FLink to="/learn">Learn</FLink>
+        <FLink to="/academy">Academy</FLink>
+        <FLink to="/iq">IQ</FLink>
+        <FLink to="/mentor">Mentor</FLink>
         <FLink to="/privacy">Privacy</FLink>
         <FLink to="/terms">Terms</FLink>
-        <FLink to="/auth">Sign in</FLink>
       </Links>
 
       <Right>

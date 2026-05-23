@@ -6,6 +6,7 @@ import {
   FaBitcoin, FaChartLine, FaFilter, FaClock,
 } from 'react-icons/fa';
 import { api } from '../api';
+import { toStudyLevel, studyLevelStyle } from '../utils/learningLabels';
 
 /* ── animations ─────────────────────────────────── */
 const spinAnim = keyframes`to { transform: rotate(360deg); }`;
@@ -366,13 +367,10 @@ const Disclaimer = styled.div`
 `;
 
 /* ── helpers ─────────────────────────────────────── */
-const ACTION_STYLES = {
-  'Strong Buy': { color: '#065f46', bg: 'rgba(16,185,129,0.12)', barColor: '#10b981', barPct: 100, leftColor: '#10b981' },
-  'Buy':        { color: '#166534', bg: 'rgba(34,197,94,0.1)',   barColor: '#22c55e', barPct: 75,  leftColor: '#22c55e' },
-  'Watch':      { color: '#92400e', bg: 'rgba(245,158,11,0.1)',  barColor: '#f59e0b', barPct: 50,  leftColor: '#f59e0b' },
-  'Reduce':     { color: '#9a3412', bg: 'rgba(249,115,22,0.1)', barColor: '#f97316', barPct: 25,  leftColor: '#f97316' },
-  'Avoid':      { color: '#7f1d1d', bg: 'rgba(220,38,38,0.1)',  barColor: '#ef4444', barPct: 0,   leftColor: '#ef4444' },
-};
+function actionStyle(action) {
+  const s = studyLevelStyle(toStudyLevel(action));
+  return { color: s.color, bg: s.bg, barColor: s.barColor, barPct: s.barPct, leftColor: s.barColor };
+}
 
 const CONFIDENCE_MAP = { High: 90, Medium: 55, Low: 25 };
 const CONFIDENCE_COLOR = { High: '#10b981', Medium: '#f59e0b', Low: '#ef4444' };
@@ -448,11 +446,10 @@ export default function TradeIdeasPage({ embedded = false }) {
       {!embedded ? (
         <Header>
           <TitleGroup>
-            <Brand>BloomVest Intelligence</Brand>
-            <PageTitle>AI Trade Ideas</PageTitle>
+            <Brand>Bloomvest IQ · Regional Desk</Brand>
+            <PageTitle>Africa market case studies</PageTitle>
             <PageSub>
-              Africa-focused signals — NGX stocks, US markets, crypto &amp; more.
-              Updated every 20 minutes from live market headlines.
+              Educational case studies for NGX, US names on Nigerian apps, and crypto — from live headlines. Not buy/sell advice.
             </PageSub>
           </TitleGroup>
 
@@ -465,7 +462,7 @@ export default function TradeIdeasPage({ embedded = false }) {
             >
               {loading
                 ? <><FaSyncAlt className="spin" /> Generating…</>
-                : <><FaBolt /> Refresh Ideas</>
+                : <><FaBolt /> New case studies</>
               }
             </GenerateBtn>
           </HeaderRight>
@@ -474,7 +471,7 @@ export default function TradeIdeasPage({ embedded = false }) {
         <Header style={{ paddingBottom: 0 }}>
           <TitleGroup>
             <PageSub style={{ margin: 0 }}>
-              Africa-focused signals from live market headlines.
+              Africa-focused learning cases from live headlines.
               {cached && <> · Cached {formatTime(generatedAt)}</>}
             </PageSub>
           </TitleGroup>
@@ -482,7 +479,7 @@ export default function TradeIdeasPage({ embedded = false }) {
             <GenerateBtn whileTap={{ scale: 0.96 }} onClick={load} disabled={loading}>
               {loading
                 ? <><FaSyncAlt className="spin" /> Generating…</>
-                : <><FaBolt /> Refresh Ideas</>
+                : <><FaBolt /> New case studies</>
               }
             </GenerateBtn>
           </HeaderRight>
@@ -507,7 +504,7 @@ export default function TradeIdeasPage({ embedded = false }) {
 
         <MetaRow>
           <IdeasCount>
-            Showing <span>{filtered.length}</span> idea{filtered.length !== 1 ? 's' : ''}
+            Showing <span>{filtered.length}</span> case stud{filtered.length !== 1 ? 'ies' : 'y'}
             {filter !== 'All' && ` · ${filter}`}
           </IdeasCount>
           {generatedAt && !cached && (
@@ -532,7 +529,8 @@ export default function TradeIdeasPage({ embedded = false }) {
                   </EmptyState>
                 )
                 : filtered.map((idea, idx) => {
-                    const style = ACTION_STYLES[idea.action] || ACTION_STYLES['Watch'];
+                    const level = toStudyLevel(idea.studyLevel || idea.action);
+                    const style = actionStyle(level);
                     const confPct = CONFIDENCE_MAP[idea.confidence] || 50;
                     const confColor = CONFIDENCE_COLOR[idea.confidence] || '#f59e0b';
 
@@ -552,7 +550,7 @@ export default function TradeIdeasPage({ embedded = false }) {
                           </TickerBlock>
                           <BadgeGroup>
                             <ActionBadge $color={style.color} $bg={style.bg}>
-                              {idea.action}
+                              {level}
                             </ActionBadge>
                             <TypeBadge>
                               {ASSET_ICONS[idea.assetType] || <FaChartLine />}{' '}
@@ -595,6 +593,13 @@ export default function TradeIdeasPage({ embedded = false }) {
                         )}
 
                         {/* Horizon */}
+                        {idea.learnerQuestion && (
+                          <Section>
+                            <SectionLabel>Quiz yourself</SectionLabel>
+                            <SectionText>{idea.learnerQuestion}</SectionText>
+                          </Section>
+                        )}
+
                         {idea.horizon && (
                           <HorizonPill>
                             <FaClock style={{ fontSize: '0.6rem' }} />
@@ -609,10 +614,8 @@ export default function TradeIdeasPage({ embedded = false }) {
         </CardGrid>
 
         <Disclaimer>
-          AI trade ideas are generated from live public market headlines and are for educational purposes only.
-          They are not personalised financial advice. Past performance is not indicative of future results.
-          Always do your own research and consult a qualified financial adviser before investing.
-          BloomVest Capital is not a licensed broker or investment adviser.
+          Case studies are generated from live public headlines for learning only — not buy/sell recommendations or personalised advice.
+          Practice decisions in Bloomvest Academy scenarios with virtual money before applying concepts in real life.
         </Disclaimer>
       </Body>
     </Page>

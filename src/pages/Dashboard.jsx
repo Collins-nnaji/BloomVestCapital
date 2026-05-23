@@ -12,10 +12,25 @@ import {
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { extractTextFromPdfArrayBuffer } from '../utils/extractPdfText';
-import MarketPage from './MarketPage';
-import TradeIdeasPage from './TradeIdeasPage';
+import { sanitizeHeadline } from '../utils/sanitizeHeadline';
+import {
+  toStudyLevel,
+  studyLevelStyle,
+  isDeepDiveLevel,
+  isCautionLevel,
+  docStanceStyle,
+  EDUCATION_DISCLAIMER,
+} from '../utils/learningLabels';
+import LearningLinks from '../components/LearningLinks';
+import IqLearningStrip from '../components/learning/IqLearningStrip';
+import { matchHeadlineTopic } from '../config/learningPaths';
+import {
+  incrementHeadlinesDecoded,
+  setMentorContext,
+  addJournalNote,
+} from '../utils/learningState';
 
 /* ── animations ─────────────────────────────────────── */
 const slide    = keyframes`from{transform:translateX(0)}to{transform:translateX(-50%)}`;
@@ -418,8 +433,41 @@ const NewsSummary = styled.div`
 `;
 const NewsInsightBox = styled(motion.div)`
   font-size:0.78rem;color:#374151;line-height:1.6;
-  background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;
-  padding:0.65rem 0.85rem;white-space:pre-wrap;
+  background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;
+  padding:0.75rem 0.9rem;white-space:pre-wrap;
+`;
+const InsightActions = styled.div`
+  display:flex;flex-wrap:wrap;gap:0.45rem;margin-top:0.7rem;padding-top:0.65rem;
+  border-top:1px solid rgba(34,197,94,0.2);
+`;
+const InsightActionBtn = styled.button`
+  display:inline-flex;align-items:center;gap:0.35rem;
+  padding:0.42rem 0.8rem;border-radius:8px;border:1px solid #e2e8f0;
+  background:#fff;font-size:0.75rem;font-weight:700;color:#475569;cursor:pointer;
+  transition:border-color 0.15s,color 0.15s,background 0.15s;
+  &:hover{border-color:#10b981;color:#15803d;background:#f0fdf4;}
+`;
+const LabNextSteps = styled.div`
+  padding:0.9rem 1.25rem;border-top:1px solid #f1f5f9;
+  display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;
+  background:linear-gradient(180deg,#fafbfc 0%,#fff 100%);
+`;
+const LabNextLabel = styled.span`
+  font-size:0.75rem;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;
+`;
+const LabNextBtn = styled.button`
+  padding:0.48rem 0.9rem;border-radius:9px;border:1px solid #e2e8f0;
+  background:#fff;font-size:0.78rem;font-weight:700;cursor:pointer;color:#0f172a;
+  transition:border-color 0.15s,box-shadow 0.15s;
+  &:hover{border-color:#cbd5e1;box-shadow:0 2px 8px rgba(15,23,42,0.06);}
+`;
+const LabNextLink = styled(Link)`
+  padding:0.48rem 0.9rem;border-radius:9px;font-size:0.78rem;font-weight:700;text-decoration:none;
+  border:1px solid ${p=>p.$primary?'rgba(34,197,94,0.35)':'rgba(14,165,233,0.25)'};
+  background:${p=>p.$primary?'rgba(34,197,94,0.1)':'rgba(14,165,233,0.08)'};
+  color:${p=>p.$primary?'#15803d':'#0369a1'};
+  transition:background 0.15s,transform 0.15s;
+  &:hover{transform:translateY(-1px);background:${p=>p.$primary?'rgba(34,197,94,0.16)':'rgba(14,165,233,0.12)'};}
 `;
 const NewsInsightBtn = styled.button`
   font-size:0.68rem;font-weight:700;padding:0.25rem 0.6rem;border-radius:5px;
@@ -919,17 +967,19 @@ export default function Dashboard() {
   const [deepError,    setDeepError]    = useState(null);
   const [showPrefs,    setShowPrefs]    = useState(false);
   const [showAuthModal,setShowAuthModal]= useState(false);
-  const [filterType,   setFilterType]   = useState('All');
+  const [filterType,   setFilterType]   = useState('All'); // All | DeepDive | Discuss | Caution
   const [filterAsset,  setFilterAsset]  = useState('All');
   const [expandedRows, setExpandedRows] = useState({});
   const [selectedRow,  setSelectedRow]  = useState(null);
 
   // tabs: 'picks' | 'trade-ideas' | 'markets' | 'brief' | 'news' | 'sentiment' | 'journal' | 'watchlist' | 'analyst'
-  const [dashTab, setDashTab] = useState('picks');
+  const [dashTab, setDashTab] = useState('news');
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'trade-ideas' || tab === 'markets') setDashTab(tab);
+    const allowed = ['picks', 'news', 'analyst', 'journal'];
+    if (tab && allowed.includes(tab)) setDashTab(tab);
+    if (tab && !allowed.includes(tab)) setDashTab('news');
   }, [searchParams]);
 
   // watchlist state
@@ -1185,12 +1235,24 @@ export default function Dashboard() {
     }
   }, [prefs, activeTypes, user]);
 
+  const [headlineTopics, setHeadlineTopics] = useState({});
+
   const handleAnalyseHeadline = useCallback(async (key, title, source) => {
     if (headlineLoading[key]) return;
     setHeadlineLoading(p=>({...p,[key]:true}));
+    const cleanTitle = sanitizeHeadline(title);
     try {
-      const {insight} = await api.analyseHeadline(title, source);
+      const {insight} = await api.analyseHeadline(cleanTitle, source);
       setHeadlineInsights(p=>({...p,[key]:insight}));
+      const topic = matchHeadlineTopic(cleanTitle);
+      setHeadlineTopics(p=>({...p,[key]:topic}));
+      incrementHeadlinesDecoded();
+      setMentorContext({
+        source: 'headline-decoder',
+        headline: cleanTitle,
+        topicId: topic.id,
+        topicLabel: topic.label,
+      });
     } catch {
       setHeadlineInsights(p=>({...p,[key]:'Could not load analysis right now.'}));
     } finally {
@@ -1198,17 +1260,28 @@ export default function Dashboard() {
     }
   }, [headlineLoading]);
 
+  const saveHeadlineToJournal = useCallback((title, insight) => {
+    const note = addJournalNote({
+      title: `Headline: ${sanitizeHeadline(title).slice(0, 72)}`,
+      text: insight,
+      tag: 'headline',
+    });
+    setNotes(p=>[note,...p]);
+    setFocusedNote(note.id);
+    setDashTab('journal');
+  }, []);
+
   const updatedLabel = brief?.generatedAt
     ? new Date(brief.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})
     : null;
 
   const copyPicksToNotes = useCallback(() => {
     if (!deepResult?.picks) return;
-    const buys = deepResult.picks.filter(p=>['Buy','Strong Buy'].includes(p.action));
-    const text = buys.length>0
-      ? `Recommended buys from AI analysis:\n\n`+buys.map(p=>`• ${p.ticker} (${p.company}): ${p.action}\n  Thesis: ${p.thesis}\n  Risk: ${p.risk}`).join('\n\n')
-      : `AI Analysis run at ${new Date(deepResult.generatedAt).toLocaleString()}.\nNo explicit Buy recommendations.`;
-    const n = { id:Date.now(), title:`AI Recommendations - ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`,
+    const studies = deepResult.picks.filter(p=>isDeepDiveLevel(p.action || p.studyLevel));
+    const text = studies.length>0
+      ? `Market Lab case studies to review:\n\n`+studies.map(p=>`• ${p.ticker} (${p.company}): ${toStudyLevel(p.action)}\n  Lesson: ${p.thesis}\n  Research: ${p.researchFocus||p.entrySignal||'—'}\n  Risk: ${p.risk}`).join('\n\n')
+      : `Market Lab run at ${new Date(deepResult.generatedAt).toLocaleString()}.\nNo deep-dive case studies yet — run analysis again.`;
+    const n = { id:Date.now(), title:`Market Lab notes - ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`,
       text, tag:'review', date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) };
     setNotes(p=>[n,...p]); setFocusedNote(n.id); setDashTab('journal');
   }, [deepResult]);
@@ -1218,15 +1291,20 @@ export default function Dashboard() {
   const confToScore = c => c==='High'?82:c==='Medium'?61:34;
 
   const filteredPicks = useMemo(()=>rawPicks.filter(p=>{
+    const level = toStudyLevel(p.studyLevel || p.action);
     const actionOk = filterType==='All'
-      ||(filterType==='Buy'&&(p.action==='Buy'||p.action==='Strong Buy'))
-      ||(filterType==='Watch'&&p.action==='Watch')
-      ||(filterType==='Avoid'&&(p.action==='Avoid'||p.action==='Reduce'));
+      ||(filterType==='DeepDive'&&isDeepDiveLevel(level))
+      ||(filterType==='Discuss'&&level==='Discuss')
+      ||(filterType==='Caution'&&isCautionLevel(level));
     const assetOk = filterAsset==='All'||normaliseAssetType(p.assetType)===filterAsset;
     return actionOk&&assetOk;
   }),[rawPicks,filterType,filterAsset]);
 
-  const counts = useMemo(()=>rawPicks.reduce((a,p)=>{a[p.action]=(a[p.action]||0)+1;return a;},{}), [rawPicks]);
+  const counts = useMemo(()=>rawPicks.reduce((a,p)=>{
+    const level = toStudyLevel(p.studyLevel || p.action);
+    a[level]=(a[level]||0)+1;
+    return a;
+  },{}), [rawPicks]);
   const avgConfidence = useMemo(()=>{
     if (!rawPicks.length) return null;
     return Math.round(rawPicks.reduce((s,p)=>s+confToPct(p.confidence),0)/rawPicks.length);
@@ -1245,7 +1323,11 @@ export default function Dashboard() {
   },[allHeadlines]);
 
   const filteredNews = useMemo(()=>{
-    let h = allHeadlines;
+    let h = allHeadlines.map((x) => ({
+      ...x,
+      title: sanitizeHeadline(x.title),
+      summary: sanitizeHeadline(x.summary),
+    }));
     if (newsSourceFilter!=='All') h=h.filter(x=>x.source===newsSourceFilter);
     if (newsQuery.trim()) {
       const q=newsQuery.toLowerCase();
@@ -1269,20 +1351,25 @@ export default function Dashboard() {
       <TopHeader>
         <HeaderLeft>
           <Brand>BloomVest</Brand><Slash>/</Slash>
-          <PageTitle>Investment Intelligence</PageTitle>
+          <PageTitle>Bloomvest IQ</PageTitle>
         </HeaderLeft>
 
         <FilterGroup>
-          {['All','Buy','Watch','Avoid'].map(f=>{
-            const label = f==='Watch'?'Hold':f;
+          {[
+            { id:'All', label:'All', color:'#cbd5e1' },
+            { id:'DeepDive', label:'Deep dive', color:'#10b981' },
+            { id:'Discuss', label:'Discuss', color:'#f59e0b' },
+            { id:'Caution', label:'Caution', color:'#ef4444' },
+          ].map(f=>{
             const af = filterAsset==='All'?rawPicks:rawPicks.filter(p=>normaliseAssetType(p.assetType)===filterAsset);
-            const count = f==='All'?af.length
-              :f==='Buy'?af.filter(p=>['Buy','Strong Buy'].includes(p.action)).length
-              :af.filter(p=>p.action===f).length;
+            const count = f.id==='All'?af.length
+              :f.id==='DeepDive'?af.filter(p=>isDeepDiveLevel(p.studyLevel||p.action)).length
+              :f.id==='Discuss'?af.filter(p=>toStudyLevel(p.studyLevel||p.action)==='Discuss').length
+              :af.filter(p=>isCautionLevel(p.studyLevel||p.action)).length;
             return (
-              <FilterBtn key={f} type="button" $active={filterType===f} onClick={()=>setFilterType(f)}>
-                <FilterDot $color={f==='Buy'?'#10b981':f==='Watch'?'#f59e0b':f==='Avoid'?'#ef4444':'#cbd5e1'}/>
-                {label}{count>0?` ${count}`:''}
+              <FilterBtn key={f.id} type="button" $active={filterType===f.id} onClick={()=>setFilterType(f.id)}>
+                <FilterDot $color={f.color}/>
+                {f.label}{count>0?` ${count}`:''}
               </FilterBtn>
             );
           })}
@@ -1297,23 +1384,26 @@ export default function Dashboard() {
             <FaFilter /> Preferences
           </PrefsToggleBtn>
           <RunBtn type="button" onClick={runDeepAnalysis} disabled={deepRunning}>
-            <FaMagic/>{deepRunning?`Running batch ${deepBatch}/${TOTAL_BATCHES}...`:'Run AI Analysis'}
+            <FaMagic/>{deepRunning?`Building lab ${deepBatch}/${TOTAL_BATCHES}...`:'Run Market Lab'}
           </RunBtn>
         </HeaderRight>
       </TopHeader>
 
       {/* ── tabs ── */}
       <DashTabBar>
-        <DashTabBtn $active={dashTab==='picks'}     onClick={()=>setDashTab('picks')}><FaMagic/>AI Picks</DashTabBtn>
-        <DashTabBtn $active={dashTab==='trade-ideas'} onClick={()=>setDashTab('trade-ideas')}><FaBolt/>Trade Ideas</DashTabBtn>
-        <DashTabBtn $active={dashTab==='markets'}   onClick={()=>setDashTab('markets')}><FaChartLine/>Markets</DashTabBtn>
-        <DashTabBtn $active={dashTab==='brief'}     onClick={()=>setDashTab('brief')}><FaCalendarAlt/>Market Brief</DashTabBtn>
-        <DashTabBtn $active={dashTab==='news'}      onClick={()=>setDashTab('news')}><FaNewspaper/>News Feed</DashTabBtn>
-        <DashTabBtn $active={dashTab==='sentiment'} onClick={()=>setDashTab('sentiment')}><FaSignal/>Market Mood</DashTabBtn>
-        <DashTabBtn $active={dashTab==='watchlist'} onClick={()=>setDashTab('watchlist')}><FaStar/>Watchlist</DashTabBtn>
-        <DashTabBtn $active={dashTab==='analyst'}   onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Analyst</DashTabBtn>
-        <DashTabBtn $active={dashTab==='journal'}   onClick={()=>setDashTab('journal')}><FaBookOpen/>Journal</DashTabBtn>
+        <DashTabBtn $active={dashTab==='news'} onClick={()=>setDashTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
+        <DashTabBtn $active={dashTab==='picks'} onClick={()=>setDashTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
+        <DashTabBtn $active={dashTab==='analyst'} onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Workshop</DashTabBtn>
+        <DashTabBtn $active={dashTab==='journal'} onClick={()=>setDashTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
       </DashTabBar>
+
+      <div style={{
+        margin:'0 1.25rem 0.75rem', padding:'0.55rem 0.85rem', borderRadius:8,
+        background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)',
+        fontSize:'0.75rem', color:'#475569', lineHeight:1.45,
+      }}>
+        {EDUCATION_DISCLAIMER}
+      </div>
 
       {/* ── prefs panel ── */}
       <AnimatePresence>
@@ -1385,9 +1475,6 @@ export default function Dashboard() {
       {/* ══════════════════════════════════════════════
           AI PICKS TAB
       ══════════════════════════════════════════════ */}
-      {dashTab==='trade-ideas' && <TradeIdeasPage embedded />}
-      {dashTab==='markets' && <MarketPage embedded />}
-
       {dashTab==='picks' && (
         <>
           <AssetTypeRow>
@@ -1408,17 +1495,16 @@ export default function Dashboard() {
               {rawPicks.length > 0 && <div style={{fontSize:'0.6rem',color:'#94a3b8',marginTop:2}}>{TOTAL_BATCHES} batches · live data</div>}
             </SumItem>
             <SumItem>
-              <SumLabel>Buy Signals</SumLabel>
-              <SumValue $color="#10b981">{(counts['Buy']||0)+(counts['Strong Buy']||0) || '—'}</SumValue>
-              {(counts['Strong Buy']||0) > 0 && <div style={{fontSize:'0.6rem',color:'#10b981',marginTop:2}}>{counts['Strong Buy']} strong</div>}
+              <SumLabel>Deep dives</SumLabel>
+              <SumValue $color="#10b981">{(counts['Deep Dive']||0)+(counts['Study']||0) || '—'}</SumValue>
             </SumItem>
             <SumItem>
-              <SumLabel>Watch / Hold</SumLabel>
-              <SumValue $color="#f59e0b">{counts['Watch']||0 || '—'}</SumValue>
+              <SumLabel>Discuss</SumLabel>
+              <SumValue $color="#f59e0b">{counts['Discuss']||0 || '—'}</SumValue>
             </SumItem>
             <SumItem>
-              <SumLabel>Avoid / Reduce</SumLabel>
-              <SumValue $color="#ef4444">{(counts['Avoid']||0)+(counts['Reduce']||0) || '—'}</SumValue>
+              <SumLabel>Caution / Skip</SumLabel>
+              <SumValue $color="#ef4444">{(counts['Caution']||0)+(counts['Skip']||0) || '—'}</SumValue>
             </SumItem>
             <SumItem>
               <SumLabel>Avg. Confidence</SumLabel>
@@ -1436,11 +1522,11 @@ export default function Dashboard() {
           <Shell>
             <MainCol>
               <TableHeader>
-                <THLeft>AI Picks <span>{filteredPicks.length} results{deepResult?.batchesCompleted?` · ${deepResult.batchesCompleted} batches`:''}</span></THLeft>
+                <THLeft>Case studies <span>{filteredPicks.length} results{deepResult?.batchesCompleted?` · ${deepResult.batchesCompleted} batches`:''}</span></THLeft>
                 <THRight>
                   {deepResult && (
                     <>
-                      <CopyPicksBtn type="button" onClick={copyPicksToNotes}><FaBookOpen/> Copy Buys to Journal</CopyPicksBtn>
+                      <CopyPicksBtn type="button" onClick={copyPicksToNotes}><FaBookOpen/> Save to Journal</CopyPicksBtn>
                       <THGroup style={{color:'#10b981'}}>Complete · {new Date(deepResult.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})}</THGroup>
                     </>
                   )}
@@ -1450,7 +1536,7 @@ export default function Dashboard() {
               <TableWrap>
                 <THead>
                   <THCell>Asset</THCell>
-                  <THCell>Verdict</THCell>
+                  <THCell>Study focus</THCell>
                   <THCell>AI Confidence</THCell>
                   <THCell>Thesis (click to expand)</THCell>
                   <THCell>Main Risk</THCell>
@@ -1461,7 +1547,7 @@ export default function Dashboard() {
                   <EmptyState>
                     <FaMagic/>
                     <EmptyTitle>No analysis yet</EmptyTitle>
-                    <EmptyDesc>Set preferences above and click <strong>Run AI Analysis</strong> to generate live picks across {TOTAL_BATCHES} batches of market data.</EmptyDesc>
+                    <EmptyDesc>Set preferences above and click <strong>Run Market Lab</strong> to generate case studies from {TOTAL_BATCHES} batches of live headlines.</EmptyDesc>
                   </EmptyState>
                 )}
                 {deepRunning && (
@@ -1480,10 +1566,10 @@ export default function Dashboard() {
                 )}
 
                 {filteredPicks.map((pick,i)=>{
-                  const isBuy   = ['Buy','Strong Buy'].includes(pick.action);
-                  const isAvoid = ['Avoid','Reduce'].includes(pick.action);
-                  const vColor  = isBuy?'#10b981':isAvoid?'#ef4444':'#f59e0b';
-                  const vBg     = isBuy?'#d1fae5':isAvoid?'#fee2e2':'#fef3c7';
+                  const level = toStudyLevel(pick.studyLevel || pick.action);
+                  const style = studyLevelStyle(level);
+                  const vColor = style.barColor;
+                  const vBg = style.bg;
                   const isSelected = selectedRow===i;
                   const isExpanded = expandedRows[i];
 
@@ -1499,8 +1585,8 @@ export default function Dashboard() {
                           </MiniTags>
                         </TCell>
                         <TCell>
-                          <VerdictBadge $bg={vBg} $color={vColor}>
-                            <FilterDot $color={vColor} style={{width:4,height:4}}/> {pick.action}
+                          <VerdictBadge $bg={vBg} $color={style.color}>
+                            <FilterDot $color={vColor} style={{width:4,height:4}}/> {level}
                           </VerdictBadge>
                         </TCell>
                         <TCell>
@@ -1539,9 +1625,15 @@ export default function Dashboard() {
                           <motion.div key={`detail-${i}`} initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}} exit={{opacity:0,height:0}} transition={{duration:0.2}}>
                             <DetailDrawer>
                               <DetailBlock>
-                                <DetailLabel>Entry Signal</DetailLabel>
-                                <DetailValue>{pick.entrySignal||'—'}</DetailValue>
+                                <DetailLabel>Research focus</DetailLabel>
+                                <DetailValue>{pick.researchFocus||pick.entrySignal||'—'}</DetailValue>
                               </DetailBlock>
+                              {pick.learnerQuestion && (
+                              <DetailBlock>
+                                <DetailLabel>Quiz yourself</DetailLabel>
+                                <DetailValue>{pick.learnerQuestion}</DetailValue>
+                              </DetailBlock>
+                              )}
                               <DetailBlock>
                                 <DetailLabel>Price Context</DetailLabel>
                                 <DetailValue>{pick.priceContext||'—'}</DetailValue>
@@ -1578,95 +1670,36 @@ export default function Dashboard() {
                   {deepResult.disclaimer}
                 </div>
               )}
+              {deepResult && (
+                <LabNextSteps>
+                  <LabNextLabel>Next steps</LabNextLabel>
+                  <LabNextBtn type="button" onClick={copyPicksToNotes}>Save to journal</LabNextBtn>
+                  <LabNextLink
+                    to="/mentor"
+                    $primary
+                    onClick={() => setMentorContext({ source: 'market-lab', headline: 'Market Lab case studies' })}
+                  >
+                    Discuss with Mentor
+                  </LabNextLink>
+                  <LabNextLink to="/academy?tab=scenarios&scenario=first-investment">
+                    Practice in Academy →
+                  </LabNextLink>
+                </LabNextSteps>
+              )}
             </MainCol>
           </Shell>
         </>
       )}
 
       {/* ══════════════════════════════════════════════
-          MARKET BRIEF TAB
-      ══════════════════════════════════════════════ */}
-      {dashTab==='brief' && (
-        <BriefWrap>
-          {loading && <EmptyState><SpinnerGreen/><EmptyTitle>Loading brief…</EmptyTitle></EmptyState>}
-          {error && <EmptyState><FaExclamationTriangle style={{color:'#ef4444'}}/><EmptyTitle>{error}</EmptyTitle></EmptyState>}
-          {brief?.aiError && <EmptyState><FaExclamationTriangle style={{color:'#ef4444'}}/><EmptyTitle>{brief.aiError}</EmptyTitle><EmptyDesc>Check the server AI connection and try refreshing.</EmptyDesc></EmptyState>}
-          {brief && !brief.aiError && (
-            <>
-              <BriefHero>
-                <BriefTheme>{brief.dayTheme||'Markets in focus'}</BriefTheme>
-                <BriefNarrative>{brief.narrative}</BriefNarrative>
-                <BriefMeta>Generated {updatedLabel} · Sources: RSS · Alpha Vantage · Finnhub</BriefMeta>
-              </BriefHero>
-
-              {/* signals */}
-              <div style={{marginBottom:'0.5rem'}}>
-                <div style={{fontSize:'0.65rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',color:'#94a3b8',marginBottom:'0.75rem'}}>
-                  Market Signals
-                </div>
-                <SignalsGrid>
-                  {(brief.signals||[]).map((s,i)=>{
-                    const cfg = STANCE_CONFIG[s.stance]||STANCE_CONFIG.watch;
-                    return (
-                      <SignalCard key={i} $color={cfg.color} initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} transition={{delay:i*0.05}}>
-                        <SignalStance $color={cfg.color}>{cfg.icon} {cfg.label}</SignalStance>
-                        <SignalTitle>{s.title}</SignalTitle>
-                        <SignalDetail>{s.detail}</SignalDetail>
-                      </SignalCard>
-                    );
-                  })}
-                </SignalsGrid>
-              </div>
-
-              {/* investment modes */}
-              <ModesSection>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'0.75rem',flexWrap:'wrap',gap:'0.5rem'}}>
-                  <div style={{fontSize:'0.65rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',color:'#94a3b8'}}>Investment Ideas</div>
-                  <ModeToggle>
-                    <ModeBtn $active={briefMode==='longTerm'} onClick={()=>setBriefMode('longTerm')}><FaGem/>Long Term</ModeBtn>
-                    <ModeBtn $active={briefMode==='shortTerm'} onClick={()=>setBriefMode('shortTerm')}><FaBolt/>Short Term</ModeBtn>
-                  </ModeToggle>
-                </div>
-                <IdeasGrid>
-                  {((brief.investmentModes||{})[briefMode]||[]).map((idea,i)=>(
-                    <IdeaCard key={i} initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} transition={{delay:i*0.04}}>
-                      <IdeaTicker>{idea.ticker}</IdeaTicker>
-                      <IdeaAsset>{idea.asset} · {idea.vehicle}</IdeaAsset>
-                      <div>
-                        <IdeaBadge $bg="#dcfce7" $color="#15803d">{idea.fit}</IdeaBadge>
-                        <IdeaBadge $bg="#eff6ff" $color="#2563eb">{idea.horizon}</IdeaBadge>
-                      </div>
-                      <IdeaRow><IdeaLabel>Why:</IdeaLabel>{idea.reason}</IdeaRow>
-                      <IdeaRow><IdeaLabel>Now:</IdeaLabel>{idea.whyNow}</IdeaRow>
-                      <IdeaRisk><strong>Risk:</strong> {idea.risk}</IdeaRisk>
-                    </IdeaCard>
-                  ))}
-                </IdeasGrid>
-
-                {brief.investmentModes?.methodology && (
-                  <div style={{marginTop:'1rem',padding:'0.85rem 1rem',background:'#f8fafc',borderRadius:'10px',fontSize:'0.78rem',color:'#64748b',lineHeight:1.6}}>
-                    <strong style={{color:'#0f172a'}}>Methodology:</strong> {brief.investmentModes.methodology}
-                  </div>
-                )}
-                {brief.investmentModes?.disclaimer && (
-                  <div style={{marginTop:'0.5rem',fontSize:'0.68rem',color:'#94a3b8',lineHeight:1.5}}>
-                    {brief.investmentModes.disclaimer}
-                  </div>
-                )}
-              </ModesSection>
-            </>
-          )}
-        </BriefWrap>
-      )}
-
-      {/* ══════════════════════════════════════════════
-          NEWS FEED TAB
+          HEADLINE DECODER
       ══════════════════════════════════════════════ */}
       {dashTab==='news' && (
         <NewsFeedWrap>
+          <IqLearningStrip />
           <NewsFeedHeader>
             <NewsFeedTitle>
-              News Feed <span>{filteredNews.length} articles</span>
+              Headline Decoder <span>{filteredNews.length} headlines</span>
             </NewsFeedTitle>
             <NewsSearch
               placeholder="Search headlines, sources..."
@@ -1689,7 +1722,7 @@ export default function Dashboard() {
               <EmptyState>
                 <FaNewspaper/>
                 <EmptyTitle>No headlines yet</EmptyTitle>
-                <EmptyDesc>Headlines load with the daily brief. Click the refresh button to fetch the latest news.</EmptyDesc>
+                <EmptyDesc>Click refresh in the header to load the latest headlines from live sources.</EmptyDesc>
               </EmptyState>
             )}
             {filteredNews.map((h,idx)=>{
@@ -1718,9 +1751,9 @@ export default function Dashboard() {
                     )}
                     <NewsTitle href={h.link} target="_blank" rel="noopener noreferrer">{h.title}</NewsTitle>
                     {!insight && (
-                      <NewsInsightBtn type="button" disabled={loading} onClick={()=>handleAnalyseHeadline(key,h.title,h.source)}>
+                      <NewsInsightBtn type="button" disabled={loading} onClick={()=>handleAnalyseHeadline(key,sanitizeHeadline(h.title),h.source)}>
                         {loading?<Spinner/>:<FaChartLine/>}
-                        {loading?'…':'AI Insight'}
+                        {loading?'…':'Decode'}
                       </NewsInsightBtn>
                     )}
                   </NewsItemTop>
@@ -1741,6 +1774,17 @@ export default function Dashboard() {
                   {insight && (
                     <NewsInsightBox initial={{opacity:0,height:0}} animate={{opacity:1,height:'auto'}} transition={{duration:0.2}}>
                       {insight}
+                      <InsightActions>
+                        <InsightActionBtn type="button" onClick={() => saveHeadlineToJournal(h.title, insight)}>
+                          <FaBookOpen style={{ fontSize:'0.72rem' }} /> Save to journal
+                        </InsightActionBtn>
+                      </InsightActions>
+                      <LearningLinks
+                        topic={headlineTopics[key]}
+                        mentorQuery={headlineTopics[key]
+                          ? `Help me understand this headline in plain English: "${sanitizeHeadline(h.title).slice(0, 120)}"`
+                          : undefined}
+                      />
                     </NewsInsightBox>
                   )}
                 </NewsItem>
@@ -1750,296 +1794,6 @@ export default function Dashboard() {
         </NewsFeedWrap>
       )}
 
-      {/* ══════════════════════════════════════════════
-          SENTIMENT TAB
-      ══════════════════════════════════════════════ */}
-      {dashTab==='sentiment' && (
-        <SentimentWrap>
-          <SentimentIntro>
-            <SentimentIntroTitle>What is market mood?</SentimentIntroTitle>
-            <SentimentIntroText>
-              This tab shows whether <strong>recent news</strong> sounds positive, negative, or mixed for each stock symbol.
-              It is <strong>not</strong> a buy/sell signal — it only reflects the tone of headlines and articles we scan.
-              Symbols like <strong>AAPL</strong> or <strong>NVDA</strong> are stock tickers (short codes for companies).
-            </SentimentIntroText>
-            <SentimentLegend>
-              {Object.entries(SENTIMENT_PLAIN).map(([key, p]) => {
-                const sc = sentimentColor(key);
-                return (
-                  <LegendChip key={key} $bg={sc.bg} $color={sc.color} $border={sc.border} title={p.hint}>
-                    {p.title}
-                  </LegendChip>
-                );
-              })}
-            </SentimentLegend>
-          </SentimentIntro>
-
-          <SentimentHeader>
-            <SentimentTitle>
-              Symbols ranked by news mood
-              <span>
-                {brief?.tickerSentiments?.length > 0
-                  ? `${brief.tickerSentiments.length} symbols from live news`
-                  : deepResult?.picks?.length > 0
-                    ? `${deepResult.picks.length} symbols from your AI picks`
-                    : 'Refresh or run AI analysis to load data'}
-              </span>
-            </SentimentTitle>
-            <RefreshBtn type="button" onClick={()=>load(true)} disabled={loading||refreshing} title="Refresh news data">
-              <FaSyncAlt className={refreshing?'spin':''}/>
-            </RefreshBtn>
-          </SentimentHeader>
-
-          {(() => {
-            let rows = [];
-            let source = 'headlines';
-
-            // Source 1: Alpha Vantage (most accurate — requires API key)
-            if (brief?.tickerSentiments?.length > 0) {
-              source = 'alphavantage';
-              rows = brief.tickerSentiments.map(t => ({
-                ticker: t.ticker,
-                topLabel: t.label || 'Neutral',
-                count: t.count,
-                avgScore: t.avgScore,
-                source: 'Alpha Vantage',
-              }));
-            }
-
-            // Source 2: Deep analysis picks — map action → sentiment label
-            if (rows.length === 0 && deepResult?.picks?.length > 0) {
-              source = 'picks';
-              const actionToLabel = { 'Strong Buy': 'Bullish', 'Buy': 'Somewhat-Bullish', 'Hold': 'Neutral', 'Sell': 'Somewhat-Bearish', 'Strong Sell': 'Bearish' };
-              rows = deepResult.picks.map((p, i) => ({
-                ticker: p.ticker,
-                topLabel: actionToLabel[p.action] || 'Neutral',
-                count: p.confidence ? Math.round(p.confidence) : (50 - i),
-                avgScore: p.action==='Strong Buy'?0.35:p.action==='Buy'?0.18:p.action==='Hold'?0:p.action==='Sell'?-0.18:-0.35,
-                source: 'AI Analysis',
-                name: p.name,
-                action: p.action,
-                confidence: p.confidence,
-              })).sort((a,b)=>b.count-a.count);
-            }
-
-            // Source 3: Regex-extract tickers from headline text
-            if (rows.length === 0 && allHeadlines.length > 0) {
-              source = 'headlines';
-              const TICKER_RE = /\b([A-Z]{2,5})\b/g;
-              // Common non-ticker uppercase words to skip
-              const SKIP = new Set(['CEO','CFO','ETF','IPO','GDP','CPI','FED','SEC','FDA','API','AI','US','UK','EU','EV','PE','VC','VIX','SPY','QQQ','DXY','USD','EUR','GBP','JPY','BTC','ETH','AND','FOR','THE','NOT','BUT','ARE','HAS','NEW','OLD','INC','LLC','PLC','LTD']);
-              const tickerMap = {};
-              allHeadlines.forEach(h => {
-                const matches = [...(h.title||'').matchAll(TICKER_RE)].map(m=>m[1]).filter(t=>!SKIP.has(t)&&t.length>=2&&t.length<=5);
-                const hasBullish = /surge|soar|jump|gain|rise|rally|beat|record|high|bull/i.test(h.title);
-                const hasBearish = /fall|drop|plunge|crash|miss|low|cut|warn|bear|decline|tumble/i.test(h.title);
-                const sentLabel = hasBullish && !hasBearish ? 'Bullish' : hasBearish && !hasBullish ? 'Bearish' : 'Neutral';
-                matches.forEach(ticker => {
-                  if (!tickerMap[ticker]) tickerMap[ticker] = { ticker, count:0, bullish:0, bearish:0, neutral:0, source:'Headlines' };
-                  tickerMap[ticker].count++;
-                  tickerMap[ticker][sentLabel.toLowerCase()]++;
-                });
-              });
-              rows = Object.values(tickerMap)
-                .filter(t => t.count >= 2) // only tickers appearing 2+ times
-                .map(t => {
-                  const topLabel = t.bullish > t.bearish && t.bullish > t.neutral ? 'Bullish'
-                    : t.bearish > t.bullish && t.bearish > t.neutral ? 'Bearish' : 'Neutral';
-                  const avgScore = (t.bullish - t.bearish) / t.count;
-                  return { ...t, topLabel, avgScore, source: 'Headlines' };
-                })
-                .sort((a,b) => b.count - a.count)
-                .slice(0, 50);
-            }
-
-            if (rows.length === 0) return (
-              <EmptyState>
-                <FaSignal/>
-                <EmptyTitle>No market mood data yet</EmptyTitle>
-                <EmptyDesc>Click Refresh above, or run AI Analysis on the AI Picks tab. We need recent news before moods can be calculated.</EmptyDesc>
-              </EmptyState>
-            );
-
-            const maxCount = rows[0]?.count || 1;
-
-            return (
-              <>
-                <div style={{fontSize:'0.75rem',color:'#64748b',marginBottom:'0.75rem',lineHeight:1.5}}>
-                  <strong style={{color:'#0f172a'}}>Data source:</strong>{' '}
-                  {SOURCE_PLAIN[source] || SOURCE_PLAIN.headlines}
-                  {' · '}{rows.length} symbol{rows.length !== 1 ? 's' : ''}
-                </div>
-                <SentTable>
-                  <SentTHead>
-                    <SentTH>Rank</SentTH>
-                    <SentTH>Symbol</SentTH>
-                    <SentTH>{source==='picks' ? 'AI confidence' : 'News mentions'}</SentTH>
-                    <SentTH>Overall mood</SentTH>
-                  </SentTHead>
-                  {rows.map((row,i)=>{
-                    const sc = sentimentColor(row.topLabel);
-                    const plain = plainSentiment(row.topLabel);
-                    const pct = Math.min(100, Math.round((row.count/maxCount)*100));
-                    const moodText = scoreToMoodText(row.avgScore);
-                    return (
-                      <SentTRow key={row.ticker} initial={{opacity:0}} animate={{opacity:1}} transition={{delay:i*0.02}}>
-                        <SentTD><RankBadge $rank={i+1}>{i+1}</RankBadge></SentTD>
-                        <SentTD>
-                          <div style={{fontWeight:800,fontSize:'0.85rem',fontFamily:"'Space Grotesk',sans-serif"}} title="Stock symbol">{row.ticker}</div>
-                          {row.name && <div style={{fontSize:'0.65rem',color:'#94a3b8',marginTop:1}}>{row.name}</div>}
-                        </SentTD>
-                        <SentTD>
-                          <div style={{fontWeight:700,color:'#0f172a'}}>
-                            {source==='picks' ? `${row.confidence ?? row.count}% sure` : `${row.count} article${row.count !== 1 ? 's' : ''}`}
-                          </div>
-                          {source==='picks' && row.action && (
-                            <div style={{fontSize:'0.68rem',color:'#64748b',marginTop:2}}>AI view: {row.action}</div>
-                          )}
-                          {source!=='picks' && (
-                            <div style={{fontSize:'0.65rem',color:'#94a3b8',marginTop:2}}>How often it appeared in news</div>
-                          )}
-                        </SentTD>
-                        <SentTD>
-                          <div style={{display:'flex',flexDirection:'column',gap:'0.35rem',flex:1,width:'100%'}}>
-                            <div style={{display:'flex',alignItems:'center',gap:'0.5rem',flexWrap:'wrap'}}>
-                              <SentimentDot $color={sc.dot}/>
-                              <SentimentLabel $bg={sc.bg} $color={sc.color} $border={sc.border} title={plain.hint}>
-                                {plain.title}
-                              </SentimentLabel>
-                            </div>
-                            <MoodHint>{moodText || plain.hint}</MoodHint>
-                            <ScoreBar title="Relative attention in the news feed">
-                              <ScoreFill $pct={pct} $color={sc.dot}/>
-                            </ScoreBar>
-                            <MoodHint style={{marginTop:0}}>Bar = how much coverage vs. other symbols on this list</MoodHint>
-                          </div>
-                        </SentTD>
-                      </SentTRow>
-                    );
-                  })}
-                </SentTable>
-              </>
-            );
-          })()}
-
-          <div style={{marginTop:'1rem',fontSize:'0.68rem',color:'#94a3b8',lineHeight:1.5}}>
-            Market mood is based on news tone only — for learning, not financial advice. Always do your own research before investing.
-          </div>
-        </SentimentWrap>
-      )}
-
-      {/* ══════════════════════════════════════════════
-          WATCHLIST TAB
-      ══════════════════════════════════════════════ */}
-      {dashTab==='watchlist' && (
-        <WatchlistWrap>
-          <WatchlistHeader>
-            <div>
-              <WatchlistTitle><FaStar style={{color:'#f59e0b'}}/> My Watchlist</WatchlistTitle>
-              <div style={{fontSize:'0.75rem',color:'#94a3b8',marginTop:'0.15rem'}}>
-                Track tickers — prices refresh on each visit. Add up to 20 symbols.
-              </div>
-            </div>
-            <AddTickerForm onSubmit={addToWatchlist}>
-              <TickerInput
-                value={tickerInput}
-                onChange={e=>setTickerInput(e.target.value.toUpperCase())}
-                placeholder="e.g. TSLA"
-                maxLength={6}
-              />
-              <AddTickerBtn type="submit" disabled={!tickerInput.trim() || watchlist.length >= 20}>
-                <FaPlus/> Add
-              </AddTickerBtn>
-            </AddTickerForm>
-          </WatchlistHeader>
-
-          <WatchGrid>
-            {watchlist.length === 0 && (
-              <WatchEmptyCard>
-                <FaStar style={{fontSize:'2rem',opacity:0.2}}/>
-                <div style={{fontWeight:700,color:'#64748b'}}>No tickers yet</div>
-                <div style={{fontSize:'0.78rem'}}>Add symbols above to track them here.</div>
-              </WatchEmptyCard>
-            )}
-            {watchlist.map((sym, idx) => {
-              const q = watchQuotes[sym];
-              const loading = watchLoading[sym];
-              const isPos = q?.change != null && q.change >= 0;
-              return (
-                <WatchCard key={sym}
-                  initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:idx*0.04}}>
-                  <WatchCardTop>
-                    <WatchSymbol>{sym}</WatchSymbol>
-                    <div style={{display:'flex',gap:'0.35rem',alignItems:'center'}}>
-                      {!q && !loading && (
-                        <button type="button" onClick={()=>fetchQuote(sym)}
-                          style={{fontSize:'0.65rem',color:'#10b981',fontWeight:700,background:'none',border:'none',cursor:'pointer',padding:0}}>
-                          Load
-                        </button>
-                      )}
-                      <RemoveWatchBtn type="button" onClick={()=>removeFromWatchlist(sym)} title="Remove">✕</RemoveWatchBtn>
-                    </div>
-                  </WatchCardTop>
-
-                  {loading && <WatchLoading/>}
-
-                  {!loading && q?.price != null && (
-                    <>
-                      <WatchPrice>${q.price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2})}</WatchPrice>
-                      {q.change != null && (
-                        <WatchChange $pos={isPos}>
-                          {isPos ? '▲' : '▼'} {Math.abs(q.change).toFixed(2)}
-                          {q.changePct != null && <span>({isPos?'+':''}{q.changePct.toFixed(2)}%)</span>}
-                        </WatchChange>
-                      )}
-                      {q.volume != null && (
-                        <div style={{fontSize:'0.65rem',color:'#94a3b8',marginTop:'0.4rem',fontFamily:"'JetBrains Mono',monospace"}}>
-                          Vol {(q.volume/1e6).toFixed(1)}M
-                        </div>
-                      )}
-                    </>
-                  )}
-                  {!loading && q && q.price == null && (
-                    <div style={{fontSize:'0.75rem',color:'#94a3b8',marginTop:'0.5rem'}}>
-                      No price data
-                      <div style={{fontSize:'0.65rem',marginTop:'0.2rem'}}>Add ALPHA_VANTAGE_KEY to enable live quotes</div>
-                    </div>
-                  )}
-                </WatchCard>
-              );
-            })}
-          </WatchGrid>
-
-          {/* AI Watchlist Brief */}
-          <WatchAIBar>
-            <WatchAIBarHeader>
-              <WatchAIBarTitle>
-                <FaRobot style={{color:'#4ade80'}}/> AI Watchlist Brief
-              </WatchAIBarTitle>
-              <WatchAIBtn
-                type="button"
-                disabled={watchAI.loading || watchlist.length === 0}
-                onClick={runWatchlistAI}
-              >
-                {watchAI.loading ? <><Spinner style={{marginRight:4}}/>Analysing…</> : 'Generate Brief'}
-              </WatchAIBtn>
-            </WatchAIBarHeader>
-            {(watchAI.result || watchAI.loading) && (
-              <WatchAIBody>
-                {watchAI.loading
-                  ? <span style={{color:'#94a3b8',fontStyle:'italic'}}>Generating your watchlist briefing…</span>
-                  : watchAI.result
-                }
-              </WatchAIBody>
-            )}
-            {!watchAI.result && !watchAI.loading && (
-              <WatchAIBody style={{color:'#94a3b8'}}>
-                Click "Generate Brief" to get an AI summary of what's happening with your tracked tickers based on current market context.
-              </WatchAIBody>
-            )}
-          </WatchAIBar>
-        </WatchlistWrap>
-      )}
 
       {/* ══════════════════════════════════════════════
           DOCUMENT ANALYST TAB
@@ -2050,7 +1804,7 @@ export default function Dashboard() {
             <DocTitle><FaFileAlt style={{color:'#10b981'}}/> Document Analyst</DocTitle>
             <DocSubtitle>
               Paste an earnings call transcript, 10-K filing, 8-K, or any financial document.
-              The AI extracts key metrics, investment signals, risks, and a verdict.
+              Learn to extract key metrics, themes, risks, and a learning takeaway — not buy/sell advice.
             </DocSubtitle>
           </DocHeader>
 
@@ -2178,17 +1932,26 @@ export default function Dashboard() {
                   </DocResultCard>
                 )}
 
-                {docResult.verdict && (
+                {docResult.verdict && (() => {
+                  const doc = docStanceStyle(docResult.verdict.stance);
+                  return (
                   <DocVerdictBox
-                    $stance={docResult.verdict.stance}
-                    initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.12}}>
-                    <DocResultLabel>AI Verdict</DocResultLabel>
-                    <DocVerdictStance $stance={docResult.verdict.stance}>
-                      {docResult.verdict.stance} · {docResult.verdict.confidence} Confidence
+                    $stance={doc.label}
+                    initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.12}}
+                    style={{ background: doc.bg, borderColor: doc.border }}>
+                    <DocResultLabel>Learning takeaway</DocResultLabel>
+                    <DocVerdictStance $stance={doc.label} style={{ color: doc.color }}>
+                      {doc.label} · {docResult.verdict.confidence} confidence
                     </DocVerdictStance>
                     <div style={{fontSize:'0.85rem',color:'#374151',lineHeight:1.6}}>{docResult.verdict.rationale}</div>
+                    {docResult.learnerQuestions?.length > 0 && (
+                      <ul style={{ margin:'0.75rem 0 0', paddingLeft:'1.1rem', fontSize:'0.82rem', color:'#475569' }}>
+                        {docResult.learnerQuestions.map((q, qi) => <li key={qi}>{q}</li>)}
+                      </ul>
+                    )}
                   </DocVerdictBox>
-                )}
+                  );
+                })()}
               </DocResultGrid>
             </AnimatePresence>
           )}
@@ -2196,7 +1959,7 @@ export default function Dashboard() {
           {!docResult && !docLoading && (
             <div style={{marginTop:'2.5rem',textAlign:'center',color:'#94a3b8',fontSize:'0.82rem',lineHeight:1.6}}>
               <FaFileAlt style={{fontSize:'2rem',opacity:0.2,display:'block',margin:'0 auto 0.75rem'}}/>
-              Paste a document above and click Analyse to extract investment intelligence from any financial text.
+              Paste a document above and click Analyse to practice reading filings like a student — metrics, risks, and quiz questions.
             </div>
           )}
 

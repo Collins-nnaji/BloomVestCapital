@@ -1,6 +1,8 @@
 const express = require('express');
 const { pool, getOrCreateUser } = require('../db');
 const { getOpenAiClient, hasAiCredentials, resolveModel, getClientMode } = require('../openai-client');
+const { normalizePick, toStudyLevel, toDocStance } = require('../learningLabels');
+const { sanitizeHeadlineText } = require('../sanitizeHeadline');
 
 const router = express.Router();
 
@@ -173,7 +175,7 @@ async function fetchAlphaVantageNews() {
   }
 
   const articles = allItems.slice(0, 80).map(item => ({
-    title: item.title || '',
+    title: sanitizeHeadlineText(item.title || ''),
     summary: item.summary ? item.summary.slice(0, 350) : '',
     source: item.source || 'Alpha Vantage',
     sourceId: 'av',
@@ -223,7 +225,7 @@ async function fetchFinnhubNews() {
     seen.add(k);
     const fhDate = item.datetime ? new Date(item.datetime * 1000) : null;
     out.push({
-      title: item.headline || '',
+      title: sanitizeHeadlineText(item.headline || ''),
       summary: item.summary ? item.summary.slice(0, 350) : '',
       source: item.source || 'Finnhub',
       sourceId: `fh_${item.category || 'general'}`,
@@ -274,7 +276,7 @@ function parseRssHeadlines(xml, limit = 14) {
     const dm = block.match(/<pubDate\b[^>]*>([\s\S]*?)<\/pubDate>/i)
             || block.match(/<dc:date\b[^>]*>([\s\S]*?)<\/dc:date>/i)
             || block.match(/<updated\b[^>]*>([\s\S]*?)<\/updated>/i);
-    const title = decodeXmlEntities(tm ? tm[1].trim() : '');
+    const title = sanitizeHeadlineText(tm ? tm[1].trim() : '');
     const link  = lm ? decodeXmlEntities(lm[1].trim()) : null;
     const pubDateRaw = dm ? dm[1].trim() : null;
     const pubDate = pubDateRaw ? new Date(pubDateRaw) : null;
@@ -322,7 +324,7 @@ async function fetchOneRssFeed({ url, source, id }) {
     const fresh = rows.filter(h => !h.pubDate || h.pubDate.getTime() >= cutoff);
     const final = (fresh.length > 0 ? fresh : rows).slice(0, RSS_PER_FEED); // fall back to all if none pass
     return final.map((h) => ({
-      title: h.title,
+      title: sanitizeHeadlineText(h.title),
       link: h.link,
       pubDate: h.pubDate ? h.pubDate.toISOString() : null,
       source,
@@ -422,24 +424,19 @@ Rules:
 - Add "methodology" as 2-3 sentences explaining that ideas were synthesized from headline themes across multiple public sources, then grouped by long-term vs short-term suitability.
 - Add "disclaimer" that clearly says this is educational, not financial advice, and based on public RSS headline titles only.`;
 
-const SYSTEM_PROMPT = `You are BloomVest AI, an expert investment tutor built into an interactive investment education platform. Your role is to teach people how to invest in a clear, engaging, and educational way.
+const SYSTEM_PROMPT = `You are BloomVest's AI Mentor — a patient tutor for the wealth learning platform (Academy, Paper Wealth, Bloomvest IQ).
 
 Guidelines:
-- Explain concepts simply, using real-world examples and analogies
-- Use **bold** for key terms and bullet points for lists — avoid markdown headers (# or ##)
-- Keep formatting clean: use bold and bullets, not hash tags or excessive formatting
-- When discussing stocks, mention real tickers and approximate valuations
-- Always emphasize risk management and long-term thinking
-- If asked about specific investment advice, remind users this is for education only
-- Keep responses focused and under 300 words unless the topic requires more detail
-- Use relevant emojis sparingly to make responses engaging
-- Reference the platform's Demo Trading and Learn features when relevant
-- Cover topics: stocks, bonds, ETFs, index funds, portfolio building, risk management, behavioral finance, financial statements, dividends, compound interest, market analysis
-- Be encouraging and supportive — no question is too basic`;
+- Teach concepts simply with examples and analogies. Use **bold** and bullets — no markdown headers (#).
+- NEVER tell users what to buy, sell, or hold. If asked, explain frameworks and suggest they practice in Paper Wealth.
+- End with a short quiz question or "try this in Paper Wealth" when helpful.
+- Reference Academy lessons, Paper Wealth simulations, or Bloomvest IQ for market context.
+- Cover: budgeting, stocks, bonds, ETFs, macro, behavioral finance, NGX/Africa access, crypto basics, options concepts.
+- Under 300 words unless the topic needs more. Encouraging tone — no question is too basic.`;
 
 router.post('/chat', async (req, res) => {
   try {
-    const { sessionId, message } = req.body;
+    const { sessionId, message, context } = req.body;
     if (!sessionId || !message) {
       return res.status(400).json({ error: 'sessionId and message are required' });
     }
@@ -457,8 +454,14 @@ router.post('/chat', async (req, res) => {
     );
     const history = historyResult.rows.reverse();
 
+    let systemContent = SYSTEM_PROMPT;
+    if (context) {
+      const ctxText = typeof context === 'string' ? context : JSON.stringify(context, null, 0);
+      systemContent += `\n\n--- Learner context (personalize teaching; never give buy/sell advice) ---\n${ctxText.slice(0, 2500)}`;
+    }
+
     const messages = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { role: 'system', content: systemContent },
       ...history.map(m => ({ role: m.role, content: m.content }))
     ];
 
@@ -781,47 +784,45 @@ router.get('/daily-brief', async (req, res) => {
   }
 });
 
-const DEEP_ANALYSIS_SYSTEM = `You are a high-end quantitative market analyst for BloomVest Strategic Capital.
-Your goal is to provide a deep, data-driven analysis of the current market landscape based on live headlines.
+const DEEP_ANALYSIS_SYSTEM = `You are BloomVest IQ's Market Lab tutor — an educational analyst helping students LEARN how to read markets from headlines.
+You NEVER tell users what to buy or sell. You teach frameworks for thinking about companies in the news.
 
 CORE REQUIREMENTS:
-1. VARIETY & SPECIFICITY: Do not just recommend the same 5 mega-cap tech stocks (AAPL, MSFT, NVDA, etc.) every time. If they are in the news, you can include them, but seek out mid-cap, sectoral, or commodity opportunities mentioned in the headlines.
-2. DATA-DRIVEN: Base your picks STRICTLY on the context provided in the headlines. If a specific ticker is mentioned with sentiment data, prioritize analyzing that ticker.
-3. STRUCTURE: Return a valid JSON object with the following schema:
+1. VARIETY: Include diverse tickers from headlines — not only mega-cap tech. Mix sectors and asset types the student requested.
+2. EVIDENCE-BASED: Tie each case study to headline themes. If evidence is thin, say so in the thesis.
+3. Return valid JSON only (no markdown fences):
 {
-  "topTheme": "...",
-  "marketContext": "...",
-  "sectorBreakdown": { "Sector Name": "Detailed note about why this sector is relevant now..." },
+  "topTheme": "one sentence lesson theme for today",
+  "marketContext": "2-3 sentences explaining the macro story in plain English",
+  "sectorBreakdown": { "Sector Name": "What a learner should notice about this sector now..." },
   "picks": [
     {
       "company": "...",
       "ticker": "...",
       "assetType": "Stocks|ETFs|Commodities|Crypto|Options Plays",
       "sector": "...",
-      "action": "Strong Buy|Buy|Watch|Reduce|Avoid",
+      "studyLevel": "Deep Dive|Study|Discuss|Caution|Skip",
       "confidence": "High|Medium|Low",
       "trend": "Uptrend|Downtrend|Sideways|Reversal",
       "trendStrength": "Strong|Moderate|Weak",
-      "thesis": "...",
-      "entrySignal": "...",
-      "priceContext": "...",
+      "thesis": "2-3 sentences: bull case AND bear case — educational, balanced",
+      "researchFocus": "What to look up in filings, charts, or news (NOT a trade trigger)",
+      "priceContext": "How the market is currently pricing this story",
       "catalysts": ["...", "...", "..."],
-      "risk": "...",
+      "risk": "Key risk a learner should understand",
+      "learnerQuestion": "One quiz-style question to test understanding",
       "horizon": "...",
       "fit": "Balanced|Growth|Value|Income|Speculative|Defensive|Momentum|Compounder|Core|Hedge|Catalyst|Cyclical"
     }
   ],
-  "disclaimer": "..."
+  "disclaimer": "Educational only — not financial advice..."
 }
 
 RULES:
-- Calibrate to the user's risk level, horizon, and preferred asset types.
-- Output ONLY valid JSON — no markdown fences, no extra text before or after.
-- Keep your analysis professional, technical, and objective.
-- Return 15-20 picks per response.
-- The "assetType" field MUST be exactly one of: "Stocks", "ETFs", "Commodities", "Crypto", "Options Plays" — no other values.
-- For each pick: "thesis" = 2-3 detailed sentences, "entrySignal" = specific price action or technical trigger, "priceContext" = current market sentiment context, "catalysts" = up to 3 items, "risk" = 1-2 sentences.
-- Ensure the JSON is complete and valid — do not truncate.`;
+- studyLevel meaning: Deep Dive = rich lesson case; Study = good practice analysis; Discuss = debatable; Caution = teach risks; Skip = too speculative for beginners.
+- NEVER use Buy, Sell, Strong Buy, or entry signals.
+- Return 15-20 picks. assetType must be exactly: Stocks, ETFs, Commodities, Crypto, or Options Plays.
+- Calibrate depth to the user's risk level, horizon, and sectors — as learning difficulty, not portfolio advice.`;
 
 router.post('/deep-analysis', async (req, res) => {
   try {
@@ -891,7 +892,7 @@ router.post('/deep-analysis', async (req, res) => {
       `INSTRUCTIONS: Using ALL the above data return JSON with keys: topTheme (string), marketContext (string), sectorBreakdown (object), picks (array of exactly 12 items), disclaimer (string).`,
       'The picks MUST be grounded in real data above.',
       'For Crypto picks, use the crypto sentiment data. For ETFs and Commodities, tie to macro headline themes.',
-      'Every pick must have all required fields including trend, trendStrength, assetType, entrySignal, priceContext, and exactly 3 catalysts.',
+      'Every pick must have all required fields including trend, trendStrength, assetType, researchFocus, learnerQuestion, priceContext, and exactly 3 catalysts.',
     ].filter(l => l !== null && l !== undefined).join('\n');
 
     const fallback = {
@@ -903,10 +904,11 @@ router.post('/deep-analysis', async (req, res) => {
           company: 'Microsoft',
           ticker: 'MSFT',
           sector: 'Information Technology',
-          action: 'Buy',
+          studyLevel: 'Deep Dive',
           confidence: 'High',
-          thesis: 'Microsoft combines durable enterprise cash flows with leading cloud (Azure) and AI monetisation via Copilot. Its diversified revenue base makes it resilient across macro cycles.',
-          entrySignal: 'Consider entering on any pullback toward the 50-day moving average or after a post-earnings reset.',
+          thesis: 'Microsoft combines durable enterprise cash flows with leading cloud (Azure) and AI monetisation via Copilot. Learners should compare its growth story to valuation.',
+          researchFocus: 'Review Azure growth rates in the latest earnings and how Copilot revenue is disclosed.',
+          learnerQuestion: 'What makes recurring cloud revenue different from one-time software licenses?',
           priceContext: 'Trades at a premium P/E (~33x) justified by double-digit earnings growth and strong FCF generation.',
           catalysts: ['Azure growth acceleration', 'Copilot enterprise adoption', 'AI capex cycle'],
           risk: 'Multiple compression if AI monetisation disappoints or enterprise IT budgets tighten.',
@@ -917,10 +919,11 @@ router.post('/deep-analysis', async (req, res) => {
           company: 'NVIDIA',
           ticker: 'NVDA',
           sector: 'Information Technology',
-          action: 'Watch',
+          studyLevel: 'Discuss',
           confidence: 'Medium',
-          thesis: 'NVIDIA dominates the AI training and inference chip market. Data-centre demand from hyperscalers keeps revenue momentum elevated. However, valuation demands execution.',
-          entrySignal: 'Wait for a post-earnings consolidation or a 10-15% pullback before adding new positions.',
+          thesis: 'NVIDIA dominates AI chips, but valuation and cyclicality are classic lesson topics. Compare bull and bear narratives from recent headlines.',
+          researchFocus: 'Track data-centre CapEx commentary from hyperscalers and export policy news.',
+          learnerQuestion: 'Why can great companies still be risky investments at the wrong price?',
           priceContext: 'Valuation remains stretched on trailing metrics; forward P/E depends heavily on accelerating revenue guidance.',
           catalysts: ['Data-centre CapEx spend', 'New GPU cycle (Blackwell)', 'Sovereign AI buildouts'],
           risk: 'Any guidance miss or chip export restriction could trigger a sharp re-rating.',
@@ -931,10 +934,11 @@ router.post('/deep-analysis', async (req, res) => {
           company: 'Alphabet',
           ticker: 'GOOGL',
           sector: 'Communication Services',
-          action: 'Buy',
+          studyLevel: 'Study',
           confidence: 'High',
-          thesis: "Alphabet's search dominance is being extended into AI-assisted results (AI Overviews) while YouTube and Google Cloud add revenue diversification. It remains one of the most cash-generative businesses globally.",
-          entrySignal: 'Current levels look reasonable; a pullback to the 200-day MA would be an attractive entry.',
+          thesis: "Alphabet extends search into AI-assisted results while Cloud diversifies revenue. Study how platform businesses monetise attention.",
+          researchFocus: 'Compare Google Cloud growth vs Azure and AWS in recent earnings.',
+          learnerQuestion: 'How does advertising revenue differ from subscription cloud revenue?',
           priceContext: 'Trades at a discount to mega-cap peers on a P/E basis (~22x forward), offering relative value.',
           catalysts: ['AI search monetisation', 'Google Cloud growth', 'Regulatory resolution'],
           risk: 'Antitrust rulings against the Search business pose structural risk.',
@@ -945,10 +949,11 @@ router.post('/deep-analysis', async (req, res) => {
           company: 'Eli Lilly',
           ticker: 'LLY',
           sector: 'Health Care',
-          action: 'Buy',
+          studyLevel: 'Study',
           confidence: 'High',
-          thesis: 'Eli Lilly leads the GLP-1 obesity and diabetes drug market with Mounjaro and Zepbound. The addressable market is enormous and manufacturing is scaling to meet demand.',
-          entrySignal: 'Any dip on macro rotation or earnings-beat fatigue could offer a better entry point.',
+          thesis: 'Eli Lilly illustrates pharma growth via blockbuster drugs — study pipeline risk vs reward and patent cliffs.',
+          researchFocus: 'Read how GLP-1 demand is discussed in earnings and manufacturing capacity updates.',
+          learnerQuestion: 'What happens to a drug company when a patent expires?',
           priceContext: 'Premium valuation (~50x forward) reflects multi-year pipeline optionality; position-size accordingly.',
           catalysts: ['Manufacturing capacity ramp', 'New GLP-1 label expansions', 'International approvals'],
           risk: 'Pricing pressure from Medicare negotiation or biosimilar competition could compress long-run margins.',
@@ -959,10 +964,11 @@ router.post('/deep-analysis', async (req, res) => {
           company: 'iShares Core S&P 500 ETF',
           ticker: 'IVV',
           sector: 'Diversified',
-          action: 'Buy',
+          studyLevel: 'Deep Dive',
           confidence: 'High',
-          thesis: 'When multiple macro narratives compete simultaneously, a core broad-market ETF captures winners across sectors without single-stock concentration risk. IVV provides efficient exposure to US large-cap earnings growth.',
-          entrySignal: 'Dollar-cost average on a regular schedule rather than timing a single entry.',
+          thesis: 'Index ETFs teach diversification — how one fund holds hundreds of companies and tracks a benchmark.',
+          researchFocus: 'Compare expense ratios and holdings overlap between IVV, VOO, and SPY.',
+          learnerQuestion: 'Why do many educators suggest index funds for beginners?',
           priceContext: 'The S&P 500 trades near historical average valuations on a forward basis; not cheap but not extreme.',
           catalysts: ['Earnings season beats', 'Rate cut cycle resumption', 'AI productivity uplift'],
           risk: 'A broad earnings recession or major policy shock would affect the whole basket.',
@@ -973,10 +979,11 @@ router.post('/deep-analysis', async (req, res) => {
           company: 'SPDR Gold Shares',
           ticker: 'GLD',
           sector: 'Commodities',
-          action: 'Watch',
+          studyLevel: 'Discuss',
           confidence: 'Medium',
-          thesis: 'Gold benefits when real yields fall, the dollar weakens, or geopolitical/policy uncertainty rises. It serves as portfolio insurance rather than a growth engine.',
-          entrySignal: 'Add to hedges when macro uncertainty spikes or if the dollar shows sustained weakness.',
+          thesis: 'Gold teaches macro relationships — real yields, dollar strength, and fear. It is insurance, not a growth stock.',
+          researchFocus: 'Chart gold vs real yields and the US dollar index over the past year.',
+          learnerQuestion: 'When might gold rise even if stocks are also rising?',
           priceContext: 'Gold near multi-year highs; momentum is supportive but mean-reversion risk exists at elevated levels.',
           catalysts: ['Central bank buying', 'Geopolitical flare-ups', 'Inflation surprise'],
           risk: 'Rising real yields or a risk-on rotation can quickly reduce demand for gold.',
@@ -992,33 +999,36 @@ router.post('/deep-analysis', async (req, res) => {
       return res.json({ ...fallback, generatedAt: new Date().toISOString(), fromFallback: true, headlines: headlines.slice(0, 60) });
     }
 
-    const normalisePick = (p) => ({
-      company: String(p.company || 'Unknown').slice(0, 100),
-      ticker: String(p.ticker || '—').slice(0, 12),
-      assetType: (() => {
-        const VALID = ['Stocks','ETFs','Commodities','Crypto','Options Plays'];
+    const normalisePick = (p) => {
+      const assetType = (() => {
+        const VALID = ['Stocks', 'ETFs', 'Commodities', 'Crypto', 'Options Plays'];
         if (VALID.includes(p.assetType)) return p.assetType;
-        // Snap stray AI values to canonical ones
         const t = String(p.assetType || '').toLowerCase();
-        if (t.includes('etf'))     return 'ETFs';
+        if (t.includes('etf')) return 'ETFs';
         if (t.includes('crypto') || t.includes('coin') || t.includes('token')) return 'Crypto';
-        if (t.includes('option'))  return 'Options Plays';
+        if (t.includes('option')) return 'Options Plays';
         if (t.includes('commodi') || t.includes('gold') || t.includes('oil') || t.includes('silver')) return 'Commodities';
         return 'Stocks';
-      })(),
-      sector: String(p.sector || 'Unknown').slice(0, 60),
-      action: ['Strong Buy', 'Buy', 'Watch', 'Reduce', 'Avoid'].includes(p.action) ? p.action : 'Watch',
-      confidence: ['High', 'Medium', 'Low'].includes(p.confidence) ? p.confidence : 'Medium',
-      trend: ['Uptrend', 'Downtrend', 'Sideways', 'Reversal'].includes(p.trend) ? p.trend : 'Sideways',
-      trendStrength: ['Strong', 'Moderate', 'Weak'].includes(p.trendStrength) ? p.trendStrength : 'Moderate',
-      thesis: String(p.thesis || '').slice(0, 500),
-      entrySignal: String(p.entrySignal || '').slice(0, 250),
-      priceContext: String(p.priceContext || '').slice(0, 250),
-      catalysts: Array.isArray(p.catalysts) ? p.catalysts.slice(0, 3).map((c) => String(c).slice(0, 80)) : [],
-      risk: String(p.risk || '').slice(0, 250),
-      horizon: String(p.horizon || '6-18 months').slice(0, 40),
-      fit: String(p.fit || 'Balanced').slice(0, 30),
-    });
+      })();
+      return normalizePick({
+        company: String(p.company || 'Unknown').slice(0, 100),
+        ticker: String(p.ticker || '—').slice(0, 12),
+        assetType,
+        sector: String(p.sector || 'Unknown').slice(0, 60),
+        studyLevel: toStudyLevel(p.studyLevel || p.action),
+        confidence: ['High', 'Medium', 'Low'].includes(p.confidence) ? p.confidence : 'Medium',
+        trend: ['Uptrend', 'Downtrend', 'Sideways', 'Reversal'].includes(p.trend) ? p.trend : 'Sideways',
+        trendStrength: ['Strong', 'Moderate', 'Weak'].includes(p.trendStrength) ? p.trendStrength : 'Moderate',
+        thesis: String(p.thesis || '').slice(0, 500),
+        researchFocus: String(p.researchFocus || p.entrySignal || '').slice(0, 280),
+        learnerQuestion: String(p.learnerQuestion || '').slice(0, 200),
+        priceContext: String(p.priceContext || '').slice(0, 250),
+        catalysts: Array.isArray(p.catalysts) ? p.catalysts.slice(0, 3).map((c) => String(c).slice(0, 80)) : [],
+        risk: String(p.risk || '').slice(0, 250),
+        horizon: String(p.horizon || '6-18 months').slice(0, 40),
+        fit: String(p.fit || 'Balanced').slice(0, 30),
+      });
+    };
 
     try {
       console.log(`[AI] Running deep analysis via ${getClientMode()} (${resolveModel('analysis', 'gpt-4o')})`);
@@ -1086,17 +1096,17 @@ router.post('/analyse-headline', async (req, res) => {
     const { title, source } = req.body;
     if (!title) return res.status(400).json({ error: 'title required' });
 
-    const prompt = `You are a concise financial analyst. A user wants a quick educational insight on this news headline:
+    const prompt = `You are BloomVest IQ's Headline Decoder — a tutor helping students learn from news.
 
-"${title}"
+Headline: "${title}"
 Source: ${source || 'Unknown'}
 
-Respond in 3 short bullet points (max 20 words each):
-1. What this likely means for markets / investors
-2. Which asset class or sector is most affected
-3. One key risk to watch
+Respond in 3 short bullet points (max 22 words each):
+1. What this headline teaches about how markets work
+2. Which sector or concept to study next
+3. One critical-thinking question the learner should ask themselves
 
-Keep it factual, educational, and jargon-free. Do NOT give personalised investment advice.`;
+No buy/sell language. Educational only.`;
 
     const completion = await getOpenAiClient().chat.completions.create({
       model: resolveModel('chat', 'gpt-4o-mini'),
@@ -1118,7 +1128,7 @@ router.post('/journal-assist', async (req, res) => {
     const { noteContent, action } = req.body;
     if (!noteContent?.trim()) return res.status(400).json({ error: 'No note content provided' });
 
-    const systemPrompt = `You are a trading journal assistant for BloomVest Capital. You help investors reflect on their trades, decisions, and strategies. Be concise, insightful, and educational. Never give direct financial advice — frame everything as educational analysis and reflection prompts.`;
+    const systemPrompt = `You are BloomVest's Reflection Journal coach for learners practicing in Paper Wealth or studying markets. Help students reflect on decisions, biases, and lessons. Never give buy/sell advice — only reflection prompts and learning takeaways.`;
 
     const actionPrompts = {
       summarise: `Summarise the key points from this trading journal note in 3-4 bullet points. Be concise.\n\nNote:\n${noteContent}`,
@@ -1158,18 +1168,22 @@ router.post('/analyse-document', async (req, res) => {
     const docLabels = { earnings: 'earnings call transcript', '10k': '10-K annual report', '8k': '8-K filing', general: 'financial document' };
     const docLabel = docLabels[docType] || docLabels.general;
 
-    const systemPrompt = `You are a senior equity research analyst at a top investment bank.
-You excel at extracting investment-relevant insights from financial documents with precision and brevity.
-Always structure your output as valid JSON matching the schema provided.`;
+    const systemPrompt = `You are BloomVest IQ's Document Workshop tutor. You teach students how to read financial documents — never what to buy or sell.
+Always return valid JSON matching the schema. Use learning language only.`;
 
-    const analysisPrompt = `Analyse this ${docLabel} and return a JSON object with this exact schema:
+    const analysisPrompt = `Teach a student from this ${docLabel}. Return JSON:
 {
-  "summary": "2-3 sentence executive summary of the most important findings",
+  "summary": "2-3 sentence plain-English summary of what a beginner should take away",
   "keyMetrics": [{ "label": "metric name", "value": "value or description", "direction": "up|down|flat|neutral" }],
-  "positives": ["string", ...],
-  "risks": ["string", ...],
-  "signals": [{ "type": "bullish|bearish|neutral", "detail": "actionable signal" }],
-  "verdict": { "stance": "Buy|Hold|Sell|Watch", "rationale": "1-2 sentences", "confidence": "High|Medium|Low" }
+  "positives": ["educational positive — what went well or improved", ...],
+  "risks": ["risk concepts the learner should understand", ...],
+  "signals": [{ "type": "bullish|bearish|neutral", "detail": "what this pattern means for learning (not a trade)" }],
+  "verdict": {
+    "stance": "Worth studying|Needs more research|High complexity — caution|Monitor & learn",
+    "rationale": "1-2 sentences on what the learner should do next (read, compare, practice in sim)",
+    "confidence": "High|Medium|Low"
+  },
+  "learnerQuestions": ["quiz question 1", "quiz question 2"]
 }
 ${question ? `\nSpecific question to address in the summary: ${question}` : ''}
 
@@ -1192,6 +1206,10 @@ ${text.slice(0, 12000)}`;
       parsed = JSON.parse(raw);
     } catch {
       return res.status(500).json({ error: 'Could not parse AI response' });
+    }
+
+    if (parsed.verdict?.stance) {
+      parsed.verdict.stance = toDocStance(parsed.verdict.stance);
     }
 
     res.json({ analysis: parsed });
@@ -1388,37 +1406,31 @@ router.get('/market-data', async (req, res) => {
 const tradeIdeasCache = { data: null, ts: 0 };
 const TRADE_IDEAS_CACHE_MS = 20 * 60 * 1000;
 
-const TRADE_IDEAS_SYSTEM = `You are BloomVest's Africa-focused investment analyst. Your audience is Nigerian and African retail investors who can access:
-- NGX-listed stocks (e.g. DANGCEM, MTNN, ZENITHBANK, GTCO, AIRTELAFRI, BUAFOODS, SEPLAT)
-- US stocks and ETFs available via Bamboo, Chaka, or Trove (the main investment apps for Nigerians)
-- Crypto (available everywhere in Nigeria)
-- Dollar-denominated assets as a naira hedge
+const TRADE_IDEAS_SYSTEM = `You are BloomVest IQ's Regional Desk tutor for African learners — especially Nigerian students using NGX, Bamboo, Chaka, or Trove.
+You create educational CASE STUDIES from headlines — never buy/sell recommendations.
 
-Your job: return 8-10 trade ideas as a JSON array. Each idea must be grounded in the live headlines provided.
-
-JSON schema (array of objects, no wrapper):
+Return 8-10 case studies as a JSON array (no wrapper):
 [
   {
     "ticker": "DANGCEM",
     "company": "Dangote Cement",
     "exchange": "NGX",
-    "action": "Buy" | "Watch" | "Avoid" | "Strong Buy" | "Reduce",
+    "studyLevel": "Deep Dive" | "Study" | "Discuss" | "Caution" | "Skip",
     "confidence": "High" | "Medium" | "Low",
     "assetType": "NGX Stock" | "US Stock" | "ETF" | "Crypto" | "Commodity",
-    "thesis": "2-3 sentence explanation in plain English grounded in the headlines",
-    "catalyst": "The single most important upcoming catalyst",
-    "risk": "The single biggest risk in one sentence",
+    "thesis": "2-3 sentences: what a learner should understand about this name in context",
+    "catalyst": "One event to research (earnings, policy, FX, etc.)",
+    "risk": "One key risk to understand",
     "horizon": "Short (< 3 months)" | "Medium (3-12 months)" | "Long (1-3 years)",
-    "nairaAngle": "Why this matters specifically for a Nigerian investor (FX hedge, local business, etc.)"
+    "nairaAngle": "Why this story matters for Nigerian learners (FX, inflation, access)",
+    "learnerQuestion": "One short quiz question"
   }
 ]
 
 RULES:
-- Always include at least 2 NGX stocks if there is any African/Nigerian market context in the headlines.
-- Always include at least 1 crypto pick relevant to the ₦/$ dynamic.
-- Always include at least 1 US ETF or stock accessible via Nigerian apps.
-- Use plain English. No jargon. If something is speculative, say so.
-- Output ONLY valid JSON array — no markdown, no extra text.`;
+- Include ≥2 NGX names when African context exists; ≥1 crypto lesson on ₦/$; ≥1 US name accessible via Nigerian apps.
+- NEVER use Buy, Sell, Avoid as advice — only studyLevel labels for learning priority.
+- Plain English. Output ONLY valid JSON array.`;
 
 router.post('/trade-ideas', async (_req, res) => {
   const now = Date.now();
@@ -1461,7 +1473,9 @@ router.post('/trade-ideas', async (_req, res) => {
       ticker:      String(idea.ticker || '').slice(0, 12),
       company:     String(idea.company || idea.ticker || '').slice(0, 60),
       exchange:    String(idea.exchange || '').slice(0, 10),
-      action:      String(idea.action || 'Watch').slice(0, 20),
+      studyLevel:  toStudyLevel(idea.studyLevel || idea.action),
+      action:      toStudyLevel(idea.studyLevel || idea.action),
+      learnerQuestion: String(idea.learnerQuestion || '').slice(0, 200),
       confidence:  String(idea.confidence || 'Medium').slice(0, 10),
       assetType:   String(idea.assetType || 'US Stock').slice(0, 20),
       thesis:      String(idea.thesis || '').slice(0, 500),

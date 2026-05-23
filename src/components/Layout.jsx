@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import OnboardingModal from './OnboardingModal';
+import { needsOnboarding } from '../utils/learningState';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
@@ -21,10 +24,17 @@ const MainContent = styled.main`
 
 const Layout = ({ children }) => {
   const location = useLocation();
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
-  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const skip = ['/auth', '/privacy', '/terms'].some((p) => location.pathname.startsWith(p));
+    if (!skip && needsOnboarding()) {
+      setShowOnboarding(true);
+    }
   }, [location.pathname]);
 
   return (
@@ -34,6 +44,11 @@ const Layout = ({ children }) => {
         {children}
       </MainContent>
       <Footer />
+      <AnimatePresence>
+        {showOnboarding && (
+          <OnboardingModal key="onboarding" onClose={() => setShowOnboarding(false)} />
+        )}
+      </AnimatePresence>
     </PageWrapper>
   );
 };

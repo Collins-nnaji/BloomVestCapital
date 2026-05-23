@@ -3,7 +3,25 @@ import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { FaArrowUp, FaArrowDown, FaRobot, FaPlay, FaTrophy, FaClock, FaCheckCircle, FaTimesCircle, FaPaperPlane, FaChartLine, FaSignOutAlt, FaStar, FaLightbulb, FaSearch, FaLock, FaCrown, FaMagic, FaChevronRight, FaSave, FaBullseye, FaSpinner, FaBookOpen, FaArrowLeft, FaChevronDown, FaChevronUp, FaGraduationCap, FaTrash, FaUser, FaCoins, FaBrain, FaShieldAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import ContinueLearningCard from '../components/ContinueLearningCard';
+import PathProgressCard from '../components/PathProgressCard';
+import LearningPanelGrid from '../components/learning/LearningPanelGrid';
+import LessonPracticeBanner from '../components/learning/LessonPracticeBanner';
+import GuestScenarioBanner from '../components/learning/GuestScenarioBanner';
+import {
+  getPathProgress,
+  getScenarioForLesson,
+  GUEST_SCENARIO_IDS,
+} from '../config/learningPaths';
+import {
+  getLearningPathId,
+  getContinueLearning,
+  setContinueLearning,
+  recordLearningActivity,
+  getStreak,
+  getHeadlinesDecodedCount,
+} from '../utils/learningState';
 import { scenarios, difficultyColors } from '../data/scenarios';
 import { stocks } from '../data/stockData';
 import { api } from '../api';
@@ -1708,6 +1726,30 @@ const LearnSummaryStrip = styled.div`
   padding: 0.1rem 0;
 `;
 
+const AcademyTip = styled.div`
+  margin-bottom: 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 11px;
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.08), rgba(14, 165, 233, 0.06));
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.65);
+  line-height: 1.5;
+
+  strong {
+    color: #15803d;
+  }
+
+  a {
+    color: #0ea5e9;
+    font-weight: 700;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const LearnWrap = styled.div`
   max-width: 100%;
 `;
@@ -2012,6 +2054,8 @@ function LearnTab() {
   const [lessonLoading, setLessonLoading] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [completing, setCompleting] = useState(false);
+  const [practiceScenarioId, setPracticeScenarioId] = useState(null);
+  const [pathKey, setPathKey] = useState(() => getLearningPathId());
 
   const loadCourses = useCallback(async () => {
     setLoading(true);
@@ -2073,6 +2117,16 @@ function LearnTab() {
     try {
       const res = await api.getLesson(lessonId, { preview: !user });
       setLessonData(res.lesson);
+      if (res.lesson) {
+        setContinueLearning({
+          type: 'lesson',
+          lessonId,
+          lessonTitle: res.lesson.title,
+          courseTitle: res.lesson.courseTitle,
+          label: res.lesson.title,
+        });
+        recordLearningActivity('lesson');
+      }
     } catch (e) {
       console.warn('Lesson load error:', e.message);
     } finally {
@@ -2084,6 +2138,7 @@ function LearnTab() {
     setActiveLesson(null);
     setLessonData(null);
     setQuizAnswers({});
+    setPracticeScenarioId(null);
   }, []);
 
   const handleQuizAnswer = (qIndex, optIndex) => {
@@ -2121,7 +2176,15 @@ function LearnTab() {
         if (!allIds.includes(lessonData.id)) return c;
         return { ...c, completedLessons: c.completedLessons + (progress.completedIds.includes(lessonData.id) ? 0 : 1) };
       }));
-      closeLesson();
+      const scenarioId = getScenarioForLesson(lessonData.courseTitle);
+      recordLearningActivity('lesson');
+      setContinueLearning({
+        type: 'scenario',
+        href: `/academy?tab=scenarios&scenario=${scenarioId}`,
+        label: 'Practice what you learned',
+        scenarioId,
+      });
+      setPracticeScenarioId(scenarioId);
     } catch (e) {
       console.warn('Complete lesson error:', e.message);
     } finally {
@@ -2134,9 +2197,44 @@ function LearnTab() {
     : 0;
 
   const completedSet = new Set(progress.completedIds);
+  const continueItem = getContinueLearning();
+  const streak = getStreak();
+  const pathProgress = getPathProgress(
+    pathKey,
+    courses,
+    progress.completedIds,
+    getHeadlinesDecodedCount()
+  );
+
+  const resumeLessonById = (lessonId) => {
+    for (const c of courses) {
+      for (const m of c.modules || []) {
+        const lesson = (m.lessons || []).find((l) => l.id === lessonId);
+        if (lesson) {
+          setSelectedCourse(c);
+          setMobilePanel('lessons');
+          openLesson(lessonId);
+          return;
+        }
+      }
+    }
+    openLesson(lessonId);
+  };
 
   return (
     <>
+      <LearningPanelGrid>
+        <ContinueLearningCard
+          continueItem={continueItem}
+          onOpenLesson={resumeLessonById}
+          streak={streak}
+        />
+        <PathProgressCard
+          pathProgress={pathProgress}
+          onPathChange={(id) => setPathKey(id)}
+        />
+      </LearningPanelGrid>
+
       {/* Summary strip */}
       <LearnSummaryStrip>
         <FaGraduationCap style={{ fontSize: '1.4rem', color: '#22c55e', flexShrink: 0 }} />
@@ -2159,6 +2257,11 @@ function LearnTab() {
           <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8' }}>Courses</div>
         </div>
       </LearnSummaryStrip>
+
+      <AcademyTip>
+        <strong>Bloomvest Academy</strong> — complete lessons and quizzes, then practice in{' '}
+        <Link to="/academy?tab=scenarios">Scenarios</Link> with virtual money and your AI tutor.
+      </AcademyTip>
 
       {loading ? (
         <div style={{ textAlign: 'center', padding: '4rem', color: 'rgba(15,23,42,0.4)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
@@ -2365,9 +2468,14 @@ function LearnTab() {
                   </QuizSection>
                 )}
 
+                <LessonPracticeBanner
+                  scenarioId={practiceScenarioId}
+                  onDismiss={closeLesson}
+                />
+
                 <CompleteBtn
                   onClick={handleComplete}
-                  disabled={!!user && (completing || completedSet.has(lessonData.id))}
+                  disabled={!!user && (completing || completedSet.has(lessonData.id) || !!practiceScenarioId)}
                 >
                   {!user ? (
                     <><FaCheckCircle /> Sign in to save progress</>
@@ -2375,6 +2483,8 @@ function LearnTab() {
                     <><SpinIcon /> Saving…</>
                   ) : completedSet.has(lessonData.id) ? (
                     <><FaCheckCircle /> Already completed</>
+                  ) : practiceScenarioId ? (
+                    <><FaCheckCircle /> Completed</>
                   ) : (
                     <><FaCheckCircle /> Mark as complete</>
                   )}
@@ -2392,10 +2502,58 @@ function LearnTab() {
   );
 }
 
+const ProductHeader = styled.div`
+  margin: 0.5rem 0 0.25rem;
+`;
+
+const ProductEyebrow = styled.div`
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #15803d;
+  margin-bottom: 0.25rem;
+`;
+
+const ProductTitle = styled.h1`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  color: #0a0f1e;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+`;
+
+const ProductSub = styled.p`
+  margin: 0;
+  font-size: 0.88rem;
+  color: rgba(15, 23, 42, 0.52);
+  line-height: 1.45;
+  max-width: 40em;
+`;
+
 const ScenarioPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [tab, setTab] = useState('learn');
+  const tabFromUrl = searchParams.get('tab');
+  const [tab, setTab] = useState(tabFromUrl === 'scenarios' ? 'scenarios' : 'learn');
+
+  useEffect(() => {
+    if (tabFromUrl === 'scenarios' || tabFromUrl === 'learn') {
+      setTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
+
+  const goLearnTab = () => {
+    setTab('learn');
+    setSearchParams({ tab: 'learn' }, { replace: true });
+  };
+  const goScenariosTab = () => {
+    setTab('scenarios');
+    setSearchParams({ tab: 'scenarios' }, { replace: true });
+  };
   const [marketShock, setMarketShock] = useState(null);
   const [shockAnswered, setShockAnswered] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -2587,11 +2745,19 @@ const ScenarioPage = () => {
   );
 
   const startScenario = useCallback(async (scenario) => {
-    if (!user) {
-      sessionStorage.setItem('auth_return_path', '/learn');
+    const isGuestScenario = GUEST_SCENARIO_IDS.includes(scenario.id);
+    if (!user && !isGuestScenario) {
+      sessionStorage.setItem('auth_return_path', '/academy?tab=scenarios');
       window.location.href = '/auth?mode=signin';
       return;
     }
+    setContinueLearning({
+      type: 'scenario',
+      href: `/academy?tab=scenarios&scenario=${scenario.id}`,
+      label: scenario.title,
+      scenarioId: scenario.id,
+    });
+    recordLearningActivity('scenario');
     setActiveScenario(scenario);
     setBalance(scenario.startingBalance);
     setHoldings([]);
@@ -2649,6 +2815,19 @@ const ScenarioPage = () => {
       setAiLoading(false);
     }
   }, [user]);
+
+  const scenarioAutoStarted = useRef(false);
+  useEffect(() => {
+    if (tab !== 'scenarios' || scenarioAutoStarted.current) return;
+    const scenarioId = searchParams.get('scenario');
+    if (!scenarioId) return;
+    const builtIn = scenarios.find((s) => s.id === scenarioId);
+    const custom = customScenarios.find((s) => s.id === scenarioId || `custom-${s.dbId}` === scenarioId);
+    const target = builtIn || custom;
+    if (!target) return;
+    scenarioAutoStarted.current = true;
+    startScenario(target);
+  }, [tab, searchParams, customScenarios, startScenario]);
 
   const resetBuilder = useCallback(() => {
     setBuilderStep(0);
@@ -3076,15 +3255,20 @@ const ScenarioPage = () => {
   const handleQuickAction = useCallback(async (action) => {
     if (aiLoading) return;
     if (action === 'advice') {
-      addUserMessage('What should I buy next?');
-      callAdvisor('ASK_ADVICE', { question: 'What stock should I buy next and why?' });
+      addUserMessage('What should I practice next for this scenario?');
+      callAdvisor('ASK_ADVICE', {
+        question:
+          'For learning only (virtual money): what concept should I practice next to meet my remaining objectives? Suggest one ticker to research and why — not real-money advice.',
+      });
     } else if (action === 'progress') {
       addUserMessage('Check my progress');
       callAdvisor('CHECK_PROGRESS');
     } else if (action === 'explain') {
       if (selectedStock) {
         addUserMessage(`Tell me about ${selectedStock.symbol}`);
-        callAdvisor('ASK_ADVICE', { question: `Explain ${selectedStock.symbol} (${selectedStock.name}) - is it a good pick for this scenario? What are the risks and benefits?` });
+        callAdvisor('ASK_ADVICE', {
+          question: `Teach me about ${selectedStock.symbol} (${selectedStock.name}) for this scenario: key metrics, risks, and how it fits the learning objectives — educational only.`,
+        });
       } else {
         showNotif('Select a stock first!', 'error');
       }
@@ -3178,11 +3362,18 @@ const ScenarioPage = () => {
     return (
       <PageContainer>
         <ContentWrapper>
+          <ProductHeader>
+            <ProductEyebrow>Learn &amp; practice</ProductEyebrow>
+            <ProductTitle>Bloomvest Academy</ProductTitle>
+            <ProductSub>
+              Courses, quizzes, and virtual-money scenarios in one place — learn concepts, then practice with an AI tutor. Not real trading.
+            </ProductSub>
+          </ProductHeader>
           <TabBar style={{marginTop:'0.5rem'}}>
-            <TabBtn $active={tab === 'learn'} onClick={() => setTab('learn')}>
+            <TabBtn $active={tab === 'learn'} onClick={goLearnTab}>
               <FaBookOpen style={{fontSize:'0.8rem'}} /> Courses
             </TabBtn>
-            <TabBtn $active={tab === 'scenarios'} onClick={() => setTab('scenarios')}>
+            <TabBtn $active={tab === 'scenarios'} onClick={goScenariosTab}>
               <FaPlay style={{fontSize:'0.75rem'}} /> Scenarios
             </TabBtn>
           </TabBar>
@@ -3191,14 +3382,7 @@ const ScenarioPage = () => {
             <LearnTab />
           ) : (
           <>
-          {!user && (
-            <Card style={{ padding: '0.85rem 1rem', marginBottom: '0.75rem', background: 'linear-gradient(135deg, rgba(14,165,233,0.08), rgba(34,197,94,0.06)', border: '1px solid rgba(14,165,233,0.25)' }}>
-              <div style={{ fontWeight: 800, fontSize: '0.82rem', color: '#0f172a', marginBottom: '0.2rem' }}>Sign in to run scenarios</div>
-              <div style={{ fontSize: '0.8rem', color: 'rgba(15,23,42,0.72)', lineHeight: 1.45 }}>
-                You can browse the library below. Starting a simulation or creating a custom scenario requires a free account.
-              </div>
-            </Card>
-          )}
+          <GuestScenarioBanner signedIn={!!user} />
           <BuilderHero
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -3912,13 +4096,13 @@ const ScenarioPage = () => {
                           onClick={handleBuy}
                           disabled={!quantity || parseInt(quantity) <= 0 || costForQuantity > balance}
                         >
-                          <FaArrowUp /> Buy
+                          <FaArrowUp /> Practice buy
                         </BuyBtn>
                         <SellBtn
                           onClick={handleSell}
                           disabled={!quantity || parseInt(quantity) <= 0 || !currentHolding || currentHolding.shares < parseInt(quantity || 0)}
                         >
-                          <FaArrowDown /> Sell
+                          <FaArrowDown /> Practice sell
                         </SellBtn>
                       </TradeRow>
                       {quantity && parseInt(quantity) > 0 && (
@@ -3946,7 +4130,7 @@ const ScenarioPage = () => {
             </CardHead>
             <CardBody>
               {holdings.length === 0 ? (
-                <EmptyState>No holdings yet. Buy some stocks to get started!</EmptyState>
+                <EmptyState>No holdings yet. Make a practice trade to start learning!</EmptyState>
               ) : (
                 <HoldingsTable>
                   {holdings.map(h => {
@@ -3980,8 +4164,8 @@ const ScenarioPage = () => {
             <AdvisorHeader>
               <FaRobot />
               <div>
-                <AdvisorTitle>AI Investment Tutor</AdvisorTitle>
-                <div style={{fontSize:'0.7rem',color:'rgba(255,255,255,0.35)',marginTop:1}}>Teaches & explains every step</div>
+                <AdvisorTitle>Academy Tutor</AdvisorTitle>
+                <div style={{fontSize:'0.7rem',color:'rgba(255,255,255,0.35)',marginTop:1}}>Virtual money · concepts only</div>
               </div>
             </AdvisorHeader>
 

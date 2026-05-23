@@ -190,10 +190,10 @@ async function request(path, options = {}) {
 export const api = {
   getSessionId,
 
-  async chat(message) {
+  async chat(message, context = null) {
     return request('/ai/chat', {
       method: 'POST',
-      body: JSON.stringify({ sessionId: getSessionId(), message }),
+      body: JSON.stringify({ sessionId: getSessionId(), message, context }),
     });
   },
 

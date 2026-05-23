@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { FaBars, FaTimes, FaChevronRight, FaSignOutAlt } from 'react-icons/fa';
 import { NavLink as RouterLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { NAV_ITEMS } from '../config/platform';
 
 const NavbarContainer = styled.header`
   position: fixed;
@@ -100,6 +101,19 @@ const NavLink = styled(RouterLink)`
     font-weight: 800;
     &::after { transform: scaleX(1); }
   }
+`;
+
+const NavBadge = styled.span`
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.12rem 0.35rem;
+  border-radius: 4px;
+  margin-left: 0.25rem;
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  vertical-align: middle;
 `;
 
 const NavRight = styled.div`
@@ -405,7 +419,14 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const isActive = (path) => (location.pathname === path ? 'active' : '');
+  const isActive = (matchPaths) => {
+    const paths = Array.isArray(matchPaths) ? matchPaths : [matchPaths];
+    return paths.some(
+      (p) => location.pathname === p || location.pathname.startsWith(`${p}/`)
+    )
+      ? 'active'
+      : '';
+  };
 
   const displayName = user?.name || user?.email?.split('@')[0] || '';
   const initials = displayName
@@ -422,8 +443,12 @@ const Navbar = () => {
 
           <NavCenter>
             <NavGroup>
-              <NavLink to="/signals" className={isActive('/signals')}>Investment Intelligence</NavLink>
-              <NavLink to="/learn" className={isActive('/learn')}>Learn</NavLink>
+              {NAV_ITEMS.map((item) => (
+                <NavLink key={item.to} to={item.to} className={isActive(item.match)}>
+                  {item.label}
+                  {item.badge ? <NavBadge>{item.badge}</NavBadge> : null}
+                </NavLink>
+              ))}
             </NavGroup>
           </NavCenter>
 
@@ -486,9 +511,14 @@ const Navbar = () => {
         )}
 
         <MobileSection>
-          <MobileSectionLabel>App</MobileSectionLabel>
-          <MobileLink to="/signals" className={isActive('/signals')}>Investment Intelligence <FaChevronRight /></MobileLink>
-          <MobileLink to="/learn" className={isActive('/learn')}>Learn <FaChevronRight /></MobileLink>
+          <MobileSectionLabel>Platform</MobileSectionLabel>
+          {NAV_ITEMS.map((item) => (
+            <MobileLink key={item.to} to={item.to} className={isActive(item.match)} onClick={() => setMenuOpen(false)}>
+              {item.label}
+              {item.badge ? ` · ${item.badge}` : ''}
+              <FaChevronRight />
+            </MobileLink>
+          ))}
         </MobileSection>
       </MobileMenu>
     </>

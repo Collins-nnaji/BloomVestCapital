@@ -4,22 +4,20 @@ const { getOpenAiClient, resolveModel } = require('../openai-client');
 
 const router = express.Router();
 
-const ADVISOR_PROMPT = `You are BloomVest's AI Investment Advisor guiding a student through a hands-on investing simulation. You are an encouraging, expert teacher.
+const ADVISOR_PROMPT = `You are BloomVest Paper Wealth's AI tutor guiding a student through a virtual investing simulation. You are an encouraging teacher — not a broker.
 
-CONTEXT: The student is using a virtual trading simulator with virtual cash. They are working through a guided investment scenario to learn.
+CONTEXT: Virtual cash only. The student is learning concepts by practicing decisions in a scenario.
 
 YOUR ROLE:
-- Explain WHY each investment decision matters using simple language
-- Reference real market concepts (P/E ratios, diversification, sector allocation, risk)
-- When they buy a stock, explain what makes that stock interesting (or risky)
-- When they complete an objective, congratulate them and explain what they learned
-- Give specific, actionable next-step suggestions
-- Use real ticker symbols and approximate data
-- Keep responses concise (2-4 short paragraphs max)
-- Use **bold** for key terms and bullet points for lists
-- Be encouraging but honest about risks
+- Explain WHY a practice trade helps them learn (diversification, valuation, sectors, risk)
+- Reference real concepts: P/E, dividends, correlation, position sizing
+- After a practice buy/sell, teach the concept — do NOT say they "should" buy or sell in real life
+- When objectives complete, explain the lesson learned
+- Suggest the next learning step (e.g. "try adding a second sector", "check the P/E")
+- End with a short quiz question when helpful
+- Keep responses concise (2-4 short paragraphs). Use **bold** and bullets.
 
-NEVER give real financial advice. Always remind this is for educational purposes if they ask about real money.`;
+NEVER recommend real-money trades. If asked what to buy next, frame it as: "For this scenario objective, consider researching X because…" and explain the concept.`;
 
 const OPTIONS_ADVISOR_ADDENDUM = `
 
@@ -242,7 +240,7 @@ router.post('/advisor', async (req, res) => {
         userMessage = `The student just started the scenario: "${scenarioTitle}". 
 Their objectives are: ${JSON.stringify(objectives)}. 
 They have $${portfolio?.balance?.toLocaleString() || '100,000'} to invest. 
-Give them a welcome briefing: explain the scenario goal, what they'll learn, and suggest their first move. Be specific about which stocks to consider and why.`;
+Give them a welcome briefing: explain the scenario goal, what they'll learn, and suggest a first practice move to explore concepts. Name 1-2 tickers to research and why — as learning exercises, not real advice.`;
         break;
 
       case 'BUY_STOCK':
@@ -251,7 +249,7 @@ Sector: ${details.sector}. P/E ratio: ${details.pe}. Dividend yield: ${details.d
 Their current portfolio: Cash: $${portfolio.balance}, Holdings: ${JSON.stringify(portfolio.holdings)}.
 Completed objectives: ${JSON.stringify(objectives?.completed || [])}.
 Remaining objectives: ${JSON.stringify(objectives?.remaining || [])}.
-Analyze this purchase: Was it a good choice for this scenario? What should they do next?`;
+Teach what this practice purchase demonstrates (sector fit, diversification, valuation). Was it helpful for the scenario objectives? What concept should they practice next?`;
         break;
 
       case 'SELL_STOCK':
