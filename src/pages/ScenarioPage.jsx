@@ -2056,6 +2056,7 @@ function LearnTab() {
   const [completing, setCompleting] = useState(false);
   const [practiceScenarioId, setPracticeScenarioId] = useState(null);
   const [pathKey, setPathKey] = useState(() => getLearningPathId());
+  const lessonPanelRef = useRef(null);
 
   const loadCourses = useCallback(async () => {
     setLoading(true);
@@ -2591,7 +2592,6 @@ const ScenarioPage = () => {
   const [builderPreview, setBuilderPreview] = useState(null);
 
   const messagesEndRef = useRef(null);
-  const lessonPanelRef = useRef(null);
 
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
