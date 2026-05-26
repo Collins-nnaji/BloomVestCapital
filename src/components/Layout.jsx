@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 import AppShell, { ShellWrapper } from './AppShell';
 import OnboardingModal from './OnboardingModal';
-import { needsOnboarding } from '../utils/learningState';
+import { needsOnboarding, completeOnboarding } from '../utils/learningState';
 import styled from 'styled-components';
 
 // Public paths render with no shell, no navbar, no popup
@@ -38,7 +38,7 @@ const Layout = ({ children }) => {
       <AppShell>{children}</AppShell>
       <AnimatePresence>
         {showOnboarding && (
-          <OnboardingModal key="onboarding" onClose={() => setShowOnboarding(false)} />
+          <OnboardingModal key="onboarding" onClose={() => { completeOnboarding('aspiring-investor'); setShowOnboarding(false); }} />
         )}
       </AnimatePresence>
     </ShellWrapper>
