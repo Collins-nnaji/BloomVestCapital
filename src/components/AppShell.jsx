@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaGraduationCap, FaBrain, FaRobot, FaSignOutAlt, FaSignInAlt, FaBars, FaTimes } from 'react-icons/fa';
+import { FaGraduationCap, FaBrain, FaRobot, FaSignOutAlt, FaSignInAlt, FaBars, FaTimes, FaChartLine } from 'react-icons/fa';
 import { useAuth } from '../AuthContext';
 import { auth } from '../auth';
 const LOGO_SRC = '/bloomvestlogo.png';
@@ -9,6 +9,7 @@ const LOGO_SRC = '/bloomvestlogo.png';
 const NAV = [
   { to: '/academy', label: 'Academy', icon: FaGraduationCap },
   { to: '/iq', label: 'IQ', icon: FaBrain },
+  { to: '/charts', label: 'Charts', icon: FaChartLine },
   { to: '/mentor', label: 'Mentor', icon: FaRobot },
 ];
 
