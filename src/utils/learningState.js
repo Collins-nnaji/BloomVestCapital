@@ -144,21 +144,15 @@ export function getMentorContext() {
   return read(KEYS.mentorCtx, null);
 }
 
-export function buildMentorContextPayload({ user, progress, pathProgress }) {
+export function buildMentorContextPayload({ user, progress, streak: streakOverride }) {
   const ctx = getMentorContext();
-  const streak = getStreak();
-  const cont = getContinueLearning();
+  const streak = streakOverride || getStreak();
   const lines = [];
   if (ctx?.source) lines.push(`Current focus: ${ctx.source}`);
   if (ctx?.headline) lines.push(`Recent headline: ${ctx.headline}`);
-  if (ctx?.lessonTitle) lines.push(`Recent lesson: ${ctx.lessonTitle}`);
-  if (ctx?.scenarioTitle) lines.push(`Recent scenario: ${ctx.scenarioTitle}`);
-  if (cont?.label) lines.push(`Continue suggestion: ${cont.label}`);
-  if (pathProgress?.path?.label) {
-    lines.push(`Learning path: ${pathProgress.path.label} (${pathProgress.completedCount}/${pathProgress.total} steps)`);
-  }
-  if (progress?.completedLessons != null) {
-    lines.push(`Lessons completed: ${progress.completedLessons}/${progress.totalLessons || '?'}`);
+  if (ctx?.topicLabel) lines.push(`Topic: ${ctx.topicLabel}`);
+  if (progress?.headlinesDecoded != null) {
+    lines.push(`Headlines decoded in IQ: ${progress.headlinesDecoded}`);
   }
   if (streak.count) lines.push(`Learning streak: ${streak.count} day(s)`);
   if (user?.email) lines.push(`Signed in as: ${user.email}`);

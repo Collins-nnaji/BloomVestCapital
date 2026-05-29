@@ -1,58 +1,74 @@
-import { FaGraduationCap, FaBrain, FaRobot } from 'react-icons/fa';
+import { FaBrain, FaRobot } from 'react-icons/fa';
 
-/** Product layers — Academy includes courses + practice simulations */
+/** Core product tools — supporting the guided investing journey */
 export const PLATFORM_LAYERS = [
   {
-    id: 'academy',
-    layer: 1,
-    name: 'Bloomvest Academy',
-    tagline: 'Learn & practice',
-    path: '/academy',
-    icon: FaGraduationCap,
-    color: '#15803d',
-    bg: 'rgba(34,197,94,0.1)',
-    description:
-      'Courses, quizzes, and virtual-money scenarios in one place — Duolingo meets investing.',
-    features: [
-      'AI-guided lessons & quizzes',
-      'Practice simulations with a tutor',
-      'Custom scenario builder',
-    ],
-  },
-  {
-    id: 'iq',
-    layer: 2,
-    name: 'Bloomvest IQ',
-    tagline: 'Understand',
-    path: '/iq',
-    icon: FaBrain,
-    color: '#7c3aed',
-    bg: 'rgba(124,58,237,0.1)',
-    description:
-      'Plain-English market literacy — headline decoder, case studies, and document workshops.',
-    features: [
-      'Headline Decoder from live news',
-      'Market Lab case studies',
-      'Document workshop & reflection journal',
-    ],
-  },
-  {
     id: 'mentor',
-    layer: 3,
     name: 'AI Mentor',
-    tagline: 'Ask',
+    tagline: 'Ask anything',
     path: '/mentor',
     icon: FaRobot,
     color: '#059669',
     bg: 'rgba(16,185,129,0.12)',
     description:
-      'An always-on tutor for concepts and practice debriefs — educational only, never buy/sell advice.',
-    features: [
-      '"Explain options simply"',
-      'Macro & portfolio thinking',
-      'Links back to Academy lessons',
-    ],
+      'Your always-on tutor for concepts, macro, and portfolio thinking — plain English, on demand.',
+    features: ['Explain any concept simply', 'Macro & market context', 'Habit and mindset coaching'],
   },
+  {
+    id: 'iq',
+    name: 'Bloomvest IQ',
+    tagline: 'Understand markets',
+    path: '/iq',
+    icon: FaBrain,
+    color: '#7c3aed',
+    bg: 'rgba(124,58,237,0.1)',
+    description:
+      'Decode headlines, study real case studies, and analyse documents — without the jargon.',
+    features: ['Headline Decoder', 'Market Lab case studies', 'Document workshop & journal'],
+  },
+];
+
+export const NAV_ITEMS = [
+  { to: '/iq', label: 'Intelligence', match: ['/iq', '/signals', '/market', '/trade-ideas', '/mentor', '/ai-tutor'] },
+];
+
+export const PRODUCT_TAGLINE = 'Guided investing education — beginner to advanced';
+
+export const PRODUCT_MISSION =
+  'We guide people through investing — from first principles to advanced markets.';
+
+export const COMPANY_VALUE =
+  'BloomVest is an education company. We build financial confidence through structured guidance, not stock picks.';
+
+export const JOURNEY_STAGES = [
+  {
+    stage: 'Beginner',
+    title: 'Build your foundation',
+    description:
+      'Understand money, saving, risk, and why markets exist. Learn the vocabulary before the volatility.',
+    topics: ['Personal finance basics', 'How markets work', 'Risk & reward', 'Building habits'],
+  },
+  {
+    stage: 'Intermediate',
+    title: 'Invest with clarity',
+    description:
+      'Move from theory to practice — stocks, funds, diversification, and reading what companies actually report.',
+    topics: ['Stocks & ETFs', 'Portfolio construction', 'Earnings & filings', 'Macro literacy'],
+  },
+  {
+    stage: 'Advanced',
+    title: 'Navigate complex markets',
+    description:
+      'Options, sector rotation, global macro, and behavioural discipline — for investors who want depth.',
+    topics: ['Options & derivatives', 'Sector analysis', 'Global markets', 'Behavioural finance'],
+  },
+];
+
+export const GUIDANCE_PILLARS = [
+  { title: 'Structured path', desc: 'A clear progression from basics to advanced — no random YouTube rabbit holes.' },
+  { title: 'Plain English', desc: 'Every concept explained without jargon, hype, or hidden sales pitches.' },
+  { title: 'Real-world context', desc: 'Live headlines and case studies so you learn how markets actually behave.' },
+  { title: 'Education only', desc: 'We teach how to think — never what to buy or sell. Not financial advice.' },
 ];
 
 export const AUDIENCES = [
@@ -60,18 +76,6 @@ export const AUDIENCES = [
   'Young professionals',
   'Founders',
   'Freelancers',
-  'Creators',
-  'Aspiring investors',
+  'First-time investors',
+  'Career changers',
 ];
-
-export const NAV_ITEMS = [
-  { to: '/academy', label: 'Academy', match: ['/academy', '/learn', '/paper-wealth', '/scenario'] },
-  { to: '/iq', label: 'IQ', match: ['/iq', '/signals', '/market', '/trade-ideas'] },
-  { to: '/mentor', label: 'Mentor', match: ['/mentor', '/ai-tutor'] },
-];
-
-export const PRODUCT_TAGLINE =
-  'AI-Powered Wealth Learning & Market Intelligence Platform';
-
-export const PRODUCT_MISSION =
-  'The operating system for financially ambitious people.';

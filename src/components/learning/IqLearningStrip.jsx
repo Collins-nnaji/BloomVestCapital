@@ -1,9 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { FaFire, FaNewspaper, FaGraduationCap } from 'react-icons/fa';
-import { getStreak, getHeadlinesDecodedCount, getLearningPathId } from '../../utils/learningState';
-import { LEARNING_PATHS } from '../../config/learningPaths';
+import { FaFire, FaNewspaper, FaRobot } from 'react-icons/fa';
+import { getStreak, getHeadlinesDecodedCount } from '../../utils/learningState';
 
 const Strip = styled.div`
   display: flex;
@@ -57,18 +56,9 @@ const LinkBtn = styled(Link)`
 export default function IqLearningStrip() {
   const streak = getStreak();
   const decoded = getHeadlinesDecodedCount();
-  const path = LEARNING_PATHS.find((p) => p.id === getLearningPathId());
 
   return (
     <Strip>
-      {path && (
-        <Stat>
-          <span>{path.emoji}</span>
-          <span>
-            Path: <strong>{path.label}</strong>
-          </span>
-        </Stat>
-      )}
       {streak.count > 0 && (
         <Stat $accent="#f97316">
           <FaFire />
@@ -80,11 +70,11 @@ export default function IqLearningStrip() {
       <Stat $accent="#0ea5e9">
         <FaNewspaper />
         <span>
-          <strong>{decoded}</strong>/3 headlines decoded
+          <strong>{decoded}</strong> headlines decoded
         </span>
       </Stat>
-      <LinkBtn to="/academy">
-        <FaGraduationCap /> Continue in Academy
+      <LinkBtn to="/mentor">
+        <FaRobot /> Ask Mentor
       </LinkBtn>
     </Strip>
   );

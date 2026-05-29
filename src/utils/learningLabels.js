@@ -79,4 +79,4 @@ export function normalizePick(pick) {
 }
 
 export const EDUCATION_DISCLAIMER =
-  'Educational market commentary only — not personalized investment advice. Practice in Bloomvest Academy with virtual money.';
+  'Educational market commentary only — not personalized investment advice.';

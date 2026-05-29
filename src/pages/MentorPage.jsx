@@ -1,17 +1,15 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { FaPaperPlane, FaRobot, FaTrash, FaLightbulb } from 'react-icons/fa';
+import { FaPaperPlane, FaRobot, FaTrash, FaLightbulb, FaNewspaper, FaTimes } from 'react-icons/fa';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../api';
-import { PRODUCT_MISSION } from '../config/platform';
 import { useAuth } from '../AuthContext';
 import {
   getMentorContext,
   buildMentorContextPayload,
   getHeadlinesDecodedCount,
-  getLearningPathId,
+  getStreak,
 } from '../utils/learningState';
-import { getPathProgress } from '../config/learningPaths';
 
 const pulse = keyframes`
   0%, 100% { opacity: 1; }
@@ -19,72 +17,83 @@ const pulse = keyframes`
 `;
 
 const Page = styled.div`
-  min-height: calc(100vh - 64px);
-  padding: 1.25rem 1.5rem 2rem;
-  margin-top: 64px;
-  background: linear-gradient(180deg, #f8fafc 0%, #f0fdf4 40%, #fafbfc 100%);
+  flex: 1;
+  min-height: 0;
+  height: ${(p) => (p.$embedded ? '100%' : 'calc(100vh - 64px)')};
+  margin-top: ${(p) => (p.$embedded ? '0' : '64px')};
+  display: flex;
+  flex-direction: column;
+  background: ${(p) => (p.$embedded ? 'transparent' : '#f8fafc')};
   font-family: 'Inter', system-ui, sans-serif;
+  overflow: hidden;
 `;
 
 const Shell = styled.div`
-  max-width: 920px;
-  margin: 0 auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  height: calc(100vh - 64px - 3rem);
-  min-height: 520px;
+  max-width: ${(p) => (p.$embedded ? 'none' : '960px')};
+  width: 100%;
+  margin: 0 auto;
+  padding: ${(p) => (p.$embedded ? '0.5rem 0.85rem 0.65rem' : '0.85rem 1rem 1rem')};
+  min-height: 0;
 `;
 
-const Header = styled.header`
+const TopBar = styled.div`
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: ${(p) => (p.$embedded ? '0.45rem' : '0.65rem')};
+  flex-shrink: 0;
+  padding: ${(p) => (p.$embedded ? '0 0.15rem' : '0')};
 `;
 
-const TitleBlock = styled.div``;
-
-const Eyebrow = styled.div`
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #15803d;
-  margin-bottom: 0.35rem;
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
 `;
 
-const Title = styled.h1`
+const BrandIcon = styled.div`
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #15803d, #0f766e);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+`;
+
+const BrandText = styled.div``;
+
+const BrandTitle = styled.div`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 800;
-  color: #0a0f1e;
-  margin: 0 0 0.35rem;
-  letter-spacing: -0.03em;
+  font-size: 0.95rem;
+  color: #0f172a;
+  line-height: 1.2;
 `;
 
-const Sub = styled.p`
-  margin: 0;
-  font-size: 0.92rem;
-  color: rgba(15, 23, 42, 0.55);
-  max-width: 36em;
-  line-height: 1.5;
+const BrandSub = styled.div`
+  font-size: 0.72rem;
+  color: #64748b;
 `;
 
 const ClearBtn = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.85rem;
+  gap: 0.35rem;
+  padding: 0.45rem 0.75rem;
   border-radius: 8px;
   border: 1px solid rgba(15, 23, 42, 0.1);
   background: #fff;
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #64748b;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
   &:hover:not(:disabled) {
     border-color: rgba(239, 68, 68, 0.35);
     color: #dc2626;
@@ -95,14 +104,47 @@ const ClearBtn = styled.button`
   }
 `;
 
+const ContextBanner = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.22);
+  margin-bottom: 0.55rem;
+  flex-shrink: 0;
+`;
+
+const ContextBody = styled.div`
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8rem;
+  color: #475569;
+  line-height: 1.4;
+`;
+
+const DismissBtn = styled.button`
+  border: none;
+  background: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.15rem;
+  flex-shrink: 0;
+  &:hover {
+    color: #64748b;
+  }
+`;
+
 const ChatCard = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.92);
+  background: #fff;
   border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.06);
+  border-radius: ${(p) => (p.$embedded ? '12px' : '14px')};
+  box-shadow: ${(p) =>
+    p.$embedded ? '0 2px 12px rgba(15, 23, 42, 0.04)' : '0 4px 24px rgba(15, 23, 42, 0.05)'};
   overflow: hidden;
   min-height: 0;
 `;
@@ -110,34 +152,59 @@ const ChatCard = styled.div`
 const Messages = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 1.25rem;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 0.85rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.65rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 `;
 
 const Bubble = styled.div`
-  max-width: 88%;
+  max-width: 85%;
   align-self: ${(p) => (p.$isUser ? 'flex-end' : 'flex-start')};
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 0.95rem;
   border-radius: ${(p) => (p.$isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px')};
   background: ${(p) =>
-    p.$isUser
-      ? 'linear-gradient(135deg, #0f172a, #14532d)'
-      : 'rgba(15, 23, 42, 0.04)'};
+    p.$isUser ? 'linear-gradient(135deg, #0f172a, #14532d)' : '#f1f5f9'};
   color: ${(p) => (p.$isUser ? '#fff' : '#0f172a')};
-  font-size: 0.9rem;
-  line-height: 1.55;
-  white-space: pre-wrap;
+  font-size: 0.88rem;
+  line-height: 1.6;
+
+  /* markdown elements */
+  p { margin: 0 0 0.55rem; &:last-child { margin-bottom: 0; } }
+  strong { font-weight: 700; color: ${(p) => (p.$isUser ? '#86efac' : '#15803d')}; }
+  ul, ol { margin: 0.35rem 0 0.55rem 1.1rem; padding: 0; }
+  li { margin-bottom: 0.25rem; }
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    background: ${(p) => (p.$isUser ? 'rgba(255,255,255,.12)' : 'rgba(15,23,42,.07)')};
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  /* strip any heading tags the model occasionally outputs */
+  h1, h2, h3, h4 {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin: 0.4rem 0 0.25rem;
+  }
 `;
 
 const Typing = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: #64748b;
-  padding: 0.5rem 0;
   span {
     width: 6px;
     height: 6px;
@@ -153,29 +220,47 @@ const Typing = styled.div`
   }
 `;
 
-const Prompts = styled.div`
+const CategoryRow = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  padding: 0 1.25rem 0.75rem;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem 0.5rem;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  max-height: 88px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const CatLabel = styled.span`
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  width: 100%;
+  margin-bottom: 0.15rem;
 `;
 
 const PromptChip = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.45rem 0.75rem;
+  gap: 0.3rem;
+  padding: 0.4rem 0.7rem;
   border-radius: 999px;
-  border: 1px solid rgba(34, 197, 94, 0.25);
+  border: 1px solid rgba(34, 197, 94, 0.22);
   background: rgba(34, 197, 94, 0.06);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 600;
   color: #15803d;
   cursor: pointer;
-  transition: background 0.15s, transform 0.15s;
+  transition: background 0.15s;
   &:hover:not(:disabled) {
     background: rgba(34, 197, 94, 0.12);
-    transform: translateY(-1px);
   }
   &:disabled {
     opacity: 0.5;
@@ -186,17 +271,18 @@ const PromptChip = styled.button`
 const InputRow = styled.form`
   display: flex;
   gap: 0.5rem;
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 0.85rem;
   border-top: 1px solid rgba(15, 23, 42, 0.06);
   background: #fff;
+  flex-shrink: 0;
 `;
 
 const Input = styled.textarea`
   flex: 1;
   resize: none;
   min-height: 44px;
-  max-height: 120px;
-  padding: 0.65rem 0.85rem;
+  max-height: 100px;
+  padding: 0.6rem 0.85rem;
   border-radius: 10px;
   border: 1px solid rgba(15, 23, 42, 0.12);
   font-family: inherit;
@@ -221,179 +307,154 @@ const SendBtn = styled.button`
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: opacity 0.15s, transform 0.15s;
-  &:hover:not(:disabled) {
-    transform: scale(1.04);
-  }
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
   }
 `;
 
-const EmptyState = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
-  color: rgba(15, 23, 42, 0.5);
-  gap: 0.75rem;
-`;
+function cleanReply(text) {
+  if (!text) return '';
+  return text
+    .replace(/<\/?[a-zA-Z][^>]*>/g, '')
+    .replace(/^\s*[\r\n]+/, '')
+    .replace(/[\r\n]{3,}/g, '\n\n')
+    .trim();
+}
 
-const ContextBanner = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
-  background: linear-gradient(90deg, rgba(34, 197, 94, 0.1), rgba(139, 92, 246, 0.06));
-  border: 1px solid rgba(34, 197, 94, 0.22);
-  margin-bottom: 0.25rem;
-`;
+// Lightweight inline markdown → React elements (no external deps)
+function MdLine({ text }) {
+  // Split on **bold** spans
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith('**') && part.endsWith('**')
+          ? <strong key={i}>{part.slice(2, -2)}</strong>
+          : part
+      )}
+    </>
+  );
+}
 
-const ContextIcon = styled.div`
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: #15803d;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 0.95rem;
-`;
+function MentorMarkdown({ children }) {
+  if (!children) return null;
+  const lines = children.split('\n');
+  const elements = [];
+  let listBuf = [];
+  let olBuf = [];
+  let key = 0;
 
-const ContextTitle = styled.div`
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #15803d;
-  margin-bottom: 0.15rem;
-`;
+  const flushUl = () => {
+    if (listBuf.length) {
+      elements.push(
+        <ul key={key++}>
+          {listBuf.map((item, i) => <li key={i}><MdLine text={item} /></li>)}
+        </ul>
+      );
+      listBuf = [];
+    }
+  };
+  const flushOl = () => {
+    if (olBuf.length) {
+      elements.push(
+        <ol key={key++}>
+          {olBuf.map((item, i) => <li key={i}><MdLine text={item} /></li>)}
+        </ol>
+      );
+      olBuf = [];
+    }
+  };
 
-const ContextText = styled.div`
-  font-size: 0.85rem;
-  color: #475569;
-  line-height: 1.45;
-`;
-
-const EmptyIcon = styled.div`
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: rgba(34, 197, 94, 0.12);
-  color: #15803d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-`;
-
-const SUGGESTED = [
-  'Explain options simply — like I\'m new to investing.',
-  'Why do interest rates matter for my savings?',
-  'What is diversification and why does it matter?',
-  'How do I read a company earnings report?',
-  'What mistakes do beginners make when they start investing?',
-];
+  for (const raw of lines) {
+    const line = raw.trimEnd();
+    if (!line) {
+      flushUl(); flushOl();
+      continue;
+    }
+    const ulMatch = line.match(/^[-*•]\s+(.+)/);
+    const olMatch = line.match(/^\d+\.\s+(.+)/);
+    if (ulMatch) {
+      flushOl();
+      listBuf.push(ulMatch[1]);
+    } else if (olMatch) {
+      flushUl();
+      olBuf.push(olMatch[1]);
+    } else {
+      flushUl(); flushOl();
+      elements.push(<p key={key++}><MdLine text={line} /></p>);
+    }
+  }
+  flushUl(); flushOl();
+  return <>{elements}</>;
+}
 
 const WELCOME =
-  `Hi — I'm your BloomVest AI Mentor. ${PRODUCT_MISSION}\n\n` +
-  'Ask me anything about money, markets, or investing concepts. I teach and explain — I do not tell you what to buy or sell.\n\n' +
-  'Try a prompt below or type your own question.';
+  "Hi — I'm your BloomVest AI Mentor.\n\n" +
+  'Ask me anything about money, markets, or investing — from first principles to advanced topics. I teach and explain; I never tell you what to buy or sell.\n\n' +
+  'Pick a topic below or type your question.';
 
-function formatTime(iso) {
-  if (!iso) return '';
-  try {
-    return new Date(iso).toLocaleTimeString(undefined, { timeStyle: 'short' });
-  } catch {
-    return '';
-  }
-}
+const TOPICS = [
+  {
+    label: 'Basics',
+    prompts: [
+      'Explain investing like I\'m completely new.',
+      'What is diversification and why does it matter?',
+      'How much should I keep in an emergency fund?',
+    ],
+  },
+  {
+    label: 'Markets',
+    prompts: [
+      'Why do interest rates affect stock prices?',
+      'How do I read a company earnings report?',
+      'What does inflation mean for my savings?',
+    ],
+  },
+  {
+    label: 'Portfolio',
+    prompts: [
+      'Explain index funds vs individual stocks.',
+      'What mistakes do beginners make?',
+      'How should I think about risk tolerance?',
+    ],
+  },
+];
 
 function contextualPrompts(ctx) {
   if (ctx?.source === 'headline-decoder' && ctx.headline) {
-    const h = ctx.headline.slice(0, 100);
+    const h = ctx.headline.slice(0, 90);
     return [
-      `Explain this headline in plain English: "${h}"`,
-      'What should a beginner study before reacting to news like this?',
-      'What are common mistakes people make when headlines like this go viral?',
-      ctx.topicLabel ? `How does "${ctx.topicLabel}" connect to long-term investing?` : 'How does this tie to diversification?',
+      `Explain this headline: "${h}"`,
+      'What should I study before reacting to news like this?',
+      ctx.topicLabel ? `How does "${ctx.topicLabel}" affect long-term investors?` : 'How does this tie to diversification?',
     ];
   }
   if (ctx?.source === 'market-lab') {
     return [
-      'How should I use case studies from Market Lab without treating them as stock picks?',
-      'What is a good checklist before researching a company deeper?',
-      'Explain risk vs reward using a simple example.',
-      'What does “study focus” mean vs buying a stock?',
+      'How do I use Market Lab without treating it as stock picks?',
+      'What checklist should I use before researching a company?',
+      'Explain risk vs reward with a simple example.',
     ];
   }
-  if (ctx?.lessonTitle) {
-    return [
-      `Quiz me on concepts from: ${ctx.lessonTitle}`,
-      'Give me a real-world example of what I just learned.',
-      'What should I practice next after this lesson?',
-    ];
-  }
-  return SUGGESTED;
+  return TOPICS.flatMap((t) => t.prompts.slice(0, 1));
 }
 
-export default function MentorPage() {
+export default function MentorPage({ embedded = false }) {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [historyLoaded, setHistoryLoaded] = useState(false);
-  const [courseProgress, setCourseProgress] = useState(null);
+  const [ctxDismissed, setCtxDismissed] = useState(false);
   const bottomRef = useRef(null);
   const initialQuerySent = useRef(false);
-  const mentorCtx = getMentorContext();
+  const storedCtx = getMentorContext();
+  const showCtx = storedCtx?.headline && !ctxDismissed;
 
-  const pathProgress = useMemo(
-    () => getPathProgress(
-      getLearningPathId(),
-      courseProgress?.courses || [],
-      courseProgress?.completedIds || [],
-      getHeadlinesDecodedCount()
-    ),
-    [courseProgress]
-  );
-
-  const prompts = useMemo(() => contextualPrompts(mentorCtx), [mentorCtx?.source, mentorCtx?.headline, mentorCtx?.topicLabel, mentorCtx?.lessonTitle]);
-
-  useEffect(() => {
-    if (!user) {
-      setCourseProgress(null);
-      return;
-    }
-    let cancelled = false;
-    (async () => {
-      try {
-        const [coursesRes, progressRes] = await Promise.all([
-          api.getCourses(),
-          api.getCourseProgress(),
-        ]);
-        if (!cancelled) {
-          setCourseProgress({
-            courses: coursesRes.courses || [],
-            completedIds: progressRes.completedIds || [],
-            completedLessons: progressRes.completedLessons,
-            totalLessons: progressRes.totalLessons,
-          });
-        }
-      } catch {
-        if (!cancelled) setCourseProgress(null);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [user]);
+  const flatPrompts = useMemo(() => contextualPrompts(storedCtx), [storedCtx?.source, storedCtx?.headline, storedCtx?.topicLabel]);
+  const showTopics = historyLoaded && messages.length <= 1 && !loading;
 
   useEffect(() => {
     let cancelled = false;
@@ -406,16 +467,13 @@ export default function MentorPage() {
             hist.map((m) => ({
               role: m.role === 'user' ? 'user' : 'assistant',
               content: m.content,
-              time: m.created_at,
             }))
           );
         } else {
-          setMessages([{ role: 'assistant', content: WELCOME, time: null }]);
+          setMessages([{ role: 'assistant', content: WELCOME }]);
         }
       } catch {
-        if (!cancelled) {
-          setMessages([{ role: 'assistant', content: WELCOME, time: null }]);
-        }
+        if (!cancelled) setMessages([{ role: 'assistant', content: WELCOME }]);
       } finally {
         if (!cancelled) setHistoryLoaded(true);
       }
@@ -434,21 +492,20 @@ export default function MentorPage() {
       const trimmed = (text || '').trim();
       if (!trimmed || loading) return;
 
-      const userMsg = { role: 'user', content: trimmed, time: new Date().toISOString() };
-      setMessages((prev) => [...prev, userMsg]);
+      setMessages((prev) => [...prev, { role: 'user', content: trimmed }]);
       setInput('');
       setLoading(true);
 
       try {
         const contextPayload = buildMentorContextPayload({
           user,
-          progress: courseProgress,
-          pathProgress,
+          progress: { headlinesDecoded: getHeadlinesDecodedCount() },
+          streak: getStreak(),
         });
         const { reply } = await api.chat(trimmed, contextPayload);
         setMessages((prev) => [
           ...prev,
-          { role: 'assistant', content: reply || 'I could not generate a response. Please try again.', time: new Date().toISOString() },
+          { role: 'assistant', content: reply || 'I could not generate a response. Please try again.' },
         ]);
       } catch (e) {
         setMessages((prev) => [
@@ -456,14 +513,13 @@ export default function MentorPage() {
           {
             role: 'assistant',
             content: `Sorry — I couldn't reach the server (${e.message || 'network error'}). Make sure the backend is running.`,
-            time: new Date().toISOString(),
           },
         ]);
       } finally {
         setLoading(false);
       }
     },
-    [loading, user, courseProgress, pathProgress]
+    [loading, user]
   );
 
   useEffect(() => {
@@ -484,67 +540,63 @@ export default function MentorPage() {
     } catch {
       /* ignore */
     }
-    setMessages([{ role: 'assistant', content: WELCOME, time: null }]);
+    setMessages([{ role: 'assistant', content: WELCOME }]);
   };
 
   return (
-    <Page>
-      <Shell>
-        <Header>
-          <TitleBlock>
-            <Eyebrow>Layer 5 · AI Mentor</Eyebrow>
-            <Title>Your investing tutor, on demand</Title>
-            <Sub>
-              Concepts, macro, portfolio thinking, and habit coaching — educational only, never personalized buy/sell advice.
-            </Sub>
-          </TitleBlock>
+    <Page $embedded={embedded}>
+      <Shell $embedded={embedded}>
+        <TopBar $embedded={embedded}>
+          <Brand>
+            <BrandIcon>
+              <FaRobot />
+            </BrandIcon>
+            <BrandText>
+              <BrandTitle>{embedded ? 'Copilot' : 'AI Mentor'}</BrandTitle>
+              <BrandSub>Educational only · never buy/sell advice</BrandSub>
+            </BrandText>
+          </Brand>
           <ClearBtn type="button" onClick={handleClear} disabled={loading || !historyLoaded}>
-            <FaTrash /> Clear chat
+            <FaTrash /> Clear
           </ClearBtn>
-        </Header>
+        </TopBar>
 
-        {mentorCtx?.headline && (
+        {showCtx && (
           <ContextBanner>
-            <ContextIcon>
-              <FaNewspaper />
-            </ContextIcon>
-            <div>
-              <ContextTitle>
-                {mentorCtx.source === 'market-lab' ? 'From Market Lab' : 'Continuing from Bloomvest IQ'}
-              </ContextTitle>
-              <ContextText>
-                {mentorCtx.topicLabel && (
-                  <strong style={{ color: '#0f172a' }}>{mentorCtx.topicLabel}</strong>
-                )}
-                {mentorCtx.topicLabel && ' — '}
-                {mentorCtx.headline.length > 140
-                  ? `${mentorCtx.headline.slice(0, 140)}…`
-                  : mentorCtx.headline}
-              </ContextText>
-            </div>
+            <FaNewspaper style={{ color: '#15803d', marginTop: 2, flexShrink: 0 }} />
+            <ContextBody>
+              <strong style={{ color: '#0f172a' }}>
+                {storedCtx.source === 'market-lab' ? 'From Market Lab' : 'From Bloomvest IQ'}
+              </strong>
+              {storedCtx.topicLabel && ` · ${storedCtx.topicLabel}`}
+              {' — '}
+              {storedCtx.headline.length > 120
+                ? `${storedCtx.headline.slice(0, 120)}…`
+                : storedCtx.headline}
+            </ContextBody>
+            <DismissBtn type="button" onClick={() => setCtxDismissed(true)} aria-label="Dismiss">
+              <FaTimes />
+            </DismissBtn>
           </ContextBanner>
         )}
 
-        <ChatCard>
+        <ChatCard $embedded={embedded}>
           <Messages>
             {!historyLoaded ? (
               <Typing>
                 <span />
                 <span />
                 <span />
-                Loading conversation…
+                Loading…
               </Typing>
-            ) : messages.length === 0 ? (
-              <EmptyState>
-                <EmptyIcon>
-                  <FaRobot />
-                </EmptyIcon>
-                <div>Start a conversation with your mentor.</div>
-              </EmptyState>
             ) : (
               messages.map((m, i) => (
                 <Bubble key={`${i}-${m.role}`} $isUser={m.role === 'user'}>
-                  {m.content}
+                  {m.role === 'user' ? (
+                    m.content
+                  ) : (
+                    <MentorMarkdown>{cleanReply(m.content)}</MentorMarkdown>
+                  )}
                 </Bubble>
               ))
             )}
@@ -553,19 +605,29 @@ export default function MentorPage() {
                 <span />
                 <span />
                 <span />
-                Mentor is thinking…
+                Thinking…
               </Typing>
             )}
             <div ref={bottomRef} />
           </Messages>
 
-          <Prompts>
-            {prompts.map((q) => (
-              <PromptChip key={q} type="button" disabled={loading} onClick={() => sendMessage(q)}>
-                <FaLightbulb /> {q.length > 48 ? `${q.slice(0, 48)}…` : q}
-              </PromptChip>
-            ))}
-          </Prompts>
+          {showTopics && (
+            <CategoryRow>
+              <CatLabel>Suggested topics</CatLabel>
+              {TOPICS.map((topic) =>
+                topic.prompts.slice(0, 2).map((q) => (
+                  <PromptChip key={q} type="button" disabled={loading} onClick={() => sendMessage(q)}>
+                    <FaLightbulb /> {q.length > 42 ? `${q.slice(0, 42)}…` : q}
+                  </PromptChip>
+                ))
+              )}
+              {flatPrompts.slice(0, 2).map((q) => (
+                <PromptChip key={`ctx-${q}`} type="button" disabled={loading} onClick={() => sendMessage(q)}>
+                  <FaLightbulb /> {q.length > 42 ? `${q.slice(0, 42)}…` : q}
+                </PromptChip>
+              ))}
+            </CategoryRow>
+          )}
 
           <InputRow onSubmit={handleSubmit}>
             <Input
@@ -577,7 +639,7 @@ export default function MentorPage() {
                   handleSubmit(e);
                 }
               }}
-              placeholder="Ask anything about money, markets, or investing…"
+              placeholder="Ask about money, markets, investing…"
               rows={1}
               disabled={loading}
             />

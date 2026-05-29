@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const FooterContainer = styled.footer`
   background: #ffffff;
-  border-top: 1px solid rgba(15,23,42,0.08);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
   padding: 0.75rem 0;
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   width: 100%;
@@ -34,8 +34,12 @@ const LogoLink = styled(Link)`
   align-items: center;
   text-decoration: none;
   flex-shrink: 0;
-  &:hover { opacity: 0.8; }
-  img { height: 24px; }
+  &:hover {
+    opacity: 0.8;
+  }
+  img {
+    height: 24px;
+  }
 `;
 
 const Links = styled.div`
@@ -51,7 +55,9 @@ const FLink = styled(Link)`
   font-weight: 500;
   text-decoration: none;
   font-family: 'DM Sans', sans-serif;
-  &:hover { color: #22c55e; }
+  &:hover {
+    color: #22c55e;
+  }
 `;
 
 const Right = styled.div`
@@ -67,11 +73,14 @@ const SocialLink = styled.a`
   width: 26px;
   height: 26px;
   border-radius: 6px;
-  background: rgba(15,23,42,0.05);
+  background: rgba(15, 23, 42, 0.05);
   color: #64748b;
   font-size: 0.78rem;
   transition: all 0.18s;
-  &:hover { color: #22c55e; background: rgba(34,197,94,0.1); }
+  &:hover {
+    color: #22c55e;
+    background: rgba(34, 197, 94, 0.1);
+  }
 `;
 
 const Copyright = styled.span`
@@ -88,19 +97,30 @@ const Footer = () => (
       </LogoLink>
 
       <Links>
-        <FLink to="/academy">Academy</FLink>
-        <FLink to="/iq">IQ</FLink>
-        <FLink to="/mentor">Mentor</FLink>
+        <FLink to="/iq">Intelligence</FLink>
+        <FLink to="/iq?tab=copilot">Copilot</FLink>
+        <FLink to="/signals">Signals</FLink>
+        <FLink to="/enquiry">Account Managers</FLink>
         <FLink to="/privacy">Privacy</FLink>
         <FLink to="/terms">Terms</FLink>
       </Links>
 
       <Right>
         <Copyright>&copy; 2026 BloomVest</Copyright>
-        <SocialLink href="https://www.linkedin.com/company/bloomvest-finance" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+        <SocialLink
+          href="https://www.linkedin.com/company/bloomvest-finance"
+          aria-label="LinkedIn"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <FaLinkedin />
         </SocialLink>
-        <SocialLink href="https://twitter.com/bloomvest" aria-label="Twitter / X" target="_blank" rel="noopener noreferrer">
+        <SocialLink
+          href="https://twitter.com/bloomvest"
+          aria-label="Twitter / X"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <FaTwitter />
         </SocialLink>
       </Right>

@@ -1,47 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
-import AppShell, { ShellWrapper } from './AppShell';
-import OnboardingModal from './OnboardingModal';
-import { needsOnboarding } from '../utils/learningState';
+import React, { useEffect } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import Navbar from './Navbar';
+import Footer from './Footer';
 import styled from 'styled-components';
 
-// Public paths render with no shell, no navbar, no popup
-const PUBLIC_PATHS = ['/', '/auth', '/privacy', '/terms'];
-
-const PublicWrapper = styled.div`
+const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
+  ${(p) =>
+    p.$copilot &&
+    `
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+  `}
+`;
+
+const MainContent = styled.main`
+  flex-grow: 1;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+
+  ${(p) =>
+    p.$copilot &&
+    `
+    overflow: hidden;
+    flex: 1;
+    padding-bottom: 0;
+  `}
+
+  @media (max-width: 768px) {
+    padding-bottom: ${(p) => (p.$copilot ? '0' : '2rem')};
+  }
 `;
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const isPublic = PUBLIC_PATHS.some(p =>
-    p === '/' ? location.pathname === '/' : location.pathname.startsWith(p)
-  );
+  const [searchParams] = useSearchParams();
+  const isCopilot =
+    location.pathname.startsWith('/iq') && searchParams.get('tab') === 'copilot';
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
   useEffect(() => {
-    if (isPublic) return;
-    if (needsOnboarding()) setShowOnboarding(true);
-  }, [location.pathname, isPublic]);
-
-  if (isPublic) {
-    return <PublicWrapper>{children}</PublicWrapper>;
-  }
+    if (!isCopilot) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [isCopilot]);
 
   return (
-    <ShellWrapper>
-      <AppShell>{children}</AppShell>
-      <AnimatePresence>
-        {showOnboarding && (
-          <OnboardingModal key="onboarding" onClose={() => setShowOnboarding(false)} />
-        )}
-      </AnimatePresence>
-    </ShellWrapper>
+    <PageWrapper $copilot={isCopilot}>
+      <Navbar />
+      <MainContent $copilot={isCopilot}>{children}</MainContent>
+      {!isCopilot && <Footer />}
+    </PageWrapper>
   );
 };
 

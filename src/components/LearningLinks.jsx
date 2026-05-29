@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { FaGraduationCap, FaPlay, FaRobot, FaLightbulb } from 'react-icons/fa';
+import { FaRobot, FaBrain, FaLightbulb } from 'react-icons/fa';
 
 const Box = styled(motion.div)`
   margin-top: 0.85rem;
@@ -36,7 +36,7 @@ const Topic = styled.span`
 
 const Row = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 0.45rem;
 `;
 
@@ -52,7 +52,7 @@ const Chip = styled(Link)`
   background: #fff;
   color: #0f172a;
   border: 1px solid rgba(15, 23, 42, 0.07);
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, transform 0.15s;
 
   svg {
     font-size: 0.9rem;
@@ -63,7 +63,6 @@ const Chip = styled(Link)`
   &:hover {
     border-color: rgba(34, 197, 94, 0.45);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
   }
 `;
 
@@ -89,36 +88,30 @@ const Quiz = styled.div`
 export default function LearningLinks({ topic, mentorQuery }) {
   if (!topic) return null;
 
-  const scenarioHref = `/academy?tab=scenarios&scenario=${topic.scenarioId || 'first-investment'}`;
   const mentorHref = mentorQuery
     ? `/mentor?q=${encodeURIComponent(mentorQuery)}`
     : '/mentor';
 
   return (
-    <Box
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.25 }}
-    >
+    <Box initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
       <Head>
         <Title>Keep learning</Title>
         <Topic>{topic.label}</Topic>
       </Head>
       <Row>
-        <Chip to="/academy" $iconColor="#22c55e">
-          <FaGraduationCap /> Lessons
+        <Chip to={mentorHref} $iconColor="#059669">
+          <FaRobot /> Ask Mentor
         </Chip>
-        <Chip to={scenarioHref} $iconColor="#0ea5e9">
-          <FaPlay /> Practice
-        </Chip>
-        <Chip to={mentorHref} $iconColor="#8b5cf6">
-          <FaRobot /> Mentor
+        <Chip to="/iq?tab=picks" $iconColor="#7c3aed">
+          <FaBrain /> Market Lab
         </Chip>
       </Row>
       {topic.quizQuestion && (
         <Quiz>
           <FaLightbulb />
-          <span><strong>Quiz yourself:</strong> {topic.quizQuestion}</span>
+          <span>
+            <strong>Quiz yourself:</strong> {topic.quizQuestion}
+          </span>
         </Quiz>
       )}
     </Box>

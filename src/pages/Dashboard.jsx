@@ -9,10 +9,10 @@ import {
   FaExclamationTriangle, FaAlignLeft, FaNewspaper, FaSignal, FaCalendarAlt,
   FaStar, FaFileAlt, FaCheckDouble,
 } from 'react-icons/fa';
-import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import MentorPage from './MentorPage';
 import { extractTextFromPdfArrayBuffer } from '../utils/extractPdfText';
 import { sanitizeHeadline } from '../utils/sanitizeHeadline';
 import {
@@ -46,6 +46,28 @@ const Page = styled.div`
   color: #0f172a;
   &::-webkit-scrollbar { display: none; }
   -ms-overflow-style: none; scrollbar-width: none;
+
+  ${(p) =>
+    p.$copilot &&
+    `
+    height: 100vh;
+    min-height: 0;
+    max-height: 100vh;
+    padding-top: 64px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+  `}
+`;
+
+/* tab bar is ~45px, so copilot pane gets the rest */
+const CopilotPane = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 `;
 
 const TopHeader = styled.div`
@@ -123,6 +145,7 @@ const RunBtn = styled(motion.button)`
 const DashTabBar = styled.div`
   display:flex;gap:0;border-bottom:1px solid #f1f5f9;
   background:#ffffff;padding:0 1.5rem;overflow-x:auto;
+  flex-shrink: 0;
   scrollbar-width:none;&::-webkit-scrollbar{display:none;}
   @media(max-width:640px){padding:0;}
 `;
@@ -273,7 +296,6 @@ const ConfBarWrap = styled.div`flex:1;height:4px;background:#f1f5f9;border-radiu
 const ConfBarFill = styled.div`height:100%;background:${p=>p.$color};width:${p=>p.$pct}%;`;
 const ConfScore   = styled.div`font-weight:700;font-size:0.8rem;color:#0f172a;`;
 const DeltaText   = styled.div`font-size:0.6rem;color:${p=>p.$pos?'#10b981':'#f43f5e'};font-weight:600;`;
-const SparkWrap   = styled.div`height:30px;width:100%;`;
 const Spinner = styled(FaSpinner)`animation:${spinAnim} 0.8s linear infinite;`;
 const SpinnerGreen = styled(FaSpinner)`animation:${spinAnim} 0.8s linear infinite;color:#10b981;`;
 
@@ -977,7 +999,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    const allowed = ['picks', 'news', 'analyst', 'journal'];
+    const allowed = ['picks', 'news', 'analyst', 'journal', 'copilot'];
     if (tab && allowed.includes(tab)) setDashTab(tab);
     if (tab && !allowed.includes(tab)) setDashTab('news');
   }, [searchParams]);
@@ -1310,12 +1332,6 @@ export default function Dashboard() {
     return Math.round(rawPicks.reduce((s,p)=>s+confToPct(p.confidence),0)/rawPicks.length);
   },[rawPicks]);
 
-  const generateChartData = useCallback((trend,points)=>{
-    let val=100; const slope=trend==='Uptrend'?1.5:trend==='Downtrend'?-1.5:0;
-    return Array.from({length:points}).map((_,i)=>{val+=(Math.random()*4-2)+slope;return{name:i,value:val};});
-  },[]);
-
-  // Unique sources for news filter
   const allHeadlines = brief?.headlines||[];
   const uniqueSources = useMemo(()=>{
     const s=new Set(allHeadlines.map(h=>h.source).filter(Boolean));
@@ -1346,57 +1362,17 @@ export default function Dashboard() {
   // ── render ──────────────────────────────────────────
   return (
     <>
-    <Page>
-      {/* ── top header ── */}
-      <TopHeader>
-        <HeaderLeft>
-          <Brand>BloomVest</Brand><Slash>/</Slash>
-          <PageTitle>Bloomvest IQ</PageTitle>
-        </HeaderLeft>
-
-        <FilterGroup>
-          {[
-            { id:'All', label:'All', color:'#cbd5e1' },
-            { id:'DeepDive', label:'Deep dive', color:'#10b981' },
-            { id:'Discuss', label:'Discuss', color:'#f59e0b' },
-            { id:'Caution', label:'Caution', color:'#ef4444' },
-          ].map(f=>{
-            const af = filterAsset==='All'?rawPicks:rawPicks.filter(p=>normaliseAssetType(p.assetType)===filterAsset);
-            const count = f.id==='All'?af.length
-              :f.id==='DeepDive'?af.filter(p=>isDeepDiveLevel(p.studyLevel||p.action)).length
-              :f.id==='Discuss'?af.filter(p=>toStudyLevel(p.studyLevel||p.action)==='Discuss').length
-              :af.filter(p=>isCautionLevel(p.studyLevel||p.action)).length;
-            return (
-              <FilterBtn key={f.id} type="button" $active={filterType===f.id} onClick={()=>setFilterType(f.id)}>
-                <FilterDot $color={f.color}/>
-                {f.label}{count>0?` ${count}`:''}
-              </FilterBtn>
-            );
-          })}
-        </FilterGroup>
-
-        <HeaderRight>
-          <LastRunInfo>LAST RUN <span>{updatedLabel||'N/A'}</span></LastRunInfo>
-          <RefreshBtn type="button" onClick={()=>load(true)} disabled={loading||refreshing}>
-            <FaSyncAlt className={refreshing?'spin':''} />
-          </RefreshBtn>
-          <PrefsToggleBtn type="button" $active={showPrefs} onClick={()=>setShowPrefs(!showPrefs)}>
-            <FaFilter /> Preferences
-          </PrefsToggleBtn>
-          <RunBtn type="button" onClick={runDeepAnalysis} disabled={deepRunning}>
-            <FaMagic/>{deepRunning?`Building lab ${deepBatch}/${TOTAL_BATCHES}...`:'Run Market Lab'}
-          </RunBtn>
-        </HeaderRight>
-      </TopHeader>
-
+    <Page $copilot={dashTab === 'copilot'}>
       {/* ── tabs ── */}
       <DashTabBar>
         <DashTabBtn $active={dashTab==='news'} onClick={()=>setDashTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
         <DashTabBtn $active={dashTab==='picks'} onClick={()=>setDashTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
         <DashTabBtn $active={dashTab==='analyst'} onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Workshop</DashTabBtn>
         <DashTabBtn $active={dashTab==='journal'} onClick={()=>setDashTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
+        <DashTabBtn $active={dashTab==='copilot'} onClick={()=>setDashTab('copilot')}><FaRobot/>Copilot</DashTabBtn>
       </DashTabBar>
 
+      {dashTab !== 'copilot' && (
       <div style={{
         margin:'0 1.25rem 0.75rem', padding:'0.55rem 0.85rem', borderRadius:8,
         background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)',
@@ -1404,6 +1380,7 @@ export default function Dashboard() {
       }}>
         {EDUCATION_DISCLAIMER}
       </div>
+      )}
 
       {/* ── prefs panel ── */}
       <AnimatePresence>
@@ -1540,7 +1517,6 @@ export default function Dashboard() {
                   <THCell>AI Confidence</THCell>
                   <THCell>Thesis (click to expand)</THCell>
                   <THCell>Main Risk</THCell>
-                  <THCell>Trend</THCell>
                 </THead>
 
                 {!deepResult && !deepRunning && (
@@ -1608,15 +1584,6 @@ export default function Dashboard() {
                         <TCell>
                           <ThesisText $expanded={isExpanded} style={{color:'#ef4444'}}>{pick.risk}</ThesisText>
                         </TCell>
-                        <TCell>
-                          <SparkWrap>
-                            <ResponsiveContainer width="100%" height="100%">
-                              <AreaChart data={generateChartData(pick.trend,10)}>
-                                <Area type="monotone" dataKey="value" stroke={vColor} fill={vColor} fillOpacity={0.1} strokeWidth={1.5} isAnimationActive={false}/>
-                              </AreaChart>
-                            </ResponsiveContainer>
-                          </SparkWrap>
-                        </TCell>
                       </TRow>
 
                       {/* expanded detail drawer */}
@@ -1680,9 +1647,6 @@ export default function Dashboard() {
                     onClick={() => setMentorContext({ source: 'market-lab', headline: 'Market Lab case studies' })}
                   >
                     Discuss with Mentor
-                  </LabNextLink>
-                  <LabNextLink to="/academy?tab=scenarios&scenario=first-investment">
-                    Practice in Academy →
                   </LabNextLink>
                 </LabNextSteps>
               )}
@@ -2056,9 +2020,13 @@ export default function Dashboard() {
           )}
         </JournalFullPage>
       )}
+      {dashTab==='copilot' && (
+        <CopilotPane>
+          <MentorPage embedded />
+        </CopilotPane>
+      )}
     </Page>
 
-    {/* ── auth modal ── */}
     <AnimatePresence>
       {showAuthModal && (
         <ModalOverlay initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} transition={{duration:0.2}} onClick={()=>setShowAuthModal(false)}>
