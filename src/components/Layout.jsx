@@ -40,6 +40,7 @@ const MainContent = styled.main`
 const Layout = ({ children }) => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
+  const isLanding = location.pathname === '/';
   const isCopilot =
     location.pathname.startsWith('/iq') && searchParams.get('tab') === 'copilot';
 
@@ -60,7 +61,7 @@ const Layout = ({ children }) => {
     <PageWrapper $copilot={isCopilot}>
       <Navbar />
       <MainContent $copilot={isCopilot}>{children}</MainContent>
-      {!isCopilot && <Footer />}
+      {!isCopilot && !isLanding && <Footer />}
     </PageWrapper>
   );
 };

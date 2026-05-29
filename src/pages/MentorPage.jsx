@@ -35,7 +35,7 @@ const Shell = styled.div`
   max-width: ${(p) => (p.$embedded ? 'none' : '960px')};
   width: 100%;
   margin: 0 auto;
-  padding: ${(p) => (p.$embedded ? '0.5rem 0.85rem 0.65rem' : '0.85rem 1rem 1rem')};
+  padding: ${(p) => (p.$embedded ? '0' : '0.85rem 1rem 1rem')};
   min-height: 0;
 `;
 
@@ -44,9 +44,10 @@ const TopBar = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: ${(p) => (p.$embedded ? '0.45rem' : '0.65rem')};
+  margin-bottom: ${(p) => (p.$embedded ? '0' : '0.65rem')};
   flex-shrink: 0;
-  padding: ${(p) => (p.$embedded ? '0 0.15rem' : '0')};
+  padding: ${(p) => (p.$embedded ? '0.65rem clamp(1rem, 5vw, 3rem) 0.5rem' : '0')};
+  border-bottom: ${(p) => (p.$embedded ? '1px solid #f1f5f9' : 'none')};
 `;
 
 const Brand = styled.div`
@@ -140,11 +141,11 @@ const ChatCard = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  border-radius: ${(p) => (p.$embedded ? '12px' : '14px')};
+  background: ${(p) => (p.$embedded ? 'transparent' : '#fff')};
+  border: ${(p) => (p.$embedded ? 'none' : '1px solid rgba(15, 23, 42, 0.08)')};
+  border-radius: ${(p) => (p.$embedded ? '0' : '14px')};
   box-shadow: ${(p) =>
-    p.$embedded ? '0 2px 12px rgba(15, 23, 42, 0.04)' : '0 4px 24px rgba(15, 23, 42, 0.05)'};
+    p.$embedded ? 'none' : '0 4px 24px rgba(15, 23, 42, 0.05)'};
   overflow: hidden;
   min-height: 0;
 `;
@@ -154,10 +155,10 @@ const Messages = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
-  padding: 0.85rem 1rem;
+  padding: ${(p) => (p.$embedded ? '1rem clamp(1rem, 5vw, 3rem)' : '0.85rem 1rem')};
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.75rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -169,33 +170,38 @@ const Messages = styled.div`
 `;
 
 const Bubble = styled.div`
-  max-width: 85%;
+  max-width: ${(p) =>
+    p.$embedded
+      ? p.$isUser
+        ? 'min(520px, 72%)'
+        : 'min(820px, 100%)'
+      : '85%'};
   align-self: ${(p) => (p.$isUser ? 'flex-end' : 'flex-start')};
-  padding: 0.75rem 0.95rem;
+  padding: 0.85rem 1rem;
   border-radius: ${(p) => (p.$isUser ? '14px 14px 4px 14px' : '14px 14px 14px 4px')};
   background: ${(p) =>
-    p.$isUser ? 'linear-gradient(135deg, #0f172a, #14532d)' : '#f1f5f9'};
+    p.$isUser ? 'linear-gradient(135deg, #0f172a, #14532d)' : '#f8fafc'};
   color: ${(p) => (p.$isUser ? '#fff' : '#0f172a')};
-  font-size: 0.88rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  word-break: break-word;
 
   /* markdown elements */
-  p { margin: 0 0 0.55rem; &:last-child { margin-bottom: 0; } }
+  p { margin: 0 0 0.6rem; &:last-child { margin-bottom: 0; } }
   strong { font-weight: 700; color: ${(p) => (p.$isUser ? '#86efac' : '#15803d')}; }
-  ul, ol { margin: 0.35rem 0 0.55rem 1.1rem; padding: 0; }
-  li { margin-bottom: 0.25rem; }
+  ul, ol { margin: 0.4rem 0 0.6rem 1.15rem; padding: 0; }
+  li { margin-bottom: 0.3rem; }
   code {
     font-family: 'JetBrains Mono', 'Fira Code', monospace;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     background: ${(p) => (p.$isUser ? 'rgba(255,255,255,.12)' : 'rgba(15,23,42,.07)')};
     padding: 0.1em 0.35em;
     border-radius: 4px;
   }
-  /* strip any heading tags the model occasionally outputs */
   h1, h2, h3, h4 {
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    margin: 0.4rem 0 0.25rem;
+    margin: 0.45rem 0 0.3rem;
   }
 `;
 
@@ -224,7 +230,7 @@ const CategoryRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  padding: 0.55rem 0.85rem 0.5rem;
+  padding: ${(p) => (p.$embedded ? '0.55rem clamp(1rem, 5vw, 3rem) 0.5rem' : '0.55rem 0.85rem 0.5rem')};
   border-top: 1px solid #f1f5f9;
   flex-shrink: 0;
   max-height: 88px;
@@ -271,7 +277,7 @@ const PromptChip = styled.button`
 const InputRow = styled.form`
   display: flex;
   gap: 0.5rem;
-  padding: 0.75rem 0.85rem;
+  padding: ${(p) => (p.$embedded ? '0.85rem clamp(1rem, 5vw, 3rem)' : '0.75rem 0.85rem')};
   border-top: 1px solid rgba(15, 23, 42, 0.06);
   background: #fff;
   flex-shrink: 0;
@@ -317,6 +323,9 @@ function cleanReply(text) {
   if (!text) return '';
   return text
     .replace(/<\/?[a-zA-Z][^>]*>/g, '')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^\s*[-*_]{3,}\s*$/gm, '')
+    .replace(/^>\s+/gm, '')
     .replace(/^\s*[\r\n]+/, '')
     .replace(/[\r\n]{3,}/g, '\n\n')
     .trim();
@@ -390,7 +399,7 @@ function MentorMarkdown({ children }) {
 }
 
 const WELCOME =
-  "Hi — I'm your BloomVest AI Mentor.\n\n" +
+  "Hi — I'm your BloomVest Copilot.\n\n" +
   'Ask me anything about money, markets, or investing — from first principles to advanced topics. I teach and explain; I never tell you what to buy or sell.\n\n' +
   'Pick a topic below or type your question.';
 
@@ -562,7 +571,7 @@ export default function MentorPage({ embedded = false }) {
         </TopBar>
 
         {showCtx && (
-          <ContextBanner>
+          <ContextBanner style={embedded ? { margin: '0 clamp(1rem, 5vw, 3rem) 0.55rem' } : undefined}>
             <FaNewspaper style={{ color: '#15803d', marginTop: 2, flexShrink: 0 }} />
             <ContextBody>
               <strong style={{ color: '#0f172a' }}>
@@ -581,7 +590,7 @@ export default function MentorPage({ embedded = false }) {
         )}
 
         <ChatCard $embedded={embedded}>
-          <Messages>
+          <Messages $embedded={embedded}>
             {!historyLoaded ? (
               <Typing>
                 <span />
@@ -591,7 +600,7 @@ export default function MentorPage({ embedded = false }) {
               </Typing>
             ) : (
               messages.map((m, i) => (
-                <Bubble key={`${i}-${m.role}`} $isUser={m.role === 'user'}>
+                <Bubble key={`${i}-${m.role}`} $isUser={m.role === 'user'} $embedded={embedded}>
                   {m.role === 'user' ? (
                     m.content
                   ) : (
@@ -612,7 +621,7 @@ export default function MentorPage({ embedded = false }) {
           </Messages>
 
           {showTopics && (
-            <CategoryRow>
+            <CategoryRow $embedded={embedded}>
               <CatLabel>Suggested topics</CatLabel>
               {TOPICS.map((topic) =>
                 topic.prompts.slice(0, 2).map((q) => (
@@ -629,7 +638,7 @@ export default function MentorPage({ embedded = false }) {
             </CategoryRow>
           )}
 
-          <InputRow onSubmit={handleSubmit}>
+          <InputRow onSubmit={handleSubmit} $embedded={embedded}>
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}

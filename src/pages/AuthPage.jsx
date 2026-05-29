@@ -236,7 +236,7 @@ const AuthPage = () => {
   const location = useLocation();
   const fromLocation = location.state?.from;
   const storedPath = sessionStorage.getItem('auth_return_path');
-  const from = fromLocation ? (fromLocation.pathname + (fromLocation.search || '')) : (storedPath || '/console');
+  const from = fromLocation ? (fromLocation.pathname + (fromLocation.search || '')) : (storedPath || '/iq');
   const modeParam = new URLSearchParams(location.search).get('mode');
   useEffect(() => {
     if (modeParam === 'signup' || modeParam === 'signin') setMode(modeParam);

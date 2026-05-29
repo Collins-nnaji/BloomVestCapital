@@ -662,6 +662,9 @@ export default function LandingPage() {
               <BtnPrimary onClick={() => navigate('/enquiry')}>
                 Get Your Strategy <FaArrowRight />
               </BtnPrimary>
+              <BtnGhost onClick={() => navigate('/iq?tab=picks')}>
+                Open Intelligence
+              </BtnGhost>
               <BtnGhost onClick={() => navigate('/signals')}>
                 View Daily Signals
               </BtnGhost>

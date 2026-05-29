@@ -50,14 +50,13 @@ const Page = styled.div`
   ${(p) =>
     p.$copilot &&
     `
-    height: 100vh;
+    flex: 1;
     min-height: 0;
-    max-height: 100vh;
     padding-top: 64px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: #f8fafc;
+    background: #ffffff;
   `}
 `;
 
@@ -68,6 +67,7 @@ const CopilotPane = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  width: 100%;
 `;
 
 const TopHeader = styled.div`
@@ -142,6 +142,37 @@ const RunBtn = styled(motion.button)`
 `;
 
 /* ── tabs ───────────────────────────────────────────── */
+const IntelligenceBar = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.65rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  @media (max-width: 640px) {
+    padding: 0.6rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+`;
+const IntelligenceTitle = styled.h1`
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+`;
+const IntelligenceSub = styled.p`
+  margin: 0;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 500;
+`;
+
 const DashTabBar = styled.div`
   display:flex;gap:0;border-bottom:1px solid #f1f5f9;
   background:#ffffff;padding:0 1.5rem;overflow-x:auto;
@@ -980,7 +1011,16 @@ export default function Dashboard() {
   const [briefMode,  setBriefMode]  = useState('longTerm');
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectTab = useCallback((tab) => {
+    setDashTab(tab);
+    if (tab === 'news') {
+      setSearchParams({}, { replace: true });
+    } else {
+      setSearchParams({ tab }, { replace: true });
+    }
+  }, [setSearchParams]);
 
   const [deepRunning,  setDeepRunning]  = useState(false);
   const [deepProgress, setDeepProgress] = useState(0);
@@ -1290,7 +1330,7 @@ export default function Dashboard() {
     });
     setNotes(p=>[note,...p]);
     setFocusedNote(note.id);
-    setDashTab('journal');
+    selectTab('journal');
   }, []);
 
   const updatedLabel = brief?.generatedAt
@@ -1305,7 +1345,7 @@ export default function Dashboard() {
       : `Market Lab run at ${new Date(deepResult.generatedAt).toLocaleString()}.\nNo deep-dive case studies yet — run analysis again.`;
     const n = { id:Date.now(), title:`Market Lab notes - ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`,
       text, tag:'review', date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) };
-    setNotes(p=>[n,...p]); setFocusedNote(n.id); setDashTab('journal');
+    setNotes(p=>[n,...p]); setFocusedNote(n.id); selectTab('journal');
   }, [deepResult]);
 
   const rawPicks = deepResult?.picks||[];
@@ -1363,13 +1403,19 @@ export default function Dashboard() {
   return (
     <>
     <Page $copilot={dashTab === 'copilot'}>
-      {/* ── tabs ── */}
+      {dashTab !== 'copilot' && (
+        <IntelligenceBar>
+          <IntelligenceTitle>BloomVest Intelligence</IntelligenceTitle>
+          <IntelligenceSub>Headlines · Market Lab · Documents · Copilot</IntelligenceSub>
+        </IntelligenceBar>
+      )}
+
       <DashTabBar>
-        <DashTabBtn $active={dashTab==='news'} onClick={()=>setDashTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
-        <DashTabBtn $active={dashTab==='picks'} onClick={()=>setDashTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
-        <DashTabBtn $active={dashTab==='analyst'} onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Workshop</DashTabBtn>
-        <DashTabBtn $active={dashTab==='journal'} onClick={()=>setDashTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
-        <DashTabBtn $active={dashTab==='copilot'} onClick={()=>setDashTab('copilot')}><FaRobot/>Copilot</DashTabBtn>
+        <DashTabBtn $active={dashTab==='news'} onClick={()=>selectTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
+        <DashTabBtn $active={dashTab==='picks'} onClick={()=>selectTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
+        <DashTabBtn $active={dashTab==='analyst'} onClick={()=>selectTab('analyst')}><FaFileAlt/>Doc Workshop</DashTabBtn>
+        <DashTabBtn $active={dashTab==='journal'} onClick={()=>selectTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
+        <DashTabBtn $active={dashTab==='copilot'} onClick={()=>selectTab('copilot')}><FaRobot/>Copilot</DashTabBtn>
       </DashTabBar>
 
       {dashTab !== 'copilot' && (

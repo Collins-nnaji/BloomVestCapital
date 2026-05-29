@@ -16,15 +16,15 @@ export const PLATFORM_LAYERS = [
   },
   {
     id: 'iq',
-    name: 'Bloomvest IQ',
-    tagline: 'Understand markets',
+    name: 'BloomVest Intelligence',
+    tagline: 'Learn markets with AI',
     path: '/iq',
     icon: FaBrain,
     color: '#7c3aed',
     bg: 'rgba(124,58,237,0.1)',
     description:
-      'Decode headlines, study real case studies, and analyse documents — without the jargon.',
-    features: ['Headline Decoder', 'Market Lab case studies', 'Document workshop & journal'],
+      'Decode headlines, study case studies, analyse documents, and ask Copilot anything — built for learning, not stock picks.',
+    features: ['Headline Decoder', 'Market Lab', 'Doc Workshop', 'Copilot AI tutor'],
   },
 ];
 
