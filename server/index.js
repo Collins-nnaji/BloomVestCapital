@@ -18,7 +18,8 @@ const coursesRoutes = require('./routes/courses');
 const scenarioRoutes = require('./routes/scenario');
 const billingRoutes = require('./routes/billing');
 const authRoutes = require('./routes/auth');
-const leadsRoutes = require('./routes/leads');
+const leadsRoutes    = require('./routes/leads');
+const glossaryRoutes = require('./routes/glossary');
 const { logAiConfigSummary } = require('./openai-client');
 
 const app = express();
@@ -37,7 +38,8 @@ app.use('/api/courses', coursesRoutes);
 app.use('/api/scenario', scenarioRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/leads', leadsRoutes);
+app.use('/api/leads',    leadsRoutes);
+app.use('/api/glossary', glossaryRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

@@ -372,6 +372,47 @@ export const api = {
     return request('/ai/market-data');
   },
 
+  /* ── Glossary ── */
+  async getGlossaryHistory() {
+    return request(`/glossary/history?sessionId=${getSessionId()}`);
+  },
+  async saveGlossaryHistory(terms, aiResponse, termLabels) {
+    return request('/glossary/history', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), terms, aiResponse, termLabels }),
+    });
+  },
+  async deleteGlossaryHistory(id) {
+    return request(`/glossary/history/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sessionId: getSessionId() }),
+    });
+  },
+  async getGlossaryBookmarks() {
+    return request(`/glossary/bookmarks?sessionId=${getSessionId()}`);
+  },
+  async saveGlossaryBookmark(termId, termLabel, category) {
+    return request('/glossary/bookmarks', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), termId, termLabel, category }),
+    });
+  },
+  async deleteGlossaryBookmark(termId) {
+    return request(`/glossary/bookmarks/${termId}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sessionId: getSessionId() }),
+    });
+  },
+  async getGlossaryLearned() {
+    return request(`/glossary/learned?sessionId=${getSessionId()}`);
+  },
+  async markGlossaryLearned(termId) {
+    return request('/glossary/learned', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), termId }),
+    });
+  },
+
   async getTradeIdeas() {
     return request('/ai/trade-ideas', { method: 'POST', body: JSON.stringify({}) });
   },

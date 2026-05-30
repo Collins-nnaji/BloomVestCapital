@@ -1,4 +1,4 @@
-import { FaBrain, FaRobot } from 'react-icons/fa';
+import { FaBrain, FaRobot, FaBook } from 'react-icons/fa';
 
 /** Core product tools — supporting the guided investing journey */
 export const PLATFORM_LAYERS = [
@@ -23,13 +23,14 @@ export const PLATFORM_LAYERS = [
     color: '#7c3aed',
     bg: 'rgba(124,58,237,0.1)',
     description:
-      'Decode headlines, study case studies, analyse documents, and ask Copilot anything — built for learning, not stock picks.',
-    features: ['Headline Decoder', 'Market Lab', 'Doc Workshop', 'Copilot AI tutor'],
+      'Decode headlines, study case studies, and ask Copilot anything — built for learning, not stock picks.',
+    features: ['Headline Decoder', 'Market Lab', 'Copilot AI tutor'],
   },
 ];
 
 export const NAV_ITEMS = [
-  { to: '/iq', label: 'Intelligence', match: ['/iq', '/signals', '/market', '/trade-ideas', '/mentor', '/ai-tutor'] },
+  { to: '/iq',       label: 'Intelligence', match: ['/iq', '/signals', '/market', '/trade-ideas', '/mentor', '/ai-tutor'] },
+  { to: '/glossary', label: 'Glossary',     match: ['/glossary'] },
 ];
 
 export const PRODUCT_TAGLINE = 'Guided investing education — beginner to advanced';
