@@ -7,9 +7,10 @@ import {
   FaArrowRight, FaHeart, FaRegHeart, FaCheckCircle, FaCheck,
   FaChevronRight, FaChevronLeft, FaLayerGroup, FaFire,
   FaCopy, FaRegClock, FaStar, FaTrash, FaGraduationCap,
-  FaChartLine, FaSync, FaTrophy,
+  FaChartLine, FaSync, FaTrophy, FaLock,
 } from 'react-icons/fa';
 import { api } from '../api';
+import { useAuth } from '../AuthContext';
 
 /* ═══════════════════════════════════════════════════════════════
    TERMS DATA — 130+ terms with category + difficulty level
@@ -219,7 +220,7 @@ function getTermOfDay() {
    AI RESPONSE PARSER
 ═══════════════════════════════════════════════════════════════ */
 function parseAIResponse(raw) {
-  const text = typeof raw === 'string' ? raw : raw?.message || JSON.stringify(raw);
+  const text = typeof raw === 'string' ? raw : raw?.reply || raw?.message || JSON.stringify(raw);
   try {
     const m = text.match(/\{[\s\S]*\}/);
     if (m) return JSON.parse(m[0]);
@@ -240,13 +241,13 @@ const fadeUp = keyframes`from{opacity:0;transform:translateY(12px)}to{opacity:1;
 
 const Page = styled.div`
   min-height: 100vh;
-  background: #f0f4f8;
+  background: #f8f9fa;
 `;
 
 /* ── Top Header ── */
 const Header = styled.div`
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  padding: 1.5rem 1.5rem 1.25rem;
+  background: linear-gradient(135deg, #0a0f1a 0%, #0f1f14 60%, #0a1a0d 100%);
+  padding: calc(64px + 1.75rem) 1.5rem 1.5rem;
   position: relative;
   overflow: hidden;
   &::after {
@@ -300,8 +301,8 @@ const StatPill = styled(motion.div)`
   gap: 0.4rem;
   padding: 0.4rem 0.85rem;
   border-radius: 99px;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(74,222,128,0.08);
+  border: 1px solid rgba(74,222,128,0.2);
   font-size: 0.78rem;
   font-weight: 700;
   color: rgba(255,255,255,0.9);
@@ -309,8 +310,8 @@ const StatPill = styled(motion.div)`
 
 const ModeToggle = styled.div`
   display: flex;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(74,222,128,0.2);
   border-radius: 99px;
   padding: 3px;
   gap: 2px;
@@ -324,8 +325,8 @@ const ModeBtn = styled.button`
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  background: ${p => p.$active ? '#fff' : 'transparent'};
-  color: ${p => p.$active ? '#0f172a' : 'rgba(255,255,255,0.55)'};
+  background: ${p => p.$active ? '#15803d' : 'transparent'};
+  color: ${p => p.$active ? '#fff' : 'rgba(255,255,255,0.55)'};
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -339,8 +340,8 @@ const DailySection = styled.div`
 `;
 
 const DailyCard = styled(motion.div)`
-  background: linear-gradient(135deg, #7c3aed12, #0ea5e912);
-  border: 1px solid rgba(124,58,237,0.18);
+  background: linear-gradient(135deg, rgba(21,128,61,0.07), rgba(74,222,128,0.05));
+  border: 1px solid rgba(21,128,61,0.2);
   border-radius: 16px;
   padding: 1rem 1.25rem;
   display: flex;
@@ -349,7 +350,7 @@ const DailyCard = styled(motion.div)`
   flex-wrap: wrap;
   cursor: pointer;
   transition: box-shadow 0.2s;
-  &:hover { box-shadow: 0 4px 20px rgba(124,58,237,0.15); }
+  &:hover { box-shadow: 0 4px 20px rgba(21,128,61,0.15); }
 `;
 
 const DailyLabel = styled.span`
@@ -357,8 +358,8 @@ const DailyLabel = styled.span`
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #7c3aed;
-  background: rgba(124,58,237,0.1);
+  color: #15803d;
+  background: rgba(21,128,61,0.1);
   padding: 0.18rem 0.5rem;
   border-radius: 5px;
   white-space: nowrap;
@@ -404,11 +405,11 @@ const SetChip = styled(motion.button)`
   background: #fff;
   font-size: 0.8rem;
   font-weight: 700;
-  color: #334155;
+  color: #1a2e1a;
   cursor: pointer;
   transition: all 0.15s;
   white-space: nowrap;
-  &:hover { border-color: #7c3aed; color: #7c3aed; background: rgba(124,58,237,0.04); }
+  &:hover { border-color: #15803d; color: #15803d; background: rgba(21,128,61,0.04); }
 `;
 
 /* ── Body Grid ── */
@@ -459,7 +460,7 @@ const SearchInput = styled.input`
   background: #fafbfc;
   color: #0f172a;
   box-sizing: border-box;
-  &:focus { outline: none; border-color: #7c3aed; background: #fff; }
+  &:focus { outline: none; border-color: #15803d; background: #fff; }
   &::placeholder { color: #94a3b8; }
 `;
 
@@ -528,7 +529,7 @@ const TermRow = styled.div`
   opacity: ${p => p.$muted ? 0.38 : 1};
   &:hover { background: #f8fafc; border-color: #e2e8f0; }
   &:active { cursor: grabbing; }
-  &.dragging { background: rgba(124,58,237,0.06); border-color: #7c3aed; }
+  &.dragging { background: rgba(21,128,61,0.06); border-color: #15803d; }
 `;
 
 const GripIco = styled(FaGripVertical)`color:#cbd5e1;font-size:0.7rem;flex-shrink:0;`;
@@ -541,7 +542,7 @@ const ABtn    = styled.button`
   display:flex;align-items:center;justify-content:center;font-size:0.6rem;
   opacity:0;transition:all 0.12s;flex-shrink:0;
   ${TermRow}:hover & { opacity:1; }
-  &:hover{border-color:#7c3aed;color:#7c3aed;}
+  &:hover{border-color:#15803d;color:#15803d;}
 `;
 const BookmarkIco = styled.button`
   width:18px;height:18px;border:none;background:none;cursor:pointer;
@@ -596,9 +597,9 @@ const DropZone = styled.div`
   gap: 0.45rem;
   align-items: flex-start;
   align-content: flex-start;
-  border: 2px dashed ${p => p.$over ? '#7c3aed' : '#e2e8f0'};
+  border: 2px dashed ${p => p.$over ? '#15803d' : '#e2e8f0'};
   border-radius: 12px;
-  background: ${p => p.$over ? 'rgba(124,58,237,0.04)' : '#fafbfc'};
+  background: ${p => p.$over ? 'rgba(21,128,61,0.04)' : '#fafbfc'};
   transition: border-color 0.15s, background 0.15s;
 `;
 
@@ -648,7 +649,7 @@ const ExplainBtn = styled(motion.button)`
   border-radius: 11px;
   background: ${p => p.$disabled
     ? '#e2e8f0'
-    : 'linear-gradient(135deg, #7c3aed, #0ea5e9)'};
+    : 'linear-gradient(135deg, #15803d, #166534)'};
   color: ${p => p.$disabled ? '#94a3b8' : '#fff'};
   font-weight: 800;
   font-size: 0.88rem;
@@ -715,7 +716,7 @@ const IconBtn = styled.button`
   gap: 0.3rem;
   font-weight: 600;
   transition: all 0.12s;
-  &:hover { border-color: #7c3aed; color: #7c3aed; }
+  &:hover { border-color: #15803d; color: #15803d; }
 `;
 
 const ExBody = styled.div`
@@ -792,7 +793,7 @@ const RelChip = styled.button`
   align-items: center;
   gap: 0.22rem;
   transition: all 0.12s;
-  &:hover { border-color: #7c3aed; color: #7c3aed; background: rgba(124,58,237,0.04); }
+  &:hover { border-color: #15803d; color: #15803d; background: rgba(21,128,61,0.04); }
 `;
 
 const MarkLearnedBtn = styled(motion.button)`
@@ -872,6 +873,89 @@ const TimeLabel = styled.span`
   margin-left: auto;
   font-weight: 500;
   flex-shrink: 0;
+`;
+
+/* ── Auth Gate ── */
+const AuthGatePage = styled.div`
+  min-height: 100vh;
+  background: #0a0f1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+`;
+
+const AuthGateCard = styled(motion.div)`
+  background: #0f1a0f;
+  border: 1px solid rgba(74,222,128,0.2);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+`;
+
+const AuthGateLockIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(21,128,61,0.12);
+  border: 1.5px solid rgba(74,222,128,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 1.5rem;
+  color: #4ade80;
+`;
+
+const AuthGateTitle = styled.h2`
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.6rem;
+`;
+
+const AuthGateSub = styled.p`
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.55);
+  margin: 0 0 2rem;
+  line-height: 1.6;
+`;
+
+const AuthGateBtn = styled(motion.a)`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background: linear-gradient(135deg, #15803d, #166534);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  &:hover { opacity: 0.9; }
+`;
+
+const AuthGateFeatures = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 1.75rem;
+  text-align: left;
+`;
+
+const AuthFeatureRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.6);
 `;
 
 /* ── Flashcard Mode ── */
@@ -1173,6 +1257,7 @@ function timeAgo(iso) {
 }
 
 export default function GlossaryPage() {
+  const { user } = useAuth();
   const [mode,       setMode]      = useState('learn');   // 'learn' | 'flashcard'
   const [search,     setSearch]    = useState('');
   const [activeCat,  setActiveCat] = useState('all');
@@ -1352,13 +1437,47 @@ Only output the JSON. No other text.`;
       ? TERMS.filter(t => t.category === activeCat)
       : TERMS.filter(t => t.level === (activeLevel || 1)));
 
+  if (!user) {
+    return (
+      <AuthGatePage>
+        <AuthGateCard
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <AuthGateLockIcon><FaLock /></AuthGateLockIcon>
+          <AuthGateTitle>Sign in to access AI Tutor</AuthGateTitle>
+          <AuthGateSub>
+            Get AI-powered lessons on any financial term — drag, drop, and learn with real-world scenarios and company examples.
+          </AuthGateSub>
+          <AuthGateBtn href="/auth" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+            <FaRobot /> Sign in to start learning
+          </AuthGateBtn>
+          <AuthGateFeatures>
+            {[
+              '130+ financial terms with AI explanations',
+              'Real-world scenarios & company examples',
+              'Flashcard mode & study sets',
+              'Track your learning progress',
+            ].map(f => (
+              <AuthFeatureRow key={f}>
+                <FaCheck style={{ color: '#4ade80', flexShrink: 0, fontSize: '0.7rem' }} />
+                {f}
+              </AuthFeatureRow>
+            ))}
+          </AuthGateFeatures>
+        </AuthGateCard>
+      </AuthGatePage>
+    );
+  }
+
   return (
     <Page>
       {/* ── Header ── */}
       <Header>
         <HeaderTop>
           <div>
-            <PageTitle><FaBook /> Financial Glossary</PageTitle>
+            <PageTitle><FaRobot /> Financial AI Tutor</PageTitle>
             <PageSub>Learn every financial term — drag to your board, get AI-powered lessons with real examples</PageSub>
           </div>
           <ModeToggle>
@@ -1386,7 +1505,7 @@ Only output the JSON. No other text.`;
           <DailyLabel>⭐ Term of the Day</DailyLabel>
           <DailyTerm>{termOfDay.label}</DailyTerm>
           <DailyDesc>{LEVEL_META[termOfDay.level]?.dot} {LEVEL_META[termOfDay.level]?.label} · {CAT_MAP[termOfDay.category]?.label}</DailyDesc>
-          <span style={{ marginLeft: 'auto', fontSize: '0.8rem', fontWeight: 700, color: '#7c3aed', display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ marginLeft: 'auto', fontSize: '0.8rem', fontWeight: 700, color: '#15803d', display: 'flex', alignItems: 'center', gap: 4 }}>
             Add &amp; Learn <FaArrowRight />
           </span>
         </DailyCard>
