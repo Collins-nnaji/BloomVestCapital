@@ -132,6 +132,31 @@ CREATE TABLE IF NOT EXISTS user_analysis (
   preferences JSONB,
   generated_at TIMESTAMPTZ DEFAULT NOW()
 );
+CREATE TABLE IF NOT EXISTS glossary_history (
+  id SERIAL PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  terms TEXT[] NOT NULL,
+  ai_response JSONB NOT NULL,
+  term_labels TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_glossary_history_user ON glossary_history(user_id, created_at DESC);
+CREATE TABLE IF NOT EXISTS glossary_bookmarks (
+  id SERIAL PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  term_id VARCHAR(100) NOT NULL,
+  term_label VARCHAR(255) NOT NULL,
+  category VARCHAR(100),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, term_id)
+);
+CREATE INDEX IF NOT EXISTS idx_glossary_bookmarks_user ON glossary_bookmarks(user_id);
+CREATE TABLE IF NOT EXISTS glossary_learned (
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  term_id VARCHAR(100) NOT NULL,
+  learned_at TIMESTAMPTZ DEFAULT NOW(),
+  PRIMARY KEY (user_id, term_id)
+);
 `;
 
 async function initializeDatabase() {
