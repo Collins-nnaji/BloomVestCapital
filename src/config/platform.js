@@ -1,4 +1,4 @@
-import { FaGraduationCap, FaBrain, FaRobot } from 'react-icons/fa';
+import { FaGraduationCap, FaBrain, FaRobot, FaBook } from 'react-icons/fa';
 
 /** Product layers — Academy includes courses + practice simulations */
 export const PLATFORM_LAYERS = [
@@ -29,11 +29,11 @@ export const PLATFORM_LAYERS = [
     color: '#7c3aed',
     bg: 'rgba(124,58,237,0.1)',
     description:
-      'Plain-English market literacy — headline decoder, case studies, and document workshops.',
+      'Plain-English market literacy — headline decoder, case studies, and reflection journal.',
     features: [
       'Headline Decoder from live news',
       'Market Lab case studies',
-      'Document workshop & reflection journal',
+      'Reflection journal',
     ],
   },
   {
@@ -65,9 +65,10 @@ export const AUDIENCES = [
 ];
 
 export const NAV_ITEMS = [
-  { to: '/academy', label: 'Academy', match: ['/academy', '/learn', '/paper-wealth', '/scenario'] },
-  { to: '/iq', label: 'IQ', match: ['/iq', '/signals', '/market', '/trade-ideas'] },
-  { to: '/mentor', label: 'Mentor', match: ['/mentor', '/ai-tutor'] },
+  { to: '/academy',  label: 'Academy',  match: ['/academy', '/learn', '/paper-wealth', '/scenario'] },
+  { to: '/iq',       label: 'IQ',       match: ['/iq', '/signals', '/market', '/trade-ideas'] },
+  { to: '/glossary', label: 'Glossary', match: ['/glossary'] },
+  { to: '/mentor',   label: 'Mentor',   match: ['/mentor', '/ai-tutor'] },
 ];
 
 export const PRODUCT_TAGLINE =

@@ -972,12 +972,12 @@ export default function Dashboard() {
   const [expandedRows, setExpandedRows] = useState({});
   const [selectedRow,  setSelectedRow]  = useState(null);
 
-  // tabs: 'picks' | 'trade-ideas' | 'markets' | 'brief' | 'news' | 'sentiment' | 'journal' | 'watchlist' | 'analyst'
+  // tabs: 'picks' | 'news' | 'journal'
   const [dashTab, setDashTab] = useState('news');
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    const allowed = ['picks', 'news', 'analyst', 'journal'];
+    const allowed = ['picks', 'news', 'journal'];
     if (tab && allowed.includes(tab)) setDashTab(tab);
     if (tab && !allowed.includes(tab)) setDashTab('news');
   }, [searchParams]);
@@ -1393,7 +1393,6 @@ export default function Dashboard() {
       <DashTabBar>
         <DashTabBtn $active={dashTab==='news'} onClick={()=>setDashTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
         <DashTabBtn $active={dashTab==='picks'} onClick={()=>setDashTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
-        <DashTabBtn $active={dashTab==='analyst'} onClick={()=>setDashTab('analyst')}><FaFileAlt/>Doc Workshop</DashTabBtn>
         <DashTabBtn $active={dashTab==='journal'} onClick={()=>setDashTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
       </DashTabBar>
 
@@ -1795,10 +1794,8 @@ export default function Dashboard() {
       )}
 
 
-      {/* ══════════════════════════════════════════════
-          DOCUMENT ANALYST TAB
-      ══════════════════════════════════════════════ */}
-      {dashTab==='analyst' && (
+      {/* DOCUMENT ANALYST TAB REMOVED */}
+      {false && (
         <DocWrap>
           <DocHeader>
             <DocTitle><FaFileAlt style={{color:'#10b981'}}/> Document Analyst</DocTitle>

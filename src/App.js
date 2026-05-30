@@ -15,7 +15,8 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const MentorPage = lazy(() => import('./pages/MentorPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
-const ChartSimPage = lazy(() => import('./pages/ChartSimPage'));
+const ChartSimPage  = lazy(() => import('./pages/ChartSimPage'));
+const GlossaryPage  = lazy(() => import('./pages/GlossaryPage'));
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
 
                 <Route path="/iq" element={<Dashboard />} />
                 <Route path="/mentor" element={<MentorPage />} />
-                <Route path="/charts" element={<ChartSimPage />} />
+                <Route path="/charts"   element={<ChartSimPage />} />
+                <Route path="/glossary" element={<GlossaryPage />} />
 
                 <Route path="/signals" element={<Navigate to="/iq" replace />} />
                 <Route path="/market" element={<Navigate to="/iq" replace />} />
