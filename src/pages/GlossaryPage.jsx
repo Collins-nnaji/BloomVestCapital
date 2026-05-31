@@ -7,10 +7,21 @@ import {
   FaArrowRight, FaHeart, FaRegHeart, FaCheckCircle, FaCheck,
   FaChevronRight, FaChevronLeft, FaLayerGroup, FaFire,
   FaCopy, FaRegClock, FaStar, FaTrash, FaGraduationCap,
-  FaChartLine, FaSync, FaTrophy, FaLock,
+  FaChartLine, FaSync, FaTrophy, FaLock, FaBrain,
 } from 'react-icons/fa';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
+
+/* ── localStorage-backed state (XP / streak) ── */
+function useLocalState(key, initial) {
+  const [v, setV] = useState(() => {
+    try { const r = localStorage.getItem(key); return r != null ? JSON.parse(r) : initial; } catch { return initial; }
+  });
+  useEffect(() => { try { localStorage.setItem(key, JSON.stringify(v)); } catch {} }, [key, v]);
+  return [v, setV];
+}
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const yesterStr = () => { const d = new Date(Date.now()-864e5); return d.toISOString().slice(0, 10); };
 
 /* ═══════════════════════════════════════════════════════════════
    TERMS DATA — 130+ terms with category + difficulty level
@@ -875,6 +886,65 @@ const TimeLabel = styled.span`
   flex-shrink: 0;
 `;
 
+/* ── XP Ring ── */
+const bounce = keyframes`0%,80%,100%{transform:scale(.5);opacity:.5}40%{transform:scale(1);opacity:1}`;
+const ThinkDot = styled.span`
+  width: 9px; height: 9px; border-radius: 50%; background: #27c46b; display: inline-block;
+  animation: ${bounce} 1.1s ${p => p.$i * 0.15}s infinite ease-in-out;
+`;
+
+/* ── Quiz ── */
+const QuizWrap = styled.div`
+  margin-top: 1rem;
+  background: #fafaf7;
+  border: 1px solid #e8e6dd;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+`;
+const QuizQ = styled.div`font-size: 0.87rem; font-weight: 700; color: #0a0f14; margin-bottom: 0.65rem;`;
+const QuizGrid = styled.div`display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;`;
+const QuizOpt = styled.button`
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1.5px solid ${p => p.$bd || '#e8e6dd'};
+  background: ${p => p.$bg || '#fff'};
+  color: ${p => p.$fg || '#0a0f14'};
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: ${p => p.$done ? 'default' : 'pointer'};
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.35rem;
+  transition: border-color 0.12s;
+  &:hover { border-color: ${p => p.$done ? 'inherit' : '#0e5148'}; }
+`;
+
+/* ── Progress view ── */
+const ProgSection = styled.div`padding: 1.25rem;`;
+const ProgCatRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  &:last-child { border-bottom: none; }
+`;
+const XpBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(109,90,224,0.08);
+  border: 1px solid rgba(109,90,224,0.2);
+  border-radius: 99px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #6d5ae0;
+`;
+
 /* ── Auth Gate ── */
 const AuthGatePage = styled.div`
   min-height: 100vh;
@@ -1057,7 +1127,7 @@ const KnowBtn = styled.button`
    SUB-COMPONENTS
 ═══════════════════════════════════════════════════════════════ */
 
-function ExplanationDisplay({ data, termLabels, learnedIds, onMarkLearned, onAddRelated, onCopy }) {
+function ExplanationDisplay({ data, termLabels, learnedIds, onMarkLearned, onAddRelated, onCopy, onQuizComplete }) {
   if (!data) return null;
   const title = termLabels.length > 1 ? termLabels.join(' vs ') : termLabels[0];
   const isMultiTerm = Array.isArray(termLabels) && termLabels.length > 1;
@@ -1143,6 +1213,9 @@ function ExplanationDisplay({ data, termLabels, learnedIds, onMarkLearned, onAdd
                 </RelatedRow>
               </Section>
             )}
+            {data.quiz?.length > 0 && (
+              <QuizBlock quiz={data.quiz} terms={termLabels} onComplete={onQuizComplete} />
+            )}
           </>
         )}
       </ExBody>
@@ -1169,6 +1242,200 @@ function SkeletonCard() {
         ))}
       </ExBody>
     </ExCard>
+  );
+}
+
+/* ── AI Thinking Steps ── */
+const THINK_STEPS = ['Reading the term…', 'Pulling real-world examples…', 'Writing your lesson…', 'Building your quiz…'];
+function ThinkingState({ names }) {
+  const [step, setStep] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setStep(s => Math.min(s + 1, THINK_STEPS.length - 1)), 750);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <ExCard initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+      <div style={{ padding: '2.5rem 1.5rem', textAlign: 'center' }}>
+        <div style={{ display: 'inline-flex', gap: 6, marginBottom: 18 }}>
+          {[0, 1, 2].map(i => <ThinkDot key={i} $i={i} />)}
+        </div>
+        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0a0f14', marginBottom: 6 }}>Tutoring {names}</div>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', color: '#6b6960' }}>{THINK_STEPS[step]}</div>
+      </div>
+    </ExCard>
+  );
+}
+
+/* ── Quiz Component ── */
+function QuizBlock({ quiz, terms, onComplete }) {
+  const [answers, setAnswers] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+  const score = quiz.reduce((s, q, i) => s + (answers[i] === q.answer ? 1 : 0), 0);
+  const allAnswered = quiz.every((_, i) => answers[i] != null);
+
+  return (
+    <QuizWrap>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+        <FaBrain style={{ color: '#0e5148', fontSize: '0.85rem' }} />
+        <span style={{ fontWeight: 800, fontSize: '0.88rem', color: '#0a0f14' }}>Quick Check</span>
+        {submitted && (
+          <span style={{ marginLeft: 'auto', fontSize: '0.75rem', fontWeight: 700,
+            color: score === quiz.length ? '#15803d' : score >= quiz.length/2 ? '#d97706' : '#dc2626',
+            background: score === quiz.length ? 'rgba(21,128,61,0.08)' : 'rgba(217,119,6,0.08)',
+            border: '1px solid', borderRadius: 99, padding: '0.2rem 0.6rem' }}>
+            {score}/{quiz.length} correct
+          </span>
+        )}
+      </div>
+      {quiz.map((q, qi) => (
+        <div key={qi} style={{ marginBottom: '1rem' }}>
+          <QuizQ>{qi + 1}. {q.prompt}</QuizQ>
+          <QuizGrid>
+            {q.options.map(opt => {
+              const chosen  = answers[qi] === opt;
+              const correct = opt === q.answer;
+              let bd = '#e8e6dd', bg = '#fff', fg = '#0a0f14';
+              if (submitted) {
+                if (correct) { bd = '#c8e6d3'; bg = '#e8f6ee'; fg = '#0e7a45'; }
+                else if (chosen) { bd = '#e6c8c8'; bg = '#f7e4e4'; fg = '#c44141'; }
+              } else if (chosen) { bd = '#0e5148'; bg = '#e3ecea'; }
+              return (
+                <QuizOpt key={opt} $bd={bd} $bg={bg} $fg={fg} $done={submitted}
+                  disabled={submitted} onClick={() => !submitted && setAnswers(a => ({ ...a, [qi]: opt }))}>
+                  {opt}
+                  {submitted && correct && <FaCheck style={{ fontSize: '0.65rem', flexShrink: 0 }} />}
+                  {submitted && chosen && !correct && <FaTimes style={{ fontSize: '0.65rem', flexShrink: 0 }} />}
+                </QuizOpt>
+              );
+            })}
+          </QuizGrid>
+        </div>
+      ))}
+      {!submitted ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <motion.button
+            onClick={() => { setSubmitted(true); onComplete(score, quiz.length, terms); }}
+            disabled={!allAnswered}
+            style={{
+              padding: '0.6rem 1.2rem', border: 'none', borderRadius: 9,
+              background: allAnswered ? '#0e5148' : '#e8e6dd', color: allAnswered ? '#fff' : '#9ca3af',
+              fontWeight: 700, fontSize: '0.84rem', cursor: allAnswered ? 'pointer' : 'default', fontFamily: 'inherit',
+            }}
+            whileHover={allAnswered ? { scale: 1.02 } : {}}
+            whileTap={allAnswered ? { scale: 0.97 } : {}}
+          >
+            Submit answers
+          </motion.button>
+          {!allAnswered && <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>Answer all {quiz.length} to submit</span>}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+          <XpBadge>+{score * 10} XP earned</XpBadge>
+          {score === quiz.length && (
+            <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 700 }}>
+              Perfect score — terms marked as learned ✓
+            </span>
+          )}
+        </div>
+      )}
+    </QuizWrap>
+  );
+}
+
+/* ── Progress View ── */
+const CATS_FOR_PROGRESS = [
+  { id: 'basics', label: 'Basics', icon: '📌' },
+  { id: 'stocks', label: 'Stocks', icon: '📈' },
+  { id: 'valuation', label: 'Valuation', icon: '🔬' },
+  { id: 'bonds', label: 'Bonds', icon: '🏛️' },
+  { id: 'portfolio', label: 'Portfolio', icon: '💼' },
+  { id: 'macro', label: 'Macro', icon: '🌍' },
+  { id: 'derivatives', label: 'Derivatives', icon: '⚙️' },
+  { id: 'crypto', label: 'Crypto', icon: '🔗' },
+  { id: 'personal', label: 'Personal Finance', icon: '💰' },
+];
+
+function ProgressView({ learnedIds, dbHistory, xp, streak, level }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {/* XP overview */}
+      <BoardCard>
+        <BoardHead>
+          <BoardTitle><FaTrophy style={{ color: '#d97706' }} /> Your Progress</BoardTitle>
+          <XpBadge>{xp} XP · Level {level}</XpBadge>
+        </BoardHead>
+        <ProgSection>
+          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+            {[
+              { label: 'Total XP', val: xp, color: '#6d5ae0', icon: '⭐' },
+              { label: 'Level', val: level, color: '#d97706', icon: '🏆' },
+              { label: 'Streak', val: `${streak}d`, color: '#dc2626', icon: '🔥' },
+              { label: 'Learned', val: learnedIds.length, color: '#15803d', icon: '🎓' },
+              { label: 'Sessions', val: dbHistory.length, color: '#0284c7', icon: '📚' },
+            ].map(s => (
+              <div key={s.label} style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '1.35rem', fontWeight: 800, color: s.color }}>{s.icon} {s.val}</div>
+                <div style={{ fontSize: '0.7rem', color: '#6b6960', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em' }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+          {/* Level progress */}
+          <div style={{ marginBottom: '0.3rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#6b6960' }}>
+            <span>Level {level} → {level + 1}</span>
+            <span>{xp % 100}/100 XP</span>
+          </div>
+          <div style={{ height: 8, background: '#f1f5f9', borderRadius: 99, overflow: 'hidden' }}>
+            <motion.div style={{ height: '100%', background: '#6d5ae0', borderRadius: 99 }}
+              initial={{ width: 0 }} animate={{ width: `${xp % 100}%` }} transition={{ duration: 0.8 }} />
+          </div>
+        </ProgSection>
+      </BoardCard>
+
+      {/* Mastery by category */}
+      <BoardCard>
+        <BoardHead>
+          <BoardTitle><FaLayerGroup style={{ color: '#15803d' }} /> Mastery by Category</BoardTitle>
+        </BoardHead>
+        <ProgSection style={{ paddingTop: '0.5rem' }}>
+          {CATS_FOR_PROGRESS.map(cat => {
+            const total   = TERMS.filter(t => t.category === cat.id).length;
+            const learned = TERMS.filter(t => t.category === cat.id && learnedIds.includes(t.id)).length;
+            const p = total > 0 ? Math.round((learned / total) * 100) : 0;
+            return (
+              <ProgCatRow key={cat.id}>
+                <span style={{ fontSize: '1rem', width: 22 }}>{cat.icon}</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#0a0f14', width: 110, flexShrink: 0 }}>{cat.label}</span>
+                <div style={{ flex: 1, height: 7, background: '#f1f5f9', borderRadius: 99, overflow: 'hidden' }}>
+                  <motion.div style={{ height: '100%', background: '#15803d', borderRadius: 99 }}
+                    initial={{ width: 0 }} animate={{ width: `${p}%` }} transition={{ duration: 0.7 }} />
+                </div>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6b6960', width: 55, textAlign: 'right' }}>
+                  {learned}/{total}
+                </span>
+              </ProgCatRow>
+            );
+          })}
+        </ProgSection>
+      </BoardCard>
+
+      {/* Session history */}
+      {dbHistory.length > 0 && (
+        <HistCard>
+          <HistHead>
+            <HistTitle><FaHistory /> All Sessions ({dbHistory.length})</HistTitle>
+          </HistHead>
+          {dbHistory.map(h => (
+            <HistRow key={h.id}>
+              <FaStar style={{ color: '#d97706', fontSize: '0.65rem', flexShrink: 0 }} />
+              <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {h.term_labels || (Array.isArray(h.terms) ? h.terms.join(', ') : h.terms)}
+              </span>
+              <TimeLabel>{timeAgo(h.created_at)}</TimeLabel>
+            </HistRow>
+          ))}
+        </HistCard>
+      )}
+    </div>
   );
 }
 
@@ -1258,7 +1525,23 @@ function timeAgo(iso) {
 
 export default function GlossaryPage() {
   const { user } = useAuth();
-  const [mode,       setMode]      = useState('learn');   // 'learn' | 'flashcard'
+
+  /* XP / streak (localStorage) */
+  const [xp,     setXp]     = useLocalState('bv_xp', 0);
+  const [streak, setStreak] = useLocalState('bv_streak', { count: 0, last: '' });
+  const level = Math.floor(xp / 100) + 1;
+  const today = todayStr();
+  const yest  = yesterStr();
+  const streakCount = (streak.last === today || streak.last === yest) ? streak.count : 0;
+
+  const addXp = useCallback((n) => setXp(x => x + n), [setXp]);
+  const touchStreak = useCallback(() => setStreak(s => {
+    if (s.last === today) return s;
+    if (s.last === yest)  return { count: s.count + 1, last: today };
+    return { count: 1, last: today };
+  }), [setStreak, today, yest]);
+
+  const [mode,       setMode]      = useState('learn');   // 'learn' | 'flashcard' | 'progress'
   const [search,     setSearch]    = useState('');
   const [activeCat,  setActiveCat] = useState('all');
   const [activeLevel,setActiveLevel]= useState(0);        // 0 = all
@@ -1349,9 +1632,19 @@ export default function GlossaryPage() {
   const markLearned = useCallback(async (termId) => {
     if (!learnedIds.includes(termId)) {
       setLearnedIds(l => [...l, termId]);
+      addXp(15); touchStreak();
       await api.markGlossaryLearned(termId).catch(() => {});
     }
-  }, [learnedIds]);
+  }, [learnedIds, addXp, touchStreak]);
+
+  /* Quiz complete */
+  const handleQuizComplete = useCallback((score, total, terms) => {
+    addXp(score * 10); touchStreak();
+    if (terms.length === 1 && score === total) {
+      const t = TERMS.find(x => x.label === terms[0]);
+      if (t) markLearned(t.id);
+    }
+  }, [addXp, touchStreak, markLearned]);
 
   /* Explain */
   const explain = useCallback(async () => {
@@ -1361,13 +1654,14 @@ export default function GlossaryPage() {
     setLoading(true); setResult(null); setError(null);
 
     const isMulti = labels.length > 1;
+    const quizInstr = `,"quiz":[{"prompt":"Question 1?","options":["A","B","C","D"],"answer":"A"},{"prompt":"Question 2?","options":["A","B","C","D"],"answer":"C"}]`;
     const prompt = isMulti
       ? `You are a financial education AI. Compare and explain these financial terms for a beginner: ${labels.join(', ')}.
 Return ONLY valid JSON:
-{"emoji":"fitting emoji","definition":"How these terms relate and differ — 3-4 sentences","scenario":"One scenario with real numbers showing all terms in context","companies":[{"name":"Company","example":"How they illustrate these concepts"}],"proTip":"One insight connecting these terms that beginners miss","relatedTerms":["term1","term2","term3"]}`
+{"emoji":"fitting emoji","definition":"How these terms relate and differ — 3-4 sentences","scenario":"One scenario with real numbers showing all terms in context","companies":[{"name":"Company","example":"How they illustrate these concepts"}],"proTip":"One insight connecting these terms that beginners miss","relatedTerms":["term1","term2","term3"]${quizInstr}}`
       : `You are a financial education AI. Explain "${labels[0]}" to a beginner investor in plain English.
 Return ONLY valid JSON:
-{"emoji":"fitting emoji","definition":"2-3 sentence plain English definition","scenario":"Concrete scenario with actual numbers","companies":[{"name":"Company","example":"How this term applies to them specifically"}],"proTip":"One insight most beginners miss","relatedTerms":["term1","term2","term3"]}
+{"emoji":"fitting emoji","definition":"2-3 sentence plain English definition","scenario":"Concrete scenario with actual numbers","companies":[{"name":"Company","example":"How this term applies to them specifically"}],"proTip":"One insight most beginners miss","relatedTerms":["term1","term2","term3"]${quizInstr}}
 Only output the JSON. No other text.`;
 
     try {
@@ -1375,6 +1669,7 @@ Only output the JSON. No other text.`;
       const parsed = parseAIResponse(raw);
       setResult(parsed);
       setResultTerms(labels);
+      addXp(5); touchStreak();
       // save to DB in background
       api.saveGlossaryHistory(
         session,
@@ -1481,15 +1776,16 @@ Only output the JSON. No other text.`;
             <PageSub>Learn every financial term — drag to your board, get AI-powered lessons with real examples</PageSub>
           </div>
           <ModeToggle>
-            <ModeBtn $active={mode === 'learn'} onClick={() => setMode('learn')}><FaBook /> Learn</ModeBtn>
-            <ModeBtn $active={mode === 'flashcard'} onClick={() => setMode('flashcard')}><FaSync /> Flashcards</ModeBtn>
+            <ModeBtn $active={mode === 'learn'}     onClick={() => setMode('learn')}><FaBook /> Learn</ModeBtn>
+            <ModeBtn $active={mode === 'flashcard'} onClick={() => setMode('flashcard')}><FaSync /> Cards</ModeBtn>
+            <ModeBtn $active={mode === 'progress'}  onClick={() => setMode('progress')}><FaTrophy /> Progress</ModeBtn>
           </ModeToggle>
         </HeaderTop>
         <StatsRow>
-          <StatPill><FaGraduationCap style={{ color: '#22c55e' }} /> {learnedCount}/{totalTerms} Learned</StatPill>
-          <StatPill><FaHeart style={{ color: '#f43f5e' }} /> {bookmarkCount} Bookmarked</StatPill>
-          <StatPill><FaHistory style={{ color: '#0ea5e9' }} /> {dbHistory.length} Sessions</StatPill>
-          <StatPill><FaLayerGroup style={{ color: '#a78bfa' }} /> {STUDY_SETS.length} Study Sets</StatPill>
+          <StatPill><FaGraduationCap style={{ color: '#4ade80' }} /> {learnedCount}/{totalTerms} Learned</StatPill>
+          <StatPill><FaFire style={{ color: '#fb923c' }} /> {streakCount}d Streak</StatPill>
+          <StatPill><FaTrophy style={{ color: '#fbbf24' }} /> Lvl {level} · {xp} XP</StatPill>
+          <StatPill><FaHistory style={{ color: '#7dd3fc' }} /> {dbHistory.length} Sessions</StatPill>
         </StatsRow>
       </Header>
 
@@ -1533,8 +1829,15 @@ Only output the JSON. No other text.`;
         </SetScroll>
       </StudySetsSection>
 
+      {/* ── Progress view (full width) ── */}
+      {mode === 'progress' && (
+        <div style={{ maxWidth: 1280, margin: '1rem auto', padding: '0 1.25rem 3rem' }}>
+          <ProgressView learnedIds={learnedIds} dbHistory={dbHistory} xp={xp} streak={streakCount} level={level} />
+        </div>
+      )}
+
       {/* ── Body ── */}
-      <Body>
+      {mode !== 'progress' && <Body>
         {/* Left: Term List */}
         <LeftPanel>
           <SearchWrap>
@@ -1673,7 +1976,7 @@ Only output the JSON. No other text.`;
 
               {/* Explanation */}
               <AnimatePresence mode="wait">
-                {loading && <SkeletonCard key="skel" />}
+                {loading && <ThinkingState key="think" names={session.map(id => TERMS.find(t=>t.id===id)?.label).filter(Boolean).join(' + ') || '…'} />}
                 {!loading && error && (
                   <motion.div key="err" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                     style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 14, padding: '1rem 1.25rem', color: '#dc2626', fontSize: '0.85rem' }}>
@@ -1689,6 +1992,7 @@ Only output the JSON. No other text.`;
                     onMarkLearned={markLearned}
                     onAddRelated={addRelated}
                     onCopy={handleCopy}
+                    onQuizComplete={handleQuizComplete}
                   />
                 )}
               </AnimatePresence>
@@ -1727,7 +2031,7 @@ Only output the JSON. No other text.`;
             </HistCard>
           )}
         </RightPanel>
-      </Body>
+      </Body>}
     </Page>
   );
 }

@@ -15,6 +15,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage'));
 const EnquiryPage = lazy(() => import('./pages/EnquiryPage'));
 const SignalsPage = lazy(() => import('./pages/SignalsPage'));
 const GlossaryPage  = lazy(() => import('./pages/GlossaryPage'));
+const ProfilePage   = lazy(() => import('./pages/ProfilePage'));
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                 <Route path="/enquiry" element={<EnquiryPage />} />
                 <Route path="/signals" element={<SignalsPage />} />
                 <Route path="/glossary" element={<GlossaryPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
 
                 <Route path="/market" element={<Navigate to="/iq" replace />} />
                 <Route path="/trade-ideas" element={<Navigate to="/iq" replace />} />

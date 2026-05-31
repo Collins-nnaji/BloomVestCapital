@@ -31,6 +31,7 @@ export const PLATFORM_LAYERS = [
 export const NAV_ITEMS = [
   { to: '/iq',       label: 'Intelligence', match: ['/iq', '/signals', '/market', '/trade-ideas', '/mentor', '/ai-tutor'] },
   { to: '/glossary', label: 'AI Tutor',      match: ['/glossary'] },
+  { to: '/profile',  label: 'My Profile',    match: ['/profile'] },
 ];
 
 export const PRODUCT_TAGLINE = 'Guided investing education — beginner to advanced';
