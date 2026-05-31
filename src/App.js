@@ -17,6 +17,8 @@ const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const ChartSimPage  = lazy(() => import('./pages/ChartSimPage'));
 const GlossaryPage  = lazy(() => import('./pages/GlossaryPage'));
+const ProfilePage   = lazy(() => import('./pages/ProfilePage'));
+const AdminPage     = lazy(() => import('./pages/AdminPage'));
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
                 <Route path="/mentor" element={<MentorPage />} />
                 <Route path="/charts"   element={<ChartSimPage />} />
                 <Route path="/glossary" element={<GlossaryPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/admin"   element={<AdminPage />} />
 
                 <Route path="/signals" element={<Navigate to="/iq" replace />} />
                 <Route path="/market" element={<Navigate to="/iq" replace />} />

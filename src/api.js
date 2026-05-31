@@ -420,4 +420,87 @@ export const api = {
   async getCalendar() {
     return request('/ai/calendar');
   },
+
+  /* ── Profile ── */
+  async getProfile() {
+    return request(`/profile?sessionId=${getSessionId()}`);
+  },
+  async saveProfile(data) {
+    return request('/profile', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), ...data }),
+    });
+  },
+  async getGoals() {
+    return request(`/profile/goals?sessionId=${getSessionId()}`);
+  },
+  async createGoal(goal) {
+    return request('/profile/goals', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), ...goal }),
+    });
+  },
+  async updateGoal(id, updates) {
+    return request(`/profile/goals/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sessionId: getSessionId(), ...updates }),
+    });
+  },
+  async deleteGoal(id) {
+    return request(`/profile/goals/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sessionId: getSessionId() }),
+    });
+  },
+  async getPlans() {
+    return request(`/profile/plans?sessionId=${getSessionId()}`);
+  },
+  async createPlan(plan) {
+    return request('/profile/plans', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), ...plan }),
+    });
+  },
+  async updatePlan(id, updates) {
+    return request(`/profile/plans/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sessionId: getSessionId(), ...updates }),
+    });
+  },
+  async deletePlan(id) {
+    return request(`/profile/plans/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sessionId: getSessionId() }),
+    });
+  },
+
+  /* ── Admin ── */
+  async checkAdmin() {
+    return request(`/admin/check?sessionId=${getSessionId()}`);
+  },
+  async getAdminStats() {
+    return request(`/admin/stats?sessionId=${getSessionId()}`);
+  },
+  async getAdminUsers(page = 1, limit = 25, search = '') {
+    const q = new URLSearchParams({ sessionId: getSessionId(), page, limit, ...(search ? { search } : {}) });
+    return request(`/admin/users?${q}`);
+  },
+  async getAdminUser(id) {
+    return request(`/admin/users/${id}?sessionId=${getSessionId()}`);
+  },
+  async getAdminAdmins() {
+    return request(`/admin/admins?sessionId=${getSessionId()}`);
+  },
+  async addAdmin(email) {
+    return request('/admin/admins', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), email }),
+    });
+  },
+  async removeAdmin(email) {
+    return request(`/admin/admins/${encodeURIComponent(email)}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sessionId: getSessionId() }),
+    });
+  },
 };

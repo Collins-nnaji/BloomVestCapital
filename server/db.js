@@ -157,11 +157,71 @@ CREATE TABLE IF NOT EXISTS glossary_learned (
   learned_at TIMESTAMPTZ DEFAULT NOW(),
   PRIMARY KEY (user_id, term_id)
 );
+CREATE TABLE IF NOT EXISTS user_profiles (
+  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  display_name VARCHAR(255),
+  tagline VARCHAR(500),
+  bio TEXT,
+  location VARCHAR(255),
+  risk_tolerance VARCHAR(20) DEFAULT 'moderate',
+  investor_type VARCHAR(30) DEFAULT 'beginner',
+  investment_style VARCHAR(20) DEFAULT 'mixed',
+  primary_focus VARCHAR(50) DEFAULT 'stocks',
+  experience_years INTEGER DEFAULT 0,
+  net_worth DECIMAL(15,2) DEFAULT 0,
+  monthly_income DECIMAL(15,2) DEFAULT 0,
+  monthly_savings DECIMAL(15,2) DEFAULT 0,
+  avatar_color VARCHAR(20) DEFAULT '#15803d',
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE TABLE IF NOT EXISTS financial_goals (
+  id SERIAL PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  category VARCHAR(50) NOT NULL DEFAULT 'custom',
+  emoji VARCHAR(10) DEFAULT '🎯',
+  target_amount DECIMAL(15,2) NOT NULL,
+  current_amount DECIMAL(15,2) DEFAULT 0,
+  deadline DATE,
+  color VARCHAR(20) DEFAULT '#15803d',
+  completed BOOLEAN DEFAULT FALSE,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_financial_goals_user ON financial_goals(user_id);
+CREATE TABLE IF NOT EXISTS financial_plans (
+  id SERIAL PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  category VARCHAR(50) DEFAULT 'custom',
+  emoji VARCHAR(10) DEFAULT '📋',
+  description TEXT,
+  steps JSONB DEFAULT '[]',
+  status VARCHAR(20) DEFAULT 'active',
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_financial_plans_user ON financial_plans(user_id);
+CREATE TABLE IF NOT EXISTS admins (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  added_by VARCHAR(255) DEFAULT 'system',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email);
 `;
 
 async function initializeDatabase() {
   try {
     await pool.query(SCHEMA);
+    /* Seed super-admin (idempotent) */
+    const superAdmin = process.env.SUPER_ADMIN_EMAIL || 'collinsnnaji1@gmail.com';
+    await pool.query(
+      `INSERT INTO admins (email, added_by) VALUES ($1, 'system') ON CONFLICT (email) DO NOTHING`,
+      [superAdmin]
+    );
     console.log('Database schema initialized');
   } catch (err) {
     console.error('Database initialization error:', err.message);
