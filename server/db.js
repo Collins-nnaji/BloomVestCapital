@@ -115,17 +115,34 @@ CREATE INDEX IF NOT EXISTS idx_lessons_module ON lessons(module_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON user_subscriptions(email);
 CREATE TABLE IF NOT EXISTS leads (
   id SERIAL PRIMARY KEY,
-  type VARCHAR(30) NOT NULL CHECK (type IN ('book_call', 'discuss_service', 'general')),
+  type VARCHAR(30) NOT NULL CHECK (type IN ('book_call', 'discuss_service', 'general', 'fund_management', 'daily_insights')),
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   company VARCHAR(255),
   message TEXT,
   service VARCHAR(100),
   preferred_time VARCHAR(100),
+  investment_range VARCHAR(50),
+  investment_goals TEXT,
+  investment_timeline VARCHAR(50),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS investment_range VARCHAR(50);
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS investment_goals TEXT;
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS investment_timeline VARCHAR(50);
 CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
 CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(type);
+CREATE TABLE IF NOT EXISTS insights_subscribers (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  name VARCHAR(255),
+  frequency VARCHAR(20) DEFAULT 'daily' CHECK (frequency IN ('daily', 'weekly')),
+  topics TEXT[],
+  active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_insights_subscribers_email ON insights_subscribers(email);
 CREATE TABLE IF NOT EXISTS user_analysis (
   user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   payload JSONB NOT NULL,

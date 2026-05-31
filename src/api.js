@@ -331,6 +331,15 @@ export const api = {
       body: JSON.stringify(data),
     });
   },
+  async subscribeInsights(data) {
+    return request('/leads/insights', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  async checkInsights(email) {
+    return request(`/leads/insights/check?email=${encodeURIComponent(email)}`);
+  },
 
   async analyseHeadline(title, source) {
     return request('/ai/analyse-headline', {
@@ -502,5 +511,12 @@ export const api = {
       method: 'DELETE',
       body: JSON.stringify({ sessionId: getSessionId() }),
     });
+  },
+  async getAdminLeads(type = '', offset = 0, limit = 50) {
+    const q = new URLSearchParams({ sessionId: getSessionId(), limit, offset, ...(type ? { type } : {}) });
+    return request(`/admin/leads?${q}`);
+  },
+  async getAdminSubscribers() {
+    return request(`/admin/subscribers?sessionId=${getSessionId()}`);
   },
 };

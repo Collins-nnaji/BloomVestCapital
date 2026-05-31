@@ -5,7 +5,7 @@ import {
   FaUsers, FaUserShield, FaSearch, FaChartBar, FaChevronDown, FaChevronUp,
   FaTrash, FaPlus, FaCheck, FaTimes, FaLock, FaSignInAlt, FaAngleRight,
   FaEnvelope, FaMapMarkerAlt, FaCalendarAlt, FaCoins, FaCheckCircle,
-  FaClock, FaBolt, FaGraduationCap, FaExchangeAlt, FaChartLine,
+  FaClock, FaBolt, FaGraduationCap, FaExchangeAlt, FaChartLine, FaBriefcase, FaBell,
 } from 'react-icons/fa';
 import { useAuth } from '../AuthContext';
 import { api } from '../api';
@@ -498,6 +498,13 @@ export default function AdminPage() {
   const [newAdminEmail,setNewAdminEmail]= useState('');
   const [addingAdmin,  setAddingAdmin]  = useState(false);
 
+  /* service requests / leads */
+  const [leads,        setLeads]        = useState([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+  const [leadsFilter,  setLeadsFilter]  = useState('');
+  const [subscribers,  setSubscribers]  = useState([]);
+  const [subsLoading,  setSubsLoading]  = useState(false);
+
   const LIMIT = 25;
   const totalPages = Math.ceil(total / LIMIT);
 
@@ -529,6 +536,15 @@ export default function AdminPage() {
     setAdminsLoading(true);
     api.getAdminAdmins().then(d => setAdmins(d.admins || [])).catch(()=>{}).finally(() => setAdminsLoading(false));
   }, [isAdmin, activeTab]);
+
+  /* load leads / subscribers */
+  useEffect(() => {
+    if (!isAdmin || activeTab !== 'services') return;
+    setLeadsLoading(true);
+    setSubsLoading(true);
+    api.getAdminLeads(leadsFilter).then(d => setLeads(d.leads || [])).catch(()=>{}).finally(() => setLeadsLoading(false));
+    api.getAdminSubscribers().then(d => setSubscribers(d.subscribers || [])).catch(()=>{}).finally(() => setSubsLoading(false));
+  }, [isAdmin, activeTab, leadsFilter]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -640,8 +656,9 @@ export default function AdminPage() {
 
         {/* ── Tabs ── */}
         <TabBar>
-          <Tab $active={activeTab==='users'} onClick={() => setActiveTab('users')}><FaUsers /> Users</Tab>
-          <Tab $active={activeTab==='admins'} onClick={() => setActiveTab('admins')}><FaUserShield /> Admins</Tab>
+          <Tab $active={activeTab==='users'}    onClick={() => setActiveTab('users')}><FaUsers /> Users</Tab>
+          <Tab $active={activeTab==='services'} onClick={() => setActiveTab('services')}><FaBriefcase /> Services</Tab>
+          <Tab $active={activeTab==='admins'}   onClick={() => setActiveTab('admins')}><FaUserShield /> Admins</Tab>
         </TabBar>
 
         {/* ══════════════════ USERS TAB ══════════════════ */}
@@ -734,6 +751,99 @@ export default function AdminPage() {
                       <PageBtn onClick={() => setPage(p=>p+1)} disabled={page===totalPages}>Next →</PageBtn>
                     </Pagination>
                   )}
+                </div>
+              )}
+            </Card>
+          </>
+        )}
+
+        {/* ══════════════════ SERVICES TAB ══════════════════ */}
+        {activeTab === 'services' && (
+          <>
+            {/* Fund Management Requests */}
+            <Card>
+              <CardHead>
+                <CardTitle><FaBriefcase style={{ color:T.gold }} /> Fund Management Requests</CardTitle>
+                <div style={{ display:'flex', gap:'0.4rem', flexWrap:'wrap' }}>
+                  {[['','All'],['fund_management','Fund Mgmt'],['book_call','Book Call'],['discuss_service','Discuss'],['general','General']].map(([val,lbl]) => (
+                    <button key={val} onClick={() => setLeadsFilter(val)}
+                      style={{ padding:'0.28rem 0.65rem', borderRadius:99, border:`1.5px solid ${leadsFilter===val ? T.navy : T.border}`, background:leadsFilter===val ? T.navy : 'transparent', color:leadsFilter===val ? '#fff' : T.inkMute, fontSize:'0.72rem', fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+              </CardHead>
+              {leadsLoading ? (
+                <div style={{ padding:'1.25rem' }}>{[0,1,2,3].map(i=><Skel key={i} $h={44} $mb={8} />)}</div>
+              ) : leads.length === 0 ? (
+                <div style={{ padding:'2rem', textAlign:'center', color:T.inkFaint, fontSize:'0.85rem' }}>No service requests yet.</div>
+              ) : (
+                <div style={{ overflowX:'auto' }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8rem' }}>
+                    <thead>
+                      <tr>
+                        {['Name','Email','Type','Amount','Timeline','Submitted'].map(h => (
+                          <th key={h} style={{ textAlign:'left', padding:'0.6rem 1.25rem', fontSize:'0.62rem', fontWeight:700, color:T.inkFaint, textTransform:'uppercase', letterSpacing:'0.07em', background:'#fafbfc', borderBottom:`1px solid ${T.border}`, whiteSpace:'nowrap' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {leads.map(l => (
+                        <tr key={l.id} style={{ borderBottom:`1px solid #f8fafc` }}>
+                          <td style={{ padding:'0.7rem 1.25rem', fontWeight:700, color:T.ink }}>{l.name}</td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkMute }}>{l.email}</td>
+                          <td style={{ padding:'0.7rem 1.25rem' }}>
+                            <span style={{ fontSize:'0.68rem', fontWeight:700, padding:'0.15rem 0.5rem', borderRadius:5, background: l.type==='fund_management'?'rgba(201,168,76,0.1)':'rgba(2,132,199,0.08)', color: l.type==='fund_management'?T.gold:T.blue }}>
+                              {l.type.replace('_',' ')}
+                            </span>
+                          </td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkMid, fontSize:'0.78rem' }}>{l.investment_range || '—'}</td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkMid, fontSize:'0.78rem' }}>{l.investment_timeline || '—'}</td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkFaint, fontSize:'0.72rem', whiteSpace:'nowrap' }}>{fmtDate(l.created_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Card>
+
+            {/* Insights Subscribers */}
+            <Card>
+              <CardHead>
+                <CardTitle><FaBell style={{ color:T.green }} /> Insights Subscribers</CardTitle>
+                <span style={{ fontSize:'0.78rem', color:T.inkFaint }}>{subscribers.length} total</span>
+              </CardHead>
+              {subsLoading ? (
+                <div style={{ padding:'1.25rem' }}>{[0,1,2,3].map(i=><Skel key={i} $h={44} $mb={8} />)}</div>
+              ) : subscribers.length === 0 ? (
+                <div style={{ padding:'2rem', textAlign:'center', color:T.inkFaint, fontSize:'0.85rem' }}>No subscribers yet.</div>
+              ) : (
+                <div style={{ overflowX:'auto' }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.8rem' }}>
+                    <thead>
+                      <tr>
+                        {['Email','Name','Frequency','Topics','Subscribed'].map(h => (
+                          <th key={h} style={{ textAlign:'left', padding:'0.6rem 1.25rem', fontSize:'0.62rem', fontWeight:700, color:T.inkFaint, textTransform:'uppercase', letterSpacing:'0.07em', background:'#fafbfc', borderBottom:`1px solid ${T.border}`, whiteSpace:'nowrap' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {subscribers.map(s => (
+                        <tr key={s.id} style={{ borderBottom:`1px solid #f8fafc` }}>
+                          <td style={{ padding:'0.7rem 1.25rem', fontWeight:700, color:T.ink }}>{s.email}</td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkMute }}>{s.name || '—'}</td>
+                          <td style={{ padding:'0.7rem 1.25rem' }}>
+                            <span style={{ fontSize:'0.68rem', fontWeight:700, padding:'0.15rem 0.5rem', borderRadius:5, background:s.frequency==='daily'?'rgba(21,128,61,0.08)':'rgba(2,132,199,0.08)', color:s.frequency==='daily'?T.green:T.blue }}>
+                              {s.frequency}
+                            </span>
+                          </td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkMid, fontSize:'0.75rem' }}>{(s.topics||[]).join(', ') || '—'}</td>
+                          <td style={{ padding:'0.7rem 1.25rem', color:T.inkFaint, fontSize:'0.72rem', whiteSpace:'nowrap' }}>{fmtDate(s.created_at)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </Card>

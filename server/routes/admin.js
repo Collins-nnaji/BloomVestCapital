@@ -153,6 +153,34 @@ router.get('/stats', requireAdmin, async (req, res) => {
   }
 });
 
+/* GET /api/admin/leads — service requests and enquiries */
+router.get('/leads', requireAdmin, async (req, res) => {
+  try {
+    const type   = req.query.type || null;
+    const limit  = Math.min(100, parseInt(req.query.limit) || 50);
+    const offset = Math.max(0, parseInt(req.query.offset) || 0);
+    const where  = type ? 'WHERE type = $3' : '';
+    const params = type ? [limit, offset, type] : [limit, offset];
+    const [rows, count] = await Promise.all([
+      pool.query(`SELECT * FROM leads ${where} ORDER BY created_at DESC LIMIT $1 OFFSET $2`, params),
+      pool.query(`SELECT COUNT(*) FROM leads ${where}`, type ? [type] : []),
+    ]);
+    res.json({ leads: rows.rows, total: parseInt(count.rows[0].count, 10) });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load leads' });
+  }
+});
+
+/* GET /api/admin/subscribers — insights subscribers */
+router.get('/subscribers', requireAdmin, async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM insights_subscribers ORDER BY created_at DESC');
+    res.json({ subscribers: rows });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load subscribers' });
+  }
+});
+
 /* GET /api/admin/admins — list all admins */
 router.get('/admins', requireAdmin, async (req, res) => {
   try {
