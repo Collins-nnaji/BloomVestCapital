@@ -138,7 +138,7 @@ const RunBtn = styled(motion.button)`
   padding:0.55rem 1rem;font-size:0.8rem;font-weight:700;
   display:inline-flex;align-items:center;gap:0.5rem;cursor:pointer;white-space:nowrap;
   &:hover{background:#1e293b;}&:disabled{opacity:0.6;cursor:not-allowed;}
-  @media(max-width:640px){flex:1;justify-content:center;padding:0.6rem 0.75rem;}
+  @media(max-width:640px){flex:1 1 100%;justify-content:center;padding:0.7rem 0.75rem;order:1;}
 `;
 
 /* ── tabs ───────────────────────────────────────────── */
