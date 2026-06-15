@@ -112,7 +112,11 @@ const FilterDot = styled.span`
 `;
 const HeaderRight = styled.div`
   display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;
-  @media(max-width:640px){width:100%;justify-content:flex-end;}
+  @media(max-width:640px){
+    width:100%;
+    justify-content:flex-end;
+    gap:0.45rem;
+  }
 `;
 const LastRunInfo = styled.div`
   font-size:0.7rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;
@@ -1337,6 +1341,10 @@ export default function Dashboard() {
     ? new Date(brief.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})
     : null;
 
+  const lastRunLabel = deepResult?.generatedAt
+    ? new Date(deepResult.generatedAt).toLocaleTimeString(undefined,{timeStyle:'short'})
+    : updatedLabel;
+
   const copyPicksToNotes = useCallback(() => {
     if (!deepResult?.picks) return;
     const studies = deepResult.picks.filter(p=>isDeepDiveLevel(p.action || p.studyLevel));
@@ -1367,6 +1375,14 @@ export default function Dashboard() {
     a[level]=(a[level]||0)+1;
     return a;
   },{}), [rawPicks]);
+
+  const filterCounts = useMemo(() => ({
+    All: rawPicks.length,
+    DeepDive: (counts['Deep Dive'] || 0) + (counts['Study'] || 0),
+    Discuss: counts['Discuss'] || 0,
+    Caution: (counts['Caution'] || 0) + (counts['Skip'] || 0),
+  }), [rawPicks.length, counts]);
+
   const avgConfidence = useMemo(()=>{
     if (!rawPicks.length) return null;
     return Math.round(rawPicks.reduce((s,p)=>s+confToPct(p.confidence),0)/rawPicks.length);
@@ -1425,6 +1441,50 @@ export default function Dashboard() {
       }}>
         {EDUCATION_DISCLAIMER}
       </div>
+      )}
+
+      {dashTab === 'picks' && (
+        <TopHeader>
+          <HeaderLeft>
+            <Brand>Market Lab</Brand>
+            <Slash>/</Slash>
+            <PageTitle>AI case studies</PageTitle>
+          </HeaderLeft>
+
+          <FilterGroup>
+            {[
+              { id: 'All', label: 'All', color: '#cbd5e1' },
+              { id: 'DeepDive', label: 'Deep dive', color: '#10b981' },
+              { id: 'Discuss', label: 'Discuss', color: '#f59e0b' },
+              { id: 'Caution', label: 'Caution', color: '#ef4444' },
+            ].map(({ id, label, color }) => (
+              <FilterBtn
+                key={id}
+                type="button"
+                $active={filterType === id}
+                onClick={() => setFilterType(id)}
+              >
+                <FilterDot $color={color} />
+                {label}{filterCounts[id] > 0 ? ` ${filterCounts[id]}` : ''}
+              </FilterBtn>
+            ))}
+          </FilterGroup>
+
+          <HeaderRight>
+            <LastRunInfo>
+              LAST RUN <span>{lastRunLabel || 'N/A'}</span>
+            </LastRunInfo>
+            <RefreshBtn type="button" onClick={() => load(true)} disabled={loading || refreshing}>
+              <FaSyncAlt className={refreshing ? 'spin' : ''} />
+            </RefreshBtn>
+            <PrefsToggleBtn type="button" $active={showPrefs} onClick={() => setShowPrefs(!showPrefs)}>
+              <FaFilter /> <span>Preferences</span>
+            </PrefsToggleBtn>
+            <RunBtn type="button" onClick={runDeepAnalysis} disabled={deepRunning}>
+              <FaMagic /> {deepRunning ? 'Running…' : 'Run AI analysis'}
+            </RunBtn>
+          </HeaderRight>
+        </TopHeader>
       )}
 
       {/* ── prefs panel ── */}
