@@ -1635,8 +1635,9 @@ export default function Dashboard() {
   },[allHeadlines]);
 
   const filteredNews = useMemo(()=>{
-    let h = allHeadlines.map((x) => ({
+    let h = allHeadlines.map((x, i) => ({
       ...x,
+      _idx: i,
       title: sanitizeHeadline(x.title),
       summary: sanitizeHeadline(x.summary),
     }));
@@ -2039,7 +2040,7 @@ export default function Dashboard() {
               </EmptyState>
             )}
             {filteredNews.map((h,idx)=>{
-              const key = allHeadlines.indexOf(h);
+              const key = h._idx;
               const sc = sentimentColor(h.sentiment);
               const insight = headlineInsights[key];
               const loading = headlineLoading[key];
