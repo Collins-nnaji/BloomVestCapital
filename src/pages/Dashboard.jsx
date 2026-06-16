@@ -41,7 +41,7 @@ const spinAnim = keyframes`to{transform:rotate(360deg)}`;
 /* ── page ───────────────────────────────────────────── */
 const Page = styled.div`
   min-height: 100vh;
-  background: #ffffff;
+  background: #e8ecf2;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   padding-top: 64px;
@@ -58,7 +58,7 @@ const Page = styled.div`
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
+    background: #e8ecf2;
   `}
 `;
 

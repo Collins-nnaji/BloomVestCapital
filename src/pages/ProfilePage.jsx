@@ -77,7 +77,7 @@ const shimmer = keyframes`
 
 const Page = styled.div`
   min-height: 100vh;
-  background: #f4f6f8;
+  background: #e8ecf2;
   padding-top: 64px;
 `;
 

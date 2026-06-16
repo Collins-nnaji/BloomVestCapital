@@ -252,7 +252,7 @@ const fadeUp = keyframes`from{opacity:0;transform:translateY(12px)}to{opacity:1;
 
 const Page = styled.div`
   min-height: 100vh;
-  background: #f8f9fa;
+  background: #e8ecf2;
 `;
 
 /* ── Top Header ── */

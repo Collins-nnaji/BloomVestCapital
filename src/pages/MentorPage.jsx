@@ -23,7 +23,7 @@ const Page = styled.div`
   margin-top: ${(p) => (p.$embedded ? '0' : '64px')};
   display: flex;
   flex-direction: column;
-  background: ${(p) => (p.$embedded ? 'transparent' : '#f8fafc')};
+  background: ${(p) => (p.$embedded ? 'transparent' : '#e8ecf2')};
   font-family: 'Inter', system-ui, sans-serif;
   overflow: hidden;
 `;
