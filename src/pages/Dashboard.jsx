@@ -258,6 +258,17 @@ const ProgressBarWrap = styled.div`flex:1;height:6px;background:#f1f5f9;border-r
 const ProgressFill    = styled(motion.div)`height:100%;background:#10b981;border-radius:3px;`;
 const ProgressText    = styled.div`font-size:0.7rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.05em;min-width:140px;`;
 
+/* ── tab content panel (white card on gray page) ──────── */
+const TabBody = styled.div`
+  background:#ffffff;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  margin:0 1.25rem 1.5rem;
+  overflow:hidden;
+  box-shadow:0 1px 3px rgba(15,23,42,.05);
+  @media(max-width:640px){margin:0 0.5rem 1rem;border-radius:12px;}
+`;
+
 /* ── shell / table ──────────────────────────────────── */
 const Shell   = styled.div`display:grid;grid-template-columns:1fr;`;
 const MainCol = styled.div`display:flex;flex-direction:column;min-width:0;`;
@@ -1674,6 +1685,8 @@ export default function Dashboard() {
       </div>
       )}
 
+      {dashTab !== 'copilot' && (
+      <TabBody>
       {dashTab === 'picks' && (
         <TopHeader>
           <HeaderLeft>
@@ -2682,6 +2695,8 @@ export default function Dashboard() {
             </>
           )}
         </div>
+      )}
+      </TabBody>
       )}
       {dashTab==='copilot' && (
         <CopilotPane>
