@@ -1652,4 +1652,163 @@ router.get('/calendar', async (_req, res) => {
   }
 });
 
+// ─── Movers Scanner ──────────────────────────────────────────────────────────
+// Spots stocks / assets with high movement potential using live headlines +
+// Alpha Vantage top gainers/losers + AI scoring. Cached 20 min.
+
+const moversCache = { data: null, ts: 0 };
+const MOVERS_CACHE_MS = 20 * 60 * 1000;
+
+const MOVERS_SYSTEM = `You are a quantitative market analyst identifying stocks and assets with HIGH PROBABILITY of significant intraday or short-term price movement (2%+ move within 1–5 trading days).
+
+Scan the provided headlines and market data for movement signals. Return a JSON object with this exact structure:
+{
+  "catalysts": [
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA Corp",
+      "assetType": "US Stock" | "NGX Stock" | "Crypto" | "Commodity" | "ETF" | "Forex",
+      "movementType": "Breakout" | "Catalyst" | "Reversal" | "Momentum" | "Squeeze" | "Event-Driven",
+      "direction": "Up" | "Down" | "Either",
+      "magnitude": "2-5%" | "5-10%" | "10%+",
+      "timeframe": "Today" | "1-3 Days" | "This Week",
+      "triggerEvent": "One concise sentence: what specific event/data point is driving the potential move",
+      "technicalNote": "Brief technical observation (pattern, level, volume signal) — or empty string if none",
+      "risk": "Main downside risk in one sentence",
+      "urgency": "High" | "Medium" | "Watch",
+      "nairaRelevance": "Why Nigerian/African investors should care — or empty string if not relevant"
+    }
+  ],
+  "scanSummary": "2-3 sentence overview of today's movement landscape — what themes are dominating",
+  "topTheme": "The single biggest catalyst theme right now (e.g. 'AI earnings beats', 'Fed surprise', 'Oil supply shock')",
+  "marketMood": "Risk-On" | "Risk-Off" | "Mixed"
+}
+
+RULES:
+- Return 6–10 catalysts. Prioritise SPECIFICITY — name the exact ticker and event, not vague sectors.
+- Mix: at least 2 high-urgency plays, at least 1 NGX or Africa-relevant name, at least 1 crypto.
+- movementType guide: Breakout=price breaking key level; Catalyst=news event driving move; Reversal=oversold/overbought bounce; Momentum=trend continuation; Squeeze=short/long squeeze setup; Event-Driven=earnings/FDA/macro data.
+- direction "Either" = binary event (earnings, FDA) where move could go both ways.
+- magnitude must reflect realistic potential, not wishful thinking.
+- Output ONLY valid JSON. No markdown, no extra text.`;
+
+async function fetchAVTopMovers() {
+  const key = process.env.ALPHA_VANTAGE_KEY;
+  if (!key) return { gainers: [], losers: [], mostActive: [] };
+  try {
+    const url = `https://www.alphavantage.co/query?function=TOP_GAINERS_LOSERS&apikey=${key}`;
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 10000);
+    const res = await fetch(url, { signal: ctl.signal });
+    clearTimeout(t);
+    if (!res.ok) return { gainers: [], losers: [], mostActive: [] };
+    const data = await res.json();
+    const pick = (arr, n) => (Array.isArray(arr) ? arr.slice(0, n) : []).map(x => ({
+      ticker: x.ticker || '',
+      price: x.price || '',
+      change: x.change_amount || '',
+      changePct: x.change_percentage || '',
+      volume: x.volume || '',
+    }));
+    return {
+      gainers:    pick(data.top_gainers, 5),
+      losers:     pick(data.top_losers, 5),
+      mostActive: pick(data.most_actively_traded, 5),
+    };
+  } catch {
+    return { gainers: [], losers: [], mostActive: [] };
+  }
+}
+
+router.get('/movers', async (_req, res) => {
+  const now = Date.now();
+  if (moversCache.data && (now - moversCache.ts) < MOVERS_CACHE_MS) {
+    return res.json({ ...moversCache.data, cached: true });
+  }
+
+  try {
+    const [{ headlines, tickerSentiments }, avMovers] = await Promise.all([
+      getSharedHeadlines(),
+      fetchAVTopMovers(),
+    ]);
+
+    const headlineBlock = headlines.length
+      ? buildHeadlineBlock(headlines, 60)
+      : '(No live headlines available. Use broad 2026 macro context.)';
+
+    // Build a market-movers context block from AV data
+    const moversBlock = [
+      avMovers.gainers.length ? `TOP GAINERS: ${avMovers.gainers.map(g => `${g.ticker} ${g.changePct}`).join(', ')}` : '',
+      avMovers.losers.length  ? `TOP LOSERS: ${avMovers.losers.map(l => `${l.ticker} ${l.changePct}`).join(', ')}` : '',
+      avMovers.mostActive.length ? `MOST ACTIVE: ${avMovers.mostActive.map(a => `${a.ticker} vol:${a.volume}`).join(', ')}` : '',
+    ].filter(Boolean).join('\n');
+
+    // Build ticker sentiment context for top AV movers
+    let sentimentBlock = '';
+    if (tickerSentiments instanceof Map && tickerSentiments.size > 0) {
+      const topSentiment = [...tickerSentiments.entries()]
+        .sort((a, b) => b[1].count - a[1].count)
+        .slice(0, 10)
+        .map(([ticker, s]) => `${ticker}: ${s.label} (score ${s.avgScore?.toFixed(2) || 'n/a'}, ${s.count} articles)`)
+        .join(', ');
+      sentimentBlock = `\nTICKER SENTIMENT FROM NEWS: ${topSentiment}`;
+    }
+
+    const userPrompt = `Today: ${new Date().toISOString().slice(0, 10)}\n\n${moversBlock ? `REAL-TIME MARKET MOVERS:\n${moversBlock}\n\n` : ''}${sentimentBlock ? sentimentBlock + '\n\n' : ''}LIVE HEADLINES:\n${headlineBlock}\n\nIdentify 6-10 assets with the highest movement potential right now.`;
+
+    const completion = await getOpenAiClient().chat.completions.create({
+      model: resolveModel('default', 'gpt-4o'),
+      messages: [
+        { role: 'system', content: MOVERS_SYSTEM },
+        { role: 'user',   content: userPrompt },
+      ],
+      temperature: 0.3,
+      max_tokens: 2500,
+    });
+
+    const raw = (completion.choices?.[0]?.message?.content || '').trim();
+    let parsed;
+    try {
+      parsed = JSON.parse(sanitizeAiJson(raw));
+    } catch {
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('Could not parse movers AI response');
+      parsed = JSON.parse(match[0]);
+    }
+
+    // Sanitise
+    const sanitisedCatalysts = (Array.isArray(parsed.catalysts) ? parsed.catalysts : []).slice(0, 10).map(c => ({
+      ticker:         String(c.ticker || '').slice(0, 12),
+      name:           String(c.name || c.ticker || '').slice(0, 60),
+      assetType:      String(c.assetType || 'US Stock').slice(0, 20),
+      movementType:   String(c.movementType || 'Catalyst').slice(0, 20),
+      direction:      ['Up', 'Down', 'Either'].includes(c.direction) ? c.direction : 'Either',
+      magnitude:      String(c.magnitude || '2-5%').slice(0, 10),
+      timeframe:      String(c.timeframe || 'This Week').slice(0, 15),
+      triggerEvent:   String(c.triggerEvent || '').slice(0, 300),
+      technicalNote:  String(c.technicalNote || '').slice(0, 200),
+      risk:           String(c.risk || '').slice(0, 200),
+      urgency:        ['High', 'Medium', 'Watch'].includes(c.urgency) ? c.urgency : 'Medium',
+      nairaRelevance: String(c.nairaRelevance || '').slice(0, 250),
+    }));
+
+    const result = {
+      catalysts:   sanitisedCatalysts,
+      scanSummary: String(parsed.scanSummary || '').slice(0, 500),
+      topTheme:    String(parsed.topTheme || '').slice(0, 100),
+      marketMood:  ['Risk-On', 'Risk-Off', 'Mixed'].includes(parsed.marketMood) ? parsed.marketMood : 'Mixed',
+      avMovers,
+      generatedAt: new Date().toISOString(),
+      cached: false,
+    };
+
+    moversCache.data = result;
+    moversCache.ts = now;
+    res.json(result);
+  } catch (err) {
+    console.error('Movers scanner error:', err);
+    res.status(500).json({ error: 'Failed to generate movers scan: ' + err.message });
+  }
+});
+
 module.exports = router;

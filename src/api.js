@@ -421,6 +421,10 @@ export const api = {
     return request('/ai/calendar');
   },
 
+  async getMovers() {
+    return request('/ai/movers');
+  },
+
   /* ── Profile ── */
   async getProfile() {
     return request(`/profile?sessionId=${getSessionId()}`);

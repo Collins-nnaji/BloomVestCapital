@@ -8,6 +8,7 @@ import {
   FaBold, FaItalic, FaListUl, FaTag, FaRobot,
   FaExclamationTriangle, FaAlignLeft, FaNewspaper, FaSignal, FaCalendarAlt,
   FaStar, FaFileAlt, FaCheckDouble, FaChartPie, FaRedo, FaSave, FaCoins, FaCheck,
+  FaFire, FaArrowUp, FaArrowDown, FaExchangeAlt,
 } from 'react-icons/fa';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RcTooltip } from 'recharts';
 import { api } from '../api';
@@ -1151,15 +1152,39 @@ export default function Dashboard() {
   const [savingAlloc,   setSavingAlloc]   = useState(false);
   const [allocSaved,    setAllocSaved]    = useState(false);
 
-  // tabs: 'picks' | 'news' | 'journal' | 'allocation' | 'copilot'
+  // tabs: 'picks' | 'news' | 'journal' | 'allocation' | 'copilot' | 'movers'
   const [dashTab, setDashTab] = useState('news');
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    const allowed = ['picks', 'news', 'journal', 'allocation', 'copilot'];
+    const allowed = ['picks', 'news', 'journal', 'allocation', 'copilot', 'movers'];
     if (tab && allowed.includes(tab)) setDashTab(tab);
     if (tab && !allowed.includes(tab)) setDashTab('news');
   }, [searchParams]);
+
+  // movers state
+  const [moversData,    setMoversData]    = useState(null);
+  const [moversLoading, setMoversLoading] = useState(false);
+  const [moversError,   setMoversError]   = useState(null);
+  const [moversExpanded, setMoversExpanded] = useState(null);
+
+  const loadMovers = useCallback(async () => {
+    if (moversLoading) return;
+    setMoversLoading(true);
+    setMoversError(null);
+    try {
+      const data = await api.getMovers();
+      setMoversData(data);
+    } catch (e) {
+      setMoversError(e.message || 'Failed to load movers scan');
+    } finally {
+      setMoversLoading(false);
+    }
+  }, [moversLoading]);
+
+  useEffect(() => {
+    if (dashTab === 'movers' && !moversData && !moversLoading) loadMovers();
+  }, [dashTab, moversData, moversLoading, loadMovers]);
 
   // watchlist state
   const [watchlist, setWatchlist] = useState(() => {
@@ -1631,6 +1656,7 @@ export default function Dashboard() {
       <DashTabBar>
         <DashTabBtn $active={dashTab==='news'} onClick={()=>selectTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
         <DashTabBtn $active={dashTab==='picks'} onClick={()=>selectTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
+        <DashTabBtn $active={dashTab==='movers'} onClick={()=>selectTab('movers')}><FaFire/>Movers Scanner</DashTabBtn>
         <DashTabBtn $active={dashTab==='allocation'} onClick={()=>selectTab('allocation')}><FaChartPie/>Fund Allocation</DashTabBtn>
         <DashTabBtn $active={dashTab==='journal'} onClick={()=>selectTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
         <DashTabBtn $active={dashTab==='copilot'} onClick={()=>selectTab('copilot')}><FaRobot/>Copilot</DashTabBtn>
@@ -2480,6 +2506,180 @@ export default function Dashboard() {
             </JournalGrid>
           )}
         </JournalFullPage>
+      )}
+      {dashTab==='movers' && (
+        <div style={{padding:'1.25rem',maxWidth:900,margin:'0 auto'}}>
+          {/* Header row */}
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',flexWrap:'wrap',gap:'0.75rem',marginBottom:'1.25rem'}}>
+            <div>
+              <div style={{fontSize:'0.65rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.12em',color:'#10b981',marginBottom:'0.2rem'}}>BloomVest Intelligence</div>
+              <h2 style={{margin:0,fontFamily:"'Space Grotesk',sans-serif",fontSize:'1.35rem',fontWeight:800,color:'#0f172a',letterSpacing:'-0.02em'}}>Movers Scanner</h2>
+              <p style={{margin:'0.2rem 0 0',fontSize:'0.78rem',color:'#64748b'}}>AI-spotted stocks &amp; assets with explosive movement potential</p>
+            </div>
+            <div style={{display:'flex',gap:'0.5rem',alignItems:'center',flexWrap:'wrap'}}>
+              {moversData && (
+                <div style={{fontSize:'0.7rem',color:'#64748b',fontWeight:600}}>
+                  Updated {new Date(moversData.generatedAt).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+                  {moversData.cached && <span style={{marginLeft:4,color:'#94a3b8'}}>(cached)</span>}
+                </div>
+              )}
+              <button
+                onClick={()=>{setMoversData(null);loadMovers();}}
+                disabled={moversLoading}
+                style={{display:'inline-flex',alignItems:'center',gap:'0.4rem',padding:'0.45rem 0.9rem',borderRadius:8,border:'1px solid #e2e8f0',background:'#fff',color:'#0f172a',fontSize:'0.75rem',fontWeight:700,cursor:moversLoading?'not-allowed':'pointer',opacity:moversLoading?0.6:1}}>
+                <FaSyncAlt className={moversLoading?'spin':''} style={{fontSize:'0.7rem'}}/> {moversLoading?'Scanning…':'Re-scan'}
+              </button>
+            </div>
+          </div>
+
+          {/* Loading skeleton */}
+          {moversLoading && (
+            <div style={{display:'flex',flexDirection:'column',gap:'0.75rem'}}>
+              {[1,2,3].map(i=>(
+                <div key={i} style={{height:80,borderRadius:12,background:'linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)',backgroundSize:'200% 100%',animation:'shimmer 1.4s infinite'}}/>
+              ))}
+            </div>
+          )}
+
+          {/* Error */}
+          {moversError && !moversLoading && (
+            <div style={{padding:'1.5rem',borderRadius:12,background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',fontSize:'0.85rem',fontWeight:600}}>
+              {moversError} — <button onClick={loadMovers} style={{background:'none',border:'none',color:'#dc2626',textDecoration:'underline',cursor:'pointer',fontWeight:700}}>Retry</button>
+            </div>
+          )}
+
+          {/* Market mood + top theme summary */}
+          {moversData && !moversLoading && (
+            <>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'0.75rem',marginBottom:'1.25rem'}}>
+                <div style={{padding:'0.9rem 1.1rem',borderRadius:12,background:moversData.marketMood==='Risk-On'?'rgba(16,185,129,0.07)':moversData.marketMood==='Risk-Off'?'rgba(239,68,68,0.07)':'rgba(245,158,11,0.07)',border:`1px solid ${moversData.marketMood==='Risk-On'?'rgba(16,185,129,0.2)':moversData.marketMood==='Risk-Off'?'rgba(239,68,68,0.2)':'rgba(245,158,11,0.2)'}`}}>
+                  <div style={{fontSize:'0.6rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',color:'#94a3b8',marginBottom:'0.25rem'}}>Market Mood</div>
+                  <div style={{fontFamily:"'Space Grotesk',sans-serif",fontWeight:800,fontSize:'1.1rem',color:moversData.marketMood==='Risk-On'?'#10b981':moversData.marketMood==='Risk-Off'?'#ef4444':'#f59e0b'}}>{moversData.marketMood}</div>
+                </div>
+                <div style={{padding:'0.9rem 1.1rem',borderRadius:12,background:'rgba(99,102,241,0.06)',border:'1px solid rgba(99,102,241,0.15)',gridColumn:'span 2'}}>
+                  <div style={{fontSize:'0.6rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',color:'#94a3b8',marginBottom:'0.25rem'}}>Top Theme</div>
+                  <div style={{fontFamily:"'Space Grotesk',sans-serif",fontWeight:700,fontSize:'0.95rem',color:'#0f172a'}}>{moversData.topTheme}</div>
+                </div>
+              </div>
+
+              {moversData.scanSummary && (
+                <div style={{padding:'0.9rem 1.1rem',borderRadius:12,background:'#f8fafc',border:'1px solid #e2e8f0',fontSize:'0.82rem',color:'#475569',lineHeight:1.6,marginBottom:'1.25rem',borderLeft:'3px solid #10b981'}}>
+                  {moversData.scanSummary}
+                </div>
+              )}
+
+              {/* AV real-time movers strip */}
+              {moversData.avMovers && (moversData.avMovers.gainers.length > 0 || moversData.avMovers.losers.length > 0) && (
+                <div style={{marginBottom:'1.25rem'}}>
+                  <div style={{fontSize:'0.65rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',color:'#94a3b8',marginBottom:'0.6rem'}}>Real-Time Top Movers (Alpha Vantage)</div>
+                  <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap'}}>
+                    {moversData.avMovers.gainers.slice(0,4).map(g=>(
+                      <div key={g.ticker} style={{display:'inline-flex',alignItems:'center',gap:'0.35rem',padding:'0.3rem 0.7rem',borderRadius:100,background:'rgba(16,185,129,0.08)',border:'1px solid rgba(16,185,129,0.2)',fontSize:'0.75rem',fontWeight:700,color:'#065f46'}}>
+                        <FaArrowUp style={{fontSize:'0.6rem',color:'#10b981'}}/> {g.ticker} <span style={{color:'#10b981'}}>{g.changePct}</span>
+                      </div>
+                    ))}
+                    {moversData.avMovers.losers.slice(0,4).map(l=>(
+                      <div key={l.ticker} style={{display:'inline-flex',alignItems:'center',gap:'0.35rem',padding:'0.3rem 0.7rem',borderRadius:100,background:'rgba(239,68,68,0.07)',border:'1px solid rgba(239,68,68,0.15)',fontSize:'0.75rem',fontWeight:700,color:'#7f1d1d'}}>
+                        <FaArrowDown style={{fontSize:'0.6rem',color:'#ef4444'}}/> {l.ticker} <span style={{color:'#ef4444'}}>{l.changePct}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Catalyst cards */}
+              <div style={{fontSize:'0.65rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.1em',color:'#94a3b8',marginBottom:'0.75rem'}}>
+                AI-Identified Movement Catalysts ({moversData.catalysts.length})
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:'0.65rem'}}>
+                {moversData.catalysts.map((c, i) => {
+                  const isOpen = moversExpanded === i;
+                  const urgencyColor = c.urgency==='High'?'#ef4444':c.urgency==='Medium'?'#f59e0b':'#64748b';
+                  const urgencyBg   = c.urgency==='High'?'rgba(239,68,68,0.08)':c.urgency==='Medium'?'rgba(245,158,11,0.08)':'rgba(100,116,139,0.08)';
+                  const dirColor = c.direction==='Up'?'#10b981':c.direction==='Down'?'#ef4444':'#6366f1';
+                  const DirIcon = c.direction==='Up'?FaArrowUp:c.direction==='Down'?FaArrowDown:FaExchangeAlt;
+                  const typeColors = {Breakout:'#6366f1',Catalyst:'#f59e0b',Reversal:'#ec4899',Momentum:'#10b981',Squeeze:'#ef4444','Event-Driven':'#3b82f6'};
+                  const typeColor = typeColors[c.movementType] || '#64748b';
+                  return (
+                    <motion.div key={i}
+                      initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:i*0.04}}
+                      style={{borderRadius:12,border:`1px solid ${isOpen?'#cbd5e1':'#f1f5f9'}`,background:'#fff',overflow:'hidden',cursor:'pointer',transition:'border-color 0.2s,box-shadow 0.2s',boxShadow:isOpen?'0 4px 16px rgba(0,0,0,0.06)':'none'}}
+                      onClick={()=>setMoversExpanded(isOpen?null:i)}>
+                      <div style={{padding:'0.85rem 1rem',display:'flex',alignItems:'center',gap:'0.75rem'}}>
+                        {/* Direction badge */}
+                        <div style={{width:38,height:38,borderRadius:10,background:`rgba(${c.direction==='Up'?'16,185,129':c.direction==='Down'?'239,68,68':'99,102,241'},0.1)`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                          <DirIcon style={{color:dirColor,fontSize:'0.9rem'}}/>
+                        </div>
+                        {/* Meta */}
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{display:'flex',alignItems:'center',gap:'0.4rem',flexWrap:'wrap'}}>
+                            <span style={{fontFamily:"'Space Grotesk',sans-serif",fontWeight:800,fontSize:'0.95rem',color:'#0f172a'}}>{c.ticker}</span>
+                            <span style={{fontSize:'0.72rem',color:'#64748b'}}>{c.name}</span>
+                            <span style={{fontSize:'0.65rem',fontWeight:700,padding:'0.1rem 0.45rem',borderRadius:100,background:`rgba(${typeColor.slice(1).match(/../g).map(h=>parseInt(h,16)).join(',')},0.1)`,color:typeColor}}>{c.movementType}</span>
+                          </div>
+                          <div style={{fontSize:'0.75rem',color:'#94a3b8',marginTop:'0.15rem'}}>{c.triggerEvent}</div>
+                        </div>
+                        {/* Right badges */}
+                        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'0.25rem',flexShrink:0}}>
+                          <span style={{fontSize:'0.68rem',fontWeight:800,padding:'0.15rem 0.5rem',borderRadius:100,background:urgencyBg,color:urgencyColor}}>{c.urgency}</span>
+                          <span style={{fontSize:'0.68rem',fontWeight:700,color:'#64748b'}}>{c.magnitude} · {c.timeframe}</span>
+                          <span style={{color:'#94a3b8',fontSize:'0.75rem'}}>{isOpen?<FaChevronUp/>:<FaChevronDown/>}</span>
+                        </div>
+                      </div>
+                      {/* Expanded detail */}
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:0.2}}>
+                            <div style={{padding:'0 1rem 1rem',borderTop:'1px solid #f1f5f9',paddingTop:'0.85rem',display:'flex',flexDirection:'column',gap:'0.65rem'}}>
+                              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(130px,1fr))',gap:'0.5rem'}}>
+                                <div style={{padding:'0.6rem 0.75rem',borderRadius:8,background:'#f8fafc'}}>
+                                  <div style={{fontSize:'0.58rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',marginBottom:'0.2rem'}}>Asset Type</div>
+                                  <div style={{fontWeight:700,fontSize:'0.82rem',color:'#0f172a'}}>{c.assetType}</div>
+                                </div>
+                                <div style={{padding:'0.6rem 0.75rem',borderRadius:8,background:'#f8fafc'}}>
+                                  <div style={{fontSize:'0.58rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',marginBottom:'0.2rem'}}>Direction</div>
+                                  <div style={{fontWeight:700,fontSize:'0.82rem',color:dirColor}}>{c.direction}</div>
+                                </div>
+                                <div style={{padding:'0.6rem 0.75rem',borderRadius:8,background:'#f8fafc'}}>
+                                  <div style={{fontSize:'0.58rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',marginBottom:'0.2rem'}}>Expected Move</div>
+                                  <div style={{fontWeight:700,fontSize:'0.82rem',color:'#0f172a'}}>{c.magnitude}</div>
+                                </div>
+                                <div style={{padding:'0.6rem 0.75rem',borderRadius:8,background:'#f8fafc'}}>
+                                  <div style={{fontSize:'0.58rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',marginBottom:'0.2rem'}}>Timeframe</div>
+                                  <div style={{fontWeight:700,fontSize:'0.82rem',color:'#0f172a'}}>{c.timeframe}</div>
+                                </div>
+                              </div>
+                              {c.technicalNote && (
+                                <div style={{fontSize:'0.8rem',color:'#475569',lineHeight:1.55,padding:'0.65rem 0.85rem',borderRadius:8,background:'rgba(99,102,241,0.05)',borderLeft:'3px solid #6366f1'}}>
+                                  <span style={{fontSize:'0.6rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',display:'block',marginBottom:'0.25rem'}}>Technical Setup</span>
+                                  {c.technicalNote}
+                                </div>
+                              )}
+                              <div style={{fontSize:'0.8rem',color:'#475569',lineHeight:1.55,padding:'0.65rem 0.85rem',borderRadius:8,background:'rgba(239,68,68,0.04)',borderLeft:'3px solid #fca5a5'}}>
+                                <span style={{fontSize:'0.6rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',display:'block',marginBottom:'0.25rem'}}>Key Risk</span>
+                                {c.risk}
+                              </div>
+                              {c.nairaRelevance && (
+                                <div style={{fontSize:'0.8rem',color:'#475569',lineHeight:1.55,padding:'0.65rem 0.85rem',borderRadius:8,background:'rgba(16,185,129,0.04)',borderLeft:'3px solid #6ee7b7'}}>
+                                  <span style={{fontSize:'0.6rem',fontWeight:800,textTransform:'uppercase',letterSpacing:'0.08em',color:'#94a3b8',display:'block',marginBottom:'0.25rem'}}>Nigeria / Africa Angle</span>
+                                  {c.nairaRelevance}
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              <p style={{fontSize:'0.68rem',color:'#94a3b8',textAlign:'center',marginTop:'1.5rem',lineHeight:1.5}}>
+                For educational purposes only. Not financial advice. AI analysis is derived from public headlines and may be delayed. Capital at risk.
+              </p>
+            </>
+          )}
+        </div>
       )}
       {dashTab==='copilot' && (
         <CopilotPane>
