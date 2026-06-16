@@ -434,6 +434,23 @@ export const api = {
   async getGoals() {
     return request(`/profile/goals?sessionId=${getSessionId()}`);
   },
+
+  /* ── Fund Allocations ── */
+  async getAllocations() {
+    return request(`/allocations?sessionId=${getSessionId()}`);
+  },
+  async saveAllocation(allocation) {
+    return request('/allocations', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: getSessionId(), ...allocation }),
+    });
+  },
+  async deleteAllocation(id) {
+    return request(`/allocations/${id}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ sessionId: getSessionId() }),
+    });
+  },
   async createGoal(goal) {
     return request('/profile/goals', {
       method: 'POST',

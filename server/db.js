@@ -190,6 +190,17 @@ CREATE TABLE IF NOT EXISTS financial_goals (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_financial_goals_user ON financial_goals(user_id);
+CREATE TABLE IF NOT EXISTS allocation_portfolios (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  fund_amount DECIMAL(15,2) NOT NULL DEFAULT 100,
+  allocations JSONB NOT NULL DEFAULT '[]',
+  breakdown JSONB NOT NULL DEFAULT '{}',
+  preferences JSONB,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_allocation_portfolios_user ON allocation_portfolios(user_id, created_at DESC);
 `;
 
 async function initializeDatabase() {
