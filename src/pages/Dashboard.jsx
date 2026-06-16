@@ -180,21 +180,23 @@ const IntelligenceSub = styled.p`
 `;
 
 const DashTabBar = styled.div`
-  display:flex;gap:0;border-bottom:1px solid #f1f5f9;
-  background:#ffffff;padding:0 1.5rem;overflow-x:auto;
+  display:flex;gap:0.15rem;border-bottom:1px solid #f1f5f9;
+  background:#ffffff;padding:0.35rem 1.5rem 0;overflow-x:auto;
   flex-shrink: 0;
   scrollbar-width:none;&::-webkit-scrollbar{display:none;}
-  @media(max-width:640px){padding:0;}
+  @media(max-width:640px){padding:0.25rem 0.35rem 0;gap:0;}
 `;
 const DashTabBtn = styled.button`
-  padding:0.85rem 1.25rem;font-family:'Space Grotesk',sans-serif;font-size:0.82rem;font-weight:700;
+  padding:0.7rem 1.05rem;font-family:'Inter',sans-serif;font-size:0.86rem;font-weight:${p=>p.$active?600:500};
+  letter-spacing:-0.011em;-webkit-font-smoothing:antialiased;
   border:none;background:transparent;cursor:pointer;white-space:nowrap;
   color:${p=>p.$active?'#0f172a':'#94a3b8'};
   border-bottom:2px solid ${p=>p.$active?'#10b981':'transparent'};
-  margin-bottom:-1px;transition:color 0.2s,border-color 0.2s;
-  display:flex;align-items:center;gap:0.4rem;
-  &:hover{color:#0f172a;}
-  @media(max-width:640px){flex:1;justify-content:center;padding:0.75rem 0.5rem;font-size:0.78rem;}
+  margin-bottom:-1px;border-radius:8px 8px 0 0;transition:color 0.18s,background 0.18s,border-color 0.18s;
+  display:flex;align-items:center;gap:0.45rem;
+  svg{font-size:0.9em;opacity:${p=>p.$active?1:0.7};}
+  &:hover{color:#0f172a;background:${p=>p.$active?'transparent':'rgba(15,23,42,0.04)'};}
+  @media(max-width:640px){flex:1;justify-content:center;padding:0.7rem 0.4rem;font-size:0.8rem;gap:0.3rem;}
 `;
 
 /* ── summary bar ────────────────────────────────────── */

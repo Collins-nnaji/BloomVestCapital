@@ -64,42 +64,42 @@ const NavGroup = styled.div`
 `;
 
 const NavLink = styled(RouterLink)`
-  font-family: 'Space Grotesk', sans-serif;
-  color: rgba(15, 23, 42, 0.55);
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 500;
   text-decoration: none;
-  transition: color 0.15s ease;
-  padding: 0.45rem 0.85rem;
-  border-radius: 0;
+  transition: color 0.18s ease, background 0.18s ease;
+  padding: 0.5rem 0.9rem;
+  border-radius: 9px;
   white-space: nowrap;
   position: relative;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
 
   &::after {
     content: '';
     position: absolute;
-    bottom: -2px;
-    left: 0.85rem;
-    right: 0.85rem;
+    bottom: 0.1rem;
+    left: 50%;
+    width: 0;
     height: 2px;
     border-radius: 2px;
     background: #10b981;
-    transform: scaleX(0);
-    transition: transform 0.18s ease;
-    transform-origin: left center;
+    transform: translateX(-50%);
+    transition: width 0.2s ease;
   }
 
   &:hover {
     color: #0f172a;
-    background: transparent;
+    background: rgba(15, 23, 42, 0.04);
   }
 
   &.active {
     color: #0f172a;
     background: transparent;
-    font-weight: 800;
-    &::after { transform: scaleX(1); }
+    font-weight: 600;
+    &::after { width: calc(100% - 1.8rem); }
   }
 `;
 
@@ -128,16 +128,19 @@ const NavRight = styled.div`
 `;
 
 const SignInLink = styled(RouterLink)`
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1.15rem;
   border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.82rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  letter-spacing: -0.011em;
   color: #0f172a;
   border: 1px solid rgba(15, 23, 42, 0.14);
   background: white;
   text-decoration: none;
   transition: all 0.2s ease;
   white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
 
   &:hover {
     border-color: rgba(34, 197, 94, 0.45);
@@ -166,9 +169,10 @@ const AvatarBtn = styled.button`
   background: linear-gradient(135deg, #0f172a 0%, #1e3a2f 100%);
   border: 2px solid rgba(34, 197, 94, 0.35);
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -206,9 +210,10 @@ const DropdownProfile = styled.div`
 `;
 
 const DropdownName = styled.div`
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.011em;
   color: #0f172a;
   margin-bottom: 0.15rem;
   white-space: nowrap;
@@ -335,19 +340,21 @@ const MobileLink = styled(RouterLink)`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 0.5rem;
-  color: #0f172a;
-  font-weight: 600;
-  font-size: 1rem;
+  padding: 0.8rem 0.65rem;
+  color: #1e293b;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.98rem;
+  letter-spacing: -0.011em;
   text-decoration: none;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  transition: all 0.2s;
+  border-radius: 9px;
+  transition: all 0.18s ease;
+  -webkit-font-smoothing: antialiased;
 
-  &:last-child { border-bottom: none; }
-  &:hover { color: #22c55e; transform: translateX(4px); }
-  &.active { color: #15803d; }
+  &:hover { color: #0f172a; background: rgba(15, 23, 42, 0.04); }
+  &.active { color: #15803d; font-weight: 600; background: rgba(34, 197, 94, 0.08); }
 
-  svg { font-size: 0.75rem; opacity: 0.4; }
+  svg { font-size: 0.7rem; opacity: 0.35; }
 `;
 
 const MobileAuthBtn = styled(RouterLink)`
@@ -358,8 +365,10 @@ const MobileAuthBtn = styled(RouterLink)`
   padding: 0.85rem;
   background: #0f172a;
   color: white;
-  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
   font-size: 0.95rem;
+  letter-spacing: -0.011em;
   text-decoration: none;
   border-radius: 12px;
   margin-bottom: 0.65rem;
