@@ -67,6 +67,15 @@ const Section = styled.section`
     padding: clamp(0.75rem, 2vh, 1.25rem) clamp(1rem, 2.5vw, 1.5rem) 1.75rem;
     justify-content: center;
   `}
+
+  ${(p) =>
+    p.$intel &&
+    `
+    @media (max-width: 768px) {
+      padding: 0.65rem 0.65rem 1.5rem;
+      justify-content: flex-start;
+    }
+  `}
 `;
 
 const SectionInner = styled.div`
@@ -89,6 +98,15 @@ const SectionInner = styled.div`
     align-items: center;
     max-width: none;
     width: 100%;
+  `}
+
+  ${(p) =>
+    p.$intel &&
+    `
+    @media (max-width: 768px) {
+      justify-content: flex-start;
+      padding-top: 0.15rem;
+    }
   `}
 `;
 
@@ -620,6 +638,10 @@ const IntelSectionHead = styled.div`
   @media (max-height: 780px) {
     margin-bottom: 0.35rem;
   }
+
+  @media (max-width: 768px) {
+    margin-bottom: 0.4rem;
+  }
 `;
 
 /* ── SCROLL ARROW ───────────────────────────────── */
@@ -814,13 +836,13 @@ export default function LandingPage() {
         </Section>
 
         {/* ── SECTION 2: INTELLIGENCE ENGINE ── */}
-        <Section>
+        <Section $intel>
           <SecIntelBg />
           <GlowOrb style={{ width: 500, height: 500, right: '-5%', top: '15%', background: 'rgba(99,102,241,.1)' }} $dur="15s" $delay="-2s" />
-          <SectionInner style={{ maxWidth: 1320 }}>
+          <SectionInner $intel style={{ maxWidth: 1320 }}>
             <IntelSectionHead>
               <SectionLabel style={{ color: '#a78bfa', justifyContent: 'center', marginBottom: '0.5rem' }}>BloomVest IQ</SectionLabel>
-              <BigHeadline style={{ textAlign: 'center', fontSize: 'clamp(1.35rem, 3.5vw, 2.75rem)', marginBottom: 0 }}>
+              <BigHeadline style={{ textAlign: 'center', fontSize: 'clamp(1.15rem, 4.5vw, 2.75rem)', marginBottom: 0 }}>
                 THE <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#a78bfa 40%,#38bdf8 100%)">INTELLIGENCE</GradText> ENGINE
               </BigHeadline>
             </IntelSectionHead>
