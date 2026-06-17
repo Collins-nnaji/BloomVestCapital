@@ -87,6 +87,7 @@ const CoverArea = styled.div`
   background: linear-gradient(135deg, #0a0f1a 0%, #0f1f14 55%, #051a10 100%);
   position: relative;
   overflow: hidden;
+  @media (max-width: 640px) { height: 140px; }
   &::before {
     content: '';
     position: absolute;
@@ -109,6 +110,7 @@ const ProfileWrapper = styled.div`
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 1.5rem 4rem;
+  @media (max-width: 640px) { padding: 0 1rem 2rem; }
 `;
 
 const ProfileHeader = styled.div`
@@ -121,6 +123,7 @@ const ProfileHeader = styled.div`
   flex-wrap: wrap;
   padding-bottom: 1rem;
   border-bottom: 1px solid #e5e7eb;
+  @media (max-width: 640px) { margin-top: -44px; gap: 0.85rem; }
 `;
 
 const Avatar = styled(motion.div)`
@@ -138,6 +141,7 @@ const Avatar = styled(motion.div)`
   color: #fff;
   flex-shrink: 0;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  @media (max-width: 640px) { width: 84px; height: 84px; font-size: 1.5rem; }
 `;
 
 const ProfileInfo = styled.div`
@@ -155,6 +159,7 @@ const ProfileName = styled.h1`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  @media (max-width: 640px) { font-size: 1.3rem; }
 `;
 
 const ProfileTagline = styled.p`
@@ -363,6 +368,7 @@ const TwoCol = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.65rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
 `;
 
 const SaveBtn = styled(motion.button)`
@@ -519,6 +525,7 @@ const Overlay = styled(motion.div)`
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
+  @media (max-width: 640px) { padding: 0.75rem; align-items: flex-end; }
 `;
 
 const ModalCard = styled(motion.div)`
@@ -547,6 +554,7 @@ const ModalTitle = styled.div`
 
 const ModalBody = styled.div`
   padding: 1.25rem;
+  @media (max-width: 640px) { padding: 0.95rem; }
 `;
 
 const CatGrid = styled.div`

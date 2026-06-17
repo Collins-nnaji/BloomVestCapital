@@ -261,6 +261,7 @@ const Header = styled.div`
   padding: calc(64px + 1.75rem) 1.5rem 1.5rem;
   position: relative;
   overflow: hidden;
+  @media (max-width: 640px) { padding: calc(64px + 1rem) 1rem 1.25rem; }
   &::after {
     content: '';
     position: absolute;
@@ -289,6 +290,7 @@ const PageTitle = styled.h1`
   display: flex;
   align-items: center;
   gap: 0.55rem;
+  @media (max-width: 640px) { font-size: 1.25rem; }
 `;
 
 const PageSub = styled.p`
@@ -348,6 +350,7 @@ const DailySection = styled.div`
   padding: 0 1.25rem;
   max-width: 1280px;
   margin: 1.1rem auto 0;
+  @media (max-width: 640px) { padding: 0 1rem; }
 `;
 
 const DailyCard = styled(motion.div)`
@@ -394,6 +397,7 @@ const StudySetsSection = styled.div`
   padding: 0.85rem 1.25rem 0;
   max-width: 1280px;
   margin: 0 auto;
+  @media (max-width: 640px) { padding: 0.85rem 1rem 0; }
 `;
 
 const SetScroll = styled.div`
@@ -433,6 +437,7 @@ const Body = styled.div`
   gap: 1rem;
   align-items: start;
   @media (max-width: 800px) { grid-template-columns: 1fr; }
+  @media (max-width: 640px) { padding: 0 1rem 2.5rem; }
 `;
 
 /* ── Left Panel ── */
@@ -902,7 +907,7 @@ const QuizWrap = styled.div`
   padding: 1.1rem 1.25rem;
 `;
 const QuizQ = styled.div`font-size: 0.87rem; font-weight: 700; color: #0a0f14; margin-bottom: 0.65rem;`;
-const QuizGrid = styled.div`display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;`;
+const QuizGrid = styled.div`display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem; @media (max-width: 480px) { grid-template-columns: 1fr; }`;
 const QuizOpt = styled.button`
   text-align: left;
   padding: 0.6rem 0.75rem;
@@ -953,6 +958,7 @@ const AuthGatePage = styled.div`
   align-items: center;
   justify-content: center;
   padding: 2rem 1.5rem;
+  @media (max-width: 640px) { padding: 1.5rem 1rem; }
 `;
 
 const AuthGateCard = styled(motion.div)`
@@ -964,6 +970,7 @@ const AuthGateCard = styled(motion.div)`
   max-width: 440px;
   width: 100%;
   box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  @media (max-width: 640px) { padding: 2rem 1.5rem; border-radius: 20px; }
 `;
 
 const AuthGateLockIcon = styled.div`
@@ -986,6 +993,7 @@ const AuthGateTitle = styled.h2`
   font-weight: 800;
   color: #fff;
   margin: 0 0 0.6rem;
+  @media (max-width: 640px) { font-size: 1.3rem; }
 `;
 
 const AuthGateSub = styled.p`
@@ -1050,6 +1058,7 @@ const FlashCard = styled(motion.div)`
   user-select: none;
   perspective: 1000px;
   margin-bottom: 1rem;
+  @media (max-width: 640px) { padding: 1.5rem 1.25rem; min-height: 220px; }
 `;
 
 const FlashTerm = styled.div`
@@ -1058,6 +1067,7 @@ const FlashTerm = styled.div`
   font-weight: 800;
   color: #0f172a;
   margin-bottom: 0.5rem;
+  @media (max-width: 640px) { font-size: 1.3rem; }
 `;
 
 const FlashHint = styled.div`
