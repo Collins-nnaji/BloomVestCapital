@@ -514,7 +514,7 @@ const Overlay = styled(motion.div)`
   inset: 0;
   background: rgba(0,0,0,0.45);
   backdrop-filter: blur(3px);
-  z-index: 200;
+  z-index: 1300;
   display: flex;
   align-items: center;
   justify-content: center;

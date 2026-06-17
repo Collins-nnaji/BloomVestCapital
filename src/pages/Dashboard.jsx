@@ -147,57 +147,47 @@ const RunBtn = styled(motion.button)`
   @media(max-width:640px){flex:1 1 100%;justify-content:center;padding:0.7rem 0.75rem;order:1;}
 `;
 
-/* ── tabs ───────────────────────────────────────────── */
-const IntelligenceBar = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.65rem 1.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
+/* ── per-tool header (sidebar drives tool selection) ──── */
+const ToolHeader = styled.div`
+  padding: 1.75rem 1.5rem 1rem;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
   flex-shrink: 0;
-  @media (max-width: 640px) {
-    padding: 0.6rem 1rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-  }
+  @media (max-width: 640px) { padding: 1.25rem 1rem 0.75rem; }
 `;
-const IntelligenceTitle = styled.h1`
+const ToolEyebrow = styled.p`
+  margin: 0 0 0.3rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #059669;
+`;
+const ToolTitle = styled.h1`
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 800;
   color: #0f172a;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 `;
-const IntelligenceSub = styled.p`
-  margin: 0;
-  font-size: 0.72rem;
+const ToolSub = styled.p`
+  margin: 0.4rem 0 0;
+  font-size: 0.84rem;
   color: #64748b;
-  font-weight: 500;
+  font-family: 'Inter', sans-serif;
 `;
 
-const DashTabBar = styled.div`
-  display:flex;gap:0.15rem;border-bottom:1px solid #f1f5f9;
-  background:#ffffff;padding:0.35rem 1.5rem 0;overflow-x:auto;
-  flex-shrink: 0;
-  scrollbar-width:none;&::-webkit-scrollbar{display:none;}
-  @media(max-width:640px){padding:0.25rem 0.35rem 0;gap:0;}
-`;
-const DashTabBtn = styled.button`
-  padding:0.7rem 1.05rem;font-family:'Inter',sans-serif;font-size:0.86rem;font-weight:${p=>p.$active?600:500};
-  letter-spacing:-0.011em;-webkit-font-smoothing:antialiased;
-  border:none;background:transparent;cursor:pointer;white-space:nowrap;
-  color:${p=>p.$active?'#0f172a':'#94a3b8'};
-  border-bottom:2px solid ${p=>p.$active?'#10b981':'transparent'};
-  margin-bottom:-1px;border-radius:8px 8px 0 0;transition:color 0.18s,background 0.18s,border-color 0.18s;
-  display:flex;align-items:center;gap:0.45rem;
-  svg{font-size:0.9em;opacity:${p=>p.$active?1:0.7};}
-  &:hover{color:#0f172a;background:${p=>p.$active?'transparent':'rgba(15,23,42,0.04)'};}
-  @media(max-width:640px){flex:1;justify-content:center;padding:0.7rem 0.4rem;font-size:0.8rem;gap:0.3rem;}
-`;
+const TAB_META = {
+  news:       { eyebrow: 'BloomVest Intelligence', title: 'Headline Decoder',   sub: 'Decode market headlines into plain-English insight.' },
+  picks:      { eyebrow: 'BloomVest Intelligence', title: 'Market Lab',         sub: 'AI case studies across assets — built for learning, not stock picks.' },
+  movers:     { eyebrow: 'BloomVest Intelligence', title: 'Movers Scanner',     sub: "Today's biggest movers and the catalysts behind them." },
+  allocation: { eyebrow: 'BloomVest Intelligence', title: 'Fund Allocation',    sub: 'Model how a hypothetical fund could be diversified.' },
+  journal:    { eyebrow: 'BloomVest Intelligence', title: 'Reflection Journal', sub: 'Capture your thinking and get AI reflection on your notes.' },
+};
 
 /* ── summary bar ────────────────────────────────────── */
 const SummaryBar = styled.div`
@@ -263,10 +253,12 @@ const TabBody = styled.div`
   background:#ffffff;
   border:1px solid #e2e8f0;
   border-radius:16px;
-  margin:0 1.25rem 1.5rem;
+  max-width:1180px;
+  width:calc(100% - 2.5rem);
+  margin:0 auto 1.5rem;
   overflow:hidden;
   box-shadow:0 1px 3px rgba(15,23,42,.05);
-  @media(max-width:640px){margin:0 0.5rem 1rem;border-radius:12px;}
+  @media(max-width:640px){width:calc(100% - 1rem);border-radius:12px;}
 `;
 
 /* ── shell / table ──────────────────────────────────── */
@@ -481,9 +473,9 @@ const NewsGrid = styled.div`
 `;
 const NewsItem = styled(motion.div)`
   display:flex;flex-direction:column;gap:0.4rem;
-  padding:0.85rem 1rem;border-radius:10px;border:1px solid transparent;
-  background:#f8fafc;transition:all 0.15s;
-  &:hover{border-color:#e2e8f0;background:#ffffff;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
+  padding:0.85rem 1rem;border-radius:12px;border:1px solid #eef2f7;
+  background:#f8fafc;transition:transform 0.16s ease,box-shadow 0.16s ease,border-color 0.16s ease,background 0.16s ease;
+  &:hover{border-color:#e2e8f0;background:#ffffff;box-shadow:0 6px 20px rgba(15,23,42,.08);transform:translateY(-1px);}
 `;
 const NewsItemTop = styled.div`display:flex;align-items:flex-start;gap:0.75rem;`;
 const NewsBadge = styled.span`
@@ -672,8 +664,10 @@ const PieGrid = styled.div`
   display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.5rem;
 `;
 const PieCard = styled.div`
-  background:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:1.25rem;
-  box-shadow:0 1px 6px rgba(0,0,0,0.04);
+  background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:1.25rem;
+  box-shadow:0 1px 3px rgba(15,23,42,.04);
+  transition:box-shadow 0.16s ease,transform 0.16s ease;
+  &:hover{box-shadow:0 6px 20px rgba(15,23,42,.08);transform:translateY(-1px);}
 `;
 const PieCardTitle = styled.h3`
   font-family:'Space Grotesk',sans-serif;font-size:0.95rem;font-weight:700;color:#0f172a;margin:0 0 0.75rem;
@@ -758,8 +752,9 @@ const JournalGrid = styled.div`
 const NoteCard = styled(motion.div)`
   background:#ffffff;border:1px solid ${p=>p.$focused?'#0f172a':'#e2e8f0'};border-radius:16px;
   display:flex;flex-direction:column;
-  box-shadow:${p=>p.$focused?'0 0 0 3px rgba(15,23,42,0.06)':'0 1px 6px rgba(0,0,0,0.04)'};
-  transition:border-color 0.2s,box-shadow 0.2s;overflow:hidden;
+  box-shadow:${p=>p.$focused?'0 0 0 3px rgba(15,23,42,0.06)':'0 1px 3px rgba(15,23,42,.04)'};
+  transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;overflow:hidden;
+  &:hover{box-shadow:${p=>p.$focused?'0 0 0 3px rgba(15,23,42,0.06)':'0 6px 20px rgba(15,23,42,.08)'};}
 `;
 const NoteCardHeader = styled.div`
   padding:0.75rem 1rem 0.5rem;display:flex;align-items:center;gap:0.5rem;border-bottom:1px solid #f8fafc;
@@ -1171,8 +1166,7 @@ export default function Dashboard() {
   useEffect(() => {
     const tab = searchParams.get('tab');
     const allowed = ['picks', 'news', 'journal', 'allocation', 'copilot', 'movers'];
-    if (tab && allowed.includes(tab)) setDashTab(tab);
-    if (tab && !allowed.includes(tab)) setDashTab('news');
+    setDashTab(tab && allowed.includes(tab) ? tab : 'news');
   }, [searchParams]);
 
   // movers state
@@ -1661,20 +1655,12 @@ export default function Dashboard() {
     <>
     <Page $copilot={dashTab === 'copilot'}>
       {dashTab !== 'copilot' && (
-        <IntelligenceBar>
-          <IntelligenceTitle>BloomVest Intelligence</IntelligenceTitle>
-          <IntelligenceSub>Headlines · Market Lab · Fund Allocation · Copilot</IntelligenceSub>
-        </IntelligenceBar>
+        <ToolHeader>
+          <ToolEyebrow>{(TAB_META[dashTab] || TAB_META.news).eyebrow}</ToolEyebrow>
+          <ToolTitle>{(TAB_META[dashTab] || TAB_META.news).title}</ToolTitle>
+          <ToolSub>{(TAB_META[dashTab] || TAB_META.news).sub}</ToolSub>
+        </ToolHeader>
       )}
-
-      <DashTabBar>
-        <DashTabBtn $active={dashTab==='news'} onClick={()=>selectTab('news')}><FaNewspaper/>Headline Decoder</DashTabBtn>
-        <DashTabBtn $active={dashTab==='picks'} onClick={()=>selectTab('picks')}><FaMagic/>Market Lab</DashTabBtn>
-        <DashTabBtn $active={dashTab==='movers'} onClick={()=>selectTab('movers')}><FaFire/>Movers Scanner</DashTabBtn>
-        <DashTabBtn $active={dashTab==='allocation'} onClick={()=>selectTab('allocation')}><FaChartPie/>Fund Allocation</DashTabBtn>
-        <DashTabBtn $active={dashTab==='journal'} onClick={()=>selectTab('journal')}><FaBookOpen/>Reflection Journal</DashTabBtn>
-        <DashTabBtn $active={dashTab==='copilot'} onClick={()=>selectTab('copilot')}><FaRobot/>Copilot</DashTabBtn>
-      </DashTabBar>
 
       {dashTab !== 'copilot' && (
       <div style={{

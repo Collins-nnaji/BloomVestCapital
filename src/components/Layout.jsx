@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import AppShell from './AppShell';
+import { isAppRoute } from '../config/sidebar';
 import styled from 'styled-components';
 
 const PageWrapper = styled.div`
@@ -41,6 +43,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const isLanding = location.pathname === '/';
+  const isApp = isAppRoute(location.pathname);
   const isCopilot =
     location.pathname.startsWith('/iq') && searchParams.get('tab') === 'copilot';
 
@@ -56,6 +59,10 @@ const Layout = ({ children }) => {
       document.body.style.overflow = prev;
     };
   }, [isCopilot]);
+
+  if (isApp) {
+    return <AppShell isCopilot={isCopilot}>{children}</AppShell>;
+  }
 
   return (
     <PageWrapper $copilot={isCopilot}>
