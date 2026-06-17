@@ -28,11 +28,14 @@ export const PLATFORM_LAYERS = [
   },
 ];
 
+/** Placeholder booking link — swap for the real Calendly/booking URL. */
+export const BOOK_SESSION_URL = 'https://calendly.com/bloomvestcapital/session';
+
 export const NAV_ITEMS = [
-  { to: '/iq',       label: 'Intelligence', match: ['/iq', '/market', '/trade-ideas', '/mentor', '/ai-tutor'] },
-  { to: '/signals',  label: 'Signals',      match: ['/signals'] },
-  { to: '/glossary', label: 'AI Tutor',      match: ['/glossary'] },
-  { to: '/profile',  label: 'My Profile',    match: ['/profile'] },
+  { to: '/iq',       label: 'Intelligence', match: ['/iq', '/market', '/trade-ideas', '/mentor', '/ai-tutor', '/signals', '/glossary'] },
+  { to: '/enquiry',  label: 'Assessment',   match: ['/enquiry'] },
+  { to: '/profile',  label: 'Profile',      match: ['/profile'] },
+  { href: BOOK_SESSION_URL, label: 'Book your session', external: true, cta: true },
 ];
 
 export const PRODUCT_TAGLINE = 'Guided investing education — beginner to advanced';

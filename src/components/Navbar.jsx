@@ -241,6 +241,42 @@ const MobileLink = styled(RouterLink)`
   svg { font-size: 0.7rem; opacity: 0.35; }
 `;
 
+const NavCta = styled.a`
+  padding: 0.55rem 1.2rem;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.86rem;
+  letter-spacing: -0.011em;
+  color: #ffffff;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  -webkit-font-smoothing: antialiased;
+
+  &:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3); }
+
+  @media (max-width: 1024px) { display: none; }
+`;
+
+const MobileCta = styled.a`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.011em;
+  text-decoration: none;
+  border-radius: 12px;
+  margin-top: 0.85rem;
+`;
+
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -278,7 +314,7 @@ const Navbar = () => {
 
           <NavCenter>
             <NavGroup>
-              {NAV_ITEMS.map((item) => (
+              {NAV_ITEMS.filter((item) => !item.cta).map((item) => (
                 <NavLink key={item.to} to={item.to} className={isActive(item.match)}>
                   {item.label}
                   {item.badge ? <NavBadge>{item.badge}</NavBadge> : null}
@@ -288,6 +324,11 @@ const Navbar = () => {
           </NavCenter>
 
           <NavRight>
+            {NAV_ITEMS.filter((item) => item.cta).map((item) => (
+              <NavCta key={item.label} href={item.href} target="_blank" rel="noopener noreferrer">
+                {item.label}
+              </NavCta>
+            ))}
             <DesktopAccount>
               <AccountMenu />
             </DesktopAccount>
@@ -309,12 +350,17 @@ const Navbar = () => {
 
         <MobileSection>
           <MobileSectionLabel>Platform</MobileSectionLabel>
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter((item) => !item.cta).map((item) => (
             <MobileLink key={item.to} to={item.to} className={isActive(item.match)} onClick={() => setMenuOpen(false)}>
               {item.label}
               {item.badge ? ` · ${item.badge}` : ''}
               <FaChevronRight />
             </MobileLink>
+          ))}
+          {NAV_ITEMS.filter((item) => item.cta).map((item) => (
+            <MobileCta key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" onClick={() => setMenuOpen(false)}>
+              {item.label}
+            </MobileCta>
           ))}
         </MobileSection>
       </MobileMenu>

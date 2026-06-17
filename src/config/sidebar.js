@@ -20,7 +20,7 @@ export const SIDEBAR_SECTIONS = [
     label: 'Intelligence',
     to: '/iq',
     icon: FaBrain,
-    match: ['/iq', '/market', '/trade-ideas', '/mentor', '/ai-tutor'],
+    match: ['/iq', '/market', '/trade-ideas', '/mentor', '/ai-tutor', '/signals', '/glossary'],
     children: [
       { label: 'Headline Decoder',   to: '/iq',                tab: 'news',       icon: FaNewspaper },
       { label: 'Market Lab',         to: '/iq?tab=picks',      tab: 'picks',      icon: FaMagic },
@@ -28,9 +28,10 @@ export const SIDEBAR_SECTIONS = [
       { label: 'Fund Allocation',    to: '/iq?tab=allocation', tab: 'allocation', icon: FaChartPie },
       { label: 'Reflection Journal', to: '/iq?tab=journal',    tab: 'journal',    icon: FaBookOpen },
       { label: 'Copilot',            to: '/iq?tab=copilot',    tab: 'copilot',    icon: FaRobot },
+      { label: 'Signals',            to: '/signals',           match: ['/signals'],  icon: FaSignal },
+      { label: 'AI Tutor',           to: '/glossary',          match: ['/glossary'], icon: FaBook },
     ],
   },
-  { label: 'Signals',    to: '/signals',  icon: FaSignal, match: ['/signals'] },
-  { label: 'AI Tutor',   to: '/glossary', icon: FaBook,   match: ['/glossary'] },
-  { label: 'My Profile', to: '/profile',  icon: FaUser,   match: ['/profile'] },
+  { label: 'My Profile', to: '/profile', icon: FaUser, match: ['/profile'] },
 ];
+

@@ -75,8 +75,11 @@ const AppSidebar = ({ collapsed = false, onNavigate }) => {
   const sectionActive = (section) =>
     section.match.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
-  const childActive = (child) =>
-    pathname.startsWith('/iq') && child.tab === tab;
+  const childActive = (child) => {
+    if (child.tab) return pathname.startsWith('/iq') && child.tab === tab;
+    if (child.match) return child.match.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+    return false;
+  };
 
   return (
     <Nav $collapsed={collapsed}>
