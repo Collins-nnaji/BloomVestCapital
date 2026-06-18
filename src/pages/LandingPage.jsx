@@ -24,7 +24,7 @@ const glowDrift = keyframes`
 
 /* ── shared helpers ─────────────────────────────── */
 const GradText = styled.span`
-  background: ${p => p.$gradient || 'linear-gradient(135deg,#4ade80 0%,#38bdf8 100%)'};
+  background: ${p => p.$gradient || 'linear-gradient(135deg,#4ade80 0%,#34d399 100%)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -121,7 +121,7 @@ const HeroBg = styled.div`
     inset: 0;
     background:
       radial-gradient(ellipse 70% 55% at 50% 45%, rgba(34,197,94,.16), transparent 60%),
-      radial-gradient(ellipse 40% 35% at 80% 20%, rgba(14,165,233,.1), transparent 50%);
+      radial-gradient(ellipse 40% 35% at 80% 20%, rgba(34,197,94,.1), transparent 50%);
   }
 `;
 
@@ -213,7 +213,7 @@ const HeroHeadline = styled(motion.h1)`
 const AnimWord = styled(motion.span)`
   display: inline-block;
   margin-right: 0.22em;
-  background: linear-gradient(135deg,#f8fafc 0%,#4ade80 35%,#38bdf8 65%,#f8fafc 100%);
+  background: linear-gradient(135deg,#f8fafc 0%,#4ade80 35%,#34d399 65%,#f8fafc 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -337,7 +337,7 @@ const Sec2Bg = styled.div`
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 55% 45% at 20% 55%, rgba(124,58,237,.14), transparent 55%),
+      radial-gradient(ellipse 55% 45% at 20% 55%, rgba(34,197,94,.14), transparent 55%),
       radial-gradient(ellipse 40% 35% at 85% 25%, rgba(34,197,94,.08), transparent 50%);
   }
 `;
@@ -372,7 +372,7 @@ const SectionLabel = styled(motion.p)`
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #7c3aed;
+  color: #16a34a;
   margin: 0 0 1rem;
   display: flex;
   align-items: center;
@@ -443,7 +443,7 @@ const StatNum = styled.div`
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(1.25rem, 2.5vw, 2rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #4ade80, #38bdf8);
+  background: linear-gradient(135deg, #4ade80, #34d399);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -524,7 +524,7 @@ const Sec3Bg = styled.div`
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 60% 50% at 75% 40%, rgba(14,165,233,.12), transparent 55%),
+      radial-gradient(ellipse 60% 50% at 75% 40%, rgba(34,197,94,.12), transparent 55%),
       radial-gradient(ellipse 40% 35% at 15% 70%, rgba(34,197,94,.08), transparent 50%);
   }
 `;
@@ -708,11 +708,11 @@ const wordVar = {
 };
 
 const STRATEGIES = [
-  { tag: 'Conservative', tagColor: '#38bdf8', tagBg: 'rgba(14,165,233,.1)', accent: '#38bdf8', border: 'rgba(14,165,233,.18)', glow: 'rgba(14,165,233,.08)',
+  { tag: 'Conservative', tagColor: '#34d399', tagBg: 'rgba(34,197,94,.1)', accent: '#34d399', border: 'rgba(34,197,94,.18)', glow: 'rgba(34,197,94,.08)',
     name: 'Steady Growth', desc: 'Low-risk diversified portfolio of bonds and dividend stocks. Ideal for capital preservation with modest returns.', risk: 'Low', return: '6-10%', horizon: '3+ yrs' },
   { tag: 'Balanced', tagColor: '#4ade80', tagBg: 'rgba(34,197,94,.1)', accent: '#4ade80', border: 'rgba(34,197,94,.18)', glow: 'rgba(34,197,94,.08)',
     name: 'Core Portfolio', desc: 'Mix of growth equities and stable assets. Our most popular strategy — proven across multiple market cycles.', risk: 'Medium', return: '12-22%', horizon: '1+ yrs' },
-  { tag: 'Aggressive', tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,.1)', accent: '#f59e0b', border: 'rgba(245,158,11,.18)', glow: 'rgba(245,158,11,.08)',
+  { tag: 'Aggressive', tagColor: '#22c55e', tagBg: 'rgba(34,197,94,.1)', accent: '#22c55e', border: 'rgba(34,197,94,.18)', glow: 'rgba(34,197,94,.08)',
     name: 'Alpha Seeker', desc: 'High-conviction positions in growth sectors and emerging markets. Maximum upside for experienced investors.', risk: 'High', return: '25-40%', horizon: '6+ mo' },
 ];
 
@@ -788,7 +788,7 @@ export default function LandingPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.55 }}
               >
-                READY TO <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#38bdf8 100%)">GROW</GradText> YOUR WEALTH?
+                READY TO <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">GROW</GradText> YOUR WEALTH?
               </HeroGrowLine>
 
               <HeroSub initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}>
@@ -841,9 +841,9 @@ export default function LandingPage() {
           <GlowOrb style={{ width: 500, height: 500, right: '-5%', top: '15%', background: 'rgba(99,102,241,.1)' }} $dur="15s" $delay="-2s" />
           <SectionInner $intel style={{ maxWidth: 1320 }}>
             <IntelSectionHead>
-              <SectionLabel style={{ color: '#a78bfa', justifyContent: 'center', marginBottom: '0.5rem' }}>BloomVest IQ</SectionLabel>
+              <SectionLabel style={{ color: '#86efac', justifyContent: 'center', marginBottom: '0.5rem' }}>BloomVest IQ</SectionLabel>
               <BigHeadline style={{ textAlign: 'center', fontSize: 'clamp(1.15rem, 4.5vw, 2.75rem)', marginBottom: 0 }}>
-                THE <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#a78bfa 40%,#38bdf8 100%)">INTELLIGENCE</GradText> ENGINE
+                THE <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#86efac 40%,#34d399 100%)">INTELLIGENCE</GradText> ENGINE
               </BigHeadline>
             </IntelSectionHead>
             <IntelligenceShowcase movers={movers} loading={loading} compact />
@@ -856,14 +856,14 @@ export default function LandingPage() {
         {/* ── SECTION 3: STRATEGIES ── */}
         <Section>
           <Sec3Bg />
-          <GlowOrb style={{ width: 400, height: 400, right: '-8%', top: '10%', background: 'rgba(14,165,233,.1)' }} $dur="13s" $delay="-2s" />
+          <GlowOrb style={{ width: 400, height: 400, right: '-8%', top: '10%', background: 'rgba(34,197,94,.1)' }} $dur="13s" $delay="-2s" />
           <GlowOrb style={{ width: 280, height: 280, left: '5%', bottom: '10%', background: 'rgba(34,197,94,.08)' }} $dur="9s" $delay="-6s" />
           <SectionInner>
           <StrategyGrid>
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionLabel style={{ color: '#4ade80' }}>Strategy Selection</SectionLabel>
               <BigHeadline>
-                WE CHOOSE THE<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#38bdf8 100%)">RIGHT STRATEGY</GradText><br />FOR YOU
+                WE CHOOSE THE<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">RIGHT STRATEGY</GradText><br />FOR YOU
               </BigHeadline>
               <BodyText>
                 After your risk profile assessment, our managers match you to the optimal strategy — and explain exactly what to expect in terms of returns and risk.
@@ -914,7 +914,7 @@ export default function LandingPage() {
         {/* ── SECTION 4: ACCOUNT MANAGERS ── */}
         <Section>
           <Sec2Bg />
-          <GlowOrb style={{ width: 500, height: 500, left: '-10%', top: '20%', background: 'rgba(124,58,237,.12)' }} $dur="14s" $delay="0s" />
+          <GlowOrb style={{ width: 500, height: 500, left: '-10%', top: '20%', background: 'rgba(34,197,94,.12)' }} $dur="14s" $delay="0s" />
           <GlowOrb style={{ width: 300, height: 300, right: '5%', bottom: '15%', background: 'rgba(34,197,94,.07)' }} $dur="10s" $delay="-4s" />
           <SectionInner>
           <TwoCol>
@@ -923,7 +923,7 @@ export default function LandingPage() {
                 Our Account Managers
               </SectionLabel>
               <BigHeadline initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}>
-                WE TRADE.<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#38bdf8 100%)">YOU PROFIT.</GradText>
+                WE TRADE.<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">YOU PROFIT.</GradText>
               </BigHeadline>
               <BodyText initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.2 }} viewport={{ once: true }}>
                 Our certified account managers analyse markets daily, build personalised strategies, and execute with precision. You receive a full breakdown of every decision — risk, rationale, and expected returns.
@@ -941,9 +941,9 @@ export default function LandingPage() {
             <FloatCard initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} viewport={{ once: true }}>
               {[
                 { icon: FaShieldAlt, bg: 'rgba(34,197,94,.12)', color: '#4ade80', title: 'Risk-Managed', desc: 'Every position has a defined stop-loss and profit target before we enter.' },
-                { icon: FaChartLine, bg: 'rgba(56,189,248,.12)', color: '#38bdf8', title: 'Transparent Returns', desc: 'Monthly performance reports with full P&L breakdown delivered to you.' },
-                { icon: FaBell, bg: 'rgba(124,58,237,.12)', color: '#a78bfa', title: 'Live Alerts', desc: 'Instant notifications when we open, adjust or close a position in your account.' },
-                { icon: FaUsers, bg: 'rgba(245,158,11,.12)', color: '#fbbf24', title: 'Dedicated Manager', desc: 'One point of contact who knows your goals and adjusts strategy accordingly.' },
+                { icon: FaChartLine, bg: 'rgba(34,197,94,.12)', color: '#34d399', title: 'Transparent Returns', desc: 'Monthly performance reports with full P&L breakdown delivered to you.' },
+                { icon: FaBell, bg: 'rgba(34,197,94,.12)', color: '#86efac', title: 'Live Alerts', desc: 'Instant notifications when we open, adjust or close a position in your account.' },
+                { icon: FaUsers, bg: 'rgba(34,197,94,.12)', color: '#34d399', title: 'Dedicated Manager', desc: 'One point of contact who knows your goals and adjusts strategy accordingly.' },
               ].map(({ icon: Icon, bg, color, title, desc }) => (
                 <FeatureRow key={title}>
                   <FeatureIcon $bg={bg} $color={color}><Icon /></FeatureIcon>
