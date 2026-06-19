@@ -54,12 +54,19 @@ const Section = styled.section`
 `;
 
 const ScrollContainer = styled.div`
+  margin-top: 64px;
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
   height: calc(100vh - 64px);
   scroll-behavior: smooth;
   &::-webkit-scrollbar { display: none; }
-  @media(max-width:768px){ scroll-snap-type: y proximity; }
+  /* Mobile: drop the nested fixed-height scroll box — flow with the page
+     and scroll continuously like every other page. */
+  @media(max-width:768px){
+    height: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
 `;
 
 /* ── SECTION 1 — HERO ───────────────────────────── */
@@ -551,6 +558,7 @@ const ScrollArrow = styled.button`
   cursor: pointer;
   transition: background .18s, color .18s;
   animation: ${pulse} 2.5s ease-in-out infinite;
+  @media(max-width:768px){ display: none; }
   &:hover {
     background: rgba(34,197,94,.15);
     color: #4ade80;
@@ -567,6 +575,7 @@ const Dots = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  @media(max-width:768px){ display: none; }
 `;
 
 const Dot = styled.button`
@@ -681,7 +690,7 @@ export default function LandingPage() {
         ))}
       </Dots>
 
-      <ScrollContainer ref={scrollRef} style={{ marginTop: 64, height: 'calc(100vh - 64px)' }}>
+      <ScrollContainer ref={scrollRef}>
 
         {/* ── SECTION 1: HERO ── */}
         <Section>
