@@ -45,12 +45,18 @@ const Section = styled.section`
   scroll-snap-align: start;
   scroll-snap-stop: always;
   padding: 3.25rem 4vw 4.25rem;
+  /* Mobile: one continuous page — sections grow to their content (no
+     clipping of headlines) and the page scrolls naturally. */
   @media(max-width:768px){
-    padding: 2.25rem 1.25rem 3.25rem;
+    height: auto;
+    min-height: calc(100vh - 64px);
+    max-height: none;
+    padding: 2.5rem 1.25rem 3rem;
   }
 `;
 
 const ScrollContainer = styled.div`
+  margin-top: 64px;
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -58,6 +64,11 @@ const ScrollContainer = styled.div`
   width: 100%;
   scroll-behavior: smooth;
   &::-webkit-scrollbar { display: none; }
+  @media(max-width:768px){
+    height: auto;
+    overflow: visible;
+    scroll-snap-type: none;
+  }
 `;
 
 /* ── SECTION 1 — HERO ───────────────────────────── */
@@ -505,6 +516,7 @@ const ScrollArrow = styled.button`
   cursor: pointer;
   transition: background .18s, color .18s;
   animation: ${pulse} 2.5s ease-in-out infinite;
+  @media(max-width:768px){ display: none; }
   &:hover {
     background: rgba(34,197,94,.15);
     color: #4ade80;
@@ -521,6 +533,7 @@ const Dots = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  @media(max-width:768px){ display: none; }
 `;
 
 const Dot = styled.button`
@@ -635,7 +648,7 @@ export default function LandingPage() {
         ))}
       </Dots>
 
-      <ScrollContainer ref={scrollRef} style={{ marginTop: 64, height: 'calc(100vh - 64px)' }}>
+      <ScrollContainer ref={scrollRef}>
 
         {/* ── SECTION 1: HERO ── */}
         <Section>
