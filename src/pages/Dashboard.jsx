@@ -10,7 +10,8 @@ import {
   FaStar, FaFileAlt, FaCheckDouble, FaChartPie, FaRedo, FaSave, FaCoins, FaCheck,
   FaFire, FaArrowUp, FaArrowDown, FaExchangeAlt,
 } from 'react-icons/fa';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RcTooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RcTooltip, AreaChart, Area, XAxis, YAxis } from 'recharts';
+import { presetReturnFor, projectValue, monthlyNeeded, projectionSeries } from '../utils/planning';
 import { api } from '../api';
 import { useAuth } from '../AuthContext';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -660,6 +661,45 @@ const FundInput = styled.input`
   &:focus{outline:none;border-color:#0f172a;box-shadow:0 0 0 3px rgba(15,23,42,0.05);}
 `;
 const FundHint = styled.div`font-size:0.72rem;color:#64748b;flex:1;min-width:200px;line-height:1.45;`;
+
+/* ── investment planner ─────────────────────────────── */
+const PlanPanel = styled.div`
+  background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;
+  box-shadow:0 1px 3px rgba(15,23,42,.04);padding:1.25rem;margin-bottom:1.25rem;
+`;
+const PlanHeadRow = styled.div`display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem;`;
+const PlanTitle = styled.h3`font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:800;color:#0f172a;margin:0;display:flex;align-items:center;gap:0.5rem;`;
+const PlanGrid = styled.div`display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0.85rem;margin-bottom:1.1rem;`;
+const PlanField = styled.div`display:flex;flex-direction:column;gap:0.3rem;`;
+const PlanLabel = styled.label`font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#94a3b8;`;
+const PlanInput = styled.input`
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.55rem 0.7rem;
+  font-size:0.9rem;font-weight:700;color:#0f172a;font-family:'Space Grotesk',sans-serif;width:100%;box-sizing:border-box;
+  &:focus{outline:none;border-color:#10b981;background:#fff;box-shadow:0 0 0 3px rgba(16,185,129,0.08);}
+`;
+const PlanSelect = styled.select`
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.55rem 0.7rem;
+  font-size:0.85rem;font-weight:600;color:#0f172a;cursor:pointer;width:100%;
+  &:focus{outline:none;border-color:#10b981;background:#fff;}
+`;
+const PlanHorizonRow = styled.div`display:flex;gap:0.35rem;margin-top:0.3rem;`;
+const HorizonBtn = styled.button`
+  flex:1;padding:0.45rem;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.15s;
+  border:1px solid ${p=>p.$active?'#10b981':'#e2e8f0'};
+  background:${p=>p.$active?'rgba(16,185,129,0.1)':'#fff'};
+  color:${p=>p.$active?'#15803d':'#64748b'};
+`;
+const PlanResultGrid = styled.div`display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.85rem;`;
+const PlanStat = styled.div`background:#f8fafc;border:1px solid #f1f5f9;border-radius:12px;padding:0.85rem 1rem;`;
+const PlanStatLabel = styled.div`font-size:0.6rem;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:0.25rem;`;
+const PlanStatValue = styled.div`font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:800;color:${p=>p.$color||'#0f172a'};`;
+const PlanBadge = styled.span`
+  font-size:0.66rem;font-weight:800;text-transform:uppercase;letter-spacing:0.05em;padding:0.3rem 0.7rem;border-radius:100px;
+  background:${p=>p.$ok?'rgba(16,185,129,0.12)':'rgba(245,158,11,0.14)'};
+  color:${p=>p.$ok?'#15803d':'#b45309'};
+`;
+const PlanChartWrap = styled.div`margin-top:1.1rem;background:#f8fafc;border:1px solid #f1f5f9;border-radius:12px;padding:0.85rem 0.5rem 0.25rem;`;
+
 const PieGrid = styled.div`
   display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;margin-bottom:1.5rem;
 `;
@@ -1160,6 +1200,14 @@ export default function Dashboard() {
   const [savingAlloc,   setSavingAlloc]   = useState(false);
   const [allocSaved,    setAllocSaved]    = useState(false);
 
+  // investment planner state (goal-based projection)
+  const [planTarget,    setPlanTarget]    = useState(50000);
+  const [planYears,     setPlanYears]     = useState(10);
+  const [planMonthly,   setPlanMonthly]   = useState(250);
+  const [planReturnOverride, setPlanReturnOverride] = useState(''); // '' = use risk preset
+  const [planGoalId,    setPlanGoalId]    = useState('');
+  const [planProfile,   setPlanProfile]   = useState({ risk: 'moderate', goals: [] });
+
   // tabs: 'picks' | 'news' | 'journal' | 'allocation' | 'copilot' | 'movers'
   const [dashTab, setDashTab] = useState('news');
 
@@ -1580,9 +1628,16 @@ export default function Dashboard() {
 
   // Load saved allocations when user signs in / opens the tab
   useEffect(()=>{
-    if (!user) { setSavedAllocs([]); return; }
+    if (!user) { setSavedAllocs([]); setPlanProfile({ risk: 'moderate', goals: [] }); return; }
     api.getAllocations()
       .then(({ allocations })=> setSavedAllocs(allocations || []))
+      .catch(()=>{});
+    // Pull risk level + goals from the profile to seed the planner
+    api.getProfile()
+      .then(({ profile, goals })=> setPlanProfile({
+        risk: profile?.risk_tolerance || 'moderate',
+        goals: Array.isArray(goals) ? goals : [],
+      }))
       .catch(()=>{});
   }, [user]);
 
@@ -1600,7 +1655,10 @@ export default function Dashboard() {
         fundAmount: Number(fundAmount) || 100,
         allocations: allocation.holdings,
         breakdown: { byAsset: allocation.byAsset, bySector: allocation.bySector },
-        preferences: { ...prefs, assetTypes: activeTypes },
+        preferences: {
+          ...prefs, assetTypes: activeTypes,
+          plan: { target: planTarget, years: planYears, monthly: planMonthly, returnOverride: planReturnOverride, goalId: planGoalId },
+        },
       });
       if (saved) setSavedAllocs(prev=>[saved, ...prev]);
       setAllocName('');
@@ -1619,8 +1677,44 @@ export default function Dashboard() {
 
   const handleLoadAllocation = useCallback((a)=>{
     if (a.fund_amount) setFundAmount(Number(a.fund_amount));
+    if (a.preferences?.plan) {
+      const pl = a.preferences.plan;
+      if (pl.target != null) setPlanTarget(Number(pl.target));
+      if (pl.years != null) setPlanYears(Number(pl.years));
+      if (pl.monthly != null) setPlanMonthly(Number(pl.monthly));
+      setPlanReturnOverride(pl.returnOverride ?? '');
+      setPlanGoalId(pl.goalId ?? '');
+    }
     selectTab('allocation');
   }, [selectTab]);
+
+  // Prefill the planner from a selected profile goal
+  useEffect(()=>{
+    if (!planGoalId) return;
+    const g = planProfile.goals.find(x => String(x.id) === String(planGoalId));
+    if (!g) return;
+    if (g.target_amount) setPlanTarget(Number(g.target_amount));
+    if (g.current_amount != null) setFundAmount(Math.max(0, Number(g.current_amount)));
+    if (g.deadline) {
+      const yrs = (new Date(g.deadline).getTime() - Date.now()) / (365.25*24*3600*1000);
+      if (yrs > 0) setPlanYears(Math.max(0.5, Math.round(yrs*10)/10));
+    }
+  }, [planGoalId, planProfile.goals]);
+
+  // Goal-based projection (compounded monthly; return from risk preset or override)
+  const plan = useMemo(()=>{
+    const annualReturn = (planReturnOverride !== '' && !Number.isNaN(Number(planReturnOverride)))
+      ? Math.max(0, Number(planReturnOverride)) / 100
+      : presetReturnFor(planProfile.risk);
+    const principal = Number(fundAmount) || 0;
+    const monthly = Number(planMonthly) || 0;
+    const target = Number(planTarget) || 0;
+    const years = Number(planYears) || 0;
+    const projected = projectValue({ principal, monthly, annualReturn, years });
+    const needed = monthlyNeeded({ target, principal, annualReturn, years });
+    const series = projectionSeries({ principal, monthly, annualReturn, years });
+    return { annualReturn, projected, needed, gap: projected - target, onTrack: monthly >= needed - 0.5, series };
+  }, [fundAmount, planMonthly, planTarget, planYears, planReturnOverride, planProfile.risk]);
 
   const allHeadlines = brief?.headlines||[];
   const uniqueSources = useMemo(()=>{
@@ -2285,6 +2379,94 @@ export default function Dashboard() {
               </AllocBtn>
             </AllocActions>
           </AllocHeader>
+
+          <PlanPanel>
+            <PlanHeadRow>
+              <PlanTitle><FaChartLine style={{color:'#10b981'}}/> Investment Planner</PlanTitle>
+              <PlanBadge $ok={plan.onTrack}>{plan.onTrack ? 'On track' : 'Increase contribution'}</PlanBadge>
+            </PlanHeadRow>
+
+            <PlanGrid>
+              {planProfile.goals.length > 0 && (
+                <PlanField style={{gridColumn:'1 / -1'}}>
+                  <PlanLabel>Plan for a profile goal</PlanLabel>
+                  <PlanSelect value={planGoalId} onChange={(e)=>setPlanGoalId(e.target.value)}>
+                    <option value="">— Custom plan —</option>
+                    {planProfile.goals.map(g=>(
+                      <option key={g.id} value={g.id}>{g.emoji} {g.title} (£{Number(g.target_amount).toLocaleString()})</option>
+                    ))}
+                  </PlanSelect>
+                </PlanField>
+              )}
+              <PlanField>
+                <PlanLabel>Goal target (£)</PlanLabel>
+                <PlanInput type="number" min="0" step="1000" value={planTarget} onChange={(e)=>setPlanTarget(Math.max(0, Number(e.target.value)||0))}/>
+              </PlanField>
+              <PlanField>
+                <PlanLabel>Starting amount (£)</PlanLabel>
+                <PlanInput type="number" min="0" step="100" value={fundAmount} onChange={(e)=>setFundAmount(Math.max(0, Number(e.target.value)||0))}/>
+              </PlanField>
+              <PlanField>
+                <PlanLabel>Monthly contribution (£)</PlanLabel>
+                <PlanInput type="number" min="0" step="50" value={planMonthly} onChange={(e)=>setPlanMonthly(Math.max(0, Number(e.target.value)||0))}/>
+              </PlanField>
+              <PlanField>
+                <PlanLabel>Time horizon (years)</PlanLabel>
+                <PlanInput type="number" min="0.5" step="0.5" value={planYears} onChange={(e)=>setPlanYears(Math.max(0.5, Number(e.target.value)||0.5))}/>
+                <PlanHorizonRow>
+                  <HorizonBtn type="button" $active={planYears<=2} onClick={()=>setPlanYears(2)}>Short</HorizonBtn>
+                  <HorizonBtn type="button" $active={planYears>2 && planYears<5} onClick={()=>setPlanYears(4)}>Medium</HorizonBtn>
+                  <HorizonBtn type="button" $active={planYears>=5} onClick={()=>setPlanYears(10)}>Long</HorizonBtn>
+                </PlanHorizonRow>
+              </PlanField>
+              <PlanField>
+                <PlanLabel>Return {Math.round(plan.annualReturn*100)}%/yr · {planReturnOverride==='' ? `${planProfile.risk} preset` : 'custom'}</PlanLabel>
+                <PlanInput type="number" min="0" max="30" step="0.5"
+                  placeholder={`${Math.round(presetReturnFor(planProfile.risk)*100)} (preset)`}
+                  value={planReturnOverride}
+                  onChange={(e)=>setPlanReturnOverride(e.target.value)}/>
+              </PlanField>
+            </PlanGrid>
+
+            <PlanResultGrid>
+              <PlanStat>
+                <PlanStatLabel>Projected value</PlanStatLabel>
+                <PlanStatValue $color="#10b981">£{Math.round(plan.projected).toLocaleString()}</PlanStatValue>
+              </PlanStat>
+              <PlanStat>
+                <PlanStatLabel>{plan.gap>=0 ? 'Surplus vs target' : 'Shortfall vs target'}</PlanStatLabel>
+                <PlanStatValue $color={plan.gap>=0 ? '#15803d' : '#dc2626'}>
+                  {plan.gap>=0 ? '+' : '−'}£{Math.abs(Math.round(plan.gap)).toLocaleString()}
+                </PlanStatValue>
+              </PlanStat>
+              <PlanStat>
+                <PlanStatLabel>Monthly needed for target</PlanStatLabel>
+                <PlanStatValue>£{Math.round(plan.needed).toLocaleString()}</PlanStatValue>
+              </PlanStat>
+            </PlanResultGrid>
+
+            <PlanChartWrap>
+              <ResponsiveContainer width="100%" height={160}>
+                <AreaChart data={plan.series} margin={{top:5,right:10,left:0,bottom:0}}>
+                  <defs>
+                    <linearGradient id="planGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.35}/>
+                      <stop offset="100%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="year" tick={{fontSize:10,fill:'#94a3b8'}} tickFormatter={(v)=>`${v}y`}/>
+                  <YAxis tick={{fontSize:10,fill:'#94a3b8'}} width={46}
+                    tickFormatter={(v)=> v>=1000 ? `£${Math.round(v/1000)}k` : `£${v}`}/>
+                  <RcTooltip formatter={(v)=>`£${Number(v).toLocaleString()}`} labelFormatter={(l)=>`Year ${l}`}/>
+                  <Area type="monotone" dataKey="value" stroke="#10b981" strokeWidth={2} fill="url(#planGrad)"/>
+                </AreaChart>
+              </ResponsiveContainer>
+            </PlanChartWrap>
+
+            <FundHint style={{marginTop:'0.75rem'}}>
+              Educational projection only — assumes a constant {Math.round(plan.annualReturn*100)}% annual return compounded monthly with level contributions. Real returns vary and markets can fall. Not financial advice.
+            </FundHint>
+          </PlanPanel>
 
           {allocation.count === 0 ? (
             <EmptyState style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:14}}>

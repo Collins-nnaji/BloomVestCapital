@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { api } from '../api';
+import { presetReturnFor, monthlyNeeded, yearsUntil } from '../utils/planning';
 
 /* ═══════════════════════════════════════════════════════════════
    CONSTANTS
@@ -826,9 +827,10 @@ export default function ProfilePage() {
   const [editGoal,       setEditGoal]       = useState(null);
   const [updateGoal,     setUpdateGoal]     = useState(null);
 
-  // snapshot (local edit of income/expenses)
+  // snapshot (local edit of income/expenses/net worth)
   const [income,   setIncome]   = useState('');
   const [expenses, setExpenses] = useState('');
+  const [netWorth, setNetWorth] = useState('');
 
   /* Load data */
   useEffect(() => {
@@ -846,6 +848,7 @@ export default function ProfilePage() {
         setMemberSince(d.memberSince || null);
         setIncome(d.profile?.monthly_income ? String(d.profile.monthly_income) : '');
         setExpenses(d.profile?.monthly_savings ? String(Math.max(0, (d.profile.monthly_income || 0) - (d.profile.monthly_savings || 0))) : '');
+        setNetWorth(d.profile?.net_worth ? String(d.profile.net_worth) : '');
       }
       if (bkRes.status === 'fulfilled') {
         setBookmarkCount((bkRes.value.bookmarks || []).length);
@@ -867,6 +870,9 @@ export default function ProfilePage() {
   const savings     = Math.max(0, incomeNum - expensesNum);
   const savingsRate = incomeNum > 0 ? Math.round((savings / incomeNum) * 100) : 0;
   const efMonths    = incomeNum > 0 ? (savings > 0 ? (incomeNum * 3 / savings).toFixed(1) : '∞') : '—';
+
+  // assumed annual return from the profile's risk level — drives goal projections
+  const planReturn = presetReturnFor(profile?.risk_tolerance);
 
   /* Edit profile */
   const startEdit = () => {
@@ -1108,6 +1114,28 @@ export default function ProfilePage() {
                   <SnapLabel>Months to 3× Emergency Fund</SnapLabel>
                   <SnapValue>{efMonths}</SnapValue>
                 </SnapRow>
+                <SnapRow>
+                  <SnapLabel>Net Worth (£)</SnapLabel>
+                  <SnapInput type="number" value={netWorth} onChange={e => setNetWorth(e.target.value)} onBlur={() => api.saveProfile({ net_worth: parseFloat(netWorth)||0 }).catch(()=>{})} placeholder="0" />
+                </SnapRow>
+              </CardBody>
+            </Card>
+
+            {/* Investment Planner CTA */}
+            <Card>
+              <CardBody $p="1.1rem">
+                <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, fontSize: '0.95rem', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                  <FaChartLine style={{ color: '#15803d' }} /> Investment Planner
+                </div>
+                <p style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: 1.5, margin: '0 0 0.85rem' }}>
+                  Project any goal forward at a {Math.round(planReturn * 100)}%/yr assumed return ({profile?.risk_tolerance || 'moderate'} risk), see the monthly contribution needed, and build a fund strategy.
+                </p>
+                <button
+                  onClick={() => navigate('/iq?tab=allocation')}
+                  style={{ width: '100%', padding: '0.7rem', border: 'none', borderRadius: '10px', background: 'linear-gradient(135deg,#22c55e,#16a34a)', color: '#fff', fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                >
+                  Open the Planner <FaArrowUp style={{ transform: 'rotate(45deg)', fontSize: '0.7rem' }} />
+                </button>
               </CardBody>
             </Card>
 
@@ -1182,6 +1210,18 @@ export default function ProfilePage() {
                             <span style={{ color: '#9ca3af' }}>of £{fmt(g.target_amount)}</span>
                             <span style={{ fontWeight: 800, color: p >= 100 ? '#15803d' : '#374151' }}>{p}%</span>
                           </GoalAmounts>
+                          {p < 100 && g.deadline && (() => {
+                            const yrs = yearsUntil(g.deadline);
+                            if (!yrs || yrs <= 0) return null;
+                            const needed = monthlyNeeded({ target: g.target_amount, principal: g.current_amount, annualReturn: planReturn, years: yrs });
+                            const feasible = savings > 0 && needed <= savings;
+                            return (
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.55rem', paddingTop: '0.55rem', borderTop: '1px solid #f3f4f6', fontSize: '0.72rem', color: '#64748b' }}>
+                                <span>≈ <strong style={{ color: '#0f172a' }}>£{fmt(Math.ceil(needed))}</strong>/mo to reach by {fmtDate(g.deadline)}</span>
+                                <span style={{ fontSize: '0.6rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.04em', padding: '0.2rem 0.5rem', borderRadius: '100px', whiteSpace: 'nowrap', background: feasible ? 'rgba(16,185,129,0.12)' : 'rgba(245,158,11,0.14)', color: feasible ? '#15803d' : '#b45309' }}>{feasible ? 'On track' : 'Stretch'}</span>
+                              </div>
+                            );
+                          })()}
                         </GoalCard>
                       );
                     })}
