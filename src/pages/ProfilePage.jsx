@@ -124,7 +124,11 @@ const ProfileHeader = styled.div`
   flex-wrap: wrap;
   padding-bottom: 1rem;
   border-bottom: 1px solid #e5e7eb;
-  @media (max-width: 640px) { margin-top: -44px; gap: 0.85rem; }
+  @media (max-width: 640px) {
+    margin-top: -44px;
+    gap: 0.6rem 0.85rem;
+    align-items: center;
+  }
 `;
 
 const Avatar = styled(motion.div)`
@@ -218,6 +222,13 @@ const EditProfileBtn = styled(motion.button)`
   margin-bottom: 0.25rem;
   transition: border-color 0.15s;
   &:hover { border-color: #15803d; color: #15803d; }
+  @media (max-width: 640px) {
+    margin-left: 0;
+    margin-bottom: 0;
+    width: 100%;
+    justify-content: center;
+    align-self: stretch;
+  }
 `;
 
 /* ── Stats Row ── */
@@ -238,6 +249,7 @@ const StatCard = styled(motion.div)`
   align-items: center;
   gap: 0.85rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  @media (max-width: 640px) { padding: 0.7rem 0.75rem; gap: 0.6rem; }
 `;
 
 const StatIcon = styled.div`
@@ -259,6 +271,7 @@ const StatVal = styled.div`
   font-weight: 800;
   color: #0a0f14;
   line-height: 1;
+  @media (max-width: 640px) { font-size: 1.15rem; }
 `;
 
 const StatLbl = styled.div`
