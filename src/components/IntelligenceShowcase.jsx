@@ -136,8 +136,8 @@ const MOCK_PICKS = [
 
 const MOCK_HOLDINGS = [
   { ticker: 'VOO', pct: 30, color: '#10b981', type: 'US Equity' },
-  { ticker: 'VXUS', pct: 20, color: '#3b82f6', type: 'Intl Equity' },
-  { ticker: 'BND', pct: 20, color: '#6366f1', type: 'Bonds' },
+  { ticker: 'VXUS', pct: 20, color: '#22c55e', type: 'Intl Equity' },
+  { ticker: 'BND', pct: 20, color: '#10b981', type: 'Bonds' },
   { ticker: 'BTC', pct: 10, color: '#f59e0b', type: 'Crypto' },
   { ticker: 'VNQ', pct: 10, color: '#ec4899', type: 'REITs' },
   { ticker: 'CASH', pct: 10, color: '#94a3b8', type: 'Cash' },
@@ -163,7 +163,7 @@ const COPILOT_PROMPTS = [
 ];
 
 const TYPE_COLORS = {
-  Breakout: { bg: 'rgba(99,102,241,0.1)', color: '#6366f1' },
+  Breakout: { bg: 'rgba(34,197,94,0.1)', color: '#10b981' },
   Catalyst: { bg: 'rgba(245,158,11,0.1)', color: '#d97706' },
   Momentum: { bg: 'rgba(16,185,129,0.1)', color: '#10b981' },
   Reversal: { bg: 'rgba(236,72,153,0.1)', color: '#ec4899' },
@@ -858,7 +858,7 @@ const ThemeBox = styled.div`
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
   background: #f8fafc;
-  border-left: 3px solid #6366f1;
+  border-left: 3px solid #10b981;
   font-size: 0.72rem;
   color: #475569;
   line-height: 1.45;
@@ -892,8 +892,8 @@ const DirBadge = styled.div`
   align-items: center;
   justify-content: center;
   background: ${(p) =>
-    p.$dir === 'Up' ? 'rgba(16,185,129,0.1)' : p.$dir === 'Down' ? 'rgba(239,68,68,0.1)' : 'rgba(99,102,241,0.1)'};
-  color: ${(p) => (p.$dir === 'Up' ? '#10b981' : p.$dir === 'Down' ? '#ef4444' : '#6366f1')};
+    p.$dir === 'Up' ? 'rgba(16,185,129,0.1)' : p.$dir === 'Down' ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)'};
+  color: ${(p) => (p.$dir === 'Up' ? '#10b981' : p.$dir === 'Down' ? '#ef4444' : '#10b981')};
   font-size: 0.7rem;
 `;
 
@@ -1079,8 +1079,8 @@ const AiReflection = styled.div`
   margin-top: 0.45rem;
   padding: 0.5rem 0.6rem;
   border-radius: 8px;
-  background: rgba(124, 58, 237, 0.06);
-  border: 1px solid rgba(124, 58, 237, 0.12);
+  background: rgba(34,197,94, 0.06);
+  border: 1px solid rgba(34,197,94, 0.12);
   font-size: 0.68rem;
   color: #5b21b6;
   line-height: 1.45;
@@ -1192,9 +1192,9 @@ const Skeleton = styled.div`
 `;
 
 const NOTE_TAGS = {
-  idea: { bg: '#eff6ff', color: '#2563eb' },
+  idea: { bg: '#eff6ff', color: '#16a34a' },
   trade: { bg: '#dcfce7', color: '#15803d' },
-  lesson: { bg: '#f3e8ff', color: '#7c3aed' },
+  lesson: { bg: '#f3e8ff', color: '#15803d' },
 };
 
 function moodColor(mood) {
@@ -1341,7 +1341,7 @@ function LayerPreview({ tab, movers, loading, compact, isMobile }) {
         <>
           <SummaryBar $cols={4}>
             <SumItem><SumLabel>Mood</SumLabel><SumValue $color={moodColor(mood)}>{mood || (loading ? '…' : '—')}</SumValue></SumItem>
-            <SumItem><SumLabel>Catalysts</SumLabel><SumValue $color="#6366f1">{catalysts.length || '—'}</SumValue></SumItem>
+            <SumItem><SumLabel>Catalysts</SumLabel><SumValue $color="#10b981">{catalysts.length || '—'}</SumValue></SumItem>
             <SumItem><SumLabel>Gainers</SumLabel><SumValue $color="#10b981">{movers?.avMovers?.gainers?.length || '—'}</SumValue></SumItem>
             <SumItem><SumLabel>Losers</SumLabel><SumValue $color="#ef4444">{movers?.avMovers?.losers?.length || '—'}</SumValue></SumItem>
           </SummaryBar>
@@ -1472,9 +1472,9 @@ function LayerPreview({ tab, movers, loading, compact, isMobile }) {
         <>
           <SummaryBar $cols={4}>
             <SumItem><SumLabel>Entries</SumLabel><SumValue>14</SumValue></SumItem>
-            <SumItem><SumLabel>Ideas</SumLabel><SumValue $color="#2563eb">5</SumValue></SumItem>
+            <SumItem><SumLabel>Ideas</SumLabel><SumValue $color="#16a34a">5</SumValue></SumItem>
             <SumItem><SumLabel>Trades</SumLabel><SumValue $color="#15803d">6</SumValue></SumItem>
-            <SumItem><SumLabel>AI reviews</SumLabel><SumValue $color="#7c3aed">8</SumValue></SumItem>
+            <SumItem><SumLabel>AI reviews</SumLabel><SumValue $color="#15803d">8</SumValue></SumItem>
           </SummaryBar>
           {MOCK_NOTES.slice(0, noteLimit).map((n) => {
             const ts = NOTE_TAGS[n.tag] || NOTE_TAGS.idea;

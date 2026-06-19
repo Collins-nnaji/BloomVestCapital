@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaArrowRight, FaShieldAlt, FaChartLine, FaBell, FaUsers } from 'react-icons/fa';
+import IntelligenceShowcase from '../components/IntelligenceShowcase';
 
 /* ── animations ────────────────────────────────── */
 const shimmer = keyframes`
@@ -23,7 +24,7 @@ const lineReveal = keyframes`from{width:0}to{width:100%}`;
 
 /* ── shared helpers ─────────────────────────────── */
 const GradText = styled.span`
-  background: ${p => p.$gradient || 'linear-gradient(135deg,#4ade80 0%,#38bdf8 100%)'};
+  background: ${p => p.$gradient || 'linear-gradient(135deg,#4ade80 0%,#34d399 100%)'};
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -32,20 +33,24 @@ const GradText = styled.span`
 /* ── SECTION WRAPPER ────────────────────────────── */
 const Section = styled.section`
   position: relative;
-  min-height: 100vh;
+  height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px);
+  max-height: calc(100vh - 64px);
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   scroll-snap-align: start;
-  padding: 5rem 4vw 7rem;
-  @media(max-width:768px){ padding: 4rem 1.25rem 6rem; }
+  scroll-snap-stop: always;
+  padding: 3.25rem 4vw 4.25rem;
+  @media(max-width:768px){ padding: 2.5rem 1.25rem 3.5rem; }
 `;
 
 const ScrollContainer = styled.div`
   scroll-snap-type: y mandatory;
   overflow-y: scroll;
-  height: 100vh;
+  height: calc(100vh - 64px);
   scroll-behavior: smooth;
   &::-webkit-scrollbar { display: none; }
 `;
@@ -61,7 +66,7 @@ const HeroBg = styled.div`
     inset: 0;
     background:
       radial-gradient(ellipse 70% 55% at 50% 45%, rgba(34,197,94,.16), transparent 60%),
-      radial-gradient(ellipse 40% 35% at 80% 20%, rgba(14,165,233,.1), transparent 50%);
+      radial-gradient(ellipse 40% 35% at 80% 20%, rgba(34,197,94,.1), transparent 50%);
   }
 `;
 
@@ -90,20 +95,21 @@ const HeroEyebrow = styled(motion.p)`
 const HeroHeadline = styled(motion.h1)`
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(3.2rem, 12vw, 8rem);
+  font-size: clamp(2.4rem, 7vw, 5rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
   text-transform: uppercase;
   color: #f8fafc;
   width: 100%;
   text-align: center;
+  @media(max-height:760px){ font-size: clamp(2rem, 5.5vw, 3.6rem); }
 `;
 
 const AnimWord = styled(motion.span)`
   display: inline-block;
   margin-right: 0.22em;
-  background: linear-gradient(135deg,#f8fafc 0%,#4ade80 35%,#38bdf8 65%,#f8fafc 100%);
+  background: linear-gradient(135deg,#f8fafc 0%,#4ade80 35%,#34d399 65%,#f8fafc 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -174,7 +180,7 @@ const Sec2Bg = styled.div`
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 55% 45% at 20% 55%, rgba(124,58,237,.14), transparent 55%),
+      radial-gradient(ellipse 55% 45% at 20% 55%, rgba(34,197,94,.14), transparent 55%),
       radial-gradient(ellipse 40% 35% at 85% 25%, rgba(34,197,94,.08), transparent 50%);
   }
 `;
@@ -206,7 +212,7 @@ const SectionLabel = styled(motion.p)`
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #7c3aed;
+  color: #16a34a;
   margin: 0 0 1rem;
   display: flex;
   align-items: center;
@@ -223,13 +229,13 @@ const SectionLabel = styled(motion.p)`
 
 const BigHeadline = styled(motion.h2)`
   font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.6rem, 7vw, 6rem);
+  font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.97;
+  letter-spacing: -0.035em;
+  line-height: 1.0;
   text-transform: uppercase;
   color: #f8fafc;
-  margin: 0 0 1.5rem;
+  margin: 0 0 1.25rem;
 `;
 
 const BodyText = styled(motion.p)`
@@ -259,7 +265,7 @@ const StatNum = styled.div`
   font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(1.75rem, 3vw, 2.6rem);
   font-weight: 800;
-  background: linear-gradient(135deg, #4ade80, #38bdf8);
+  background: linear-gradient(135deg, #4ade80, #34d399);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -329,7 +335,7 @@ const Sec3Bg = styled.div`
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 60% 50% at 75% 40%, rgba(14,165,233,.12), transparent 55%),
+      radial-gradient(ellipse 60% 50% at 75% 40%, rgba(34,197,94,.12), transparent 55%),
       radial-gradient(ellipse 40% 35% at 15% 70%, rgba(34,197,94,.08), transparent 50%);
   }
 `;
@@ -442,7 +448,7 @@ const Sec4Bg = styled.div`
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse 55% 45% at 50% 50%, rgba(251,191,36,.09), transparent 55%),
+      radial-gradient(ellipse 55% 45% at 50% 50%, rgba(34,197,94,.09), transparent 55%),
       radial-gradient(ellipse 35% 30% at 10% 20%, rgba(34,197,94,.07), transparent 50%);
   }
 `;
@@ -502,7 +508,7 @@ const Sec5Bg = styled.div`
     inset: 0;
     background:
       radial-gradient(ellipse 65% 55% at 50% 50%, rgba(34,197,94,.13), transparent 55%),
-      radial-gradient(ellipse 40% 35% at 85% 15%, rgba(56,189,248,.07), transparent 50%);
+      radial-gradient(ellipse 40% 35% at 85% 15%, rgba(34,197,94,.07), transparent 50%);
   }
 `;
 
@@ -578,11 +584,11 @@ const wordVar = {
 };
 
 const STRATEGIES = [
-  { tag: 'Conservative', tagColor: '#38bdf8', tagBg: 'rgba(14,165,233,.1)', accent: '#38bdf8', border: 'rgba(14,165,233,.18)', glow: 'rgba(14,165,233,.08)',
+  { tag: 'Conservative', tagColor: '#34d399', tagBg: 'rgba(34,197,94,.1)', accent: '#34d399', border: 'rgba(34,197,94,.18)', glow: 'rgba(34,197,94,.08)',
     name: 'Steady Growth', desc: 'Low-risk diversified portfolio of bonds and dividend stocks. Ideal for capital preservation with modest returns.', risk: 'Low', return: '6-10%', horizon: '3+ yrs' },
   { tag: 'Balanced', tagColor: '#4ade80', tagBg: 'rgba(34,197,94,.1)', accent: '#4ade80', border: 'rgba(34,197,94,.18)', glow: 'rgba(34,197,94,.08)',
     name: 'Core Portfolio', desc: 'Mix of growth equities and stable assets. Our most popular strategy — proven across multiple market cycles.', risk: 'Medium', return: '12-22%', horizon: '1+ yrs' },
-  { tag: 'Aggressive', tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,.1)', accent: '#f59e0b', border: 'rgba(245,158,11,.18)', glow: 'rgba(245,158,11,.08)',
+  { tag: 'Aggressive', tagColor: '#22c55e', tagBg: 'rgba(34,197,94,.1)', accent: '#22c55e', border: 'rgba(34,197,94,.18)', glow: 'rgba(34,197,94,.08)',
     name: 'Alpha Seeker', desc: 'High-conviction positions in growth sectors and emerging markets. Maximum upside for experienced investors.', risk: 'High', return: '25-40%', horizon: '6+ mo' },
 ];
 
@@ -593,7 +599,45 @@ const SIGNAL_TICKERS = [
   { sym: 'QQQ', dir: '+1.4%', up: true }, { sym: 'META', dir: '-0.6%', up: false },
 ];
 
-const SECTION_REFS = ['hero', 'managers', 'strategies', 'signals', 'cta'];
+/* ── SECTION — INTELLIGENCE ENGINE ──────────────── */
+const SecIntelBg = styled.div`
+  position: absolute;
+  inset: 0;
+  background: #070b14;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 25%, rgba(34,197,94,.14), transparent 55%),
+      radial-gradient(ellipse 40% 35% at 85% 80%, rgba(52,211,153,.08), transparent 50%);
+  }
+`;
+
+const IntelInner = styled.div`
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 0;
+`;
+
+const IntelHead = styled.div`
+  flex-shrink: 0;
+  text-align: center;
+`;
+
+const IntelShowcaseWrap = styled.div`
+  flex: 1;
+  min-height: 0;
+  display: flex;
+`;
+
+const SECTION_REFS = ['hero', 'intelligence', 'managers', 'strategies', 'signals', 'cta'];
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -675,10 +719,29 @@ export default function LandingPage() {
           </ScrollArrow>
         </Section>
 
-        {/* ── SECTION 2: ACCOUNT MANAGERS ── */}
+        {/* ── SECTION 2: INTELLIGENCE ENGINE ── */}
+        <Section>
+          <SecIntelBg />
+          <IntelInner>
+            <IntelHead>
+              <SectionLabel style={{ color: '#86efac', justifyContent: 'center' }}>BloomVest IQ</SectionLabel>
+              <BigHeadline style={{ textAlign: 'center', fontSize: 'clamp(1.5rem, 4.5vw, 3rem)', margin: 0 }}>
+                THE <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#86efac 40%,#34d399 100%)">INTELLIGENCE</GradText> ENGINE
+              </BigHeadline>
+            </IntelHead>
+            <IntelShowcaseWrap>
+              <IntelligenceShowcase compact />
+            </IntelShowcaseWrap>
+          </IntelInner>
+          <ScrollArrow onClick={() => scrollTo(2)} aria-label="Next section">
+            <FaChevronDown />
+          </ScrollArrow>
+        </Section>
+
+        {/* ── SECTION 3: ACCOUNT MANAGERS ── */}
         <Section>
           <Sec2Bg />
-          <GlowOrb style={{ width: 500, height: 500, left: '-10%', top: '20%', background: 'rgba(124,58,237,.12)' }} $dur="14s" $delay="0s" />
+          <GlowOrb style={{ width: 500, height: 500, left: '-10%', top: '20%', background: 'rgba(34,197,94,.12)' }} $dur="14s" $delay="0s" />
           <GlowOrb style={{ width: 300, height: 300, right: '5%', bottom: '15%', background: 'rgba(34,197,94,.07)' }} $dur="10s" $delay="-4s" />
           <TwoCol>
             <div>
@@ -686,7 +749,7 @@ export default function LandingPage() {
                 Our Account Managers
               </SectionLabel>
               <BigHeadline initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} viewport={{ once: true }}>
-                WE TRADE.<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#38bdf8 100%)">YOU PROFIT.</GradText>
+                WE TRADE.<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">YOU PROFIT.</GradText>
               </BigHeadline>
               <BodyText initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.2 }} viewport={{ once: true }}>
                 Our certified account managers analyse markets daily, build personalised strategies, and execute with precision. You receive a full breakdown of every decision — risk, rationale, and expected returns.
@@ -704,9 +767,9 @@ export default function LandingPage() {
             <FloatCard initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} viewport={{ once: true }}>
               {[
                 { icon: FaShieldAlt, bg: 'rgba(34,197,94,.12)', color: '#4ade80', title: 'Risk-Managed', desc: 'Every position has a defined stop-loss and profit target before we enter.' },
-                { icon: FaChartLine, bg: 'rgba(56,189,248,.12)', color: '#38bdf8', title: 'Transparent Returns', desc: 'Monthly performance reports with full P&L breakdown delivered to you.' },
-                { icon: FaBell, bg: 'rgba(124,58,237,.12)', color: '#a78bfa', title: 'Live Alerts', desc: 'Instant notifications when we open, adjust or close a position in your account.' },
-                { icon: FaUsers, bg: 'rgba(245,158,11,.12)', color: '#fbbf24', title: 'Dedicated Manager', desc: 'One point of contact who knows your goals and adjusts strategy accordingly.' },
+                { icon: FaChartLine, bg: 'rgba(34,197,94,.12)', color: '#34d399', title: 'Transparent Returns', desc: 'Monthly performance reports with full P&L breakdown delivered to you.' },
+                { icon: FaBell, bg: 'rgba(34,197,94,.12)', color: '#86efac', title: 'Live Alerts', desc: 'Instant notifications when we open, adjust or close a position in your account.' },
+                { icon: FaUsers, bg: 'rgba(34,197,94,.12)', color: '#34d399', title: 'Dedicated Manager', desc: 'One point of contact who knows your goals and adjusts strategy accordingly.' },
               ].map(({ icon: Icon, bg, color, title, desc }) => (
                 <FeatureRow key={title}>
                   <FeatureIcon $bg={bg} $color={color}><Icon /></FeatureIcon>
@@ -718,21 +781,21 @@ export default function LandingPage() {
               ))}
             </FloatCard>
           </TwoCol>
-          <ScrollArrow onClick={() => scrollTo(2)} aria-label="Next section">
+          <ScrollArrow onClick={() => scrollTo(3)} aria-label="Next section">
             <FaChevronDown />
           </ScrollArrow>
         </Section>
 
-        {/* ── SECTION 3: STRATEGIES ── */}
+        {/* ── SECTION 4: STRATEGIES ── */}
         <Section>
           <Sec3Bg />
-          <GlowOrb style={{ width: 400, height: 400, right: '-8%', top: '10%', background: 'rgba(14,165,233,.1)' }} $dur="13s" $delay="-2s" />
+          <GlowOrb style={{ width: 400, height: 400, right: '-8%', top: '10%', background: 'rgba(34,197,94,.1)' }} $dur="13s" $delay="-2s" />
           <GlowOrb style={{ width: 280, height: 280, left: '5%', bottom: '10%', background: 'rgba(34,197,94,.08)' }} $dur="9s" $delay="-6s" />
           <StrategyGrid>
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionLabel style={{ color: '#4ade80' }}>Strategy Selection</SectionLabel>
               <BigHeadline>
-                WE CHOOSE THE<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#38bdf8 100%)">RIGHT STRATEGY</GradText><br />FOR YOU
+                WE CHOOSE THE<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">RIGHT STRATEGY</GradText><br />FOR YOU
               </BigHeadline>
               <BodyText>
                 After your risk profile assessment, our managers match you to the optimal strategy — and explain exactly what to expect in terms of returns and risk.
@@ -774,20 +837,20 @@ export default function LandingPage() {
               </BtnPrimary>
             </motion.div>
           </StrategyGrid>
-          <ScrollArrow onClick={() => scrollTo(3)} aria-label="Next section">
+          <ScrollArrow onClick={() => scrollTo(4)} aria-label="Next section">
             <FaChevronDown />
           </ScrollArrow>
         </Section>
 
-        {/* ── SECTION 4: SIGNALS TEASER ── */}
+        {/* ── SECTION 5: SIGNALS TEASER ── */}
         <Section>
           <Sec4Bg />
-          <GlowOrb style={{ width: 450, height: 450, left: '50%', top: '30%', transform: 'translateX(-50%)', background: 'rgba(251,191,36,.07)' }} $dur="16s" $delay="-3s" />
+          <GlowOrb style={{ width: 450, height: 450, left: '50%', top: '30%', transform: 'translateX(-50%)', background: 'rgba(34,197,94,.07)' }} $dur="16s" $delay="-3s" />
           <SignalTickerWrap>
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionLabel style={{ color: '#4ade80', textAlign: 'center', justifyContent: 'center' }}>Live Every Day</SectionLabel>
               <BigHeadline style={{ textAlign: 'center' }}>
-                DAILY <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 35%,#38bdf8 100%)">SIGNALS</GradText><br />LIKE CLOCKWORK
+                DAILY <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 35%,#34d399 100%)">SIGNALS</GradText><br />LIKE CLOCKWORK
               </BigHeadline>
               <BodyText style={{ textAlign: 'center', margin: '0 auto 0', maxWidth: '640px' }}>
                 Every morning our analysts publish high-confidence trade signals — entry, exit, stop-loss, and the reasoning behind each call. Subscribers get them first.
@@ -815,12 +878,12 @@ export default function LandingPage() {
               </BtnPrimary>
             </motion.div>
           </SignalTickerWrap>
-          <ScrollArrow onClick={() => scrollTo(4)} aria-label="Next section">
+          <ScrollArrow onClick={() => scrollTo(5)} aria-label="Next section">
             <FaChevronDown />
           </ScrollArrow>
         </Section>
 
-        {/* ── SECTION 5: FINAL CTA ── */}
+        {/* ── SECTION 6: FINAL CTA ── */}
         <Section>
           <Sec5Bg />
           <GlowOrb style={{ width: 600, height: 600, left: '50%', top: '50%', transform: 'translate(-50%,-50%)', background: 'rgba(34,197,94,.09)' }} $dur="18s" $delay="-5s" />
@@ -828,7 +891,7 @@ export default function LandingPage() {
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <SectionLabel style={{ color: '#4ade80', justifyContent: 'center' }}>Get Started Today</SectionLabel>
               <BigHeadline style={{ textAlign: 'center' }}>
-                READY TO <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#38bdf8 100%)">GROW</GradText><br />YOUR WEALTH?
+                READY TO <GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">GROW</GradText><br />YOUR WEALTH?
               </BigHeadline>
               <BodyText style={{ textAlign: 'center', maxWidth: '640px', margin: '0 auto 0' }}>
                 Complete our 2-minute assessment. Tell us your goals, risk tolerance, and investment experience — we'll assign a dedicated account manager and propose your strategy within 24 hours.
