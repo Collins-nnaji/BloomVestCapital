@@ -1521,6 +1521,109 @@ function LayerPreview({ tab, movers, loading, compact, isMobile }) {
   }
 }
 
+/* ── Abridged mobile card (landing teaser) ────────── */
+const MobileCard = styled.div`
+  width: 100%;
+  align-self: stretch;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MCardHead = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 0.95rem;
+  background: linear-gradient(135deg, #0f172a 0%, #14281c 100%);
+`;
+
+const MCardMark = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+`;
+
+const MCardTitle = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: #f8fafc;
+  line-height: 1.1;
+`;
+
+const MCardSubtitle = styled.div`
+  font-size: 0.68rem;
+  color: rgba(248, 250, 252, 0.55);
+  margin-top: 0.1rem;
+`;
+
+const MToolRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.62rem 0.95rem;
+  border-bottom: 1px solid #f1f5f9;
+  &:last-child { border-bottom: none; }
+`;
+
+const MToolIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  font-size: 0.8rem;
+`;
+
+const MToolLabel = styled.div`
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #0f172a;
+`;
+
+const MToolSub = styled.div`
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.35;
+  margin-top: 0.05rem;
+`;
+
+const MCardCta = styled.button`
+  margin: 0.7rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+`;
+
 export default function IntelligenceShowcase({ movers, loading, compact = false }) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -1561,6 +1664,35 @@ export default function IntelligenceShowcase({ movers, loading, compact = false 
   const openHub = () => {
     navigate(activeTab === 'news' ? '/iq' : `/iq?tab=${activeTab}`);
   };
+
+  if (isMobile) {
+    return (
+      <MobileCard>
+        <MCardHead>
+          <MCardMark>B</MCardMark>
+          <div>
+            <MCardTitle>BloomVest Intelligence</MCardTitle>
+            <MCardSubtitle>Six AI tools in one workspace</MCardSubtitle>
+          </div>
+        </MCardHead>
+        {IQ_TOOLS.map((t) => {
+          const Icon = t.icon;
+          return (
+            <MToolRow key={t.tab}>
+              <MToolIcon><Icon /></MToolIcon>
+              <div>
+                <MToolLabel>{t.label}</MToolLabel>
+                <MToolSub>{t.sub}</MToolSub>
+              </div>
+            </MToolRow>
+          );
+        })}
+        <MCardCta onClick={() => navigate('/iq')}>
+          Open Intelligence Hub <FaArrowRight />
+        </MCardCta>
+      </MobileCard>
+    );
+  }
 
   return (
     <Wrap>

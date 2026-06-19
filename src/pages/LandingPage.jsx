@@ -44,7 +44,13 @@ const Section = styled.section`
   scroll-snap-align: start;
   scroll-snap-stop: always;
   padding: 3.25rem 4vw 4.25rem;
-  @media(max-width:768px){ padding: 2.5rem 1.25rem 3.5rem; }
+  @media(max-width:768px){
+    height: auto;
+    min-height: calc(100vh - 64px);
+    max-height: none;
+    overflow: visible;
+    padding: 2.25rem 1.25rem 3.25rem;
+  }
 `;
 
 const ScrollContainer = styled.div`
@@ -53,6 +59,7 @@ const ScrollContainer = styled.div`
   height: calc(100vh - 64px);
   scroll-behavior: smooth;
   &::-webkit-scrollbar { display: none; }
+  @media(max-width:768px){ scroll-snap-type: y proximity; }
 `;
 
 /* ── SECTION 1 — HERO ───────────────────────────── */
@@ -624,6 +631,7 @@ const IntelInner = styled.div`
   flex-direction: column;
   gap: 0.85rem;
   min-height: 0;
+  @media(max-width:768px){ height: auto; justify-content: center; }
 `;
 
 const IntelHead = styled.div`
