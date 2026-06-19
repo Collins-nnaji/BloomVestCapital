@@ -500,6 +500,10 @@ const ToolEyebrow = styled.p`
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #059669;
+
+  @media (max-width: ${MOBILE_BP}px) {
+    display: none;
+  }
 `;
 
 const ToolTitle = styled.h2`
@@ -543,9 +547,7 @@ const Disclaimer = styled.div`
   flex-shrink: 0;
 
   @media (max-width: ${MOBILE_BP}px) {
-    margin: 0 0.65rem 0.4rem;
-    font-size: 0.64rem;
-    padding: 0.4rem 0.55rem;
+    display: none;
   }
 `;
 
@@ -579,14 +581,7 @@ const SubToolbar = styled.div`
   flex-shrink: 0;
 
   @media (max-width: ${MOBILE_BP}px) {
-    padding: 0.45rem 0.6rem;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    display: none;
   }
 `;
 
