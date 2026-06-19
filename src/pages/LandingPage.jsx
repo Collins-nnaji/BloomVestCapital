@@ -82,7 +82,7 @@ const HeroInner = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 1.5rem;
+  gap: 1.1rem;
   max-width: 1300px;
   width: 100%;
 `;
@@ -330,117 +330,73 @@ const FeatureDesc = styled.div`
   font-family: 'DM Sans', sans-serif;
 `;
 
-/* ── SECTION 3 — STRATEGY CHOOSER ──────────────── */
-const Sec3Bg = styled.div`
-  position: absolute;
-  inset: 0;
-  background: #070b14;
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 50% at 75% 40%, rgba(34,197,94,.12), transparent 55%),
-      radial-gradient(ellipse 40% 35% at 15% 70%, rgba(34,197,94,.08), transparent 50%);
-  }
-`;
-
-const StrategyGrid = styled.div`
-  position: relative;
-  z-index: 2;
-  max-width: 1400px;
+/* ── HERO STRATEGY CARD — three strategies in one card ─ */
+const HeroStrategyCard = styled(motion.div)`
+  margin-top: 0.4rem;
   width: 100%;
-`;
-
-const StrategyCards = styled(motion.div)`
+  max-width: 820px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-top: 2.5rem;
-  @media(max-width:900px){ grid-template-columns: 1fr; }
-`;
-
-const StratCard = styled(motion.div)`
-  padding: 2.25rem 2rem;
-  border-radius: 24px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid ${p => p.$border || 'rgba(255,255,255,.07)'};
-  position: relative;
+  border-radius: 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(12px);
   overflow: hidden;
-  cursor: pointer;
-  transition: border-color .2s, transform .2s, box-shadow .2s;
-  &:hover {
-    border-color: ${p => p.$accent || '#4ade80'};
-    transform: translateY(-6px);
-    box-shadow: 0 24px 60px rgba(0,0,0,.35);
-  }
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: ${p => p.$accent || '#4ade80'};
-    border-radius: 3px 3px 0 0;
-  }
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, ${p => p.$glow || 'rgba(34,197,94,.06)'}, transparent 60%);
-    pointer-events: none;
+  @media(max-width:560px){ grid-template-columns: 1fr; }
+`;
+
+const HeroStratCell = styled.div`
+  padding: 0.95rem 0.9rem;
+  text-align: center;
+  border-right: 1px solid rgba(255,255,255,.08);
+  &:last-child { border-right: none; }
+  @media(max-width:560px){
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    &:last-child { border-bottom: none; }
   }
 `;
 
-const StratTag = styled.div`
-  font-size: 0.65rem;
+const HeroStratTag = styled.div`
+  font-size: 0.58rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: ${p => p.$color || '#4ade80'};
-  background: ${p => p.$bg || 'rgba(34,197,94,.1)'};
-  padding: 0.25rem 0.65rem;
-  border-radius: 100px;
-  display: inline-block;
-  margin-bottom: 1rem;
+  margin-bottom: 0.3rem;
 `;
 
-const StratName = styled.div`
+const HeroStratName = styled.div`
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 800;
-  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-size: 1rem;
   color: #f8fafc;
   margin-bottom: 0.6rem;
 `;
 
-const StratDesc = styled.div`
-  font-size: 0.9rem;
-  color: rgba(248,250,252,.5);
-  line-height: 1.65;
-  margin-bottom: 1.5rem;
-  font-family: 'DM Sans', sans-serif;
-`;
-
-const StratMeta = styled.div`
+const HeroStratMeta = styled.div`
   display: flex;
-  gap: 1rem;
+  justify-content: center;
+  gap: 0.75rem;
 `;
 
-const StratMetaItem = styled.div`
+const HeroStratMetaItem = styled.div`
   text-align: center;
 `;
 
-const StratMetaNum = styled.div`
+const HeroStratNum = styled.div`
   font-family: 'Space Grotesk', sans-serif;
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 0.82rem;
   color: ${p => p.$color || '#4ade80'};
 `;
 
-const StratMetaLbl = styled.div`
-  font-size: 0.65rem;
-  color: rgba(248,250,252,.35);
+const HeroStratLbl = styled.div`
+  font-size: 0.52rem;
+  color: rgba(248,250,252,.4);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
+  margin-top: 0.1rem;
 `;
 
 /* ── SECTION 4 — SIGNALS TEASER ─────────────────── */
@@ -643,7 +599,7 @@ const IntelShowcaseWrap = styled.div`
   display: flex;
 `;
 
-const SECTION_REFS = ['hero', 'intelligence', 'managers', 'strategies', 'signals', 'cta'];
+const SECTION_REFS = ['hero', 'intelligence', 'managers', 'signals', 'cta'];
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -719,6 +675,29 @@ export default function LandingPage() {
                 View Daily Signals
               </BtnGhost>
             </HeroCta>
+
+            <HeroStrategyCard initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1 }}>
+              {STRATEGIES.map((s) => (
+                <HeroStratCell key={s.name}>
+                  <HeroStratTag $color={s.tagColor}>{s.tag}</HeroStratTag>
+                  <HeroStratName>{s.name}</HeroStratName>
+                  <HeroStratMeta>
+                    <HeroStratMetaItem>
+                      <HeroStratNum $color={s.accent}>{s.risk}</HeroStratNum>
+                      <HeroStratLbl>Risk</HeroStratLbl>
+                    </HeroStratMetaItem>
+                    <HeroStratMetaItem>
+                      <HeroStratNum $color={s.accent}>{s.return}</HeroStratNum>
+                      <HeroStratLbl>Return</HeroStratLbl>
+                    </HeroStratMetaItem>
+                    <HeroStratMetaItem>
+                      <HeroStratNum $color={s.accent}>{s.horizon}</HeroStratNum>
+                      <HeroStratLbl>Horizon</HeroStratLbl>
+                    </HeroStratMetaItem>
+                  </HeroStratMeta>
+                </HeroStratCell>
+              ))}
+            </HeroStrategyCard>
           </HeroInner>
           <ScrollArrow onClick={() => scrollTo(1)} aria-label="Next section">
             <FaChevronDown />
@@ -792,63 +771,7 @@ export default function LandingPage() {
           </ScrollArrow>
         </Section>
 
-        {/* ── SECTION 4: STRATEGIES ── */}
-        <Section>
-          <Sec3Bg />
-          <GlowOrb style={{ width: 400, height: 400, right: '-8%', top: '10%', background: 'rgba(34,197,94,.1)' }} $dur="13s" $delay="-2s" />
-          <GlowOrb style={{ width: 280, height: 280, left: '5%', bottom: '10%', background: 'rgba(34,197,94,.08)' }} $dur="9s" $delay="-6s" />
-          <StrategyGrid>
-            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <SectionLabel style={{ color: '#4ade80' }}>Strategy Selection</SectionLabel>
-              <BigHeadline>
-                WE CHOOSE THE<br /><GradText $gradient="linear-gradient(135deg,#f8fafc 0%,#4ade80 40%,#34d399 100%)">RIGHT STRATEGY</GradText><br />FOR YOU
-              </BigHeadline>
-              <BodyText>
-                After your risk profile assessment, our managers match you to the optimal strategy — and explain exactly what to expect in terms of returns and risk.
-              </BodyText>
-            </motion.div>
-
-            <StrategyCards
-              variants={{ show: { transition: { staggerChildren: 0.12 } } }}
-              initial="hidden" whileInView="show" viewport={{ once: true }}>
-              {STRATEGIES.map((s) => (
-                <StratCard key={s.name} $accent={s.accent} $border={s.border} $glow={s.glow}
-                  variants={{ hidden: { opacity: 0, y: 36 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 16 } } }}
-                  whileHover={{ scale: 1.03 }}>
-                  <StratTag $color={s.tagColor} $bg={s.tagBg}>{s.tag}</StratTag>
-                  <StratName>{s.name}</StratName>
-                  <StratDesc>{s.desc}</StratDesc>
-                  <StratMeta>
-                    <StratMetaItem>
-                      <StratMetaNum $color={s.accent}>{s.risk}</StratMetaNum>
-                      <StratMetaLbl>Risk</StratMetaLbl>
-                    </StratMetaItem>
-                    <StratMetaItem>
-                      <StratMetaNum $color={s.accent}>{s.return}</StratMetaNum>
-                      <StratMetaLbl>Target Return</StratMetaLbl>
-                    </StratMetaItem>
-                    <StratMetaItem>
-                      <StratMetaNum $color={s.accent}>{s.horizon}</StratMetaNum>
-                      <StratMetaLbl>Horizon</StratMetaLbl>
-                    </StratMetaItem>
-                  </StratMeta>
-                </StratCard>
-              ))}
-            </StrategyCards>
-
-            <motion.div style={{ textAlign: 'center', marginTop: '2rem' }}
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.4 }} viewport={{ once: true }}>
-              <BtnPrimary onClick={() => navigate('/enquiry')} style={{ margin: '0 auto' }}>
-                Take the Assessment <FaArrowRight />
-              </BtnPrimary>
-            </motion.div>
-          </StrategyGrid>
-          <ScrollArrow onClick={() => scrollTo(4)} aria-label="Next section">
-            <FaChevronDown />
-          </ScrollArrow>
-        </Section>
-
-        {/* ── SECTION 5: SIGNALS TEASER ── */}
+        {/* ── SECTION 4: SIGNALS TEASER ── */}
         <Section>
           <Sec4Bg />
           <GlowOrb style={{ width: 450, height: 450, left: '50%', top: '30%', transform: 'translateX(-50%)', background: 'rgba(34,197,94,.07)' }} $dur="16s" $delay="-3s" />
@@ -884,7 +807,7 @@ export default function LandingPage() {
               </BtnPrimary>
             </motion.div>
           </SignalTickerWrap>
-          <ScrollArrow onClick={() => scrollTo(5)} aria-label="Next section">
+          <ScrollArrow onClick={() => scrollTo(4)} aria-label="Next section">
             <FaChevronDown />
           </ScrollArrow>
         </Section>
