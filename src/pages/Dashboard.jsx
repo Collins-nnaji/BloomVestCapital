@@ -150,12 +150,10 @@ const RunBtn = styled(motion.button)`
 
 /* ── per-tool header (sidebar drives tool selection) ──── */
 const ToolHeader = styled.div`
-  padding: 1.75rem 1.5rem 1rem;
-  max-width: 1180px;
-  margin: 0 auto;
+  padding: 1.35rem 0.9rem 0.85rem;
   width: 100%;
   flex-shrink: 0;
-  @media (max-width: 640px) { padding: 1.25rem 1rem 0.75rem; }
+  @media (max-width: 640px) { padding: 1.1rem 0.8rem 0.7rem; }
 `;
 const ToolEyebrow = styled.p`
   margin: 0 0 0.3rem;
@@ -253,13 +251,11 @@ const ProgressText    = styled.div`font-size:0.7rem;font-weight:700;color:#64748
 const TabBody = styled.div`
   background:#ffffff;
   border:1px solid #e2e8f0;
-  border-radius:16px;
-  max-width:1180px;
-  width:calc(100% - 2.5rem);
-  margin:0 auto 1.5rem;
+  border-radius:14px;
+  margin:0 0.9rem 1.25rem;
   overflow:hidden;
   box-shadow:0 1px 3px rgba(15,23,42,.05);
-  @media(max-width:640px){width:calc(100% - 1rem);border-radius:12px;}
+  @media(max-width:640px){margin:0 0.6rem 1rem;border-radius:12px;}
 `;
 
 /* ── shell / table ──────────────────────────────────── */
@@ -1758,7 +1754,7 @@ export default function Dashboard() {
 
       {dashTab !== 'copilot' && (
       <div style={{
-        margin:'0 1.25rem 0.75rem', padding:'0.55rem 0.85rem', borderRadius:8,
+        margin:'0 0.9rem 0.75rem', padding:'0.55rem 0.85rem', borderRadius:8,
         background:'rgba(34,197,94,0.06)', border:'1px solid rgba(34,197,94,0.2)',
         fontSize:'0.75rem', color:'#475569', lineHeight:1.45,
       }}>
