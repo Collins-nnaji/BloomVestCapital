@@ -473,4 +473,17 @@ export const api = {
       body: JSON.stringify({ sessionId: getSessionId() }),
     });
   },
+
+  async searchCompanies(q = '') {
+    const query = q ? `?q=${encodeURIComponent(q)}` : '';
+    return request(`/research/companies${query}`);
+  },
+
+  async getCompany(ticker) {
+    return request(`/research/company/${encodeURIComponent(ticker)}`);
+  },
+
+  async getCompanyStatements(ticker, type = 'income', period = 'annual') {
+    return request(`/research/company/${encodeURIComponent(ticker)}/statements?type=${type}&period=${period}`);
+  },
 };

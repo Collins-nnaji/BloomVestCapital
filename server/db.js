@@ -201,6 +201,63 @@ CREATE TABLE IF NOT EXISTS allocation_portfolios (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 CREATE INDEX IF NOT EXISTS idx_allocation_portfolios_user ON allocation_portfolios(user_id, created_at DESC);
+CREATE TABLE IF NOT EXISTS companies (
+  id SERIAL PRIMARY KEY,
+  ticker VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  region VARCHAR(20) NOT NULL DEFAULT 'US',
+  exchange VARCHAR(20),
+  sector VARCHAR(100),
+  industry VARCHAR(100),
+  logo_url VARCHAR(500),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_companies_ticker ON companies(ticker);
+CREATE TABLE IF NOT EXISTS financial_statements (
+  id SERIAL PRIMARY KEY,
+  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+  statement_type VARCHAR(20) NOT NULL CHECK (statement_type IN ('income','balance','cashflow')),
+  period_type VARCHAR(10) NOT NULL CHECK (period_type IN ('annual','quarterly')),
+  fiscal_period VARCHAR(10) NOT NULL,
+  fiscal_end_date DATE,
+  data JSONB NOT NULL,
+  source VARCHAR(30) NOT NULL DEFAULT 'alpha_vantage',
+  fetched_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(company_id, statement_type, period_type, fiscal_period)
+);
+CREATE INDEX IF NOT EXISTS idx_fin_statements_company ON financial_statements(company_id, statement_type, period_type);
+CREATE TABLE IF NOT EXISTS computed_ratios (
+  id SERIAL PRIMARY KEY,
+  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+  fiscal_period VARCHAR(10) NOT NULL,
+  period_type VARCHAR(10) NOT NULL,
+  roic DECIMAL(10,4), fcf_yield DECIMAL(10,4), debt_to_ebitda DECIMAL(10,4),
+  gross_margin DECIMAL(10,4), operating_margin DECIMAL(10,4), net_margin DECIMAL(10,4),
+  current_ratio DECIMAL(10,4), revenue_growth_yoy DECIMAL(10,4),
+  computed_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(company_id, fiscal_period, period_type)
+);
+CREATE TABLE IF NOT EXISTS company_narratives (
+  id SERIAL PRIMARY KEY,
+  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+  fiscal_period VARCHAR(10) NOT NULL,
+  narrative TEXT NOT NULL,
+  model VARCHAR(50),
+  generated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(company_id, fiscal_period)
+);
+CREATE TABLE IF NOT EXISTS red_flags (
+  id SERIAL PRIMARY KEY,
+  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+  fiscal_period VARCHAR(10) NOT NULL,
+  flag_type VARCHAR(50) NOT NULL,
+  severity VARCHAR(10) NOT NULL CHECK (severity IN ('low','medium','high')),
+  detail TEXT NOT NULL,
+  metric_value DECIMAL(15,4),
+  threshold_value DECIMAL(15,4),
+  detected_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_red_flags_company ON red_flags(company_id, fiscal_period);
 `;
 
 async function initializeDatabase() {

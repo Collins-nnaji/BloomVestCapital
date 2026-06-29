@@ -22,6 +22,7 @@ const leadsRoutes    = require('./routes/leads');
 const glossaryRoutes = require('./routes/glossary');
 const profileRoutes  = require('./routes/profile');
 const allocationRoutes = require('./routes/allocations');
+const researchRoutes = require('./routes/research');
 const { logAiConfigSummary } = require('./openai-client');
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/leads',    leadsRoutes);
 app.use('/api/glossary', glossaryRoutes);
 app.use('/api/profile',  profileRoutes);
 app.use('/api/allocations', allocationRoutes);
+app.use('/api/research', researchRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
