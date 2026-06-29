@@ -97,6 +97,7 @@ const Footer = () => (
       </LogoLink>
 
       <Links>
+        <FLink to="/valuation">Valuation Tool</FLink>
         <FLink to="/enquiry">Enquire</FLink>
         <FLink to="/privacy">Privacy</FLink>
         <FLink to="/terms">Terms</FLink>

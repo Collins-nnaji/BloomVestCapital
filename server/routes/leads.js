@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: 'Invalid email address' });
   }
 
-  const validTypes = ['book_call', 'discuss_service', 'general'];
+  const validTypes = ['investor_enquiry', 'seller_enquiry', 'jv_enquiry', 'general'];
   if (!validTypes.includes(type)) {
     return res.status(400).json({ error: 'Invalid lead type' });
   }

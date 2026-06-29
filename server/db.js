@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS user_subscriptions (
 CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON user_subscriptions(email);
 CREATE TABLE IF NOT EXISTS leads (
   id SERIAL PRIMARY KEY,
-  type VARCHAR(30) NOT NULL CHECK (type IN ('book_call', 'discuss_service', 'general')),
+  type VARCHAR(30) NOT NULL,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   company VARCHAR(255),
@@ -38,6 +38,12 @@ CREATE TABLE IF NOT EXISTS leads (
   preferred_time VARCHAR(100),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+DO $$ BEGIN
+  ALTER TABLE leads DROP CONSTRAINT IF EXISTS leads_type_check;
+  ALTER TABLE leads ADD CONSTRAINT leads_type_check
+    CHECK (type IN ('investor_enquiry', 'seller_enquiry', 'jv_enquiry', 'general'));
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
 CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(type);
 CREATE TABLE IF NOT EXISTS user_profiles (
@@ -46,7 +52,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   tagline VARCHAR(500),
   bio TEXT,
   location VARCHAR(255),
-  avatar_color VARCHAR(20) DEFAULT '#b8893f',
+  avatar_color VARCHAR(20) DEFAULT '#15803d',
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 `;

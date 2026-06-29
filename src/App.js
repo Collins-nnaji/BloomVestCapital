@@ -12,6 +12,7 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
 const TermsPage = lazy(() => import('./pages/TermsPage'));
 const EnquiryPage = lazy(() => import('./pages/EnquiryPage'));
+const ValuationPage = lazy(() => import('./pages/ValuationPage'));
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/enquiry" element={<EnquiryPage />} />
+                <Route path="/valuation" element={<ValuationPage />} />
 
                 <Route path="/privacy" element={<PrivacyPage />} />
                 <Route path="/terms" element={<TermsPage />} />
