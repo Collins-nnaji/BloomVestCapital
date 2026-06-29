@@ -190,6 +190,22 @@ const Input = styled.input`
   &:focus { border-color: #22c55e; }
 `;
 
+const Select = styled.select`
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,.1);
+  background: rgba(255,255,255,.05);
+  color: #f8fafc;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color .18s;
+  &:focus { border-color: #22c55e; }
+  option { background: #1c1917; color: #f8fafc; }
+`;
+
 const Textarea = styled.textarea`
   width: 100%;
   padding: 0.75rem 1rem;
@@ -295,7 +311,10 @@ const ENQUIRY_TYPES = [
 ];
 
 const INVESTMENT_FOCUS = ['Sourcing', 'Flips', 'Buy-to-Let', 'Joint Venture', 'Development'];
-const CAPITAL_BANDS = ['£10k–25k', '£25k–75k', '£75k–250k', '£250k+'];
+const CAPITAL_BANDS = {
+  GBP: ['£10k–25k', '£25k–75k', '£75k–250k', '£250k+'],
+  NGN: ['₦15m–35m', '₦35m–100m', '₦100m–350m', '₦350m+'],
+};
 const TIMELINES = ['Ready now', 'Within 3 months', 'Within 6 months', 'Just exploring'];
 
 const PROPERTY_SITUATIONS = ['Need to sell quickly', 'Inherited property', 'Distressed, needs repair', 'Landlord exit', 'Other'];
@@ -309,6 +328,7 @@ export default function EnquiryPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [direction, setDirection] = useState(1);
+  const [currency, setCurrency] = useState('GBP');
 
   const [form, setForm] = useState({
     type: '',
@@ -452,6 +472,16 @@ export default function EnquiryPage() {
                       <Input type="tel" placeholder="+44 7xxx xxxxxx" value={form.phone} onChange={e => update('phone', e.target.value)} />
                     </Field>
 
+                    {(form.type === 'investor_enquiry' || form.type === 'jv_enquiry' || form.type === 'seller_enquiry') && (
+                      <Field>
+                        <Label>Currency</Label>
+                        <Select value={currency} onChange={(e) => setCurrency(e.target.value)}>
+                          <option value="GBP">£ GBP (UK)</option>
+                          <option value="NGN">₦ NGN (Nigeria)</option>
+                        </Select>
+                      </Field>
+                    )}
+
                     {form.type === 'investor_enquiry' && (
                       <>
                         <Label>Investment Focus</Label>
@@ -462,7 +492,7 @@ export default function EnquiryPage() {
                         </PillRow>
                         <Label>Capital Available</Label>
                         <PillRow>
-                          {CAPITAL_BANDS.map(c => (
+                          {CAPITAL_BANDS[currency].map(c => (
                             <Pill key={c} $selected={form.capitalBand === c} onClick={() => update('capitalBand', c)}>{c}</Pill>
                           ))}
                         </PillRow>
@@ -489,7 +519,11 @@ export default function EnquiryPage() {
                         </PillRow>
                         <Field>
                           <Label>Guide Price (optional)</Label>
-                          <Input placeholder="£180,000" value={form.guidePrice} onChange={e => update('guidePrice', e.target.value)} />
+                          <Input
+                            placeholder={currency === 'NGN' ? '₦65,000,000' : '£180,000'}
+                            value={form.guidePrice}
+                            onChange={e => update('guidePrice', e.target.value)}
+                          />
                         </Field>
                       </>
                     )}
@@ -498,7 +532,7 @@ export default function EnquiryPage() {
                       <>
                         <Label>Capital to Commit</Label>
                         <PillRow>
-                          {CAPITAL_BANDS.map(c => (
+                          {CAPITAL_BANDS[currency].map(c => (
                             <Pill key={c} $selected={form.jvCapitalBand === c} onClick={() => update('jvCapitalBand', c)}>{c}</Pill>
                           ))}
                         </PillRow>
