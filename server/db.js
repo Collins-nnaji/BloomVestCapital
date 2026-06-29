@@ -17,91 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(255);
-CREATE TABLE IF NOT EXISTS holdings (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  symbol VARCHAR(10) NOT NULL,
-  shares INTEGER NOT NULL DEFAULT 0,
-  avg_price DECIMAL(15,2) NOT NULL,
-  UNIQUE(user_id, symbol)
-);
-CREATE TABLE IF NOT EXISTS transactions (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  type VARCHAR(4) NOT NULL CHECK (type IN ('BUY', 'SELL')),
-  symbol VARCHAR(10) NOT NULL,
-  shares INTEGER NOT NULL,
-  price DECIMAL(15,2) NOT NULL,
-  total DECIMAL(15,2) NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE TABLE IF NOT EXISTS courses (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  level VARCHAR(20) NOT NULL DEFAULT 'beginner',
-  icon VARCHAR(10),
-  color VARCHAR(20),
-  is_pro BOOLEAN DEFAULT FALSE,
-  sort_order INTEGER DEFAULT 0
-);
-CREATE TABLE IF NOT EXISTS modules (
-  id SERIAL PRIMARY KEY,
-  course_id INTEGER REFERENCES courses(id) ON DELETE CASCADE,
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  sort_order INTEGER DEFAULT 0
-);
-CREATE TABLE IF NOT EXISTS lessons (
-  id SERIAL PRIMARY KEY,
-  module_id INTEGER REFERENCES modules(id) ON DELETE CASCADE,
-  title VARCHAR(255) NOT NULL,
-  description TEXT,
-  duration VARCHAR(20),
-  icon VARCHAR(10),
-  content JSONB NOT NULL DEFAULT '[]',
-  key_takeaways JSONB NOT NULL DEFAULT '[]',
-  quiz JSONB NOT NULL DEFAULT '[]',
-  sort_order INTEGER DEFAULT 0
-);
-CREATE TABLE IF NOT EXISTS lesson_progress (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  lesson_id INTEGER NOT NULL,
-  completed BOOLEAN DEFAULT FALSE,
-  quiz_score INTEGER DEFAULT 0,
-  completed_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, lesson_id)
-);
-CREATE TABLE IF NOT EXISTS chat_messages (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  role VARCHAR(10) NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
-  content TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE TABLE IF NOT EXISTS custom_scenarios (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  title VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
-  briefing TEXT NOT NULL,
-  difficulty VARCHAR(20) NOT NULL DEFAULT 'Beginner',
-  duration VARCHAR(20) NOT NULL DEFAULT '15 min',
-  icon VARCHAR(10) NOT NULL DEFAULT '🧠',
-  starting_balance INTEGER NOT NULL DEFAULT 10000,
-  assets JSONB NOT NULL DEFAULT '[]',
-  objectives JSONB NOT NULL DEFAULT '[]',
-  tips JSONB NOT NULL DEFAULT '[]',
-  learning_goals JSONB NOT NULL DEFAULT '[]',
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_holdings_user ON holdings(user_id);
-CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);
-CREATE INDEX IF NOT EXISTS idx_lesson_progress_user ON lesson_progress(user_id);
-CREATE INDEX IF NOT EXISTS idx_chat_messages_user ON chat_messages(user_id);
-CREATE INDEX IF NOT EXISTS idx_custom_scenarios_user ON custom_scenarios(user_id);
+CREATE INDEX IF NOT EXISTS idx_users_session ON users(session_id);
 CREATE TABLE IF NOT EXISTS user_subscriptions (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -110,8 +26,6 @@ CREATE TABLE IF NOT EXISTS user_subscriptions (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE INDEX IF NOT EXISTS idx_modules_course ON modules(course_id);
-CREATE INDEX IF NOT EXISTS idx_lessons_module ON lessons(module_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_email ON user_subscriptions(email);
 CREATE TABLE IF NOT EXISTS leads (
   id SERIAL PRIMARY KEY,
@@ -126,138 +40,15 @@ CREATE TABLE IF NOT EXISTS leads (
 );
 CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);
 CREATE INDEX IF NOT EXISTS idx_leads_type ON leads(type);
-CREATE TABLE IF NOT EXISTS user_analysis (
-  user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-  payload JSONB NOT NULL,
-  preferences JSONB,
-  generated_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE TABLE IF NOT EXISTS glossary_history (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  terms TEXT[] NOT NULL,
-  ai_response JSONB NOT NULL,
-  term_labels TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_glossary_history_user ON glossary_history(user_id, created_at DESC);
-CREATE TABLE IF NOT EXISTS glossary_bookmarks (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  term_id VARCHAR(100) NOT NULL,
-  term_label VARCHAR(255) NOT NULL,
-  category VARCHAR(100),
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, term_id)
-);
-CREATE INDEX IF NOT EXISTS idx_glossary_bookmarks_user ON glossary_bookmarks(user_id);
-CREATE TABLE IF NOT EXISTS glossary_learned (
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  term_id VARCHAR(100) NOT NULL,
-  learned_at TIMESTAMPTZ DEFAULT NOW(),
-  PRIMARY KEY (user_id, term_id)
-);
 CREATE TABLE IF NOT EXISTS user_profiles (
   user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
   display_name VARCHAR(255),
   tagline VARCHAR(500),
   bio TEXT,
   location VARCHAR(255),
-  risk_tolerance VARCHAR(20) DEFAULT 'moderate',
-  investor_type VARCHAR(30) DEFAULT 'beginner',
-  investment_style VARCHAR(20) DEFAULT 'mixed',
-  primary_focus VARCHAR(50) DEFAULT 'stocks',
-  experience_years INTEGER DEFAULT 0,
-  net_worth DECIMAL(15,2) DEFAULT 0,
-  monthly_income DECIMAL(15,2) DEFAULT 0,
-  monthly_savings DECIMAL(15,2) DEFAULT 0,
-  avatar_color VARCHAR(20) DEFAULT '#15803d',
+  avatar_color VARCHAR(20) DEFAULT '#b8893f',
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-CREATE TABLE IF NOT EXISTS financial_goals (
-  id SERIAL PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  title VARCHAR(255) NOT NULL,
-  category VARCHAR(50) NOT NULL DEFAULT 'custom',
-  emoji VARCHAR(10) DEFAULT '🎯',
-  target_amount DECIMAL(15,2) NOT NULL,
-  current_amount DECIMAL(15,2) DEFAULT 0,
-  deadline DATE,
-  color VARCHAR(20) DEFAULT '#15803d',
-  completed BOOLEAN DEFAULT FALSE,
-  sort_order INTEGER DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_financial_goals_user ON financial_goals(user_id);
-CREATE TABLE IF NOT EXISTS allocation_portfolios (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  name VARCHAR(255) NOT NULL,
-  fund_amount DECIMAL(15,2) NOT NULL DEFAULT 100,
-  allocations JSONB NOT NULL DEFAULT '[]',
-  breakdown JSONB NOT NULL DEFAULT '{}',
-  preferences JSONB,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_allocation_portfolios_user ON allocation_portfolios(user_id, created_at DESC);
-CREATE TABLE IF NOT EXISTS companies (
-  id SERIAL PRIMARY KEY,
-  ticker VARCHAR(20) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  region VARCHAR(20) NOT NULL DEFAULT 'US',
-  exchange VARCHAR(20),
-  sector VARCHAR(100),
-  industry VARCHAR(100),
-  logo_url VARCHAR(500),
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_companies_ticker ON companies(ticker);
-CREATE TABLE IF NOT EXISTS financial_statements (
-  id SERIAL PRIMARY KEY,
-  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
-  statement_type VARCHAR(20) NOT NULL CHECK (statement_type IN ('income','balance','cashflow')),
-  period_type VARCHAR(10) NOT NULL CHECK (period_type IN ('annual','quarterly')),
-  fiscal_period VARCHAR(10) NOT NULL,
-  fiscal_end_date DATE,
-  data JSONB NOT NULL,
-  source VARCHAR(30) NOT NULL DEFAULT 'alpha_vantage',
-  fetched_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(company_id, statement_type, period_type, fiscal_period)
-);
-CREATE INDEX IF NOT EXISTS idx_fin_statements_company ON financial_statements(company_id, statement_type, period_type);
-CREATE TABLE IF NOT EXISTS computed_ratios (
-  id SERIAL PRIMARY KEY,
-  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
-  fiscal_period VARCHAR(10) NOT NULL,
-  period_type VARCHAR(10) NOT NULL,
-  roic DECIMAL(10,4), fcf_yield DECIMAL(10,4), debt_to_ebitda DECIMAL(10,4),
-  gross_margin DECIMAL(10,4), operating_margin DECIMAL(10,4), net_margin DECIMAL(10,4),
-  current_ratio DECIMAL(10,4), revenue_growth_yoy DECIMAL(10,4),
-  computed_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(company_id, fiscal_period, period_type)
-);
-CREATE TABLE IF NOT EXISTS company_narratives (
-  id SERIAL PRIMARY KEY,
-  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
-  fiscal_period VARCHAR(10) NOT NULL,
-  narrative TEXT NOT NULL,
-  model VARCHAR(50),
-  generated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(company_id, fiscal_period)
-);
-CREATE TABLE IF NOT EXISTS red_flags (
-  id SERIAL PRIMARY KEY,
-  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
-  fiscal_period VARCHAR(10) NOT NULL,
-  flag_type VARCHAR(50) NOT NULL,
-  severity VARCHAR(10) NOT NULL CHECK (severity IN ('low','medium','high')),
-  detail TEXT NOT NULL,
-  metric_value DECIMAL(15,4),
-  threshold_value DECIMAL(15,4),
-  detected_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_red_flags_company ON red_flags(company_id, fiscal_period);
 `;
 
 async function initializeDatabase() {

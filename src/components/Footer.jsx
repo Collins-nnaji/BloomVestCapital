@@ -97,16 +97,13 @@ const Footer = () => (
       </LogoLink>
 
       <Links>
-        <FLink to="/iq">Intelligence</FLink>
-        <FLink to="/iq?tab=copilot">Copilot</FLink>
-        <FLink to="/signals">Signals</FLink>
-        <FLink to="/enquiry">Account Managers</FLink>
+        <FLink to="/enquiry">Enquire</FLink>
         <FLink to="/privacy">Privacy</FLink>
         <FLink to="/terms">Terms</FLink>
       </Links>
 
       <Right>
-        <Copyright>&copy; 2026 BloomVest</Copyright>
+        <Copyright>&copy; 2026 Bloomvest Property</Copyright>
         <SocialLink
           href="https://www.linkedin.com/company/bloomvest-finance"
           aria-label="LinkedIn"

@@ -11,18 +11,10 @@ try {
 const express = require('express');
 const cors = require('cors');
 const { initializeDatabase } = require('./db');
-const aiRoutes = require('./routes/ai');
-const portfolioRoutes = require('./routes/portfolio');
-const progressRoutes = require('./routes/progress');
-const coursesRoutes = require('./routes/courses');
-const scenarioRoutes = require('./routes/scenario');
 const billingRoutes = require('./routes/billing');
 const authRoutes = require('./routes/auth');
 const leadsRoutes    = require('./routes/leads');
-const glossaryRoutes = require('./routes/glossary');
 const profileRoutes  = require('./routes/profile');
-const allocationRoutes = require('./routes/allocations');
-const researchRoutes = require('./routes/research');
 const { logAiConfigSummary } = require('./openai-client');
 
 const app = express();
@@ -34,18 +26,10 @@ app.post('/api/billing/webhook', express.raw({ type: 'application/json' }), bill
 
 app.use(express.json());
 
-app.use('/api/ai', aiRoutes);
-app.use('/api/portfolio', portfolioRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/courses', coursesRoutes);
-app.use('/api/scenario', scenarioRoutes);
 app.use('/api/billing', billingRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/leads',    leadsRoutes);
-app.use('/api/glossary', glossaryRoutes);
 app.use('/api/profile',  profileRoutes);
-app.use('/api/allocations', allocationRoutes);
-app.use('/api/research', researchRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

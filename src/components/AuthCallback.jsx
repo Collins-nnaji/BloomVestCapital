@@ -11,7 +11,7 @@ export default function AuthCallback() {
     if (loading) return;
     const returnPath = sessionStorage.getItem('auth_return_path');
     sessionStorage.removeItem('auth_return_path');
-    navigate(returnPath || '/iq', { replace: true });
+    navigate(returnPath || '/', { replace: true });
   }, [loading, navigate]);
 
   return <Loader />;
